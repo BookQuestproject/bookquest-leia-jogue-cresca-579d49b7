@@ -83,6 +83,9 @@ const Premium = () => {
               <span className="text-4xl font-bold">R$ 19,90</span>
               <span className="text-muted-foreground">/mês</span>
             </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Inclui: Book Club, Mentoria Literária, Trilhas ENEM/Vestibulares, Estatísticas detalhadas, Paginômetro
+            </p>
             <ul className="space-y-3 mb-8">
               {premiumBenefits.map((benefit, index) => (
                 <li key={index} className="flex items-center gap-3">

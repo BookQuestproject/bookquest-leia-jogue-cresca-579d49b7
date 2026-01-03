@@ -9,6 +9,14 @@ import Ranking from "./pages/Ranking";
 import Comunidade from "./pages/Comunidade";
 import Premium from "./pages/Premium";
 import Perfil from "./pages/Perfil";
+import Trilhas from "./pages/Trilhas";
+import Estante from "./pages/Estante";
+import Biblioteca from "./pages/Biblioteca";
+import Missoes from "./pages/Missoes";
+import BookClub from "./pages/BookClub";
+import Mentoria from "./pages/Mentoria";
+import Enem from "./pages/Enem";
+import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,7 +34,14 @@ const App = () => (
           <Route path="/comunidade" element={<Comunidade />} />
           <Route path="/premium" element={<Premium />} />
           <Route path="/perfil" element={<Perfil />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/trilhas" element={<Trilhas />} />
+          <Route path="/estante" element={<Estante />} />
+          <Route path="/biblioteca" element={<Biblioteca />} />
+          <Route path="/missoes" element={<Missoes />} />
+          <Route path="/bookclub" element={<BookClub />} />
+          <Route path="/mentoria" element={<Mentoria />} />
+          <Route path="/enem" element={<Enem />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

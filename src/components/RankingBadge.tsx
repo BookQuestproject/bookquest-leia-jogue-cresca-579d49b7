@@ -1,10 +1,10 @@
 import { Crown, Medal, Star, Diamond, Flame, Sparkles } from "lucide-react";
 
-type RankingTier = "bronze" | "silver" | "gold" | "platinum" | "diamond" | "legendary";
+type RankingTier = "bronze" | "gold" | "sapphire" | "emerald" | "amethyst" | "ruby" | "diamond" | "legendary";
 
 interface RankingBadgeProps {
   tier: RankingTier;
-  points?: number;
+  booksRead?: number;
   showLabel?: boolean;
   size?: "sm" | "md" | "lg";
 }
@@ -14,56 +14,84 @@ const tierConfig = {
     label: "Bronze",
     icon: Medal,
     className: "ranking-bronze",
-    minPoints: 0,
-    maxPoints: 499,
-  },
-  silver: {
-    label: "Prata",
-    icon: Star,
-    className: "ranking-silver",
-    minPoints: 500,
-    maxPoints: 1499,
+    minBooks: 0,
+    maxBooks: 4,
   },
   gold: {
     label: "Ouro",
     icon: Crown,
     className: "ranking-gold",
-    minPoints: 1500,
-    maxPoints: 2999,
+    minBooks: 5,
+    maxBooks: 9,
   },
-  platinum: {
-    label: "Platina",
+  sapphire: {
+    label: "Safira",
+    icon: Star,
+    className: "ranking-sapphire",
+    minBooks: 10,
+    maxBooks: 19,
+  },
+  emerald: {
+    label: "Esmeralda",
     icon: Sparkles,
-    className: "ranking-platinum",
-    minPoints: 3000,
-    maxPoints: 4999,
+    className: "ranking-emerald",
+    minBooks: 20,
+    maxBooks: 34,
+  },
+  amethyst: {
+    label: "Ametista",
+    icon: Sparkles,
+    className: "ranking-amethyst",
+    minBooks: 35,
+    maxBooks: 49,
+  },
+  ruby: {
+    label: "Rubi",
+    icon: Flame,
+    className: "ranking-ruby",
+    minBooks: 50,
+    maxBooks: 69,
   },
   diamond: {
     label: "Diamante",
     icon: Diamond,
     className: "ranking-diamond",
-    minPoints: 5000,
-    maxPoints: 9999,
+    minBooks: 70,
+    maxBooks: 99,
   },
   legendary: {
     label: "Lendário",
-    icon: Flame,
+    icon: Crown,
     className: "ranking-legendary",
-    minPoints: 10000,
-    maxPoints: Infinity,
+    minBooks: 100,
+    maxBooks: Infinity,
   },
 };
 
-export const getTierFromPoints = (points: number): RankingTier => {
-  if (points >= 10000) return "legendary";
-  if (points >= 5000) return "diamond";
-  if (points >= 3000) return "platinum";
-  if (points >= 1500) return "gold";
-  if (points >= 500) return "silver";
+export const getTierFromBooks = (booksRead: number): RankingTier => {
+  if (booksRead >= 100) return "legendary";
+  if (booksRead >= 70) return "diamond";
+  if (booksRead >= 50) return "ruby";
+  if (booksRead >= 35) return "amethyst";
+  if (booksRead >= 20) return "emerald";
+  if (booksRead >= 10) return "sapphire";
+  if (booksRead >= 5) return "gold";
   return "bronze";
 };
 
-const RankingBadge = ({ tier, points, showLabel = true, size = "md" }: RankingBadgeProps) => {
+export const getNextTierInfo = (currentTier: RankingTier) => {
+  const tiers: RankingTier[] = ["bronze", "gold", "sapphire", "emerald", "amethyst", "ruby", "diamond", "legendary"];
+  const currentIndex = tiers.indexOf(currentTier);
+  if (currentIndex === tiers.length - 1) return null;
+  const nextTier = tiers[currentIndex + 1];
+  return {
+    tier: nextTier,
+    booksNeeded: tierConfig[nextTier].minBooks,
+    label: tierConfig[nextTier].label,
+  };
+};
+
+const RankingBadge = ({ tier, booksRead, showLabel = true, size = "md" }: RankingBadgeProps) => {
   const config = tierConfig[tier];
   const Icon = config.icon;
 
@@ -83,8 +111,8 @@ const RankingBadge = ({ tier, points, showLabel = true, size = "md" }: RankingBa
     <div className={`ranking-badge ${config.className} ${sizeClasses[size]}`}>
       <Icon className={iconSizes[size]} />
       {showLabel && <span>{config.label}</span>}
-      {points !== undefined && (
-        <span className="opacity-80">• {points.toLocaleString("pt-BR")} pts</span>
+      {booksRead !== undefined && (
+        <span className="opacity-80">• {booksRead} livros</span>
       )}
     </div>
   );
