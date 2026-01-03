@@ -2,14 +2,19 @@ import { Link, useLocation } from "react-router-dom";
 import {
   Home,
   BookOpen,
+  BookMarked,
+  Library,
+  Target,
   Trophy,
+  HelpCircle,
   Users,
   Crown,
-  User,
-  HelpCircle,
-  Sparkles,
   GraduationCap,
   MessageSquare,
+  Sparkles,
+  Settings,
+  Lock,
+  Flame,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -20,18 +25,20 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const location = useLocation();
 
   const menuItems = [
-    { icon: Home, label: "Início", path: "/" },
-    { icon: BookOpen, label: "Quiz Literário", path: "/quiz" },
-    { icon: Trophy, label: "Ranking", path: "/ranking" },
-    { icon: Users, label: "Comunidade", path: "/comunidade" },
-    { icon: Crown, label: "Premium", path: "/premium" },
-    { icon: User, label: "Perfil", path: "/perfil" },
+    { icon: Home, label: "Home", path: "/" },
+    { icon: BookOpen, label: "Trilhas Literárias", path: "/trilhas" },
+    { icon: BookMarked, label: "Minha Estante", path: "/estante" },
+    { icon: Library, label: "Biblioteca", path: "/biblioteca" },
+    { icon: Target, label: "Missões", path: "/missoes" },
+    { icon: Trophy, label: "Ranking Literário", path: "/ranking" },
+    { icon: HelpCircle, label: "Quiz Literário", path: "/quiz" },
+    { icon: Users, label: "Comunidades Literárias", path: "/comunidade" },
   ];
 
   const premiumItems = [
-    { icon: GraduationCap, label: "Trilhas ENEM", path: "/trilhas" },
     { icon: MessageSquare, label: "Book Club", path: "/bookclub" },
-    { icon: Sparkles, label: "Mentoria", path: "/mentoria" },
+    { icon: Sparkles, label: "Mentoria Literária", path: "/mentoria" },
+    { icon: GraduationCap, label: "ENEM e Vestibulares", path: "/enem" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -48,8 +55,22 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
         </Link>
       </div>
 
+      {/* User Stats Quick View */}
+      <div className="px-4 py-3 border-b border-sidebar-border">
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-1 text-accent">
+            <Flame className="w-4 h-4" />
+            <span className="font-bold">3</span>
+          </div>
+          <div className="flex items-center gap-1 text-primary">
+            <Trophy className="w-4 h-4" />
+            <span className="font-bold">Bronze</span>
+          </div>
+        </div>
+      </div>
+
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => (
           <Link
             key={item.path}
@@ -57,41 +78,67 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             className={`sidebar-item ${isActive(item.path) ? "active" : ""}`}
           >
             <item.icon className="w-5 h-5" />
-            <span>{item.label}</span>
+            <span className="text-sm">{item.label}</span>
           </Link>
         ))}
 
         {/* Premium Section */}
-        {isPremium && (
-          <>
-            <div className="pt-4 pb-2">
-              <span className="px-4 text-xs font-bold text-gold uppercase tracking-wider">
-                Premium
-              </span>
+        <div className="pt-4 pb-2">
+          <span className="px-4 text-xs font-bold text-accent uppercase tracking-wider flex items-center gap-2">
+            <Crown className="w-3 h-3" />
+            Premium
+          </span>
+        </div>
+        
+        {premiumItems.map((item) => (
+          isPremium ? (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`sidebar-item ${isActive(item.path) ? "active" : ""}`}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-sm">{item.label}</span>
+              <Crown className="w-4 h-4 text-accent ml-auto" />
+            </Link>
+          ) : (
+            <div
+              key={item.path}
+              className="sidebar-item premium-locked cursor-not-allowed"
+              title="Disponível no Plano Premium"
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-sm">{item.label}</span>
+              <Lock className="w-4 h-4 text-muted-foreground ml-auto" />
             </div>
-            {premiumItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`sidebar-item ${isActive(item.path) ? "active" : ""}`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span>{item.label}</span>
-                <Crown className="w-4 h-4 text-gold ml-auto" />
-              </Link>
-            ))}
-          </>
-        )}
+          )
+        ))}
       </nav>
 
-      {/* Help Section */}
+      {/* Premium CTA for non-premium users */}
+      {!isPremium && (
+        <div className="p-4 border-t border-sidebar-border">
+          <Link
+            to="/premium"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+          >
+            <Crown className="w-5 h-5" />
+            <div>
+              <p className="text-sm font-bold">Assine o Premium</p>
+              <p className="text-xs opacity-80">R$ 19,90/mês</p>
+            </div>
+          </Link>
+        </div>
+      )}
+
+      {/* Settings */}
       <div className="p-4 border-t border-sidebar-border">
         <Link
-          to="/ajuda"
-          className="sidebar-item"
+          to="/configuracoes"
+          className={`sidebar-item ${isActive("/configuracoes") ? "active" : ""}`}
         >
-          <HelpCircle className="w-5 h-5" />
-          <span>Ajuda</span>
+          <Settings className="w-5 h-5" />
+          <span className="text-sm">Configurações</span>
         </Link>
       </div>
     </aside>

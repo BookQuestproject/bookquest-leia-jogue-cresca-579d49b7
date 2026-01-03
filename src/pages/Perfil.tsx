@@ -1,7 +1,7 @@
 import { BookOpen, Trophy, Flame, Star, Award, Crown, Settings, Edit2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import RankingBadge, { getTierFromPoints } from "@/components/RankingBadge";
+import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
 import ProgressBar from "@/components/ProgressBar";
 
 interface Badge {
@@ -16,7 +16,6 @@ const userProfile = {
   name: "Você",
   avatar: "VC",
   email: "usuario@email.com",
-  points: 150,
   booksRead: 2,
   streak: 3,
   quizzesCompleted: 1,
@@ -39,22 +38,9 @@ const readingHistory = [
   { id: 2, title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", completedAt: "Jan 2024", pages: 96 },
 ];
 
-const tierThresholds = [
-  { tier: "bronze", min: 0, max: 500 },
-  { tier: "silver", min: 500, max: 1500 },
-  { tier: "gold", min: 1500, max: 3000 },
-  { tier: "platinum", min: 3000, max: 5000 },
-  { tier: "diamond", min: 5000, max: 10000 },
-  { tier: "legendary", min: 10000, max: Infinity },
-];
-
 const Perfil = () => {
-  const currentTier = getTierFromPoints(userProfile.points);
-  const currentThreshold = tierThresholds.find(t => t.tier === currentTier)!;
-  const nextThreshold = tierThresholds[tierThresholds.findIndex(t => t.tier === currentTier) + 1];
-  const progressToNext = nextThreshold 
-    ? ((userProfile.points - currentThreshold.min) / (nextThreshold.min - currentThreshold.min)) * 100
-    : 100;
+  const currentTier = getTierFromBooks(userProfile.booksRead);
+  const nextTier = getNextTierInfo(currentTier);
 
   return (
     <Layout>
@@ -78,7 +64,7 @@ const Perfil = () => {
                   <h1 className="text-2xl font-bold">{userProfile.name}</h1>
                   <RankingBadge tier={currentTier} size="sm" />
                   {userProfile.isPremium ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold/10 text-gold text-xs font-bold">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-bold">
                       <Crown className="w-3 h-3" />
                       Premium
                     </span>
@@ -96,15 +82,15 @@ const Perfil = () => {
                     <div className="text-xs text-muted-foreground">Livros</div>
                   </div>
                   <div className="text-center p-3 rounded-xl bg-secondary">
-                    <div className="text-xl font-bold text-warning">{userProfile.points}</div>
-                    <div className="text-xs text-muted-foreground">XP</div>
-                  </div>
-                  <div className="text-center p-3 rounded-xl bg-secondary">
-                    <div className="text-xl font-bold text-legendary flex items-center justify-center gap-1">
+                    <div className="text-xl font-bold text-accent flex items-center justify-center gap-1">
                       <Flame className="w-4 h-4" />
                       {userProfile.streak}
                     </div>
                     <div className="text-xs text-muted-foreground">Sequência</div>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-secondary">
+                    <div className="text-xl font-bold text-info">{userProfile.quizzesCompleted}</div>
+                    <div className="text-xs text-muted-foreground">Quizzes</div>
                   </div>
                 </div>
               </div>
@@ -115,17 +101,17 @@ const Perfil = () => {
             </div>
 
             {/* Progress to next tier */}
-            {nextThreshold && (
+            {nextTier && (
               <div className="mt-6 pt-6 border-t border-border">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">
-                    Próximo nível: <span className="text-foreground font-medium capitalize">{nextThreshold.tier === "silver" ? "Prata" : nextThreshold.tier}</span>
+                    Próximo nível: <span className="text-foreground font-medium">{nextTier.label}</span>
                   </span>
                   <span className="text-sm font-bold text-primary">
-                    {userProfile.points} / {nextThreshold.min} XP
+                    {userProfile.booksRead} / {nextTier.booksNeeded} livros
                   </span>
                 </div>
-                <ProgressBar value={userProfile.points} max={nextThreshold.min} />
+                <ProgressBar value={userProfile.booksRead} max={nextTier.booksNeeded} />
               </div>
             )}
           </div>
@@ -151,7 +137,7 @@ const Perfil = () => {
         {/* Badges Section */}
         <div className="glass-card rounded-2xl p-6 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Award className="w-6 h-6 text-warning" />
+            <Award className="w-6 h-6 text-accent" />
             Conquistas
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
