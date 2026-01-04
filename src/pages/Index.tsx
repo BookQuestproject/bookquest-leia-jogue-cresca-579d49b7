@@ -1,28 +1,31 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Trophy, Flame, ArrowRight, Star, Target, Lock, CheckCircle, Play } from "lucide-react";
+import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
+import StreakFlame from "@/components/StreakFlame";
 
 const Index = () => {
   // User data - would come from state/backend
   const userStats = {
     booksRead: 2,
     streak: 3,
-    currentTrail: "Fantasia",
+    currentBook: "Harry Potter e a Pedra Filosofal",
     currentChapter: 2,
+    totalChapters: 17,
   };
 
   const currentTier = getTierFromBooks(userStats.booksRead);
   const nextTier = getNextTierInfo(currentTier);
 
-  // Trail nodes representing reading progress
+  // Trail nodes representing chapters of current book
   const trailNodes = [
-    { id: 1, title: "Introdução", status: "completed", icon: "📖" },
-    { id: 2, title: "Capítulo 1", status: "completed", icon: "✨" },
-    { id: 3, title: "Capítulo 2", status: "current", icon: "🎯" },
-    { id: 4, title: "Capítulo 3", status: "locked", icon: "📚" },
-    { id: 5, title: "Quiz Final", status: "locked", icon: "🏆" },
+    { id: 1, title: "Capítulo 1", status: "completed", icon: "📖" },
+    { id: 2, title: "Capítulo 2", status: "completed", icon: "✨" },
+    { id: 3, title: "Capítulo 3", status: "current", icon: "🎯" },
+    { id: 4, title: "Capítulo 4", status: "locked", icon: "📚" },
+    { id: 5, title: "Capítulo 5", status: "locked", icon: "🔮" },
+    { id: 6, title: "Quiz Cap. 1-5", status: "locked", icon: "🧠" },
   ];
 
   const dailyMissions = [
@@ -53,18 +56,21 @@ const Index = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto py-4 lg:py-8">
-        {/* Current Trail Header */}
+        {/* Current Book Header */}
         <div className="glass-card rounded-2xl p-4 lg:p-6 mb-6 animate-fade-in bg-primary">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-primary-foreground/80 mb-1">← Trilha atual</p>
+              <p className="text-sm text-primary-foreground/80 mb-1">📖 Livro atual</p>
               <h1 className="text-xl lg:text-2xl font-bold text-primary-foreground">
-                {userStats.currentTrail}
+                {userStats.currentBook}
               </h1>
+              <p className="text-sm text-primary-foreground/80 mt-1">
+                Capítulo {userStats.currentChapter} de {userStats.totalChapters}
+              </p>
             </div>
             <Button variant="secondary" size="sm" className="gap-2">
               <BookOpen className="w-4 h-4" />
-              Guia
+              Ver Trilha
             </Button>
           </div>
         </div>
@@ -179,15 +185,7 @@ const Index = () => {
 
             {/* Streak Card */}
             <div className="glass-card rounded-2xl p-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                  <Flame className="w-6 h-6 text-accent" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{userStats.streak}</p>
-                  <p className="text-sm text-muted-foreground">dias de sequência</p>
-                </div>
-              </div>
+              <StreakFlame days={userStats.streak} />
             </div>
 
             {/* Daily Missions */}

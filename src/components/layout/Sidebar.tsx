@@ -15,6 +15,7 @@ import {
   Settings,
   Lock,
   Flame,
+  Newspaper,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -33,6 +34,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
     { icon: Trophy, label: "Ranking Literário", path: "/ranking" },
     { icon: HelpCircle, label: "Quiz Literário", path: "/quiz" },
     { icon: Users, label: "Comunidades Literárias", path: "/comunidade" },
+    { icon: Newspaper, label: "Notícias", path: "/noticias" },
   ];
 
   const premiumItems = [

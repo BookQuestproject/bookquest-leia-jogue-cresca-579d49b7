@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles, User, Clock, Layers } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
+import { Input } from "@/components/ui/input";
+
+type QuizStep = "login" | "profile" | "questions" | "curiosity" | "result";
+
+interface ReaderProfile {
+  name: string;
+  level: "iniciante" | "intermediario" | "avancado";
+  timePerDay: number; // in minutes
+}
 
 interface Question {
   id: number;
@@ -110,42 +119,99 @@ const curiosities = [
   },
 ];
 
-const genreResults: Record<string, { title: string; description: string; books: string[] }> = {
+interface BookRecommendation {
+  title: string;
+  author: string;
+  pages: number;
+  readingTime: string;
+  level: "iniciante" | "intermediario" | "avancado";
+}
+
+const genreBooks: Record<string, BookRecommendation[]> = {
+  fantasia: [
+    { title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", pages: 96, readingTime: "2h", level: "iniciante" },
+    { title: "Percy Jackson - O Ladrão de Raios", author: "Rick Riordan", pages: 400, readingTime: "8h", level: "iniciante" },
+    { title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", pages: 264, readingTime: "6h", level: "intermediario" },
+    { title: "As Crônicas de Nárnia", author: "C.S. Lewis", pages: 768, readingTime: "16h", level: "intermediario" },
+    { title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", pages: 1200, readingTime: "30h", level: "avancado" },
+    { title: "O Nome do Vento", author: "Patrick Rothfuss", pages: 656, readingTime: "15h", level: "avancado" },
+  ],
+  misterio: [
+    { title: "A Garota no Trem", author: "Paula Hawkins", pages: 336, readingTime: "7h", level: "iniciante" },
+    { title: "E Não Sobrou Nenhum", author: "Agatha Christie", pages: 272, readingTime: "5h", level: "iniciante" },
+    { title: "Gone Girl", author: "Gillian Flynn", pages: 432, readingTime: "9h", level: "intermediario" },
+    { title: "O Código Da Vinci", author: "Dan Brown", pages: 480, readingTime: "10h", level: "intermediario" },
+    { title: "Sherlock Holmes - Obra Completa", author: "Arthur Conan Doyle", pages: 1408, readingTime: "35h", level: "avancado" },
+    { title: "O Silêncio dos Inocentes", author: "Thomas Harris", pages: 352, readingTime: "8h", level: "avancado" },
+  ],
+  romance: [
+    { title: "A Culpa é das Estrelas", author: "John Green", pages: 288, readingTime: "5h", level: "iniciante" },
+    { title: "Como Eu Era Antes de Você", author: "Jojo Moyes", pages: 384, readingTime: "7h", level: "iniciante" },
+    { title: "Orgulho e Preconceito", author: "Jane Austen", pages: 432, readingTime: "9h", level: "intermediario" },
+    { title: "Me Chame Pelo Seu Nome", author: "André Aciman", pages: 248, readingTime: "5h", level: "intermediario" },
+    { title: "Anna Karenina", author: "Liev Tolstói", pages: 864, readingTime: "20h", level: "avancado" },
+    { title: "O Morro dos Ventos Uivantes", author: "Emily Brontë", pages: 400, readingTime: "9h", level: "avancado" },
+  ],
+  "nao-ficcao": [
+    { title: "O Poder do Hábito", author: "Charles Duhigg", pages: 408, readingTime: "8h", level: "iniciante" },
+    { title: "Mindset", author: "Carol S. Dweck", pages: 320, readingTime: "6h", level: "iniciante" },
+    { title: "Sapiens", author: "Yuval Noah Harari", pages: 464, readingTime: "10h", level: "intermediario" },
+    { title: "Rápido e Devagar", author: "Daniel Kahneman", pages: 608, readingTime: "14h", level: "intermediario" },
+    { title: "Uma Breve História do Tempo", author: "Stephen Hawking", pages: 256, readingTime: "7h", level: "avancado" },
+    { title: "O Gene Egoísta", author: "Richard Dawkins", pages: 544, readingTime: "12h", level: "avancado" },
+  ],
+  aventura: [
+    { title: "As Aventuras de Pi", author: "Yann Martel", pages: 320, readingTime: "6h", level: "iniciante" },
+    { title: "Jogos Vorazes", author: "Suzanne Collins", pages: 400, readingTime: "8h", level: "iniciante" },
+    { title: "Maze Runner", author: "James Dashner", pages: 400, readingTime: "8h", level: "intermediario" },
+    { title: "Divergente", author: "Veronica Roth", pages: 496, readingTime: "10h", level: "intermediario" },
+    { title: "A Ilha do Tesouro", author: "Robert Louis Stevenson", pages: 304, readingTime: "7h", level: "avancado" },
+    { title: "20.000 Léguas Submarinas", author: "Júlio Verne", pages: 448, readingTime: "10h", level: "avancado" },
+  ],
+};
+
+const genreInfo: Record<string, { title: string; description: string }> = {
   fantasia: {
     title: "Fantasia",
     description: "Você é um sonhador nato! Adora explorar mundos mágicos, criaturas fantásticas e histórias épicas. Sua imaginação não tem limites.",
-    books: ["Harry Potter", "O Senhor dos Anéis", "As Crônicas de Nárnia", "Percy Jackson", "Eragon"],
   },
   misterio: {
     title: "Mistério e Suspense",
     description: "Você adora um bom enigma! Tem mente analítica e fica vidrado até descobrir todas as reviravoltas. Nada escapa do seu olhar atento.",
-    books: ["E Não Sobrou Nenhum", "O Código Da Vinci", "Sherlock Holmes", "Gone Girl", "A Garota no Trem"],
   },
   romance: {
     title: "Romance",
     description: "Você é movido por emoções e conexões profundas! Histórias de amor te cativam e você acredita no poder dos sentimentos.",
-    books: ["Orgulho e Preconceito", "A Culpa é das Estrelas", "Me Chame Pelo Seu Nome", "Depois", "Como Eu Era Antes de Você"],
   },
   "nao-ficcao": {
     title: "Não-Ficção",
     description: "Você é curioso e sedento por conhecimento! Prefere aprender sobre o mundo real e expandir seus horizontes constantemente.",
-    books: ["Sapiens", "O Poder do Hábito", "Pai Rico, Pai Pobre", "Rápido e Devagar", "Mindset"],
   },
   aventura: {
     title: "Aventura e Ação",
     description: "Adrenalina é seu combustível! Você ama histórias cheias de ação, desafios e jornadas épicas que tiram o fôlego.",
-    books: ["Jogos Vorazes", "O Ladrão de Raios", "Divergente", "Maze Runner", "As Aventuras de Pi"],
   },
 };
 
 const Quiz = () => {
   const navigate = useNavigate();
+  const [step, setStep] = useState<QuizStep>("login");
+  const [profile, setProfile] = useState<ReaderProfile>({
+    name: "",
+    level: "iniciante",
+    timePerDay: 20,
+  });
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
-  const [showCuriosity, setShowCuriosity] = useState(false);
   const [curiosityIndex, setCuriosityIndex] = useState(0);
-  const [showResult, setShowResult] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [resultGenre, setResultGenre] = useState<string>("");
+
+  const handleProfileSubmit = () => {
+    if (profile.name.trim()) {
+      setStep("questions");
+    }
+  };
 
   const handleOptionSelect = (optionIndex: number) => {
     setSelectedOption(optionIndex);
@@ -160,31 +226,31 @@ const Quiz = () => {
 
     // Show curiosity after question 2 and 5
     if (currentQuestion === 2 || currentQuestion === 5) {
-      setShowCuriosity(true);
+      setStep("curiosity");
       if (currentQuestion === 5) setCuriosityIndex(1);
       return;
     }
 
     if (currentQuestion === questions.length - 1) {
-      setShowResult(true);
+      calculateResult(newAnswers);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
 
-  const handleContinue = () => {
-    setShowCuriosity(false);
+  const handleContinueCuriosity = () => {
+    setStep("questions");
     if (currentQuestion === questions.length - 1) {
-      setShowResult(true);
+      calculateResult(answers);
     } else {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
 
-  const calculateResult = () => {
+  const calculateResult = (finalAnswers: number[]) => {
     const genreCount: Record<string, number> = {};
     
-    answers.forEach((answerIndex, questionIndex) => {
+    finalAnswers.forEach((answerIndex, questionIndex) => {
       const genre = questions[questionIndex].genreMapping[answerIndex];
       genreCount[genre] = (genreCount[genre] || 0) + 1;
     });
@@ -193,60 +259,126 @@ const Quiz = () => {
       a[1] > b[1] ? a : b
     )[0];
 
-    return genreResults[winningGenre];
+    setResultGenre(winningGenre);
+    setStep("result");
   };
 
-  if (showResult) {
-    const result = calculateResult();
+  const getRecommendedBooks = () => {
+    const allBooks = genreBooks[resultGenre] || [];
     
+    // Filter by level and time available
+    return allBooks.filter(book => {
+      // Level filter
+      if (profile.level === "iniciante" && book.level !== "iniciante") return false;
+      if (profile.level === "intermediario" && book.level === "avancado") return false;
+      
+      // Time filter - estimate based on daily reading time
+      const estimatedDays = parseInt(book.readingTime) / (profile.timePerDay / 60);
+      if (profile.timePerDay <= 15 && estimatedDays > 30) return false;
+      
+      return true;
+    }).slice(0, 5);
+  };
+
+  // Login Step
+  if (step === "login") {
     return (
       <Layout>
-        <div className="max-w-2xl mx-auto py-8 animate-fade-in">
+        <div className="max-w-md mx-auto py-8 animate-fade-in">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6 pulse-glow">
-              <Sparkles className="w-10 h-10 text-primary" />
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="w-10 h-10 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold mb-2">Seu Gênero Literário</h1>
-            <p className="text-muted-foreground">Baseado nas suas respostas, descobrimos seu perfil!</p>
+            <h1 className="text-3xl font-bold mb-2">Quiz Literário</h1>
+            <p className="text-muted-foreground">
+              Descubra seu gênero literário e receba recomendações personalizadas!
+            </p>
           </div>
 
-          <div className="glass-card rounded-3xl p-8 mb-8">
-            <h2 className="text-2xl font-bold text-primary mb-4">{result.title}</h2>
-            <p className="text-lg text-muted-foreground mb-6">{result.description}</p>
-            
-            <div className="border-t border-border pt-6">
-              <h3 className="font-bold mb-4">Livros recomendados para você:</h3>
-              <div className="grid gap-3">
-                {result.books.map((book, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-secondary">
-                    <BookOpen className="w-5 h-5 text-primary" />
-                    <span className="font-medium">{book}</span>
-                  </div>
-                ))}
+          <div className="glass-card rounded-3xl p-8">
+            <div className="space-y-6">
+              <div>
+                <label className="text-sm font-medium mb-2 block">
+                  <User className="w-4 h-4 inline mr-2" />
+                  Seu nome de exibição
+                </label>
+                <Input
+                  placeholder="Como quer ser chamado?"
+                  value={profile.name}
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  className="text-lg"
+                />
               </div>
-            </div>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" size="lg" onClick={() => navigate("/perfil")}>
-              Ver meu perfil
-            </Button>
-            <Button variant="outline" size="lg" onClick={() => {
-              setCurrentQuestion(0);
-              setAnswers([]);
-              setShowResult(false);
-              setShowCuriosity(false);
-              setCuriosityIndex(0);
-            }}>
-              Refazer quiz
-            </Button>
+              <div>
+                <label className="text-sm font-medium mb-3 block">
+                  <Layers className="w-4 h-4 inline mr-2" />
+                  Seu nível de leitura
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: "iniciante", label: "Iniciante", desc: "Começando" },
+                    { id: "intermediario", label: "Intermediário", desc: "Leio às vezes" },
+                    { id: "avancado", label: "Avançado", desc: "Leio muito" },
+                  ].map((level) => (
+                    <button
+                      key={level.id}
+                      onClick={() => setProfile({ ...profile, level: level.id as any })}
+                      className={`p-3 rounded-xl text-center transition-all ${
+                        profile.level === level.id
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-secondary hover:bg-secondary/80"
+                      }`}
+                    >
+                      <p className="font-bold text-sm">{level.label}</p>
+                      <p className="text-xs opacity-70">{level.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-3 block">
+                  <Clock className="w-4 h-4 inline mr-2" />
+                  Tempo disponível por dia
+                </label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[10, 20, 30, 60].map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => setProfile({ ...profile, timePerDay: time })}
+                      className={`p-3 rounded-xl text-center transition-all ${
+                        profile.timePerDay === time
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-secondary hover:bg-secondary/80"
+                      }`}
+                    >
+                      <p className="font-bold">{time}</p>
+                      <p className="text-xs opacity-70">min</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button 
+                variant="hero" 
+                size="lg" 
+                className="w-full gap-2"
+                onClick={handleProfileSubmit}
+                disabled={!profile.name.trim()}
+              >
+                Iniciar Quiz
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </Layout>
     );
   }
 
-  if (showCuriosity) {
+  // Curiosity Step
+  if (step === "curiosity") {
     const curiosity = curiosities[curiosityIndex];
     
     return (
@@ -258,7 +390,7 @@ const Quiz = () => {
             </div>
             <h2 className="text-2xl font-bold mb-4">{curiosity.title}</h2>
             <p className="text-lg text-muted-foreground mb-8">{curiosity.text}</p>
-            <Button variant="hero" size="lg" onClick={handleContinue}>
+            <Button variant="hero" size="lg" onClick={handleContinueCuriosity}>
               Continuar
               <ArrowRight className="w-5 h-5" />
             </Button>
@@ -268,6 +400,76 @@ const Quiz = () => {
     );
   }
 
+  // Result Step
+  if (step === "result") {
+    const genre = genreInfo[resultGenre];
+    const recommendedBooks = getRecommendedBooks();
+    
+    return (
+      <Layout>
+        <div className="max-w-2xl mx-auto py-8 animate-fade-in">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6 pulse-glow">
+              <Sparkles className="w-10 h-10 text-primary" />
+            </div>
+            <h1 className="text-3xl font-bold mb-2">Olá, {profile.name}!</h1>
+            <p className="text-muted-foreground">Baseado nas suas respostas, descobrimos seu perfil!</p>
+          </div>
+
+          <div className="glass-card rounded-3xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-primary mb-4">{genre?.title}</h2>
+            <p className="text-lg text-muted-foreground mb-6">{genre?.description}</p>
+            
+            <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-secondary rounded-xl">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Nível</p>
+                <p className="font-bold capitalize">{profile.level}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Tempo/dia</p>
+                <p className="font-bold">{profile.timePerDay} min</p>
+              </div>
+            </div>
+            
+            <div className="border-t border-border pt-6">
+              <h3 className="font-bold mb-4">📚 Livros recomendados para você:</h3>
+              <div className="grid gap-3">
+                {recommendedBooks.map((book, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-secondary">
+                    <BookOpen className="w-5 h-5 text-primary flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{book.title}</p>
+                      <p className="text-xs text-muted-foreground">{book.author} • {book.pages} páginas</p>
+                    </div>
+                    <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                      ~{book.readingTime}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button variant="hero" size="lg" onClick={() => navigate("/perfil")}>
+              Ver meu perfil
+            </Button>
+            <Button variant="outline" size="lg" onClick={() => {
+              setStep("login");
+              setCurrentQuestion(0);
+              setAnswers([]);
+              setCuriosityIndex(0);
+              setProfile({ name: "", level: "iniciante", timePerDay: 20 });
+            }}>
+              Refazer quiz
+            </Button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Questions Step
   const question = questions[currentQuestion];
 
   return (
