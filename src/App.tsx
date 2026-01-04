@@ -17,6 +17,7 @@ import BookClub from "./pages/BookClub";
 import Mentoria from "./pages/Mentoria";
 import Enem from "./pages/Enem";
 import Configuracoes from "./pages/Configuracoes";
+import Noticias from "./pages/Noticias";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/premium" element={<Premium />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/trilhas" element={<Trilhas />} />
+          <Route path="/trilhas/:bookId" element={<Trilhas />} />
           <Route path="/estante" element={<Estante />} />
           <Route path="/biblioteca" element={<Biblioteca />} />
           <Route path="/missoes" element={<Missoes />} />
@@ -42,6 +44,7 @@ const App = () => (
           <Route path="/mentoria" element={<Mentoria />} />
           <Route path="/enem" element={<Enem />} />
           <Route path="/configuracoes" element={<Configuracoes />} />
+          <Route path="/noticias" element={<Noticias />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

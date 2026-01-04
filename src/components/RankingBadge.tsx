@@ -15,67 +15,67 @@ const tierConfig = {
     icon: Medal,
     className: "ranking-bronze",
     minBooks: 0,
-    maxBooks: 4,
+    maxBooks: 5,
   },
   gold: {
     label: "Ouro",
     icon: Crown,
     className: "ranking-gold",
-    minBooks: 5,
-    maxBooks: 9,
+    minBooks: 6,
+    maxBooks: 15,
   },
   sapphire: {
     label: "Safira",
     icon: Star,
     className: "ranking-sapphire",
-    minBooks: 10,
-    maxBooks: 19,
+    minBooks: 16,
+    maxBooks: 30,
   },
   emerald: {
     label: "Esmeralda",
     icon: Sparkles,
     className: "ranking-emerald",
-    minBooks: 20,
-    maxBooks: 34,
+    minBooks: 31,
+    maxBooks: 50,
   },
   amethyst: {
     label: "Ametista",
     icon: Sparkles,
     className: "ranking-amethyst",
-    minBooks: 35,
-    maxBooks: 49,
+    minBooks: 51,
+    maxBooks: 80,
   },
   ruby: {
     label: "Rubi",
     icon: Flame,
     className: "ranking-ruby",
-    minBooks: 50,
-    maxBooks: 69,
+    minBooks: 81,
+    maxBooks: 120,
   },
   diamond: {
     label: "Diamante",
     icon: Diamond,
     className: "ranking-diamond",
-    minBooks: 70,
-    maxBooks: 99,
+    minBooks: 121,
+    maxBooks: 199,
   },
   legendary: {
     label: "Lendário",
     icon: Crown,
     className: "ranking-legendary",
-    minBooks: 100,
+    minBooks: 200,
     maxBooks: Infinity,
   },
 };
 
 export const getTierFromBooks = (booksRead: number): RankingTier => {
-  if (booksRead >= 100) return "legendary";
-  if (booksRead >= 70) return "diamond";
-  if (booksRead >= 50) return "ruby";
-  if (booksRead >= 35) return "amethyst";
-  if (booksRead >= 20) return "emerald";
-  if (booksRead >= 10) return "sapphire";
-  if (booksRead >= 5) return "gold";
+  if (booksRead >= 200) return "legendary";
+  if (booksRead >= 121) return "diamond";
+  if (booksRead >= 81) return "ruby";
+  if (booksRead >= 51) return "amethyst";
+  if (booksRead >= 31) return "emerald";
+  if (booksRead >= 16) return "sapphire";
+  if (booksRead >= 6) return "gold";
   return "bronze";
 };
 
