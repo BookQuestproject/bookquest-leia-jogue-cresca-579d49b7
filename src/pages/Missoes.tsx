@@ -1,7 +1,13 @@
-import { Target, CheckCircle, Clock, Flame, Trophy, Star, Gift } from "lucide-react";
+import { Target, CheckCircle, Clock, Flame, Trophy, Star, Gift, Info } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Mission {
   id: number;
@@ -13,24 +19,147 @@ interface Mission {
   reward: string;
   type: "daily" | "weekly" | "monthly";
   completed: boolean;
+  verifiable: boolean;
+  howToComplete: string;
 }
 
+// Todas as missões são verificáveis automaticamente pelo sistema
 const missions: Mission[] = [
-  // Daily
-  { id: 1, title: "Ler 1 capítulo", description: "Leia pelo menos um capítulo hoje", icon: "📖", progress: 0, goal: 1, reward: "+10 pts", type: "daily", completed: false },
-  { id: 2, title: "Manter sequência", description: "Continue lendo todos os dias", icon: "🔥", progress: 1, goal: 1, reward: "+5 pts", type: "daily", completed: true },
-  { id: 3, title: "Completar quiz", description: "Responda um quiz literário", icon: "🧠", progress: 0, goal: 1, reward: "+25 pts", type: "daily", completed: false },
-  { id: 4, title: "Interagir na comunidade", description: "Comente ou curta um post", icon: "💬", progress: 0, goal: 1, reward: "+5 pts", type: "daily", completed: false },
+  // Daily - Ações verificáveis
+  { 
+    id: 1, 
+    title: "Responder pergunta de capítulo", 
+    description: "Responda uma pergunta de qualquer capítulo", 
+    icon: "📖", 
+    progress: 0, 
+    goal: 1, 
+    reward: "+10 pts", 
+    type: "daily", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Clique em 'Continuar Leitura' e responda a pergunta do capítulo atual."
+  },
+  { 
+    id: 2, 
+    title: "Fazer login hoje", 
+    description: "Acesse o BookQuest", 
+    icon: "🔥", 
+    progress: 1, 
+    goal: 1, 
+    reward: "+5 pts", 
+    type: "daily", 
+    completed: true,
+    verifiable: true,
+    howToComplete: "Detectado automaticamente ao acessar o site."
+  },
+  { 
+    id: 3, 
+    title: "Completar quiz literário", 
+    description: "Responda o quiz de perfil literário", 
+    icon: "🧠", 
+    progress: 0, 
+    goal: 1, 
+    reward: "+25 pts", 
+    type: "daily", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Acesse o Quiz Literário no menu lateral e complete todas as perguntas."
+  },
+  { 
+    id: 4, 
+    title: "Interagir na comunidade", 
+    description: "Curta ou comente em um post", 
+    icon: "💬", 
+    progress: 0, 
+    goal: 1, 
+    reward: "+5 pts", 
+    type: "daily", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Acesse uma comunidade de livro e curta ou comente em qualquer post."
+  },
   
-  // Weekly
-  { id: 5, title: "Ler 5 capítulos", description: "Leia 5 capítulos esta semana", icon: "📚", progress: 2, goal: 5, reward: "+50 pts", type: "weekly", completed: false },
-  { id: 6, title: "Sequência de 7 dias", description: "Leia por 7 dias seguidos", icon: "⚡", progress: 3, goal: 7, reward: "+100 pts", type: "weekly", completed: false },
-  { id: 7, title: "Completar trilha", description: "Finalize uma etapa de trilha", icon: "🎯", progress: 0, goal: 1, reward: "+75 pts", type: "weekly", completed: false },
+  // Weekly - Ações verificáveis
+  { 
+    id: 5, 
+    title: "Completar 5 unidades de trilha", 
+    description: "Responda 5 perguntas de capítulos", 
+    icon: "📚", 
+    progress: 0, 
+    goal: 5, 
+    reward: "+50 pts", 
+    type: "weekly", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Responda corretamente 5 perguntas de capítulos em qualquer trilha."
+  },
+  { 
+    id: 6, 
+    title: "Sequência de 7 dias", 
+    description: "Faça login por 7 dias seguidos", 
+    icon: "⚡", 
+    progress: 0, 
+    goal: 7, 
+    reward: "+100 pts", 
+    type: "weekly", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Acesse o BookQuest todos os dias por uma semana."
+  },
+  { 
+    id: 7, 
+    title: "Escrever uma resenha", 
+    description: "Avalie um livro na sua estante", 
+    icon: "✍️", 
+    progress: 0, 
+    goal: 1, 
+    reward: "+75 pts", 
+    type: "weekly", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Vá em Minha Estante, clique em um livro e escreva uma resenha."
+  },
   
-  // Monthly
-  { id: 8, title: "Finalizar 1 livro", description: "Complete a leitura de um livro inteiro", icon: "🏆", progress: 0, goal: 1, reward: "+200 pts", type: "monthly", completed: false },
-  { id: 9, title: "Ler 20 capítulos", description: "Leia 20 capítulos este mês", icon: "📕", progress: 5, goal: 20, reward: "+150 pts", type: "monthly", completed: false },
-  { id: 10, title: "Escrever 3 resenhas", description: "Avalie livros na sua estante", icon: "✍️", progress: 1, goal: 3, reward: "+100 pts", type: "monthly", completed: false },
+  // Monthly - Ações verificáveis
+  { 
+    id: 8, 
+    title: "Marcar livro como concluído", 
+    description: "Complete todas as unidades de uma trilha e marque como lido", 
+    icon: "🏆", 
+    progress: 0, 
+    goal: 1, 
+    reward: "+200 pts", 
+    type: "monthly", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Complete todas as perguntas de uma trilha e clique em 'Marcar como Concluído'."
+  },
+  { 
+    id: 9, 
+    title: "Responder 20 perguntas de capítulos", 
+    description: "Complete 20 unidades de trilha", 
+    icon: "📕", 
+    progress: 0, 
+    goal: 20, 
+    reward: "+150 pts", 
+    type: "monthly", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Responda corretamente 20 perguntas em qualquer trilha."
+  },
+  { 
+    id: 10, 
+    title: "Escrever 3 resenhas", 
+    description: "Avalie 3 livros diferentes", 
+    icon: "✍️", 
+    progress: 0, 
+    goal: 3, 
+    reward: "+100 pts", 
+    type: "monthly", 
+    completed: false,
+    verifiable: true,
+    howToComplete: "Vá em Minha Estante e escreva resenhas para 3 livros diferentes."
+  },
 ];
 
 const Missoes = () => {
@@ -64,9 +193,24 @@ const Missoes = () => {
             <div className="flex items-center gap-2">
               <Flame className="w-6 h-6 text-accent" />
               <div>
-                <p className="font-bold">3 dias</p>
+                <p className="font-bold">0 dias</p>
                 <p className="text-xs text-muted-foreground">de sequência</p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Box */}
+        <div className="glass-card rounded-xl p-4 mb-8 bg-primary/5 border-primary/20">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-primary mt-0.5" />
+            <div>
+              <p className="font-bold text-sm mb-1">Como funcionam as missões?</p>
+              <p className="text-sm text-muted-foreground">
+                Todas as missões são verificadas automaticamente pelo sistema. 
+                Ao completar uma ação (como responder uma pergunta ou escrever uma resenha), 
+                o progresso é atualizado automaticamente.
+              </p>
             </div>
           </div>
         </div>
@@ -136,9 +280,23 @@ const MissionCard = ({ mission, index }: { mission: Mission; index: number }) =>
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h3 className={`font-bold ${mission.completed ? "line-through text-muted-foreground" : ""}`}>
-              {mission.title}
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className={`font-bold ${mission.completed ? "line-through text-muted-foreground" : ""}`}>
+                {mission.title}
+              </h3>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="p-0.5 rounded-full hover:bg-secondary transition-colors">
+                      <Info className="w-3.5 h-3.5 text-muted-foreground" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs">
+                    <p className="text-xs">{mission.howToComplete}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <span className="text-sm font-bold text-accent flex items-center gap-1">
               <Gift className="w-3 h-3" />
               {mission.reward}

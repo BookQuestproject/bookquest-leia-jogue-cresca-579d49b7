@@ -1,9 +1,69 @@
-import { Settings, User, Bell, Moon, Globe, Shield, LogOut, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Settings, User, Bell, Moon, Sun, Globe, Shield, LogOut, ChevronRight, BookOpen, Users } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 
 const Configuracoes = () => {
+  const { toast } = useToast();
+  
+  // Estados das configurações
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [notifications, setNotifications] = useState({
+    readingReminder: true,
+    newMissions: true,
+    community: false,
+  });
+  const [privacy, setPrivacy] = useState({
+    publicProfile: true,
+    showInCommunity: true,
+  });
+  const [readingPreferences, setReadingPreferences] = useState({
+    dailyGoal: 30, // minutos
+    preferredGenres: ["Fantasia", "Romance"],
+  });
+
+  // Carregar tema salvo
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("bookquest-theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    }
+  }, []);
+
+  // Alternar tema
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("bookquest-theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    
+    toast({
+      title: `Tema ${newTheme === "dark" ? "escuro" : "claro"} ativado`,
+      description: "Suas preferências foram salvas.",
+    });
+  };
+
+  // Atualizar notificações
+  const updateNotification = (key: keyof typeof notifications, value: boolean) => {
+    setNotifications(prev => ({ ...prev, [key]: value }));
+    toast({
+      title: "Notificações atualizadas",
+      description: `${key === "readingReminder" ? "Lembrete de leitura" : key === "newMissions" ? "Novas missões" : "Comunidade"} ${value ? "ativado" : "desativado"}.`,
+    });
+  };
+
+  // Atualizar privacidade
+  const updatePrivacy = (key: keyof typeof privacy, value: boolean) => {
+    setPrivacy(prev => ({ ...prev, [key]: value }));
+    toast({
+      title: "Privacidade atualizada",
+      description: "Suas configurações foram salvas.",
+    });
+  };
+
   return (
     <Layout>
       <div className="py-8 max-w-2xl mx-auto">
@@ -65,23 +125,32 @@ const Configuracoes = () => {
               <div className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">Lembrete de leitura</p>
-                  <p className="text-sm text-muted-foreground">Receba lembretes diários</p>
+                  <p className="text-sm text-muted-foreground">Receba lembretes diários para ler</p>
                 </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={notifications.readingReminder}
+                  onCheckedChange={(checked) => updateNotification("readingReminder", checked)}
+                />
               </div>
               <div className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">Novas missões</p>
                   <p className="text-sm text-muted-foreground">Aviso de novas missões disponíveis</p>
                 </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={notifications.newMissions}
+                  onCheckedChange={(checked) => updateNotification("newMissions", checked)}
+                />
               </div>
               <div className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">Comunidade</p>
-                  <p className="text-sm text-muted-foreground">Respostas e menções</p>
+                  <p className="text-sm text-muted-foreground">Respostas e menções nas comunidades</p>
                 </div>
-                <Switch />
+                <Switch 
+                  checked={notifications.community}
+                  onCheckedChange={(checked) => updateNotification("community", checked)}
+                />
               </div>
             </div>
           </section>
@@ -90,17 +159,68 @@ const Configuracoes = () => {
           <section className="glass-card rounded-2xl overflow-hidden">
             <div className="p-4 border-b border-border">
               <h2 className="font-bold flex items-center gap-2">
-                <Moon className="w-5 h-5 text-primary" />
+                {theme === "dark" ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
                 Aparência
               </h2>
             </div>
             <div className="divide-y divide-border">
               <div className="flex items-center justify-between p-4">
                 <div>
-                  <p className="font-medium">Tema escuro</p>
-                  <p className="text-sm text-muted-foreground">Sempre ativado</p>
+                  <p className="font-medium">Tema {theme === "dark" ? "escuro" : "claro"}</p>
+                  <p className="text-sm text-muted-foreground">Altere entre tema claro e escuro</p>
                 </div>
-                <Switch defaultChecked disabled />
+                <Switch 
+                  checked={theme === "dark"}
+                  onCheckedChange={toggleTheme}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Reading Preferences */}
+          <section className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-4 border-b border-border">
+              <h2 className="font-bold flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+                Preferências de Leitura
+              </h2>
+            </div>
+            <div className="divide-y divide-border">
+              <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+                <div>
+                  <p className="font-medium">Meta diária de leitura</p>
+                  <p className="text-sm text-muted-foreground">{readingPreferences.dailyGoal} minutos por dia</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+              </button>
+              <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+                <div>
+                  <p className="font-medium">Gêneros preferidos</p>
+                  <p className="text-sm text-muted-foreground">{readingPreferences.preferredGenres.join(", ")}</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </div>
+          </section>
+
+          {/* Community Preferences */}
+          <section className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-4 border-b border-border">
+              <h2 className="font-bold flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
+                Preferências de Comunidade
+              </h2>
+            </div>
+            <div className="divide-y divide-border">
+              <div className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-medium">Receber notificações de comunidades</p>
+                  <p className="text-sm text-muted-foreground">Novos posts nas comunidades que participa</p>
+                </div>
+                <Switch 
+                  checked={notifications.community}
+                  onCheckedChange={(checked) => updateNotification("community", checked)}
+                />
               </div>
             </div>
           </section>
@@ -136,16 +256,22 @@ const Configuracoes = () => {
               <div className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">Perfil público</p>
-                  <p className="text-sm text-muted-foreground">Outros podem ver seu ranking</p>
+                  <p className="text-sm text-muted-foreground">Outros podem ver seu ranking e estatísticas</p>
                 </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={privacy.publicProfile}
+                  onCheckedChange={(checked) => updatePrivacy("publicProfile", checked)}
+                />
               </div>
               <div className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">Mostrar na comunidade</p>
-                  <p className="text-sm text-muted-foreground">Aparecer em listas públicas</p>
+                  <p className="text-sm text-muted-foreground">Aparecer em listas públicas e ranking</p>
                 </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={privacy.showInCommunity}
+                  onCheckedChange={(checked) => updatePrivacy("showInCommunity", checked)}
+                />
               </div>
             </div>
           </section>

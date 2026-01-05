@@ -15,84 +15,56 @@ const BookClub = () => {
     members: 234,
   };
 
-  if (!isPremium) {
-    return (
-      <Layout>
-        <div className="py-8 max-w-2xl mx-auto text-center">
-          <div className="glass-card rounded-3xl p-8 lg:p-12 animate-fade-in">
-            <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-10 h-10 text-accent" />
-            </div>
-            <h1 className="text-3xl font-bold mb-4">Book Club</h1>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Participe de leituras coletivas mensais com discussões guiadas e análises aprofundadas.
-            </p>
-            
-            <div className="glass-card rounded-2xl p-6 mb-8 text-left">
-              <div className="flex gap-4 items-center mb-4">
-                <div className="w-20 h-28 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
-                  <span className="text-5xl">{currentBook.cover}</span>
+  // Preview para não-premium - mostra estrutura mas não permite interação
+  return (
+    <Layout isPremium={isPremium}>
+      <div className="py-8">
+        {/* Premium Banner */}
+        {!isPremium && (
+          <div className="glass-card rounded-2xl p-4 mb-6 bg-accent/5 border-accent/20 animate-fade-in">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-accent" />
                 </div>
                 <div>
-                  <span className="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-500 font-medium">
-                    {currentBook.status}
-                  </span>
-                  <h3 className="font-bold text-lg mt-1">{currentBook.title}</h3>
-                  <p className="text-sm text-muted-foreground">{currentBook.author}</p>
-                  <p className="text-xs text-primary mt-2">📅 Início: {currentBook.startDate}</p>
+                  <p className="font-bold text-sm">Conteúdo Premium</p>
+                  <p className="text-xs text-muted-foreground">Visualização prévia - assine para interagir</p>
                 </div>
               </div>
+              <Link to="/premium">
+                <Button variant="premium" size="sm" className="gap-2">
+                  <Crown className="w-4 h-4" />
+                  Assinar - R$ 19,90/mês
+                </Button>
+              </Link>
             </div>
-
-            <div className="grid md:grid-cols-3 gap-4 mb-8">
-              <div className="p-4 rounded-xl bg-secondary">
-                <BookOpen className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Resenhas</p>
-                <p className="text-xs text-muted-foreground">Análises detalhadas</p>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary">
-                <Video className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Vídeos</p>
-                <p className="text-xs text-muted-foreground">Discussões em vídeo</p>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary">
-                <User className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Prévia do Autor</p>
-                <p className="text-xs text-muted-foreground">Conheça o escritor</p>
-              </div>
-            </div>
-
-            <Link to="/premium">
-              <Button variant="premium" size="lg" className="gap-2">
-                <Crown className="w-5 h-5" />
-                Assinar Premium - R$ 19,90/mês
-              </Button>
-            </Link>
           </div>
-        </div>
-      </Layout>
-    );
-  }
+        )}
 
-  return (
-    <Layout isPremium>
-      <div className="py-8">
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-bold mb-4">
             <Crown className="w-4 h-4" />
             Premium
           </div>
           <h1 className="text-3xl font-bold mb-2">Book Club</h1>
+          <p className="text-muted-foreground">
+            Participe de leituras coletivas mensais com discussões guiadas e análises aprofundadas.
+          </p>
         </div>
 
+        {/* Livro do Mês */}
         <div className="glass-card rounded-2xl p-6 mb-8">
           <h2 className="font-bold text-xl mb-4">📖 Livro do Mês - Fevereiro 2026</h2>
-          <div className="flex gap-6">
-            <div className="w-32 h-44 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="w-32 h-44 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center flex-shrink-0">
               <span className="text-6xl">{currentBook.cover}</span>
             </div>
             <div>
-              <h3 className="text-2xl font-bold">{currentBook.title}</h3>
+              <span className="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-500 font-medium">
+                {currentBook.status}
+              </span>
+              <h3 className="text-2xl font-bold mt-2">{currentBook.title}</h3>
               <p className="text-muted-foreground">{currentBook.author}</p>
               <p className="text-sm text-primary mt-2">📅 Início: {currentBook.startDate}</p>
               <p className="text-sm text-muted-foreground mt-1">👥 {currentBook.members} participantes</p>
@@ -100,27 +72,61 @@ const BookClub = () => {
           </div>
         </div>
 
+        {/* Seções do Book Club */}
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="glass-card rounded-2xl p-6">
-            <h3 className="font-bold mb-4">📝 Resenhas</h3>
-            <p className="text-muted-foreground">Análises e discussões sobre o livro.</p>
+          <div className={`glass-card rounded-2xl p-6 ${!isPremium ? "opacity-60" : ""}`}>
+            <h3 className="font-bold mb-4 flex items-center gap-2">
+              📝 Resenhas
+              {!isPremium && <Lock className="w-4 h-4 text-muted-foreground" />}
+            </h3>
+            <p className="text-muted-foreground text-sm mb-4">Análises e discussões sobre o livro.</p>
+            {isPremium ? (
+              <Button variant="outline" className="w-full">Ver Resenhas</Button>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">Assine para acessar</p>
+            )}
           </div>
-          <div className="glass-card rounded-2xl p-6">
-            <h3 className="font-bold mb-4">🎬 Vídeos</h3>
-            <p className="text-muted-foreground">Conteúdos em vídeo sobre a obra.</p>
+          <div className={`glass-card rounded-2xl p-6 ${!isPremium ? "opacity-60" : ""}`}>
+            <h3 className="font-bold mb-4 flex items-center gap-2">
+              🎬 Vídeos
+              {!isPremium && <Lock className="w-4 h-4 text-muted-foreground" />}
+            </h3>
+            <p className="text-muted-foreground text-sm mb-4">Conteúdos em vídeo sobre a obra.</p>
+            {isPremium ? (
+              <Button variant="outline" className="w-full">Ver Vídeos</Button>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">Assine para acessar</p>
+            )}
           </div>
-          <div className="glass-card rounded-2xl p-6">
-            <h3 className="font-bold mb-4">🔍 Análise Aprofundada</h3>
-            <p className="text-muted-foreground">Estudo detalhado dos temas e personagens.</p>
+          <div className={`glass-card rounded-2xl p-6 ${!isPremium ? "opacity-60" : ""}`}>
+            <h3 className="font-bold mb-4 flex items-center gap-2">
+              🔍 Análise Aprofundada
+              {!isPremium && <Lock className="w-4 h-4 text-muted-foreground" />}
+            </h3>
+            <p className="text-muted-foreground text-sm mb-4">Estudo detalhado dos temas e personagens.</p>
+            {isPremium ? (
+              <Button variant="outline" className="w-full">Ver Análise</Button>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">Assine para acessar</p>
+            )}
           </div>
-          <div className="glass-card rounded-2xl p-6">
-            <h3 className="font-bold mb-4">👤 Prévia do Autor</h3>
-            <p className="text-muted-foreground">Conheça Patrick Rothfuss e sua obra.</p>
+          <div className={`glass-card rounded-2xl p-6 ${!isPremium ? "opacity-60" : ""}`}>
+            <h3 className="font-bold mb-4 flex items-center gap-2">
+              👤 Prévia do Autor
+              {!isPremium && <Lock className="w-4 h-4 text-muted-foreground" />}
+            </h3>
+            <p className="text-muted-foreground text-sm mb-4">Conheça Patrick Rothfuss e sua obra.</p>
+            {isPremium ? (
+              <Button variant="outline" className="w-full">Ver Autor</Button>
+            ) : (
+              <p className="text-xs text-muted-foreground italic">Assine para acessar</p>
+            )}
           </div>
         </div>
       </div>
     </Layout>
   );
+
 };
 
 export default BookClub;
