@@ -62,7 +62,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1 text-accent">
             <Flame className="w-4 h-4" />
-            <span className="font-bold">3</span>
+            <span className="font-bold">0</span>
           </div>
           <div className="flex items-center gap-1 text-primary">
             <Trophy className="w-4 h-4" />

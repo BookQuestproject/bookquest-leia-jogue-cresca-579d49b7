@@ -23,53 +23,33 @@ const weeklyPlan: WeeklyPlan[] = [
 const Mentoria = () => {
   const isPremium = false; // Would come from user state
 
-  if (!isPremium) {
-    return (
-      <Layout>
-        <div className="py-8 max-w-2xl mx-auto text-center">
-          <div className="glass-card rounded-3xl p-8 lg:p-12 animate-fade-in">
-            <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-10 h-10 text-accent" />
-            </div>
-            <h1 className="text-3xl font-bold mb-4">Mentoria Literária</h1>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Receba uma rotina de leitura personalizada toda semana, baseada no seu tempo disponível 
-              e objetivos. Exclusivo para assinantes Premium.
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-4 mb-8">
-              <div className="p-4 rounded-xl bg-secondary">
-                <Calendar className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Rotina Semanal</p>
-                <p className="text-xs text-muted-foreground">Planejamento personalizado</p>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary">
-                <Target className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Metas Claras</p>
-                <p className="text-xs text-muted-foreground">Objetivos alcançáveis</p>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary">
-                <TrendingUp className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Progresso</p>
-                <p className="text-xs text-muted-foreground">Acompanhamento semanal</p>
-              </div>
-            </div>
-
-            <Link to="/premium">
-              <Button variant="premium" size="lg" className="gap-2">
-                <Crown className="w-5 h-5" />
-                Assinar Premium - R$ 19,90/mês
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
+  // Preview para não-premium
   return (
-    <Layout isPremium>
+    <Layout isPremium={isPremium}>
       <div className="py-8">
+        {/* Premium Banner */}
+        {!isPremium && (
+          <div className="glass-card rounded-2xl p-4 mb-6 bg-accent/5 border-accent/20 animate-fade-in">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-bold text-sm">Conteúdo Premium</p>
+                  <p className="text-xs text-muted-foreground">Visualização prévia - assine para interagir</p>
+                </div>
+              </div>
+              <Link to="/premium">
+                <Button variant="premium" size="sm" className="gap-2">
+                  <Crown className="w-4 h-4" />
+                  Assinar - R$ 19,90/mês
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-bold mb-4">
@@ -81,7 +61,7 @@ const Mentoria = () => {
             Mentoria Literária
           </h1>
           <p className="text-muted-foreground">
-            Sua rotina de leitura personalizada para esta semana
+            Receba uma rotina de leitura personalizada toda semana, baseada no seu tempo disponível e objetivos.
           </p>
         </div>
 
@@ -96,11 +76,11 @@ const Mentoria = () => {
             <p className="text-xs text-muted-foreground">Capítulos/semana</p>
           </div>
           <div className="glass-card rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold text-success">2/7</p>
+            <p className="text-2xl font-bold text-success">0/7</p>
             <p className="text-xs text-muted-foreground">Dias completados</p>
           </div>
           <div className="glass-card rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold text-info">29%</p>
+            <p className="text-2xl font-bold text-info">0%</p>
             <p className="text-xs text-muted-foreground">Progresso semanal</p>
           </div>
         </div>
@@ -110,8 +90,9 @@ const Mentoria = () => {
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
             Plano Semanal
+            {!isPremium && <Lock className="w-4 h-4 text-muted-foreground" />}
           </h2>
-          <div className="space-y-3">
+          <div className={`space-y-3 ${!isPremium ? "opacity-60" : ""}`}>
             {weeklyPlan.map((item, index) => (
               <div 
                 key={index}
@@ -138,7 +119,7 @@ const Mentoria = () => {
                       {item.task}
                     </p>
                   </div>
-                  {!item.completed && (
+                  {!item.completed && isPremium && (
                     <Button variant="outline" size="sm">Marcar</Button>
                   )}
                 </div>
@@ -148,19 +129,24 @@ const Mentoria = () => {
         </section>
 
         {/* Adjust Schedule */}
-        <div className="glass-card rounded-2xl p-6 text-center">
+        <div className={`glass-card rounded-2xl p-6 text-center ${!isPremium ? "opacity-60" : ""}`}>
           <h3 className="font-bold mb-2">Precisa ajustar seu tempo?</h3>
           <p className="text-sm text-muted-foreground mb-4">
             Altere o tempo disponível para receber uma nova rotina personalizada
           </p>
-          <Button variant="outline" className="gap-2">
-            <Clock className="w-4 h-4" />
-            Ajustar Disponibilidade
-          </Button>
+          {isPremium ? (
+            <Button variant="outline" className="gap-2">
+              <Clock className="w-4 h-4" />
+              Ajustar Disponibilidade
+            </Button>
+          ) : (
+            <p className="text-xs text-muted-foreground italic">Assine para personalizar sua rotina</p>
+          )}
         </div>
       </div>
     </Layout>
   );
+
 };
 
 export default Mentoria;

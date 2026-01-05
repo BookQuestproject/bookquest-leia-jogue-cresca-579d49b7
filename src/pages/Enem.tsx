@@ -29,69 +29,33 @@ const featuredBooks = [
 const Enem = () => {
   const isPremium = false; // Would come from user state
 
-  if (!isPremium) {
-    return (
-      <Layout>
-        <div className="py-8 max-w-2xl mx-auto text-center">
-          <div className="glass-card rounded-3xl p-8 lg:p-12 animate-fade-in">
-            <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-10 h-10 text-accent" />
-            </div>
-            <h1 className="text-3xl font-bold mb-4">ENEM e Vestibulares</h1>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Acesse trilhas focadas nas leituras obrigatórias do ENEM e principais vestibulares. 
-              Inclui resumos, análises e questões de provas anteriores.
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-4 mb-8">
-              <div className="p-4 rounded-xl bg-secondary">
-                <BookOpen className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">40+ Obras</p>
-                <p className="text-xs text-muted-foreground">Literatura obrigatória</p>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary">
-                <CheckCircle className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Resumos</p>
-                <p className="text-xs text-muted-foreground">Análises detalhadas</p>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary">
-                <GraduationCap className="w-8 h-8 text-primary mx-auto mb-2" />
-                <p className="font-bold">Questões</p>
-                <p className="text-xs text-muted-foreground">Provas anteriores</p>
-              </div>
-            </div>
-
-            {/* Featured Books Preview */}
-            <div className="mb-8">
-              <p className="text-sm text-muted-foreground mb-4">Algumas das obras incluídas:</p>
-              <div className="flex justify-center gap-4 flex-wrap">
-                {featuredBooks.map((book, index) => (
-                  <div 
-                    key={index} 
-                    className="w-16 h-20 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center"
-                    title={book.title}
-                  >
-                    <span className="text-2xl">{book.cover}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Link to="/premium">
-              <Button variant="premium" size="lg" className="gap-2">
-                <Crown className="w-5 h-5" />
-                Assinar Premium - R$ 19,90/mês
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
+  // Preview para não-premium
   return (
-    <Layout isPremium>
+    <Layout isPremium={isPremium}>
       <div className="py-8">
+        {/* Premium Banner */}
+        {!isPremium && (
+          <div className="glass-card rounded-2xl p-4 mb-6 bg-accent/5 border-accent/20 animate-fade-in">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-bold text-sm">Conteúdo Premium</p>
+                  <p className="text-xs text-muted-foreground">Visualização prévia - assine para interagir</p>
+                </div>
+              </div>
+              <Link to="/premium">
+                <Button variant="premium" size="sm" className="gap-2">
+                  <Crown className="w-4 h-4" />
+                  Assinar - R$ 19,90/mês
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-bold mb-4">
@@ -103,16 +67,34 @@ const Enem = () => {
             ENEM e Vestibulares
           </h1>
           <p className="text-muted-foreground">
-            Trilhas focadas em leituras obrigatórias para vestibulares
+            Trilhas focadas em leituras obrigatórias para vestibulares. Inclui resumos, análises e questões.
           </p>
         </div>
 
+        {/* Featured Books Preview */}
+        <div className="glass-card rounded-2xl p-6 mb-8">
+          <p className="text-sm font-bold mb-4">Algumas das obras incluídas:</p>
+          <div className="flex gap-4 flex-wrap">
+            {featuredBooks.map((book, index) => (
+              <div 
+                key={index} 
+                className="flex flex-col items-center"
+              >
+                <div className="w-16 h-20 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center mb-2">
+                  <span className="text-2xl">{book.cover}</span>
+                </div>
+                <p className="text-xs text-center max-w-[80px] line-clamp-2">{book.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Exam Trails */}
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
+        <div className={`grid md:grid-cols-2 gap-6 mb-10 ${!isPremium ? "opacity-70" : ""}`}>
           {examTrails.map((trail, index) => (
             <div 
               key={trail.id}
-              className="glass-card rounded-2xl p-6 card-hover animate-fade-in"
+              className="glass-card rounded-2xl p-6 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex items-start gap-4">
@@ -120,7 +102,10 @@ const Enem = () => {
                   {trail.icon}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg">{trail.name}</h3>
+                  <h3 className="font-bold text-lg flex items-center gap-2">
+                    {trail.name}
+                    {!isPremium && <Lock className="w-4 h-4 text-muted-foreground" />}
+                  </h3>
                   <p className="text-sm text-muted-foreground mb-2">{trail.description}</p>
                   <p className="text-xs text-muted-foreground">{trail.books} obras incluídas</p>
                 </div>
@@ -137,10 +122,14 @@ const Enem = () => {
                     style={{ width: `${trail.progress}%` }}
                   />
                 </div>
-                <Button variant="hero" className="w-full gap-2">
-                  <Play className="w-4 h-4" />
-                  Começar Trilha
-                </Button>
+                {isPremium ? (
+                  <Button variant="hero" className="w-full gap-2">
+                    <Play className="w-4 h-4" />
+                    Começar Trilha
+                  </Button>
+                ) : (
+                  <p className="text-xs text-muted-foreground italic text-center">Assine para acessar</p>
+                )}
               </div>
             </div>
           ))}
@@ -171,6 +160,7 @@ const Enem = () => {
       </div>
     </Layout>
   );
+
 };
 
 export default Enem;

@@ -1,17 +1,28 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play } from "lucide-react";
+import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
 import StreakFlame from "@/components/StreakFlame";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Index = () => {
-  // User data - would come from state/backend
+  const [showChapterQuestion, setShowChapterQuestion] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showResult, setShowResult] = useState(false);
+
+  // User data - estado inicial para conta nova (0 streak, 0 livros)
   const userStats = {
-    booksRead: 2,
-    streak: 3,
+    booksRead: 0,
+    streak: 0, // Começa em 0 para contas novas
     currentBook: "Harry Potter e a Pedra Filosofal",
-    currentChapter: 2,
+    currentChapter: 1,
     totalChapters: 17,
   };
 
@@ -20,31 +31,45 @@ const Index = () => {
 
   // Trail nodes representing chapters of current book
   const trailNodes = [
-    { id: 1, title: "Capítulo 1", status: "completed", icon: "📖" },
-    { id: 2, title: "Capítulo 2", status: "completed", icon: "✨" },
-    { id: 3, title: "Capítulo 3", status: "current", icon: "🎯" },
+    { id: 1, title: "Capítulo 1", status: "current", icon: "📖" },
+    { id: 2, title: "Capítulo 2", status: "locked", icon: "✨" },
+    { id: 3, title: "Capítulo 3", status: "locked", icon: "🎯" },
     { id: 4, title: "Capítulo 4", status: "locked", icon: "📚" },
     { id: 5, title: "Capítulo 5", status: "locked", icon: "🔮" },
     { id: 6, title: "Quiz Cap. 1-5", status: "locked", icon: "🧠" },
   ];
 
+  // Pergunta do capítulo atual
+  const currentChapterQuestion = {
+    text: "Por que os Dursley tinham tanto medo de que os vizinhos descobrissem sobre os Potter?",
+    options: [
+      "Porque os Potter eram criminosos procurados",
+      "Porque não queriam ser associados a algo 'anormal'",
+      "Porque deviam dinheiro aos Potter",
+      "Porque os Potter eram celebridades famosas",
+      "Porque tinham vergonha de serem parentes de bruxos"
+    ],
+    correctAnswer: 1,
+    explanation: "Os Dursley valorizavam acima de tudo a 'normalidade' e temiam qualquer associação com o mundo mágico."
+  };
+
   const dailyMissions = [
     {
-      title: "Ler 1 capítulo",
+      title: "Responder pergunta de capítulo",
       progress: 0,
       goal: 1,
       reward: "+10 pts",
       icon: "📖",
     },
     {
-      title: "Completar quiz",
+      title: "Completar unidade de trilha",
       progress: 0,
       goal: 1,
       reward: "+25 pts",
       icon: "🧠",
     },
     {
-      title: "Manter sequência",
+      title: "Fazer login hoje",
       progress: 1,
       goal: 1,
       reward: "+5 pts",
@@ -52,6 +77,18 @@ const Index = () => {
       completed: true,
     },
   ];
+
+  const handleContinueReading = () => {
+    setShowChapterQuestion(true);
+    setSelectedAnswer(null);
+    setShowResult(false);
+  };
+
+  const handleAnswerSubmit = () => {
+    if (selectedAnswer !== null) {
+      setShowResult(true);
+    }
+  };
 
   return (
     <Layout>
@@ -68,10 +105,12 @@ const Index = () => {
                 Capítulo {userStats.currentChapter} de {userStats.totalChapters}
               </p>
             </div>
-            <Button variant="secondary" size="sm" className="gap-2">
-              <BookOpen className="w-4 h-4" />
-              Ver Trilha
-            </Button>
+            <Link to="/trilhas/harry-potter-1">
+              <Button variant="secondary" size="sm" className="gap-2">
+                <BookOpen className="w-4 h-4" />
+                Ver Trilha
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -80,13 +119,11 @@ const Index = () => {
           <div className="lg:col-span-2 order-2 lg:order-1">
             {/* Trail Progress */}
             <div className="flex flex-col items-center py-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              {/* Start Button */}
-              <Link to="/trilhas/fantasia/capitulo-2">
-                <Button variant="hero" size="lg" className="mb-8 gap-2">
-                  <Play className="w-5 h-5" />
-                  Continuar Leitura
-                </Button>
-              </Link>
+              {/* Start Button - Abre pergunta do capítulo */}
+              <Button variant="hero" size="lg" className="mb-8 gap-2" onClick={handleContinueReading}>
+                <Play className="w-5 h-5" />
+                Continuar Leitura
+              </Button>
 
               {/* Trail Nodes */}
               <div className="relative flex flex-col items-center space-y-4">
@@ -105,6 +142,7 @@ const Index = () => {
                     <button
                       className={`trail-node ${node.status} relative`}
                       disabled={node.status === "locked"}
+                      onClick={() => node.status === "current" && handleContinueReading()}
                     >
                       {node.status === "completed" ? (
                         <CheckCircle className="w-8 h-8" />
@@ -185,7 +223,7 @@ const Index = () => {
 
             {/* Streak Card */}
             <div className="glass-card rounded-2xl p-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-              <StreakFlame days={userStats.streak} />
+              <StreakFlame days={userStats.streak} showInfo={true} />
             </div>
 
             {/* Daily Missions */}
@@ -251,6 +289,83 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Chapter Question Modal */}
+      <Dialog open={showChapterQuestion} onOpenChange={setShowChapterQuestion}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-primary" />
+              Pergunta do Capítulo {userStats.currentChapter}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            <p className="text-lg font-medium">{currentChapterQuestion.text}</p>
+            
+            <div className="space-y-3">
+              {currentChapterQuestion.options.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => !showResult && setSelectedAnswer(index)}
+                  disabled={showResult}
+                  className={`w-full text-left p-4 rounded-xl transition-all ${
+                    showResult
+                      ? index === currentChapterQuestion.correctAnswer
+                        ? "bg-green-500/20 border-2 border-green-500"
+                        : selectedAnswer === index
+                        ? "bg-red-500/20 border-2 border-red-500"
+                        : "bg-secondary"
+                      : selectedAnswer === index
+                      ? "bg-primary/20 border-2 border-primary"
+                      : "bg-secondary hover:bg-secondary/80"
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+
+            {showResult && (
+              <div className={`p-4 rounded-xl ${
+                selectedAnswer === currentChapterQuestion.correctAnswer
+                  ? "bg-green-500/10 border border-green-500/30"
+                  : "bg-red-500/10 border border-red-500/30"
+              }`}>
+                <p className="font-bold mb-2">
+                  {selectedAnswer === currentChapterQuestion.correctAnswer
+                    ? "✅ Correto! +10 pts"
+                    : "❌ Incorreto"}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {currentChapterQuestion.explanation}
+                </p>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              {!showResult ? (
+                <Button 
+                  variant="hero" 
+                  className="w-full"
+                  onClick={handleAnswerSubmit}
+                  disabled={selectedAnswer === null}
+                >
+                  Confirmar Resposta
+                </Button>
+              ) : (
+                <Button 
+                  variant="hero" 
+                  className="w-full"
+                  onClick={() => setShowChapterQuestion(false)}
+                >
+                  {selectedAnswer === currentChapterQuestion.correctAnswer ? "Avançar na Trilha" : "Tentar Novamente"}
+                </Button>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
