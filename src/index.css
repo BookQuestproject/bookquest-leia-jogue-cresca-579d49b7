@@ -2,117 +2,131 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* Tema claro - fundo branco, azul royal como principal */
-    --background: 0 0% 100%;
-    --foreground: 220 20% 15%;
+    /* BookQuest Editorial Color Palette */
+    /* Base: Petrol Blue, Burgundy, Olive, Graphite, Ivory */
+    --background: 43 23% 95%; /* Marfim suave #F2EFE9 */
+    --foreground: 240 6% 12%; /* Grafite #1E1E24 */
 
-    --card: 220 15% 97%;
-    --card-foreground: 220 20% 15%;
+    --card: 43 23% 97%;
+    --card-foreground: 240 6% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 15%;
+    --popover: 43 23% 98%;
+    --popover-foreground: 240 6% 12%;
 
-    --primary: 225 75% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Petrol Blue #0F2A44 */
+    --primary: 209 64% 16%;
+    --primary-foreground: 43 23% 95%;
 
-    --secondary: 220 15% 93%;
-    --secondary-foreground: 220 20% 20%;
+    /* Secondary: Burgundy #7A1F2B */
+    --secondary: 352 59% 30%;
+    --secondary-foreground: 43 23% 95%;
 
-    --muted: 220 10% 90%;
-    --muted-foreground: 220 10% 45%;
+    /* Muted: Light tones */
+    --muted: 43 15% 88%;
+    --muted-foreground: 240 6% 40%;
 
-    --accent: 45 95% 50%;
-    --accent-foreground: 220 20% 10%;
+    /* Accent: Gold #C9A24D for achievements only */
+    --accent: 43 52% 54%;
+    --accent-foreground: 240 6% 12%;
 
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 43 23% 95%;
 
-    --border: 220 15% 88%;
-    --input: 220 15% 93%;
-    --ring: 225 75% 50%;
+    --border: 43 15% 82%;
+    --input: 43 15% 90%;
+    --ring: 209 64% 16%;
 
-    --radius: 1rem;
+    --radius: 0.5rem;
 
-    /* BookQuest Ranking Colors - Based on books read */
-    --bronze: 30 70% 45%;
-    --gold: 45 90% 50%;
-    --sapphire: 210 80% 55%;
-    --emerald: 145 70% 45%;
-    --amethyst: 280 70% 60%;
-    --ruby: 350 80% 55%;
-    --diamond: 200 100% 75%;
-    --legendary: 45 100% 50%;
+    /* BookQuest Ranking Colors */
+    --bronze: 30 60% 40%;
+    --gold: 43 52% 54%;
+    --sapphire: 210 60% 45%;
+    --emerald: 145 45% 35%;
+    --amethyst: 280 45% 50%;
+    --ruby: 350 60% 45%;
+    --diamond: 200 70% 65%;
+    --legendary: 43 80% 50%;
 
-    --success: 145 70% 45%;
-    --warning: 45 95% 50%;
-    --info: 210 80% 55%;
+    /* Olive accent #4B5D52 */
+    --olive: 140 12% 33%;
 
-    /* Accent color for highlights */
-    --gold-accent: 45 95% 50%;
+    --success: 145 45% 35%;
+    --warning: 43 52% 54%;
+    --info: 210 60% 45%;
+
+    /* Achievement Gold */
+    --gold-accent: 43 52% 54%;
+    --amber: 40 80% 63%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(225 75% 50%), hsl(225 75% 60%));
-    --gradient-accent: linear-gradient(135deg, hsl(45 95% 50%), hsl(45 95% 60%));
-    --gradient-bronze: linear-gradient(135deg, hsl(30 70% 35%), hsl(30 70% 55%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 90% 40%), hsl(45 90% 60%));
-    --gradient-sapphire: linear-gradient(135deg, hsl(210 80% 45%), hsl(210 80% 65%));
-    --gradient-emerald: linear-gradient(135deg, hsl(145 70% 35%), hsl(145 70% 55%));
-    --gradient-amethyst: linear-gradient(135deg, hsl(280 70% 50%), hsl(280 70% 70%));
-    --gradient-ruby: linear-gradient(135deg, hsl(350 80% 45%), hsl(350 80% 65%));
-    --gradient-diamond: linear-gradient(135deg, hsl(200 100% 65%), hsl(200 100% 85%));
-    --gradient-legendary: linear-gradient(135deg, hsl(45 100% 40%), hsl(35 100% 55%));
+    --gradient-primary: linear-gradient(135deg, hsl(209 64% 16%), hsl(209 64% 24%));
+    --gradient-secondary: linear-gradient(135deg, hsl(352 59% 30%), hsl(352 59% 40%));
+    --gradient-achievement: linear-gradient(135deg, hsl(43 52% 48%), hsl(40 80% 58%));
+    --gradient-bronze: linear-gradient(135deg, hsl(30 60% 30%), hsl(30 60% 50%));
+    --gradient-gold: linear-gradient(135deg, hsl(43 52% 45%), hsl(43 52% 60%));
+    --gradient-sapphire: linear-gradient(135deg, hsl(210 60% 35%), hsl(210 60% 55%));
+    --gradient-emerald: linear-gradient(135deg, hsl(145 45% 28%), hsl(145 45% 42%));
+    --gradient-amethyst: linear-gradient(135deg, hsl(280 45% 42%), hsl(280 45% 58%));
+    --gradient-ruby: linear-gradient(135deg, hsl(350 60% 38%), hsl(350 60% 52%));
+    --gradient-diamond: linear-gradient(135deg, hsl(200 70% 55%), hsl(200 70% 75%));
+    --gradient-legendary: linear-gradient(135deg, hsl(43 80% 42%), hsl(35 85% 52%));
 
-    --sidebar-background: 220 15% 97%;
-    --sidebar-foreground: 220 20% 15%;
-    --sidebar-primary: 225 75% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 93%;
-    --sidebar-accent-foreground: 220 20% 15%;
-    --sidebar-border: 220 15% 88%;
-    --sidebar-ring: 225 75% 50%;
+    --sidebar-background: 43 23% 93%;
+    --sidebar-foreground: 240 6% 12%;
+    --sidebar-primary: 352 59% 30%;
+    --sidebar-primary-foreground: 43 23% 95%;
+    --sidebar-accent: 43 15% 88%;
+    --sidebar-accent-foreground: 240 6% 12%;
+    --sidebar-border: 43 15% 80%;
+    --sidebar-ring: 209 64% 16%;
   }
 
   .dark {
-    --background: 220 20% 10%;
-    --foreground: 0 0% 98%;
+    /* Dark theme - Deep night blue with warm undertones */
+    --background: 220 25% 8%; /* Azul noite profundo */
+    --foreground: 43 23% 93%;
 
-    --card: 220 20% 13%;
-    --card-foreground: 0 0% 98%;
+    --card: 220 25% 11%;
+    --card-foreground: 43 23% 93%;
 
-    --popover: 220 20% 13%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 25% 11%;
+    --popover-foreground: 43 23% 93%;
 
-    --primary: 225 75% 55%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Lighter petrol for dark mode */
+    --primary: 209 55% 35%;
+    --primary-foreground: 43 23% 95%;
 
-    --secondary: 220 20% 18%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary: Burgundy */
+    --secondary: 352 50% 35%;
+    --secondary-foreground: 43 23% 95%;
 
-    --muted: 220 15% 20%;
-    --muted-foreground: 220 10% 60%;
+    --muted: 220 20% 16%;
+    --muted-foreground: 43 15% 60%;
 
-    --accent: 45 95% 55%;
-    --accent-foreground: 220 20% 10%;
+    /* Accent: Gold for achievements */
+    --accent: 43 60% 55%;
+    --accent-foreground: 240 6% 10%;
 
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 43 23% 95%;
 
-    --border: 220 15% 22%;
-    --input: 220 15% 18%;
-    --ring: 225 75% 55%;
+    --border: 220 20% 18%;
+    --input: 220 20% 14%;
+    --ring: 209 55% 35%;
 
-    --sidebar-background: 220 20% 8%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 225 75% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 15%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 220 15% 15%;
-    --sidebar-ring: 225 75% 55%;
+    --sidebar-background: 220 25% 6%;
+    --sidebar-foreground: 43 23% 93%;
+    --sidebar-primary: 352 50% 35%;
+    --sidebar-primary-foreground: 43 23% 95%;
+    --sidebar-accent: 220 20% 14%;
+    --sidebar-accent-foreground: 43 23% 93%;
+    --sidebar-border: 220 20% 15%;
+    --sidebar-ring: 209 55% 35%;
   }
 }
 
@@ -122,18 +136,97 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Nunito', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  /* Editorial typography - Serif for headings */
+  h1, h2, h3 {
+    font-family: 'Crimson Pro', Georgia, serif;
+    @apply font-semibold tracking-tight;
+  }
+
+  h4, h5, h6 {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
     @apply font-bold tracking-tight;
+  }
+
+  /* Subtle paper texture overlay for dark mode */
+  .dark body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(ellipse at 20% 30%, hsl(260 30% 20% / 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(220 40% 25% / 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Subtle grain texture */
+  .dark body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.015;
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
 @layer components {
+  /* Editorial card style - less rounded, more sophisticated */
+  .editorial-card {
+    @apply bg-card border border-border/60 rounded-md shadow-sm;
+    @apply transition-all duration-300;
+  }
+
+  .editorial-card:hover {
+    @apply shadow-md border-border;
+  }
+
   .card-hover {
-    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10;
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5;
+  }
+
+  /* Journey card - represents progress stages */
+  .journey-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-md;
+    @apply transition-all duration-300;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .journey-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--gradient-secondary);
+    opacity: 0.8;
+  }
+
+  .journey-card.completed::before {
+    background: var(--gradient-achievement);
+  }
+
+  .journey-card.current::before {
+    background: var(--gradient-secondary);
+    animation: pulse-border 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
   }
 
   .btn-glow {
@@ -143,15 +236,18 @@
   .btn-glow::after {
     content: '';
     @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: radial-gradient(circle at center, hsl(var(--primary) / 0.3), transparent 70%);
+    background: radial-gradient(circle at center, hsl(var(--secondary) / 0.2), transparent 70%);
   }
 
   .btn-glow:hover::after {
     @apply opacity-100;
   }
 
+  /* Ranking badges with editorial style */
   .ranking-badge {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold;
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-semibold;
+    font-family: 'Source Sans 3', sans-serif;
+    letter-spacing: 0.02em;
   }
 
   .ranking-bronze {
@@ -195,11 +291,12 @@
   }
 
   .glass-card {
-    @apply backdrop-blur-md bg-card/90 border border-border/50 shadow-sm;
+    @apply backdrop-blur-md bg-card/90 border border-border/50 shadow-sm rounded-md;
   }
 
+  /* Sidebar with editorial style */
   .sidebar-item {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground transition-all duration-200;
+    @apply flex items-center gap-3 px-4 py-3 rounded text-muted-foreground transition-all duration-200;
   }
 
   .sidebar-item:hover {
@@ -207,47 +304,99 @@
   }
 
   .sidebar-item.active {
-    @apply bg-primary text-primary-foreground font-bold;
+    @apply bg-secondary text-secondary-foreground font-semibold;
   }
 
   .sidebar-item.premium-locked {
     @apply opacity-60;
   }
 
+  /* Progress bar - more subtle and editorial */
   .progress-bar {
-    @apply h-3 rounded-full bg-muted overflow-hidden;
+    @apply h-2 rounded bg-muted/60 overflow-hidden;
   }
 
   .progress-bar-fill {
-    @apply h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-500;
+    @apply h-full rounded transition-all duration-500;
+    background: var(--gradient-secondary);
   }
 
+  .progress-bar-fill.achievement {
+    background: var(--gradient-achievement);
+  }
+
+  /* Quiz options */
   .quiz-option {
-    @apply p-4 rounded-xl border-2 border-border bg-card text-foreground cursor-pointer transition-all duration-200;
+    @apply p-4 rounded border border-border bg-card text-foreground cursor-pointer transition-all duration-200;
   }
 
   .quiz-option:hover {
-    @apply border-primary/50 bg-secondary;
+    @apply border-secondary/50 bg-secondary/5;
   }
 
   .quiz-option.selected {
-    @apply border-primary bg-primary/10;
+    @apply border-secondary bg-secondary/10;
   }
 
+  /* Mission card - editorial timeline style */
   .mission-card {
-    @apply flex items-center gap-4 p-4 rounded-xl bg-card border border-border;
+    @apply flex items-center gap-4 p-4 rounded bg-card border border-border/60;
+    position: relative;
   }
 
+  /* Chapter nodes - Editorial timeline style */
+  .chapter-node {
+    @apply flex items-center gap-4 p-4 rounded bg-card/80 border border-border/50;
+    @apply transition-all duration-300 cursor-pointer;
+    position: relative;
+  }
+
+  .chapter-node::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: hsl(var(--muted));
+    border-radius: 0 2px 2px 0;
+  }
+
+  .chapter-node.completed::before {
+    background: var(--gradient-achievement);
+  }
+
+  .chapter-node.current::before {
+    background: var(--gradient-secondary);
+  }
+
+  .chapter-node.completed {
+    @apply border-accent/30;
+  }
+
+  .chapter-node.current {
+    @apply border-secondary/50 bg-secondary/5;
+  }
+
+  .chapter-node:not(.locked):hover {
+    @apply -translate-y-0.5 shadow-md;
+  }
+
+  .chapter-node.locked {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* Legacy trail-node support */
   .trail-node {
-    @apply w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-300 cursor-pointer;
+    @apply w-14 h-14 rounded flex items-center justify-center text-lg font-semibold transition-all duration-300 cursor-pointer;
   }
 
   .trail-node.completed {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-accent text-accent-foreground;
   }
 
   .trail-node.current {
-    @apply bg-primary text-primary-foreground ring-4 ring-primary/30 animate-pulse;
+    @apply bg-secondary text-secondary-foreground ring-2 ring-secondary/30;
   }
 
   .trail-node.locked {
@@ -255,37 +404,58 @@
   }
 
   .floating-animation {
-    animation: float 3s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
   }
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-6px); }
   }
 
   .pulse-glow {
-    animation: pulseGlow 2s ease-in-out infinite;
+    animation: pulseGlow 3s ease-in-out infinite;
   }
 
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
-    50% { box-shadow: 0 0 40px hsl(var(--primary) / 0.6); }
+    0%, 100% { box-shadow: 0 0 15px hsl(var(--secondary) / 0.2); }
+    50% { box-shadow: 0 0 25px hsl(var(--secondary) / 0.4); }
   }
 
   .streak-fire {
     @apply text-accent;
+  }
+
+  /* Section divider - editorial style */
+  .section-divider {
+    @apply border-t border-border/60 my-8;
+    position: relative;
+  }
+
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 60px;
+    height: 2px;
+    background: var(--gradient-secondary);
+  }
+
+  /* Achievement glow for gold elements */
+  .achievement-glow {
+    box-shadow: 0 0 20px hsl(var(--accent) / 0.3);
   }
 }
 
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
+    background-image: var(--gradient-secondary);
   }
 
   .text-gradient-accent {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-accent);
+    background-image: var(--gradient-achievement);
   }
 
   .text-gold {
@@ -298,5 +468,15 @@
 
   .bg-gold {
     background-color: hsl(var(--accent));
+  }
+
+  /* Editorial serif for special headings */
+  .font-editorial {
+    font-family: 'Crimson Pro', Georgia, serif;
+  }
+
+  /* Book icon styling */
+  .book-icon {
+    @apply text-secondary;
   }
 }

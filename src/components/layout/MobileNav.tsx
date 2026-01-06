@@ -23,16 +23,16 @@ const MobileNav = ({ isPremium = false }: MobileNavProps) => {
       {/* Top Header */}
       <header className="fixed top-0 left-0 right-0 h-14 bg-sidebar border-b border-sidebar-border flex items-center justify-between px-4 z-50">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-primary-foreground" />
+          <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
+            <BookOpen className="w-4 h-4 text-secondary-foreground" />
           </div>
-          <span className="text-lg font-bold text-foreground">BookQuest</span>
+          <span className="text-base font-serif font-semibold text-foreground">BookQuest</span>
         </Link>
         
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1 text-accent">
             <Flame className="w-4 h-4" />
-            <span className="font-bold text-sm">3</span>
+            <span className="font-semibold text-sm">0</span>
           </div>
           <Link to="/estante" className="text-muted-foreground hover:text-foreground">
             <BookMarked className="w-5 h-5" />
@@ -49,9 +49,9 @@ const MobileNav = ({ isPremium = false }: MobileNavProps) => {
           <Link
             key={item.path}
             to={item.path}
-            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200 ${
+            className={`flex flex-col items-center gap-1 p-2 rounded transition-all duration-200 ${
               isActive(item.path)
-                ? "text-primary"
+                ? "text-secondary"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
