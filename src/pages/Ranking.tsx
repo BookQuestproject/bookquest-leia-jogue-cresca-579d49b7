@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Trophy, Crown, TrendingUp, BookOpen, Users } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import RankingBadge, { RankingTier, tierConfig, getTierFromBooks } from "@/components/RankingBadge";
-import { Button } from "@/components/ui/button";
 
 interface RankingUser {
   id: number;
@@ -16,7 +15,7 @@ interface RankingUser {
 // Mock users organized by tier
 const allUsers: RankingUser[] = [
   // Bronze (0-5 livros)
-  { id: 101, name: "Você", avatar: "VC", booksRead: 2, tier: "bronze", streak: 3 },
+  { id: 101, name: "Você", avatar: "VC", booksRead: 0, tier: "bronze", streak: 0 },
   { id: 102, name: "Fernanda Rocha", avatar: "FR", booksRead: 4, tier: "bronze", streak: 5 },
   { id: 103, name: "Bruno Dias", avatar: "BD", booksRead: 5, tier: "bronze", streak: 2 },
   { id: 104, name: "Amanda Costa", avatar: "AC", booksRead: 3, tier: "bronze", streak: 1 },
@@ -69,7 +68,7 @@ const rankingTiers: { tier: RankingTier; books: string; label: string }[] = [
 
 const Ranking = () => {
   const [selectedTier, setSelectedTier] = useState<RankingTier>("bronze");
-  const currentUserTier: RankingTier = "bronze"; // Would come from user state
+  const currentUserTier: RankingTier = "bronze";
 
   const tierUsers = allUsers
     .filter(user => user.tier === selectedTier)
@@ -80,60 +79,57 @@ const Ranking = () => {
 
   return (
     <Layout>
-      <div className="py-8">
+      <div className="max-w-5xl mx-auto py-8">
         {/* Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-4">
-            <Trophy className="w-4 h-4" />
-            <span>Ranking por Patamar</span>
-          </div>
-          <h1 className="text-3xl lg:text-4xl font-bold mb-4">Ranking Literário</h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            Você compete apenas com leitores do seu nível. Suba de patamar lendo mais livros!
+        <header className="mb-10 animate-fade-in">
+          <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Competição por Nível</p>
+          <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Ranking Literário</h1>
+          <p className="text-muted-foreground max-w-xl">
+            Você compete apenas com leitores do seu nível. Suba de patamar lendo mais livros.
           </p>
-        </div>
+        </header>
 
-        {/* Tiers Explanation */}
-        <div className="glass-card rounded-2xl p-6 mb-8">
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-primary" />
-            Níveis do Ranking
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+        {/* Tier Selector */}
+        <div className="editorial-card p-5 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <div className="flex items-center gap-2 mb-4">
+            <BookOpen className="w-5 h-5 text-secondary" />
+            <h2 className="font-semibold">Selecione o Patamar</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
             {rankingTiers.map(({ tier, books, label }) => (
               <button
                 key={tier}
                 onClick={() => setSelectedTier(tier)}
-                className={`text-center p-3 rounded-xl transition-all ${
+                className={`text-center p-3 rounded transition-all ${
                   selectedTier === tier 
-                    ? "bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background" 
-                    : "bg-secondary hover:bg-secondary/80"
+                    ? "bg-secondary text-secondary-foreground" 
+                    : "bg-muted/30 hover:bg-muted/50"
                 }`}
               >
                 <RankingBadge tier={tier} showLabel={false} size="sm" />
-                <p className="font-bold mt-2 text-xs">{label}</p>
-                <p className="text-xs opacity-70">{books} livros</p>
+                <p className="font-medium mt-2 text-xs">{label}</p>
+                <p className="text-xs text-muted-foreground">{books}</p>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Selected Tier Header */}
-        <div className="glass-card rounded-2xl p-4 mb-8 bg-primary">
+        {/* Selected Tier Info */}
+        <div className="editorial-card p-5 mb-8 border-l-4 border-secondary animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <RankingBadge tier={selectedTier} size="lg" />
               <div>
-                <h3 className="font-bold text-primary-foreground">
+                <h3 className="font-serif text-xl font-semibold">
                   Ranking {tierConfig[selectedTier].label}
                 </h3>
-                <p className="text-sm text-primary-foreground/80">
+                <p className="text-sm text-muted-foreground">
                   {tierUsers.length} leitores neste patamar
                 </p>
               </div>
             </div>
             {currentUserTier === selectedTier && (
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-primary-foreground text-sm font-bold">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-secondary/10 text-secondary text-sm font-medium">
                 <Users className="w-4 h-4" />
                 Seu patamar
               </div>
@@ -141,72 +137,72 @@ const Ranking = () => {
           </div>
         </div>
 
-        {/* Top 3 */}
+        {/* Top 3 Podium */}
         {top3.length >= 3 && (
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-3 gap-4 mb-10">
             {/* 2nd Place */}
-            <div className="glass-card rounded-2xl p-6 text-center order-2 md:order-1 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              <div className={`w-16 h-16 rounded-full ${tierConfig[selectedTier].className.replace('ranking-', 'bg-')} flex items-center justify-center mx-auto mb-4 text-xl font-bold text-background`}>
+            <div className="editorial-card p-5 text-center order-2 md:order-1 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              <div className="w-14 h-14 rounded bg-muted flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
                 {top3[1]?.avatar}
               </div>
-              <div className="text-2xl font-bold mb-1">🥈</div>
-              <h3 className="font-bold text-lg mb-1">
+              <p className="text-xl mb-2">🥈</p>
+              <h3 className="font-semibold">
                 {top3[1]?.name}
-                {top3[1]?.name === "Você" && <span className="text-primary ml-1">(você)</span>}
+                {top3[1]?.name === "Você" && <span className="text-secondary ml-1">(você)</span>}
               </h3>
-              <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
+              <div className="flex justify-center gap-4 mt-3 text-sm">
                 <div>
                   <p className="text-muted-foreground">Livros</p>
-                  <p className="font-bold">{top3[1]?.booksRead}</p>
+                  <p className="font-semibold">{top3[1]?.booksRead}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Sequência</p>
-                  <p className="font-bold">{top3[1]?.streak} dias</p>
+                  <p className="font-semibold">{top3[1]?.streak} dias</p>
                 </div>
               </div>
             </div>
 
             {/* 1st Place */}
-            <div className="glass-card rounded-2xl p-6 text-center order-1 md:order-2 md:-mt-6 border-2 border-accent animate-fade-in">
-              <Crown className="w-8 h-8 text-accent mx-auto mb-2" />
-              <div className={`w-20 h-20 rounded-full ${tierConfig[selectedTier].className.replace('ranking-', 'bg-')} flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-background pulse-glow`}>
+            <div className="editorial-card p-5 text-center order-1 md:order-2 border-accent/50 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+              <Crown className="w-6 h-6 text-accent mx-auto mb-2" />
+              <div className="w-16 h-16 rounded bg-accent/20 flex items-center justify-center mx-auto mb-3 text-xl font-semibold text-accent">
                 {top3[0]?.avatar}
               </div>
-              <div className="text-3xl font-bold mb-1">🥇</div>
-              <h3 className="font-bold text-xl mb-1">
+              <p className="text-2xl mb-2">🥇</p>
+              <h3 className="font-serif text-lg font-semibold">
                 {top3[0]?.name}
-                {top3[0]?.name === "Você" && <span className="text-primary ml-1">(você)</span>}
+                {top3[0]?.name === "Você" && <span className="text-secondary ml-1">(você)</span>}
               </h3>
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="flex justify-center gap-4 mt-3">
                 <div>
                   <p className="text-muted-foreground text-sm">Livros</p>
-                  <p className="font-bold text-lg">{top3[0]?.booksRead}</p>
+                  <p className="font-semibold">{top3[0]?.booksRead}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground text-sm">Sequência</p>
-                  <p className="font-bold text-lg">{top3[0]?.streak} dias</p>
+                  <p className="font-semibold">{top3[0]?.streak} dias</p>
                 </div>
               </div>
             </div>
 
             {/* 3rd Place */}
-            <div className="glass-card rounded-2xl p-6 text-center order-3 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              <div className={`w-16 h-16 rounded-full ${tierConfig[selectedTier].className.replace('ranking-', 'bg-')} flex items-center justify-center mx-auto mb-4 text-xl font-bold text-background`}>
+            <div className="editorial-card p-5 text-center order-3 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+              <div className="w-14 h-14 rounded bg-muted flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
                 {top3[2]?.avatar}
               </div>
-              <div className="text-2xl font-bold mb-1">🥉</div>
-              <h3 className="font-bold text-lg mb-1">
+              <p className="text-xl mb-2">🥉</p>
+              <h3 className="font-semibold">
                 {top3[2]?.name}
-                {top3[2]?.name === "Você" && <span className="text-primary ml-1">(você)</span>}
+                {top3[2]?.name === "Você" && <span className="text-secondary ml-1">(você)</span>}
               </h3>
-              <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
+              <div className="flex justify-center gap-4 mt-3 text-sm">
                 <div>
                   <p className="text-muted-foreground">Livros</p>
-                  <p className="font-bold">{top3[2]?.booksRead}</p>
+                  <p className="font-semibold">{top3[2]?.booksRead}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Sequência</p>
-                  <p className="font-bold">{top3[2]?.streak} dias</p>
+                  <p className="font-semibold">{top3[2]?.streak} dias</p>
                 </div>
               </div>
             </div>
@@ -215,38 +211,38 @@ const Ranking = () => {
 
         {/* Full Ranking List */}
         {restUsers.length > 0 && (
-          <div className="glass-card rounded-2xl overflow-hidden">
-            <div className="p-4 border-b border-border">
-              <h3 className="font-bold flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-primary" />
-                Ranking {tierConfig[selectedTier].label} - Completo
+          <div className="editorial-card overflow-hidden animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <div className="p-4 border-b border-border/60">
+              <h3 className="font-semibold flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-secondary" />
+                Ranking Completo
               </h3>
             </div>
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-border/60">
               {restUsers.map((user, index) => (
                 <div
                   key={user.id}
-                  className={`flex items-center gap-4 p-4 hover:bg-secondary/50 transition-colors ${
-                    user.name === "Você" ? "bg-primary/5 border-l-4 border-l-primary" : ""
+                  className={`flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors ${
+                    user.name === "Você" ? "bg-secondary/5 border-l-2 border-secondary" : ""
                   }`}
                 >
-                  <span className="text-lg font-bold text-muted-foreground w-8">
+                  <span className="text-lg font-medium text-muted-foreground w-8">
                     #{index + 4}
                   </span>
-                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded bg-muted flex items-center justify-center font-medium">
                     {user.avatar}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold truncate">
+                    <p className="font-medium truncate">
                       {user.name}
                       {user.name === "Você" && (
-                        <span className="ml-2 text-xs text-primary">(você)</span>
+                        <span className="ml-2 text-xs text-secondary">(você)</span>
                       )}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-primary">{user.booksRead} livros</p>
-                    <p className="text-xs text-muted-foreground">{user.streak} dias seguidos</p>
+                    <p className="font-semibold text-secondary">{user.booksRead} livros</p>
+                    <p className="text-xs text-muted-foreground">{user.streak} dias</p>
                   </div>
                 </div>
               ))}
@@ -255,9 +251,9 @@ const Ranking = () => {
         )}
 
         {tierUsers.length === 0 && (
-          <div className="text-center py-12 glass-card rounded-2xl">
-            <Trophy className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-bold text-lg mb-2">Nenhum leitor neste patamar</h3>
+          <div className="text-center py-12 editorial-card">
+            <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="font-serif text-lg font-semibold mb-2">Nenhum leitor neste patamar</h3>
             <p className="text-muted-foreground">
               Seja o primeiro a alcançar o nível {tierConfig[selectedTier].label}!
             </p>
