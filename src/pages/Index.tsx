@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Bookmark } from "lucide-react";
+import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Bookmark, Castle, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
@@ -12,33 +12,50 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+// Book theme colors based on genre/book
+const bookThemes = {
+  "harry-potter": {
+    name: "Harry Potter e a Pedra Filosofal",
+    color: "350 45% 38%", // Ruby wine
+    icon: Castle,
+    genre: "Fantasia",
+  },
+  "percy-jackson": {
+    name: "Percy Jackson",
+    color: "210 55% 35%", // Navy ocean
+    icon: Sparkles,
+    genre: "Mitologia",
+  },
+};
+
 const Index = () => {
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
 
-  // User data - estado inicial para conta nova (0 streak, 0 livros)
+  // User data - new account starts at 0
   const userStats = {
     booksRead: 0,
     streak: 0,
     currentBook: "Harry Potter e a Pedra Filosofal",
+    currentBookId: "harry-potter",
     currentChapter: 1,
     totalChapters: 17,
   };
 
+  const currentBookTheme = bookThemes[userStats.currentBookId as keyof typeof bookThemes];
   const currentTier = getTierFromBooks(userStats.booksRead);
   const nextTier = getNextTierInfo(currentTier);
 
-  // Trail nodes representing chapters of current book - editorial style
-  const trailNodes = [
-    { id: 1, title: "O Menino que Sobreviveu", status: "current" },
-    { id: 2, title: "O Vidro que Sumiu", status: "locked" },
-    { id: 3, title: "As Cartas de Ninguém", status: "locked" },
-    { id: 4, title: "O Guardião das Chaves", status: "locked" },
-    { id: 5, title: "O Beco Diagonal", status: "locked" },
+  // Chapters as mini-books
+  const chapters = [
+    { id: 1, title: "O Menino que Sobreviveu", status: "current", icon: "🏠" },
+    { id: 2, title: "O Vidro que Sumiu", status: "locked", icon: "🐍" },
+    { id: 3, title: "As Cartas de Ninguém", status: "locked", icon: "✉️" },
+    { id: 4, title: "O Guardião das Chaves", status: "locked", icon: "🗝️" },
+    { id: 5, title: "O Beco Diagonal", status: "locked", icon: "🏪" },
   ];
 
-  // Pergunta do capítulo atual
   const currentChapterQuestion = {
     text: "Por que os Dursley tinham tanto medo de que os vizinhos descobrissem sobre os Potter?",
     options: [
@@ -89,99 +106,162 @@ const Index = () => {
     }
   };
 
+  // Dynamic styles based on current book theme
+  const themeColor = currentBookTheme?.color || "350 45% 38%";
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto py-6 lg:py-10">
         {/* Header - Current Journey */}
         <header className="mb-10 animate-fade-in">
-          <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Sua Jornada Atual</p>
+          <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+            <MapPin className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
+            Sua Jornada Atual
+          </p>
           <h1 className="text-3xl lg:text-4xl font-serif font-semibold text-foreground mb-1">
             {userStats.currentBook}
           </h1>
           <p className="text-muted-foreground">
-            Capítulo {userStats.currentChapter} de {userStats.totalChapters}
+            Capítulo {userStats.currentChapter} de {userStats.totalChapters} • {currentBookTheme?.genre}
           </p>
         </header>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content - Journey Timeline */}
+          {/* Main Content */}
           <div className="lg:col-span-2 order-2 lg:order-1">
-            {/* Continue Reading Card */}
-            <div className="journey-card current p-6 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            {/* Continue Reading Card with glow */}
+            <div 
+              className="journey-card current p-6 mb-8 animate-fade-in active-glow" 
+              style={{ 
+                animationDelay: "0.1s",
+                borderColor: `hsl(${themeColor} / 0.5)`,
+              }}
+            >
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="font-serif text-xl font-semibold mb-1">Continue sua jornada</h2>
-                  <p className="text-sm text-muted-foreground">Capítulo {userStats.currentChapter}: {trailNodes[0].title}</p>
+                  <p className="text-sm text-muted-foreground">Capítulo {userStats.currentChapter}: {chapters[0].title}</p>
                 </div>
-                <div className="flex items-center gap-1 text-accent text-sm font-medium">
-                  <MapPin className="w-4 h-4" />
+                <div 
+                  className="flex items-center gap-1 text-sm font-medium px-2 py-1 rounded"
+                  style={{ 
+                    backgroundColor: `hsl(${themeColor} / 0.15)`,
+                    color: `hsl(${themeColor})` 
+                  }}
+                >
+                  <Sparkles className="w-4 h-4" />
                   Em progresso
                 </div>
               </div>
               
-              <Button variant="hero" size="lg" className="gap-2" onClick={handleContinueReading}>
+              <Button 
+                variant="hero" 
+                size="lg" 
+                className="gap-2" 
+                onClick={handleContinueReading}
+                style={{ 
+                  background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                }}
+              >
                 <Play className="w-5 h-5" />
                 Iniciar Leitura
               </Button>
             </div>
 
-            {/* Chapter Timeline - Editorial Style */}
+            {/* Chapter Timeline as Mini-Books */}
             <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-serif text-xl font-semibold">Trilha de Capítulos</h2>
-                <Link to="/trilhas/harry-potter-1" className="text-sm text-secondary hover:underline font-medium">
+                <Link 
+                  to="/trilhas/harry-potter-1" 
+                  className="text-sm hover:underline font-medium"
+                  style={{ color: `hsl(${themeColor})` }}
+                >
                   Ver trilha completa →
                 </Link>
               </div>
               
-              <div className="space-y-3">
-                {trailNodes.map((node, index) => (
-                  <button
-                    key={node.id}
-                    onClick={() => node.status === "current" && handleContinueReading()}
-                    disabled={node.status === "locked"}
-                    className={`chapter-node w-full ${node.status} text-left`}
-                  >
-                    <div className={`w-10 h-10 rounded flex items-center justify-center flex-shrink-0 ${
-                      node.status === "completed" 
-                        ? "bg-accent/20 text-accent" 
-                        : node.status === "current"
-                        ? "bg-secondary/20 text-secondary"
-                        : "bg-muted text-muted-foreground"
-                    }`}>
-                      {node.status === "completed" ? (
-                        <CheckCircle className="w-5 h-5" />
-                      ) : node.status === "current" ? (
-                        <Bookmark className="w-5 h-5" />
-                      ) : (
-                        <Lock className="w-4 h-4" />
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium">Capítulo {node.id}</p>
-                      <p className="text-sm text-muted-foreground truncate">{node.title}</p>
-                    </div>
-
-                    {node.status === "current" && (
-                      <span className="text-xs text-secondary font-medium px-2 py-1 rounded bg-secondary/10">
-                        Atual
+              {/* Journey Path with Mini-Books */}
+              <div className="relative">
+                {/* Connection line */}
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 z-0"
+                  style={{ 
+                    background: `linear-gradient(90deg, hsl(${themeColor} / 0.5) 0%, hsl(var(--muted) / 0.3) 100%)` 
+                  }}
+                />
+                
+                <div className="flex gap-4 overflow-x-auto pb-4 relative z-10">
+                  {chapters.map((chapter, index) => (
+                    <button
+                      key={chapter.id}
+                      onClick={() => chapter.status === "current" && handleContinueReading()}
+                      disabled={chapter.status === "locked"}
+                      className={`mini-book ${chapter.status} flex-shrink-0`}
+                      style={chapter.status === "current" ? { 
+                        borderColor: `hsl(${themeColor} / 0.6)`,
+                        boxShadow: `0 0 20px hsl(${themeColor} / 0.2)`,
+                      } : {}}
+                    >
+                      {/* Book spine indicator */}
+                      <div 
+                        className="absolute left-1 top-2 bottom-2 w-1 rounded"
+                        style={{ 
+                          background: chapter.status === "current" 
+                            ? `hsl(${themeColor})` 
+                            : chapter.status === "completed" 
+                            ? `hsl(var(--accent))` 
+                            : `hsl(var(--muted-foreground) / 0.2)`,
+                          boxShadow: chapter.status === "current" ? `0 0 8px hsl(${themeColor} / 0.6)` : 'none',
+                        }}
+                      />
+                      
+                      {/* Book content */}
+                      <div className="text-2xl mb-2 ml-2">
+                        {chapter.status === "locked" ? (
+                          <Lock className="w-6 h-6 text-muted-foreground/50" />
+                        ) : chapter.status === "completed" ? (
+                          <CheckCircle className="w-6 h-6 text-accent" />
+                        ) : (
+                          <span>{chapter.icon}</span>
+                        )}
+                      </div>
+                      
+                      <span className="text-xs font-semibold text-muted-foreground ml-2">
+                        Cap. {chapter.id}
                       </span>
-                    )}
-                  </button>
-                ))}
+                      <span className="text-xs text-muted-foreground/70 line-clamp-2 text-center mt-1 ml-2 max-w-[80px]">
+                        {chapter.title}
+                      </span>
+                      
+                      {chapter.status === "current" && (
+                        <span 
+                          className="absolute -top-2 -right-2 text-xs font-semibold px-2 py-0.5 rounded"
+                          style={{ 
+                            backgroundColor: `hsl(${themeColor})`,
+                            color: 'white',
+                          }}
+                        >
+                          Atual
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Progress */}
               <div className="mt-6 pt-6 border-t border-border/60">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-muted-foreground">Progresso da jornada</span>
-                  <span className="font-semibold">{userStats.currentChapter}/{trailNodes.length}</span>
+                  <span className="font-semibold">{userStats.currentChapter}/{chapters.length}</span>
                 </div>
                 <div className="progress-bar">
                   <div 
                     className="progress-bar-fill"
-                    style={{ width: `${(userStats.currentChapter / trailNodes.length) * 100}%` }}
+                    style={{ 
+                      width: `${(userStats.currentChapter / chapters.length) * 100}%`,
+                      background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 12 + '%')}))`,
+                    }}
                   />
                 </div>
               </div>
@@ -304,7 +384,7 @@ const Index = () => {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 font-serif">
-              <HelpCircle className="w-5 h-5 text-secondary" />
+              <HelpCircle className="w-5 h-5" style={{ color: `hsl(${themeColor})` }} />
               Pergunta do Capítulo {userStats.currentChapter}
             </DialogTitle>
           </DialogHeader>
@@ -326,9 +406,13 @@ const Index = () => {
                         ? "bg-destructive/10 border-destructive"
                         : "bg-muted/30 border-border"
                       : selectedAnswer === index
-                      ? "bg-secondary/10 border-secondary"
+                      ? "border-secondary bg-secondary/10"
                       : "bg-muted/30 border-border hover:border-secondary/50"
                   }`}
+                  style={selectedAnswer === index && !showResult ? {
+                    borderColor: `hsl(${themeColor})`,
+                    backgroundColor: `hsl(${themeColor} / 0.1)`,
+                  } : {}}
                 >
                   {option}
                 </button>
@@ -355,18 +439,22 @@ const Index = () => {
             <div className="flex gap-3">
               {!showResult ? (
                 <Button 
-                  variant="hero" 
                   className="w-full"
                   onClick={handleAnswerSubmit}
                   disabled={selectedAnswer === null}
+                  style={{ 
+                    background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                  }}
                 >
                   Confirmar Resposta
                 </Button>
               ) : (
                 <Button 
-                  variant="hero" 
                   className="w-full"
                   onClick={() => setShowChapterQuestion(false)}
+                  style={{ 
+                    background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                  }}
                 >
                   {selectedAnswer === currentChapterQuestion.correctAnswer ? "Avançar na Trilha" : "Tentar Novamente"}
                 </Button>

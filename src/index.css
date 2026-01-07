@@ -6,127 +6,120 @@
 
 @layer base {
   :root {
-    /* BookQuest Editorial Color Palette */
-    /* Base: Petrol Blue, Burgundy, Olive, Graphite, Ivory */
-    --background: 43 23% 95%; /* Marfim suave #F2EFE9 */
-    --foreground: 240 6% 12%; /* Grafite #1E1E24 */
+    /* BookQuest - Light Mode (Marfim) */
+    --background: 43 23% 95%;
+    --foreground: 220 30% 15%;
 
     --card: 43 23% 97%;
-    --card-foreground: 240 6% 12%;
+    --card-foreground: 220 30% 15%;
 
     --popover: 43 23% 98%;
-    --popover-foreground: 240 6% 12%;
+    --popover-foreground: 220 30% 15%;
 
-    /* Primary: Petrol Blue #0F2A44 */
-    --primary: 209 64% 16%;
+    /* Primary: Royal Blue */
+    --primary: 220 50% 25%;
     --primary-foreground: 43 23% 95%;
 
-    /* Secondary: Burgundy #7A1F2B */
-    --secondary: 352 59% 30%;
+    /* Secondary: Wine Ruby */
+    --secondary: 350 45% 28%;
     --secondary-foreground: 43 23% 95%;
 
-    /* Muted: Light tones */
+    /* Muted */
     --muted: 43 15% 88%;
-    --muted-foreground: 240 6% 40%;
+    --muted-foreground: 220 15% 45%;
 
-    /* Accent: Gold #C9A24D for achievements only */
-    --accent: 43 52% 54%;
-    --accent-foreground: 240 6% 12%;
+    /* Accent: Gold for achievements */
+    --accent: 43 60% 50%;
+    --accent-foreground: 220 30% 12%;
 
-    --destructive: 0 65% 45%;
+    --destructive: 0 55% 45%;
     --destructive-foreground: 43 23% 95%;
 
     --border: 43 15% 82%;
     --input: 43 15% 90%;
-    --ring: 209 64% 16%;
+    --ring: 220 50% 25%;
 
     --radius: 0.5rem;
 
     /* BookQuest Ranking Colors */
-    --bronze: 30 60% 40%;
-    --gold: 43 52% 54%;
-    --sapphire: 210 60% 45%;
-    --emerald: 145 45% 35%;
-    --amethyst: 280 45% 50%;
-    --ruby: 350 60% 45%;
-    --diamond: 200 70% 65%;
-    --legendary: 43 80% 50%;
+    --bronze: 30 50% 40%;
+    --gold: 43 60% 50%;
+    --sapphire: 210 55% 45%;
+    --emerald: 150 40% 35%;
+    --amethyst: 275 40% 50%;
+    --ruby: 350 55% 40%;
+    --diamond: 200 60% 65%;
+    --legendary: 43 70% 55%;
 
-    /* Olive accent #4B5D52 */
+    /* Book Theme Colors */
+    --theme-fantasy: 350 45% 28%; /* Ruby wine - Harry Potter */
+    --theme-ocean: 210 55% 30%; /* Navy - Percy Jackson */
+    --theme-epic: 275 40% 35%; /* Amethyst - Epic fantasy */
+    --theme-mystery: 200 35% 30%; /* Petrol - Mystery */
+    --theme-adventure: 150 40% 28%; /* Emerald - Adventure */
+    --theme-classic: 350 45% 28%; /* Wine - Classics */
+
     --olive: 140 12% 33%;
-
-    --success: 145 45% 35%;
-    --warning: 43 52% 54%;
-    --info: 210 60% 45%;
-
-    /* Achievement Gold */
-    --gold-accent: 43 52% 54%;
-    --amber: 40 80% 63%;
+    --success: 150 40% 35%;
+    --warning: 43 60% 50%;
+    --info: 210 55% 45%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(209 64% 16%), hsl(209 64% 24%));
-    --gradient-secondary: linear-gradient(135deg, hsl(352 59% 30%), hsl(352 59% 40%));
-    --gradient-achievement: linear-gradient(135deg, hsl(43 52% 48%), hsl(40 80% 58%));
-    --gradient-bronze: linear-gradient(135deg, hsl(30 60% 30%), hsl(30 60% 50%));
-    --gradient-gold: linear-gradient(135deg, hsl(43 52% 45%), hsl(43 52% 60%));
-    --gradient-sapphire: linear-gradient(135deg, hsl(210 60% 35%), hsl(210 60% 55%));
-    --gradient-emerald: linear-gradient(135deg, hsl(145 45% 28%), hsl(145 45% 42%));
-    --gradient-amethyst: linear-gradient(135deg, hsl(280 45% 42%), hsl(280 45% 58%));
-    --gradient-ruby: linear-gradient(135deg, hsl(350 60% 38%), hsl(350 60% 52%));
-    --gradient-diamond: linear-gradient(135deg, hsl(200 70% 55%), hsl(200 70% 75%));
-    --gradient-legendary: linear-gradient(135deg, hsl(43 80% 42%), hsl(35 85% 52%));
+    --gradient-primary: linear-gradient(135deg, hsl(220 50% 25%), hsl(220 50% 35%));
+    --gradient-secondary: linear-gradient(135deg, hsl(350 45% 28%), hsl(350 45% 38%));
+    --gradient-achievement: linear-gradient(135deg, hsl(43 60% 45%), hsl(40 70% 55%));
 
     --sidebar-background: 43 23% 93%;
-    --sidebar-foreground: 240 6% 12%;
-    --sidebar-primary: 352 59% 30%;
+    --sidebar-foreground: 220 30% 15%;
+    --sidebar-primary: 350 45% 28%;
     --sidebar-primary-foreground: 43 23% 95%;
     --sidebar-accent: 43 15% 88%;
-    --sidebar-accent-foreground: 240 6% 12%;
+    --sidebar-accent-foreground: 220 30% 15%;
     --sidebar-border: 43 15% 80%;
-    --sidebar-ring: 209 64% 16%;
+    --sidebar-ring: 220 50% 25%;
   }
 
   .dark {
-    /* Dark theme - Deep night blue with warm undertones */
-    --background: 220 25% 8%; /* Azul noite profundo */
-    --foreground: 43 23% 93%;
+    /* Dark theme - Royal Blue Night Sky */
+    --background: 220 40% 10%; /* #1B2A4A base */
+    --foreground: 43 20% 90%;
 
-    --card: 220 25% 11%;
-    --card-foreground: 43 23% 93%;
+    --card: 220 35% 14%;
+    --card-foreground: 43 20% 90%;
 
-    --popover: 220 25% 11%;
-    --popover-foreground: 43 23% 93%;
+    --popover: 220 35% 14%;
+    --popover-foreground: 43 20% 90%;
 
-    /* Primary: Lighter petrol for dark mode */
-    --primary: 209 55% 35%;
+    /* Primary: Lighter Royal Blue */
+    --primary: 220 50% 45%;
     --primary-foreground: 43 23% 95%;
 
-    /* Secondary: Burgundy */
-    --secondary: 352 50% 35%;
+    /* Secondary: Wine Ruby (elegant) */
+    --secondary: 350 50% 38%;
     --secondary-foreground: 43 23% 95%;
 
-    --muted: 220 20% 16%;
-    --muted-foreground: 43 15% 60%;
+    --muted: 220 25% 18%;
+    --muted-foreground: 43 15% 55%;
 
     /* Accent: Gold for achievements */
-    --accent: 43 60% 55%;
-    --accent-foreground: 240 6% 10%;
+    --accent: 43 65% 55%;
+    --accent-foreground: 220 30% 10%;
 
-    --destructive: 0 60% 50%;
+    --destructive: 0 55% 50%;
     --destructive-foreground: 43 23% 95%;
 
-    --border: 220 20% 18%;
-    --input: 220 20% 14%;
-    --ring: 209 55% 35%;
+    --border: 220 25% 20%;
+    --input: 220 25% 16%;
+    --ring: 220 50% 45%;
 
-    --sidebar-background: 220 25% 6%;
-    --sidebar-foreground: 43 23% 93%;
-    --sidebar-primary: 352 50% 35%;
+    --sidebar-background: 220 40% 8%;
+    --sidebar-foreground: 43 20% 90%;
+    --sidebar-primary: 350 50% 38%;
     --sidebar-primary-foreground: 43 23% 95%;
-    --sidebar-accent: 220 20% 14%;
-    --sidebar-accent-foreground: 43 23% 93%;
-    --sidebar-border: 220 20% 15%;
-    --sidebar-ring: 209 55% 35%;
+    --sidebar-accent: 220 25% 16%;
+    --sidebar-accent-foreground: 43 20% 90%;
+    --sidebar-border: 220 25% 18%;
+    --sidebar-ring: 220 50% 45%;
   }
 }
 
@@ -140,7 +133,7 @@
     font-family: 'Source Sans 3', system-ui, sans-serif;
   }
 
-  /* Editorial typography - Serif for headings */
+  /* Typography */
   h1, h2, h3 {
     font-family: 'Crimson Pro', Georgia, serif;
     @apply font-semibold tracking-tight;
@@ -151,7 +144,7 @@
     @apply font-bold tracking-tight;
   }
 
-  /* Subtle paper texture overlay for dark mode */
+  /* Starry Background for Dark Mode */
   .dark body::before {
     content: '';
     position: fixed;
@@ -160,29 +153,32 @@
     right: 0;
     bottom: 0;
     background-image: 
-      radial-gradient(ellipse at 20% 30%, hsl(260 30% 20% / 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, hsl(220 40% 25% / 0.06) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  /* Subtle grain texture */
-  .dark body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    opacity: 0.015;
+      /* Radial glow behind content */
+      radial-gradient(ellipse 80% 50% at 50% 30%, hsl(220 50% 20% / 0.4) 0%, transparent 60%),
+      /* Subtle micro stars */
+      radial-gradient(1px 1px at 20% 30%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
+      radial-gradient(1px 1px at 40% 70%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
+      radial-gradient(1px 1px at 50% 20%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
+      radial-gradient(1px 1px at 60% 55%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
+      radial-gradient(1px 1px at 70% 40%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
+      radial-gradient(1px 1px at 80% 60%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
+      radial-gradient(1px 1px at 90% 20%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
+      radial-gradient(1px 1px at 10% 60%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
+      radial-gradient(1px 1px at 30% 80%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
+      radial-gradient(1px 1px at 15% 45%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
+      radial-gradient(1px 1px at 85% 75%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
+      radial-gradient(1px 1px at 55% 85%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
+      radial-gradient(1px 1px at 25% 15%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
+      radial-gradient(1px 1px at 75% 10%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
+      radial-gradient(1px 1px at 45% 45%, hsl(43 30% 70% / 0.4) 1px, transparent 0);
+    background-size: 100% 100%, 250px 250px, 300px 300px, 350px 350px, 400px 400px, 280px 280px, 320px 320px, 260px 260px, 340px 340px, 290px 290px, 310px 310px, 270px 270px, 330px 330px, 380px 380px, 360px 360px, 240px 240px;
     pointer-events: none;
     z-index: -1;
   }
 }
 
 @layer components {
-  /* Editorial card style - less rounded, more sophisticated */
+  /* Card Styles */
   .editorial-card {
     @apply bg-card border border-border/60 rounded-md shadow-sm;
     @apply transition-all duration-300;
@@ -196,9 +192,9 @@
     @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5;
   }
 
-  /* Journey card - represents progress stages */
+  /* Journey card with active glow */
   .journey-card {
-    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-md;
+    @apply bg-card/90 backdrop-blur-sm border border-border/50 rounded-md;
     @apply transition-all duration-300;
     position: relative;
     overflow: hidden;
@@ -211,140 +207,81 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background: var(--gradient-secondary);
-    opacity: 0.8;
-  }
-
-  .journey-card.completed::before {
-    background: var(--gradient-achievement);
+    background: hsl(var(--secondary));
   }
 
   .journey-card.current::before {
-    background: var(--gradient-secondary);
-    animation: pulse-border 2s ease-in-out infinite;
+    background: hsl(var(--secondary));
+    box-shadow: 0 0 12px hsl(var(--secondary) / 0.5);
   }
 
-  @keyframes pulse-border {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
+  /* Mini-book chapter card */
+  .mini-book {
+    @apply relative flex flex-col items-center p-4 rounded transition-all duration-300 cursor-pointer;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.5) 100%);
+    border: 1px solid hsl(var(--border) / 0.6);
+    min-width: 100px;
   }
 
-  .btn-glow {
-    @apply relative overflow-hidden;
-  }
-
-  .btn-glow::after {
+  .mini-book::before {
     content: '';
-    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: radial-gradient(circle at center, hsl(var(--secondary) / 0.2), transparent 70%);
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 2px;
   }
 
-  .btn-glow:hover::after {
-    @apply opacity-100;
+  .mini-book.completed {
+    border-color: hsl(var(--accent) / 0.5);
   }
 
-  /* Ranking badges with editorial style */
-  .ranking-badge {
-    @apply inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-semibold;
-    font-family: 'Source Sans 3', sans-serif;
-    letter-spacing: 0.02em;
+  .mini-book.completed::before {
+    background: hsl(var(--accent) / 0.8);
   }
 
-  .ranking-bronze {
-    background: var(--gradient-bronze);
-    @apply text-white;
+  .mini-book.current {
+    border-color: hsl(var(--secondary) / 0.6);
+    box-shadow: 0 0 20px hsl(var(--secondary) / 0.2), inset 0 0 30px hsl(var(--secondary) / 0.05);
   }
 
-  .ranking-gold {
-    background: var(--gradient-gold);
-    @apply text-gray-900;
+  .mini-book.current::before {
+    background: hsl(var(--secondary));
+    box-shadow: 0 0 8px hsl(var(--secondary) / 0.6);
   }
 
-  .ranking-sapphire {
-    background: var(--gradient-sapphire);
-    @apply text-white;
+  .mini-book.locked {
+    @apply opacity-50 cursor-not-allowed;
   }
 
-  .ranking-emerald {
-    background: var(--gradient-emerald);
-    @apply text-white;
+  .mini-book:not(.locked):hover {
+    @apply -translate-y-1;
+    box-shadow: 0 8px 24px hsl(var(--primary) / 0.15);
   }
 
-  .ranking-amethyst {
-    background: var(--gradient-amethyst);
-    @apply text-white;
-  }
-
-  .ranking-ruby {
-    background: var(--gradient-ruby);
-    @apply text-white;
-  }
-
-  .ranking-diamond {
-    background: var(--gradient-diamond);
-    @apply text-gray-900;
-  }
-
-  .ranking-legendary {
-    background: var(--gradient-legendary);
-    @apply text-gray-900;
-  }
-
-  .glass-card {
-    @apply backdrop-blur-md bg-card/90 border border-border/50 shadow-sm rounded-md;
-  }
-
-  /* Sidebar with editorial style */
-  .sidebar-item {
-    @apply flex items-center gap-3 px-4 py-3 rounded text-muted-foreground transition-all duration-200;
-  }
-
-  .sidebar-item:hover {
-    @apply bg-sidebar-accent text-foreground;
-  }
-
-  .sidebar-item.active {
-    @apply bg-secondary text-secondary-foreground font-semibold;
-  }
-
-  .sidebar-item.premium-locked {
-    @apply opacity-60;
-  }
-
-  /* Progress bar - more subtle and editorial */
-  .progress-bar {
-    @apply h-2 rounded bg-muted/60 overflow-hidden;
-  }
-
-  .progress-bar-fill {
-    @apply h-full rounded transition-all duration-500;
-    background: var(--gradient-secondary);
-  }
-
-  .progress-bar-fill.achievement {
-    background: var(--gradient-achievement);
-  }
-
-  /* Quiz options */
-  .quiz-option {
-    @apply p-4 rounded border border-border bg-card text-foreground cursor-pointer transition-all duration-200;
-  }
-
-  .quiz-option:hover {
-    @apply border-secondary/50 bg-secondary/5;
-  }
-
-  .quiz-option.selected {
-    @apply border-secondary bg-secondary/10;
-  }
-
-  /* Mission card - editorial timeline style */
-  .mission-card {
-    @apply flex items-center gap-4 p-4 rounded bg-card border border-border/60;
+  /* Journey path line */
+  .journey-path {
     position: relative;
   }
 
-  /* Chapter nodes - Editorial timeline style */
+  .journey-path::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      hsl(var(--accent) / 0.6) 0%,
+      hsl(var(--secondary) / 0.4) 50%,
+      hsl(var(--muted) / 0.3) 100%
+    );
+    z-index: 0;
+  }
+
+  /* Chapter node - timeline style */
   .chapter-node {
     @apply flex items-center gap-4 p-4 rounded bg-card/80 border border-border/50;
     @apply transition-all duration-300 cursor-pointer;
@@ -363,11 +300,12 @@
   }
 
   .chapter-node.completed::before {
-    background: var(--gradient-achievement);
+    background: hsl(var(--accent));
   }
 
   .chapter-node.current::before {
-    background: var(--gradient-secondary);
+    background: hsl(var(--secondary));
+    box-shadow: 0 0 10px hsl(var(--secondary) / 0.5);
   }
 
   .chapter-node.completed {
@@ -375,7 +313,8 @@
   }
 
   .chapter-node.current {
-    @apply border-secondary/50 bg-secondary/5;
+    @apply border-secondary/50;
+    box-shadow: 0 0 20px hsl(var(--secondary) / 0.1);
   }
 
   .chapter-node:not(.locked):hover {
@@ -386,7 +325,108 @@
     @apply opacity-50 cursor-not-allowed;
   }
 
-  /* Legacy trail-node support */
+  /* Progress bar */
+  .progress-bar {
+    @apply h-2 rounded bg-muted/60 overflow-hidden;
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded transition-all duration-500;
+    background: hsl(var(--secondary));
+  }
+
+  .progress-bar-fill.achievement {
+    background: linear-gradient(90deg, hsl(var(--accent)), hsl(40 70% 55%));
+  }
+
+  /* Ranking badges */
+  .ranking-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-semibold;
+    font-family: 'Source Sans 3', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .ranking-bronze {
+    background: linear-gradient(135deg, hsl(30 50% 30%), hsl(30 50% 45%));
+    @apply text-white;
+  }
+
+  .ranking-gold {
+    background: linear-gradient(135deg, hsl(43 60% 45%), hsl(43 60% 58%));
+    @apply text-gray-900;
+  }
+
+  .ranking-sapphire {
+    background: linear-gradient(135deg, hsl(210 55% 35%), hsl(210 55% 50%));
+    @apply text-white;
+  }
+
+  .ranking-emerald {
+    background: linear-gradient(135deg, hsl(150 40% 28%), hsl(150 40% 42%));
+    @apply text-white;
+  }
+
+  .ranking-amethyst {
+    background: linear-gradient(135deg, hsl(275 40% 42%), hsl(275 40% 55%));
+    @apply text-white;
+  }
+
+  .ranking-ruby {
+    background: linear-gradient(135deg, hsl(350 55% 35%), hsl(350 55% 48%));
+    @apply text-white;
+  }
+
+  .ranking-diamond {
+    background: linear-gradient(135deg, hsl(200 60% 55%), hsl(200 60% 72%));
+    @apply text-gray-900;
+  }
+
+  .ranking-legendary {
+    background: linear-gradient(135deg, hsl(43 70% 45%), hsl(35 75% 55%));
+    @apply text-gray-900;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-md bg-card/90 border border-border/50 shadow-sm rounded-md;
+  }
+
+  /* Sidebar */
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded text-muted-foreground transition-all duration-200;
+  }
+
+  .sidebar-item:hover {
+    @apply bg-sidebar-accent text-foreground;
+  }
+
+  .sidebar-item.active {
+    @apply bg-secondary text-secondary-foreground font-semibold;
+  }
+
+  .sidebar-item.premium-locked {
+    @apply opacity-60;
+  }
+
+  /* Quiz options */
+  .quiz-option {
+    @apply p-4 rounded border border-border bg-card text-foreground cursor-pointer transition-all duration-200;
+  }
+
+  .quiz-option:hover {
+    @apply border-secondary/50 bg-secondary/5;
+  }
+
+  .quiz-option.selected {
+    @apply border-secondary bg-secondary/10;
+  }
+
+  /* Mission card */
+  .mission-card {
+    @apply flex items-center gap-4 p-4 rounded bg-card border border-border/60;
+    position: relative;
+  }
+
+  /* Trail node (legacy) */
   .trail-node {
     @apply w-14 h-14 rounded flex items-center justify-center text-lg font-semibold transition-all duration-300 cursor-pointer;
   }
@@ -403,6 +443,7 @@
     @apply bg-muted text-muted-foreground;
   }
 
+  /* Animations */
   .floating-animation {
     animation: float 4s ease-in-out infinite;
   }
@@ -425,7 +466,7 @@
     @apply text-accent;
   }
 
-  /* Section divider - editorial style */
+  /* Section divider */
   .section-divider {
     @apply border-t border-border/60 my-8;
     position: relative;
@@ -438,24 +479,49 @@
     top: -1px;
     width: 60px;
     height: 2px;
-    background: var(--gradient-secondary);
+    background: hsl(var(--secondary));
   }
 
-  /* Achievement glow for gold elements */
+  /* Achievement glow */
   .achievement-glow {
     box-shadow: 0 0 20px hsl(var(--accent) / 0.3);
+  }
+
+  /* Active element soft glow */
+  .active-glow {
+    box-shadow: 0 0 16px hsl(var(--secondary) / 0.25);
+  }
+
+  /* Book theme colors as classes */
+  .theme-fantasy { --book-color: 350 45% 28%; }
+  .theme-ocean { --book-color: 210 55% 30%; }
+  .theme-epic { --book-color: 275 40% 35%; }
+  .theme-mystery { --book-color: 200 35% 30%; }
+  .theme-adventure { --book-color: 150 40% 28%; }
+  .theme-classic { --book-color: 350 45% 28%; }
+
+  .book-themed {
+    border-color: hsl(var(--book-color) / 0.5);
+  }
+
+  .book-themed-bg {
+    background: hsl(var(--book-color) / 0.1);
+  }
+
+  .book-themed-accent {
+    color: hsl(var(--book-color));
   }
 }
 
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-secondary);
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(350 45% 45%));
   }
 
   .text-gradient-accent {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-achievement);
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(40 70% 60%));
   }
 
   .text-gold {
@@ -470,12 +536,10 @@
     background-color: hsl(var(--accent));
   }
 
-  /* Editorial serif for special headings */
   .font-editorial {
     font-family: 'Crimson Pro', Georgia, serif;
   }
 
-  /* Book icon styling */
   .book-icon {
     @apply text-secondary;
   }

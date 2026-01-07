@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Clock } from "lucide-react";
+import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Castle, Anchor, Feather, Compass, Skull } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,7 @@ interface Chapter {
   id: number;
   title: string;
   status: "completed" | "current" | "locked";
+  icon: string;
   question?: {
     text: string;
     options: string[];
@@ -31,6 +32,7 @@ interface BookTrail {
   chapters: Chapter[];
   isPremium: boolean;
   genre: string;
+  themeColor: string; // HSL color for dynamic theming
 }
 
 const bookTrails: BookTrail[] = [
@@ -42,11 +44,13 @@ const bookTrails: BookTrail[] = [
     totalChapters: 17,
     isPremium: false,
     genre: "Fantasia",
+    themeColor: "350 45% 38%", // Ruby wine
     chapters: [
       {
         id: 1,
         title: "O Menino que Sobreviveu",
         status: "completed",
+        icon: "🏠",
         question: {
           text: "Por que os Dursley tinham tanto medo de que os vizinhos descobrissem sobre os Potter?",
           options: [
@@ -63,6 +67,7 @@ const bookTrails: BookTrail[] = [
         id: 2,
         title: "O Vidro que Sumiu",
         status: "completed",
+        icon: "🐍",
         question: {
           text: "O que a cena do zoológico revela sobre a relação entre Harry e sua magia?",
           options: [
@@ -72,15 +77,16 @@ const bookTrails: BookTrail[] = [
             "Harry aprendeu a fazer mágica sozinho"
           ],
           correctAnswer: 1,
-          explanation: "A magia acidental de Harry se manifesta quando ele está emocionalmente afetado, como ao sentir empatia pela cobra."
+          explanation: "A magia acidental de Harry se manifesta quando ele está emocionalmente afetado."
         }
       },
       {
         id: 3,
         title: "As Cartas de Ninguém",
         status: "current",
+        icon: "✉️",
         question: {
-          text: "Qual o significado simbólico da persistência das cartas de Hogwarts chegando cada vez em maior quantidade?",
+          text: "Qual o significado simbólico da persistência das cartas chegando cada vez em maior quantidade?",
           options: [
             "Hogwarts estava desperdiçando recursos",
             "Era um erro do sistema de correio mágico",
@@ -88,23 +94,31 @@ const bookTrails: BookTrail[] = [
             "Os bruxos estavam tentando irritar os Dursley"
           ],
           correctAnswer: 2,
-          explanation: "As cartas simbolizam que não se pode fugir do próprio destino - quanto mais os Dursley resistiam, mais forte era a chamada."
+          explanation: "As cartas simbolizam que não se pode fugir do próprio destino."
         }
       },
-      { id: 4, title: "O Guardião das Chaves", status: "locked" },
-      { id: 5, title: "O Beco Diagonal", status: "locked" },
-      { id: 6, title: "A Viagem da Plataforma Nove e Meia", status: "locked" },
-      { id: 7, title: "O Chapéu Seletor", status: "locked" },
-      { id: 8, title: "O Mestre das Poções", status: "locked" },
-      { id: 9, title: "O Duelo à Meia-Noite", status: "locked" },
-      { id: 10, title: "O Espelho de Ojesed", status: "locked" },
-      { id: 11, title: "Norberto, o Dragão Norueguês", status: "locked" },
-      { id: 12, title: "A Floresta Proibida", status: "locked" },
-      { id: 13, title: "O Alçapão", status: "locked" },
-      { id: 14, title: "Através do Alçapão", status: "locked" },
-      { id: 15, title: "O Homem de Duas Faces", status: "locked" },
-      { id: 16, title: "Reflexão Final", status: "locked" },
-      { id: 17, title: "Quiz Final do Livro", status: "locked" },
+      { id: 4, title: "O Guardião das Chaves", status: "locked", icon: "🗝️" },
+      { id: 5, title: "O Beco Diagonal", status: "locked", icon: "🏪" },
+      { id: 6, title: "A Viagem da Plataforma", status: "locked", icon: "🚂" },
+      { id: 7, title: "O Chapéu Seletor", status: "locked", icon: "🎩" },
+      { id: 8, title: "O Mestre das Poções", status: "locked", icon: "⚗️" },
+      { id: 9, title: "O Duelo à Meia-Noite", status: "locked", icon: "⚔️" },
+      { id: 10, title: "O Espelho de Ojesed", status: "locked", icon: "🪞" },
+    ]
+  },
+  {
+    id: "percy-jackson-1",
+    title: "Percy Jackson e o Ladrão de Raios",
+    author: "Rick Riordan",
+    cover: "📗",
+    totalChapters: 22,
+    isPremium: false,
+    genre: "Mitologia",
+    themeColor: "210 55% 35%", // Navy ocean
+    chapters: [
+      { id: 1, title: "Eu Vaporizo Minha Professora", status: "completed", icon: "⚡" },
+      { id: 2, title: "Três Velhas Tricotando", status: "current", icon: "🧶" },
+      { id: 3, title: "Grover Perde as Calças", status: "locked", icon: "🐐" },
     ]
   },
   {
@@ -115,10 +129,11 @@ const bookTrails: BookTrail[] = [
     totalChapters: 15,
     isPremium: true,
     genre: "Romance Brasileiro",
+    themeColor: "350 45% 32%", // Deep wine
     chapters: [
-      { id: 1, title: "Do título", status: "locked" },
-      { id: 2, title: "Do livro", status: "locked" },
-      { id: 3, title: "A denúncia", status: "locked" },
+      { id: 1, title: "Do título", status: "locked", icon: "📜" },
+      { id: 2, title: "Do livro", status: "locked", icon: "📖" },
+      { id: 3, title: "A denúncia", status: "locked", icon: "🔔" },
     ]
   },
   {
@@ -129,10 +144,11 @@ const bookTrails: BookTrail[] = [
     totalChapters: 12,
     isPremium: false,
     genre: "Fábula",
+    themeColor: "40 60% 45%", // Warm amber
     chapters: [
-      { id: 1, title: "O Desenho", status: "completed" },
-      { id: 2, title: "O Encontro", status: "current" },
-      { id: 3, title: "O Asteroide B-612", status: "locked" },
+      { id: 1, title: "O Desenho", status: "completed", icon: "🎨" },
+      { id: 2, title: "O Encontro", status: "current", icon: "⭐" },
+      { id: 3, title: "O Asteroide B-612", status: "locked", icon: "🪐" },
     ]
   },
 ];
@@ -145,7 +161,7 @@ const Trilhas = () => {
   const [showResult, setShowResult] = useState(false);
   const isPremium = false;
 
-  // If bookId is provided, show the book trail
+  // Book detail view
   if (bookId) {
     const book = bookTrails.find(b => b.id === bookId);
     
@@ -162,6 +178,7 @@ const Trilhas = () => {
       );
     }
 
+    const themeColor = book.themeColor;
     const completedChapters = book.chapters.filter(c => c.status === "completed").length;
     const progress = (completedChapters / book.totalChapters) * 100;
     const currentChapter = book.chapters.find(c => c.status === "current");
@@ -182,7 +199,7 @@ const Trilhas = () => {
 
     return (
       <Layout isPremium={isPremium}>
-        <div className="max-w-3xl mx-auto py-8">
+        <div className="max-w-4xl mx-auto py-8">
           {/* Back Button */}
           <Link to="/trilhas" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 text-sm">
             <ArrowLeft className="w-4 h-4" />
@@ -192,23 +209,39 @@ const Trilhas = () => {
           {/* Book Header */}
           <header className="mb-10 animate-fade-in">
             <div className="flex items-start gap-6">
-              <div className="w-20 h-28 bg-gradient-to-br from-secondary/20 to-accent/10 rounded flex items-center justify-center flex-shrink-0">
-                <span className="text-4xl">{book.cover}</span>
+              <div 
+                className="w-24 h-32 rounded flex items-center justify-center flex-shrink-0"
+                style={{ 
+                  background: `linear-gradient(135deg, hsl(${themeColor} / 0.2), hsl(${themeColor} / 0.1))`,
+                  border: `2px solid hsl(${themeColor} / 0.3)`,
+                }}
+              >
+                <span className="text-5xl">{book.cover}</span>
               </div>
               <div className="flex-1">
-                <p className="text-xs text-secondary uppercase tracking-wider font-medium mb-1">{book.genre}</p>
+                <p 
+                  className="text-xs uppercase tracking-wider font-medium mb-1"
+                  style={{ color: `hsl(${themeColor})` }}
+                >
+                  {book.genre}
+                </p>
                 <h1 className="text-2xl lg:text-3xl font-serif font-semibold mb-1">{book.title}</h1>
                 <p className="text-muted-foreground mb-4">{book.author}</p>
                 
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-muted-foreground">{completedChapters} de {book.totalChapters} capítulos</span>
-                  <span className="text-accent font-semibold">{Math.round(progress)}% concluído</span>
+                  <span className="font-semibold" style={{ color: `hsl(${themeColor})` }}>
+                    {Math.round(progress)}% concluído
+                  </span>
                 </div>
                 
                 <div className="progress-bar mt-3 max-w-sm">
                   <div 
                     className="progress-bar-fill"
-                    style={{ width: `${progress}%` }}
+                    style={{ 
+                      width: `${progress}%`,
+                      background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 12 + '%')}))`,
+                    }}
                   />
                 </div>
               </div>
@@ -217,13 +250,28 @@ const Trilhas = () => {
 
           {/* Current Chapter CTA */}
           {currentChapter && (
-            <div className="journey-card current p-5 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            <div 
+              className="journey-card current p-5 mb-8 animate-fade-in active-glow" 
+              style={{ 
+                animationDelay: "0.1s",
+                borderColor: `hsl(${themeColor} / 0.5)`,
+              }}
+            >
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Continue de onde parou</p>
-                  <p className="font-semibold">Capítulo {currentChapter.id}: {currentChapter.title}</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{currentChapter.icon}</span>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Continue de onde parou</p>
+                    <p className="font-semibold">Capítulo {currentChapter.id}: {currentChapter.title}</p>
+                  </div>
                 </div>
-                <Button variant="hero" size="sm" onClick={() => handleChapterClick(currentChapter)}>
+                <Button 
+                  size="sm" 
+                  onClick={() => handleChapterClick(currentChapter)}
+                  style={{ 
+                    background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                  }}
+                >
                   <Play className="w-4 h-4 mr-2" />
                   Continuar
                 </Button>
@@ -231,48 +279,73 @@ const Trilhas = () => {
             </div>
           )}
 
-          {/* Chapters Timeline */}
+          {/* Chapters as Mini-Books Grid */}
           <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <h2 className="font-serif text-xl font-semibold mb-6">Linha do Tempo de Leitura</h2>
+            <h2 className="font-serif text-xl font-semibold mb-6">Coleção de Capítulos</h2>
             
-            <div className="space-y-2">
+            {/* Mini-books grid */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
               {book.chapters.map((chapter, index) => (
                 <button
                   key={chapter.id}
                   onClick={() => handleChapterClick(chapter)}
                   disabled={chapter.status === "locked"}
-                  className={`chapter-node w-full text-left ${chapter.status}`}
+                  className={`mini-book ${chapter.status} aspect-[3/4]`}
+                  style={chapter.status === "current" ? { 
+                    borderColor: `hsl(${themeColor} / 0.6)`,
+                    boxShadow: `0 0 20px hsl(${themeColor} / 0.25)`,
+                  } : chapter.status === "completed" ? {
+                    borderColor: `hsl(var(--accent) / 0.5)`,
+                  } : {}}
                 >
-                  <div className={`w-10 h-10 rounded flex items-center justify-center flex-shrink-0 ${
-                    chapter.status === "completed" 
-                      ? "bg-accent/20 text-accent" 
-                      : chapter.status === "current"
-                      ? "bg-secondary/20 text-secondary"
-                      : "bg-muted text-muted-foreground"
-                  }`}>
-                    {chapter.status === "completed" ? (
-                      <CheckCircle className="w-5 h-5" />
-                    ) : chapter.status === "current" ? (
-                      <Bookmark className="w-5 h-5" />
+                  {/* Book spine */}
+                  <div 
+                    className="absolute left-1 top-3 bottom-3 w-1 rounded"
+                    style={{ 
+                      background: chapter.status === "current" 
+                        ? `hsl(${themeColor})` 
+                        : chapter.status === "completed" 
+                        ? `hsl(var(--accent))` 
+                        : `hsl(var(--muted-foreground) / 0.2)`,
+                      boxShadow: chapter.status === "current" ? `0 0 8px hsl(${themeColor} / 0.6)` : 'none',
+                    }}
+                  />
+                  
+                  {/* Icon */}
+                  <div className="text-2xl mb-2 ml-2">
+                    {chapter.status === "locked" ? (
+                      <Lock className="w-5 h-5 text-muted-foreground/50" />
+                    ) : chapter.status === "completed" ? (
+                      <span className="relative">
+                        {chapter.icon}
+                        <CheckCircle className="w-4 h-4 text-accent absolute -bottom-1 -right-1" />
+                      </span>
                     ) : (
-                      <Lock className="w-4 h-4" />
+                      <span>{chapter.icon}</span>
                     )}
                   </div>
                   
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium">Capítulo {chapter.id}</p>
-                      {chapter.status === "current" && (
-                        <span className="text-xs text-secondary font-medium px-2 py-0.5 rounded bg-secondary/10">
-                          Atual
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground truncate">{chapter.title}</p>
-                  </div>
-
-                  {chapter.question && chapter.status !== "locked" && (
-                    <HelpCircle className="w-4 h-4 text-secondary flex-shrink-0" />
+                  {/* Chapter number */}
+                  <span className="text-xs font-bold text-muted-foreground ml-2">
+                    {chapter.id}
+                  </span>
+                  
+                  {/* Title */}
+                  <span className="text-[10px] text-muted-foreground/70 line-clamp-2 text-center mt-1 ml-2 px-1">
+                    {chapter.title}
+                  </span>
+                  
+                  {/* Current badge */}
+                  {chapter.status === "current" && (
+                    <span 
+                      className="absolute -top-2 right-1 text-[10px] font-bold px-1.5 py-0.5 rounded"
+                      style={{ 
+                        backgroundColor: `hsl(${themeColor})`,
+                        color: 'white',
+                      }}
+                    >
+                      ▶
+                    </span>
                   )}
                 </button>
               ))}
@@ -284,7 +357,7 @@ const Trilhas = () => {
             <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 font-serif">
-                  <HelpCircle className="w-5 h-5 text-secondary" />
+                  <HelpCircle className="w-5 h-5" style={{ color: `hsl(${themeColor})` }} />
                   Pergunta do Capítulo {selectedChapter?.id}
                 </DialogTitle>
               </DialogHeader>
@@ -307,9 +380,13 @@ const Trilhas = () => {
                               ? "bg-destructive/10 border-destructive"
                               : "bg-muted/30 border-border"
                             : selectedAnswer === index
-                            ? "bg-secondary/10 border-secondary"
+                            ? "border-secondary bg-secondary/10"
                             : "bg-muted/30 border-border hover:border-secondary/50"
                         }`}
+                        style={selectedAnswer === index && !showResult ? {
+                          borderColor: `hsl(${themeColor})`,
+                          backgroundColor: `hsl(${themeColor} / 0.1)`,
+                        } : {}}
                       >
                         {option}
                       </button>
@@ -324,7 +401,7 @@ const Trilhas = () => {
                     }`}>
                       <p className="font-semibold mb-2">
                         {selectedAnswer === selectedChapter.question.correctAnswer
-                          ? "✓ Correto!"
+                          ? "✓ Correto! +10 pts"
                           : "✗ Incorreto"}
                       </p>
                       <p className="text-sm text-muted-foreground">
@@ -336,18 +413,22 @@ const Trilhas = () => {
                   <div className="flex gap-3">
                     {!showResult ? (
                       <Button 
-                        variant="hero" 
                         className="w-full"
                         onClick={handleAnswerSubmit}
                         disabled={selectedAnswer === null}
+                        style={{ 
+                          background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                        }}
                       >
                         Confirmar Resposta
                       </Button>
                     ) : (
                       <Button 
-                        variant="hero" 
                         className="w-full"
                         onClick={() => setShowQuestion(false)}
+                        style={{ 
+                          background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                        }}
                       >
                         Continuar
                       </Button>
@@ -362,7 +443,7 @@ const Trilhas = () => {
     );
   }
 
-  // Default view - list all book trails
+  // Books listing view
   return (
     <Layout isPremium={isPremium}>
       <div className="max-w-5xl mx-auto py-8">
@@ -381,6 +462,7 @@ const Trilhas = () => {
             const completedChapters = book.chapters.filter(c => c.status === "completed").length;
             const progress = (completedChapters / book.totalChapters) * 100;
             const currentChapter = book.chapters.find(c => c.status === "current");
+            const themeColor = book.themeColor;
 
             return (
               <Link
@@ -389,11 +471,19 @@ const Trilhas = () => {
                 className={`editorial-card overflow-hidden card-hover animate-fade-in ${
                   book.isPremium && !isPremium ? "opacity-80 cursor-not-allowed" : ""
                 }`}
-                style={{ animationDelay: `${index * 0.1}s` }}
+                style={{ 
+                  animationDelay: `${index * 0.1}s`,
+                  borderColor: progress > 0 ? `hsl(${themeColor} / 0.3)` : undefined,
+                }}
                 onClick={e => book.isPremium && !isPremium && e.preventDefault()}
               >
                 {/* Cover */}
-                <div className="h-36 bg-gradient-to-br from-secondary/10 to-accent/5 flex items-center justify-center relative">
+                <div 
+                  className="h-36 flex items-center justify-center relative"
+                  style={{ 
+                    background: `linear-gradient(135deg, hsl(${themeColor} / 0.15), hsl(${themeColor} / 0.05))`,
+                  }}
+                >
                   <span className="text-5xl">{book.cover}</span>
                   
                   {book.isPremium && !isPremium && (
@@ -404,8 +494,14 @@ const Trilhas = () => {
                   )}
                   
                   {progress > 0 && (
-                    <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded bg-card/90 text-xs font-medium">
-                      <CheckCircle className="w-3 h-3 text-accent" />
+                    <div 
+                      className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded text-xs font-medium"
+                      style={{ 
+                        backgroundColor: `hsl(${themeColor} / 0.9)`,
+                        color: 'white',
+                      }}
+                    >
+                      <CheckCircle className="w-3 h-3" />
                       {completedChapters}/{book.totalChapters}
                     </div>
                   )}
@@ -413,12 +509,20 @@ const Trilhas = () => {
 
                 {/* Content */}
                 <div className="p-5">
-                  <p className="text-xs text-secondary uppercase tracking-wider font-medium mb-1">{book.genre}</p>
+                  <p 
+                    className="text-xs uppercase tracking-wider font-medium mb-1"
+                    style={{ color: `hsl(${themeColor})` }}
+                  >
+                    {book.genre}
+                  </p>
                   <h3 className="font-serif text-lg font-semibold mb-1">{book.title}</h3>
                   <p className="text-sm text-muted-foreground mb-3">{book.author}</p>
                   
                   {currentChapter && (
-                    <p className="text-xs text-secondary mb-3 flex items-center gap-1">
+                    <p 
+                      className="text-xs mb-3 flex items-center gap-1"
+                      style={{ color: `hsl(${themeColor})` }}
+                    >
                       <Bookmark className="w-3 h-3" />
                       {currentChapter.title}
                     </p>
@@ -430,10 +534,13 @@ const Trilhas = () => {
                       <span className="text-muted-foreground">Progresso</span>
                       <span className="font-medium">{Math.round(progress)}%</span>
                     </div>
-                    <div className="progress-bar h-1">
+                    <div className="progress-bar h-1.5">
                       <div 
                         className="progress-bar-fill"
-                        style={{ width: `${progress}%` }}
+                        style={{ 
+                          width: `${progress}%`,
+                          background: `hsl(${themeColor})`,
+                        }}
                       />
                     </div>
                   </div>
