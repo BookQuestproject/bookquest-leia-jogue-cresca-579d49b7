@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Trophy, Users, User, Target, Flame, BookMarked } from "lucide-react";
+import { Home, BookOpen, Trophy, Users, User, Target, Flame, BookMarked, LogIn } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface MobileNavProps {
   isPremium?: boolean;
@@ -7,13 +8,14 @@ interface MobileNavProps {
 
 const MobileNav = ({ isPremium = false }: MobileNavProps) => {
   const location = useLocation();
+  const { user } = useAuth();
 
   const menuItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: BookOpen, label: "Trilhas", path: "/trilhas" },
     { icon: Target, label: "Missões", path: "/missoes" },
     { icon: Trophy, label: "Ranking", path: "/ranking" },
-    { icon: User, label: "Perfil", path: "/perfil" },
+    { icon: user ? User : LogIn, label: user ? "Perfil" : "Entrar", path: user ? "/perfil" : "/auth" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

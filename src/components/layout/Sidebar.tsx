@@ -16,7 +16,11 @@ import {
   Lock,
   Flame,
   Newspaper,
+  LogIn,
+  LogOut,
+  User,
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface SidebarProps {
   isPremium?: boolean;
@@ -24,6 +28,7 @@ interface SidebarProps {
 
 const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const menuItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -59,16 +64,26 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
       {/* User Stats Quick View */}
       <div className="px-5 py-3 border-b border-sidebar-border">
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1.5 text-accent">
-            <Flame className="w-4 h-4" />
-            <span className="font-semibold">0</span>
+        {user ? (
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-1.5 text-accent">
+              <Flame className="w-4 h-4" />
+              <span className="font-semibold">0</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Trophy className="w-4 h-4" />
+              <span className="font-medium">Bronze</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Trophy className="w-4 h-4" />
-            <span className="font-medium">Bronze</span>
-          </div>
-        </div>
+        ) : (
+          <Link 
+            to="/auth" 
+            className="flex items-center gap-2 text-sm text-secondary hover:text-secondary/80 transition-colors"
+          >
+            <LogIn className="w-4 h-4" />
+            <span className="font-medium">Entrar / Cadastrar</span>
+          </Link>
+        )}
       </div>
 
       {/* Navigation */}
@@ -121,8 +136,17 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
         </div>
       )}
 
-      {/* Settings */}
-      <div className="p-3 border-t border-sidebar-border">
+      {/* Settings & User Actions */}
+      <div className="p-3 border-t border-sidebar-border space-y-0.5">
+        {user && (
+          <Link
+            to="/perfil"
+            className={`sidebar-item ${isActive("/perfil") ? "active" : ""}`}
+          >
+            <User className="w-5 h-5" />
+            <span className="text-sm">Meu Perfil</span>
+          </Link>
+        )}
         <Link
           to="/configuracoes"
           className={`sidebar-item ${isActive("/configuracoes") ? "active" : ""}`}
@@ -130,6 +154,15 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
           <Settings className="w-5 h-5" />
           <span className="text-sm">Configurações</span>
         </Link>
+        {user && (
+          <button
+            onClick={() => signOut()}
+            className="sidebar-item w-full text-left hover:text-destructive"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="text-sm">Sair</span>
+          </button>
+        )}
       </div>
     </aside>
   );

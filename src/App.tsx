@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
 import Ranking from "./pages/Ranking";
@@ -18,37 +19,41 @@ import Mentoria from "./pages/Mentoria";
 import Enem from "./pages/Enem";
 import Configuracoes from "./pages/Configuracoes";
 import Noticias from "./pages/Noticias";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/ranking" element={<Ranking />} />
-          <Route path="/comunidade" element={<Comunidade />} />
-          <Route path="/premium" element={<Premium />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/trilhas" element={<Trilhas />} />
-          <Route path="/trilhas/:bookId" element={<Trilhas />} />
-          <Route path="/estante" element={<Estante />} />
-          <Route path="/biblioteca" element={<Biblioteca />} />
-          <Route path="/missoes" element={<Missoes />} />
-          <Route path="/bookclub" element={<BookClub />} />
-          <Route path="/mentoria" element={<Mentoria />} />
-          <Route path="/enem" element={<Enem />} />
-          <Route path="/configuracoes" element={<Configuracoes />} />
-          <Route path="/noticias" element={<Noticias />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/ranking" element={<Ranking />} />
+            <Route path="/comunidade" element={<Comunidade />} />
+            <Route path="/premium" element={<Premium />} />
+            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/trilhas" element={<Trilhas />} />
+            <Route path="/trilhas/:bookId" element={<Trilhas />} />
+            <Route path="/estante" element={<Estante />} />
+            <Route path="/biblioteca" element={<Biblioteca />} />
+            <Route path="/missoes" element={<Missoes />} />
+            <Route path="/bookclub" element={<BookClub />} />
+            <Route path="/mentoria" element={<Mentoria />} />
+            <Route path="/enem" element={<Enem />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
+            <Route path="/noticias" element={<Noticias />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
