@@ -14,7 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      available_slots: {
+        Row: {
+          day_of_week: number
+          id: string
+          is_active: boolean | null
+          time_slot: string
+        }
+        Insert: {
+          day_of_week: number
+          id?: string
+          is_active?: boolean | null
+          time_slot: string
+        }
+        Update: {
+          day_of_week?: number
+          id?: string
+          is_active?: boolean | null
+          time_slot?: string
+        }
+        Relationships: []
+      }
+      mentorship_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          session_date: string
+          session_time: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          session_date: string
+          session_time: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          session_date?: string
+          session_time?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          is_premium: boolean | null
+          literary_profile: Json | null
+          premium_expires_at: string | null
+          quiz_completed: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          is_premium?: boolean | null
+          literary_profile?: Json | null
+          premium_expires_at?: string | null
+          quiz_completed?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_premium?: boolean | null
+          literary_profile?: Json | null
+          premium_expires_at?: string | null
+          quiz_completed?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
