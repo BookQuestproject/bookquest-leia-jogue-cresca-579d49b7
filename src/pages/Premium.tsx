@@ -1,11 +1,45 @@
-import { Link } from "react-router-dom";
-import { Crown, Check, Star, BookOpen, Users, Sparkles, GraduationCap, MessageSquare, Zap } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Crown, Check, Star, Sparkles, GraduationCap, Users, Loader2, ExternalLink } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Premium = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isPremium, checkSubscription } = useProfile();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isManageLoading, setIsManageLoading] = useState(false);
+
+  // Check for success/cancel params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      toast({
+        title: "Assinatura realizada!",
+        description: "Bem-vindo ao BookQuest Premium! Aproveite todos os benefícios.",
+      });
+      checkSubscription();
+      // Clean URL
+      window.history.replaceState({}, '', '/premium');
+    }
+    if (params.get('canceled') === 'true') {
+      toast({
+        title: "Assinatura cancelada",
+        description: "Você pode assinar quando quiser.",
+        variant: "destructive",
+      });
+      window.history.replaceState({}, '', '/premium');
+    }
+  }, []);
+
   const freeBenefits = [
-    "Quiz literário completo",
+    "Quiz literário (uma vez)",
     "Perfil personalizado",
     "Ranking e competição",
     "Comunidade e fóruns",
@@ -18,14 +52,61 @@ const Premium = () => {
     "Trilhas ENEM e Vestibulares",
     "Book Club mensal com discussões guiadas",
     "Mentoria literária semanal personalizada",
-    "Quiz literário avançado com análises",
+    "Quiz literário ilimitado",
     "Missões exclusivas com mais XP",
     "Badge Premium no perfil",
     "Acesso antecipado a novidades",
   ];
 
+  const handleSubscribe = async () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout');
+      
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível iniciar o pagamento. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    setIsManageLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error opening portal:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível abrir o portal. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsManageLoading(false);
+    }
+  };
+
   return (
-    <Layout>
+    <Layout isPremium={isPremium}>
       <div className="py-8 max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
@@ -62,16 +143,23 @@ const Premium = () => {
                 </li>
               ))}
             </ul>
-            <Button variant="outline" size="lg" className="w-full">
-              Plano atual
+            <Button variant="outline" size="lg" className="w-full" disabled={!isPremium}>
+              {!isPremium ? "Plano atual" : "Plano gratuito"}
             </Button>
           </div>
 
           {/* Premium Plan */}
-          <div className="glass-card rounded-3xl p-8 border-2 border-gold relative animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gold text-background text-sm font-bold">
-              Mais popular
-            </div>
+          <div className={`glass-card rounded-3xl p-8 border-2 relative animate-fade-in ${isPremium ? 'border-gold' : 'border-gold'}`} style={{ animationDelay: "0.2s" }}>
+            {isPremium && (
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gold text-background text-sm font-bold">
+                Seu plano
+              </div>
+            )}
+            {!isPremium && (
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gold text-background text-sm font-bold">
+                Mais popular
+              </div>
+            )}
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
                 Premium
@@ -80,11 +168,11 @@ const Premium = () => {
               <p className="text-muted-foreground">Para leitores dedicados</p>
             </div>
             <div className="mb-6">
-              <span className="text-4xl font-bold">R$ 19,90</span>
+              <span className="text-4xl font-bold">R$ 29,90</span>
               <span className="text-muted-foreground">/mês</span>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Inclui: Book Club, Mentoria Literária, Trilhas ENEM/Vestibulares, Estatísticas detalhadas, Paginômetro
+              Inclui: Book Club, Mentoria Literária, Trilhas ENEM/Vestibulares, Quiz ilimitado
             </p>
             <ul className="space-y-3 mb-8">
               {premiumBenefits.map((benefit, index) => (
@@ -94,10 +182,38 @@ const Premium = () => {
                 </li>
               ))}
             </ul>
-            <Button variant="premium" size="lg" className="w-full">
-              <Crown className="w-5 h-5" />
-              Assinar Premium
-            </Button>
+            
+            {isPremium ? (
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full gap-2"
+                onClick={handleManageSubscription}
+                disabled={isManageLoading}
+              >
+                {isManageLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <ExternalLink className="w-5 h-5" />
+                )}
+                Gerenciar assinatura
+              </Button>
+            ) : (
+              <Button 
+                variant="premium" 
+                size="lg" 
+                className="w-full gap-2"
+                onClick={handleSubscribe}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Crown className="w-5 h-5" />
+                )}
+                Assinar Premium
+              </Button>
+            )}
             <p className="text-center text-sm text-muted-foreground mt-4">
               Cancele quando quiser. Sem compromisso.
             </p>
@@ -148,7 +264,7 @@ const Premium = () => {
             <div className="glass-card rounded-2xl p-6">
               <h3 className="font-bold mb-2">Como funciona o pagamento?</h3>
               <p className="text-sm text-muted-foreground">
-                O pagamento é mensal e recorrente. Você pode cancelar a qualquer momento sem multas.
+                O pagamento é mensal e recorrente via cartão de crédito. Você pode cancelar a qualquer momento sem multas.
               </p>
             </div>
             <div className="glass-card rounded-2xl p-6">
@@ -160,7 +276,7 @@ const Premium = () => {
             <div className="glass-card rounded-2xl p-6">
               <h3 className="font-bold mb-2">Como funciona a mentoria?</h3>
               <p className="text-sm text-muted-foreground">
-                Você recebe semanalmente uma rotina personalizada de leitura baseada nos seus objetivos.
+                Você agenda uma sessão semanal para criar sua rotina de leitura personalizada.
               </p>
             </div>
             <div className="glass-card rounded-2xl p-6">
