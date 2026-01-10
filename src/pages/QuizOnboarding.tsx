@@ -495,7 +495,7 @@ const QuizOnboarding = () => {
             </span>
             <span className="text-sm font-medium">{Math.round(progress)}%</span>
           </div>
-          <ProgressBar progress={progress} variant="primary" />
+          <ProgressBar value={progress} max={100} />
         </div>
 
         <div className="glass-card rounded-3xl p-8">
