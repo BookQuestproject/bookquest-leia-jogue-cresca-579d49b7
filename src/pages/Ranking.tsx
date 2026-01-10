@@ -1,7 +1,17 @@
 import { useState } from "react";
-import { Trophy, Crown, TrendingUp, BookOpen, Users } from "lucide-react";
+import { Trophy, Crown, TrendingUp, BookOpen, Users, Plus, Check, X, AlertTriangle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import RankingBadge, { RankingTier, tierConfig, getTierFromBooks } from "@/components/RankingBadge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface RankingUser {
   id: number;
@@ -66,8 +76,36 @@ const rankingTiers: { tier: RankingTier; books: string; label: string }[] = [
   { tier: "legendary", books: "200+", label: "Lendário" },
 ];
 
+// Book verification questions for anti-fraud
+interface VerificationQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
+}
+
+const bookVerificationQuestions: Record<string, VerificationQuestion[]> = {
+  default: [
+    {
+      question: "Você realmente leu este livro até o final?",
+      options: ["Sim, li completamente", "Li parcialmente", "Ainda não terminei"],
+      correctIndex: 0,
+    },
+    {
+      question: "Quanto tempo levou para ler este livro?",
+      options: ["Menos de 1 semana", "1-2 semanas", "Mais de 2 semanas", "Mais de 1 mês"],
+      correctIndex: -1, // Any answer is valid
+    },
+  ],
+};
+
 const Ranking = () => {
   const [selectedTier, setSelectedTier] = useState<RankingTier>("bronze");
+  const [isAddBookOpen, setIsAddBookOpen] = useState(false);
+  const [bookTitle, setBookTitle] = useState("");
+  const [bookAuthor, setBookAuthor] = useState("");
+  const [verificationStep, setVerificationStep] = useState(0);
+  const [verificationAnswers, setVerificationAnswers] = useState<number[]>([]);
+  const [isVerified, setIsVerified] = useState<boolean | null>(null);
   const currentUserTier: RankingTier = "bronze";
 
   const tierUsers = allUsers
@@ -77,16 +115,188 @@ const Ranking = () => {
   const top3 = tierUsers.slice(0, 3);
   const restUsers = tierUsers.slice(3);
 
+  const handleAddBook = () => {
+    if (!bookTitle.trim() || !bookAuthor.trim()) return;
+    setVerificationStep(1);
+  };
+
+  const handleVerificationAnswer = (answerIndex: number) => {
+    const newAnswers = [...verificationAnswers, answerIndex];
+    setVerificationAnswers(newAnswers);
+
+    const questions = bookVerificationQuestions.default;
+    if (newAnswers.length >= questions.length) {
+      // Check if first question was answered correctly (user claims to have read the book)
+      const claimedToRead = newAnswers[0] === 0;
+      setIsVerified(claimedToRead);
+      setVerificationStep(2);
+    }
+  };
+
+  const resetAddBook = () => {
+    setBookTitle("");
+    setBookAuthor("");
+    setVerificationStep(0);
+    setVerificationAnswers([]);
+    setIsVerified(null);
+    setIsAddBookOpen(false);
+  };
+
+  const questions = bookVerificationQuestions.default;
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto py-8">
         {/* Header */}
         <header className="mb-10 animate-fade-in">
-          <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Competição por Nível</p>
-          <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Ranking Literário</h1>
-          <p className="text-muted-foreground max-w-xl">
-            Você compete apenas com leitores do seu nível. Suba de patamar lendo mais livros.
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Competição por Nível</p>
+              <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Ranking Literário</h1>
+              <p className="text-muted-foreground max-w-xl">
+                Você compete apenas com leitores do seu nível. Suba de patamar lendo mais livros.
+              </p>
+            </div>
+            
+            {/* Add Book Button */}
+            <Dialog open={isAddBookOpen} onOpenChange={(open) => {
+              if (!open) resetAddBook();
+              else setIsAddBookOpen(true);
+            }}>
+              <DialogTrigger asChild>
+                <Button variant="hero" size="lg" className="gap-2">
+                  <Plus className="w-5 h-5" />
+                  Adicionar Livro
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-secondary" />
+                    {verificationStep === 0 && "Adicionar Livro Lido"}
+                    {verificationStep === 1 && "Verificação de Leitura"}
+                    {verificationStep === 2 && (isVerified ? "Livro Adicionado!" : "Verificação Falhou")}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {verificationStep === 0 && "Informe os dados do livro que você terminou de ler."}
+                    {verificationStep === 1 && "Por favor, responda algumas perguntas para confirmar sua leitura."}
+                    {verificationStep === 2 && (isVerified 
+                      ? "Sua leitura foi verificada com sucesso!" 
+                      : "Não foi possível verificar sua leitura."
+                    )}
+                  </DialogDescription>
+                </DialogHeader>
+
+                {verificationStep === 0 && (
+                  <div className="space-y-4 py-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Título do Livro</label>
+                      <Input
+                        placeholder="Ex: Harry Potter e a Pedra Filosofal"
+                        value={bookTitle}
+                        onChange={(e) => setBookTitle(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Autor</label>
+                      <Input
+                        placeholder="Ex: J.K. Rowling"
+                        value={bookAuthor}
+                        onChange={(e) => setBookAuthor(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex items-start gap-2 p-3 rounded-lg bg-secondary/10 text-sm">
+                      <AlertTriangle className="w-4 h-4 text-secondary mt-0.5 flex-shrink-0" />
+                      <p className="text-muted-foreground">
+                        Sistema antifraude: você precisará responder perguntas para verificar sua leitura.
+                      </p>
+                    </div>
+                    <Button 
+                      variant="hero" 
+                      className="w-full" 
+                      onClick={handleAddBook}
+                      disabled={!bookTitle.trim() || !bookAuthor.trim()}
+                    >
+                      Continuar
+                    </Button>
+                  </div>
+                )}
+
+                {verificationStep === 1 && (
+                  <div className="space-y-4 py-4">
+                    <div className="p-4 bg-muted/30 rounded-lg">
+                      <p className="text-sm text-muted-foreground mb-1">Livro:</p>
+                      <p className="font-semibold">{bookTitle}</p>
+                      <p className="text-sm text-muted-foreground">{bookAuthor}</p>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <p className="font-medium">{questions[verificationAnswers.length]?.question}</p>
+                      <div className="space-y-2">
+                        {questions[verificationAnswers.length]?.options.map((option, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleVerificationAnswer(idx)}
+                            className="w-full p-3 text-left rounded-lg border border-border hover:border-secondary hover:bg-secondary/5 transition-all"
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-center gap-1">
+                      {questions.map((_, idx) => (
+                        <div
+                          key={idx}
+                          className={`w-2 h-2 rounded-full transition-all ${
+                            idx < verificationAnswers.length
+                              ? "bg-secondary"
+                              : idx === verificationAnswers.length
+                              ? "bg-secondary/50"
+                              : "bg-muted"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {verificationStep === 2 && (
+                  <div className="py-6 text-center">
+                    {isVerified ? (
+                      <>
+                        <div className="w-16 h-16 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-4">
+                          <Check className="w-8 h-8 text-success" />
+                        </div>
+                        <p className="font-semibold mb-2">{bookTitle}</p>
+                        <p className="text-sm text-muted-foreground mb-4">por {bookAuthor}</p>
+                        <p className="text-sm text-muted-foreground mb-6">
+                          Parabéns! O livro foi adicionado à sua estante e sua contagem foi atualizada.
+                        </p>
+                        <Button variant="hero" onClick={resetAddBook}>
+                          Fechar
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-16 h-16 rounded-full bg-destructive/20 flex items-center justify-center mx-auto mb-4">
+                          <X className="w-8 h-8 text-destructive" />
+                        </div>
+                        <p className="font-semibold mb-2">Verificação não concluída</p>
+                        <p className="text-sm text-muted-foreground mb-6">
+                          Você indicou que ainda não terminou de ler o livro. Adicione-o quando concluir a leitura!
+                        </p>
+                        <Button variant="outline" onClick={resetAddBook}>
+                          Tentar novamente
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+          </div>
         </header>
 
         {/* Tier Selector */}

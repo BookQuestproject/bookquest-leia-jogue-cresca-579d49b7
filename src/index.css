@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* BookQuest - Light Mode (Marfim) */
+    /* BookQuest - Light Mode (Marfim with Golden Yellow accent) */
     --background: 43 23% 95%;
     --foreground: 220 30% 15%;
 
@@ -16,20 +16,20 @@
     --popover: 43 23% 98%;
     --popover-foreground: 220 30% 15%;
 
-    /* Primary: Royal Blue */
+    /* Primary: Deep Navy Blue */
     --primary: 220 50% 25%;
     --primary-foreground: 43 23% 95%;
 
-    /* Secondary: Wine Ruby */
-    --secondary: 350 45% 28%;
-    --secondary-foreground: 43 23% 95%;
+    /* Secondary: Golden Yellow (was Wine Ruby) */
+    --secondary: 43 75% 45%;
+    --secondary-foreground: 220 30% 12%;
 
     /* Muted */
     --muted: 43 15% 88%;
     --muted-foreground: 220 15% 45%;
 
-    /* Accent: Gold for achievements */
-    --accent: 43 60% 50%;
+    /* Accent: Rich Gold for achievements */
+    --accent: 40 80% 50%;
     --accent-foreground: 220 30% 12%;
 
     --destructive: 0 55% 45%;
@@ -37,51 +37,51 @@
 
     --border: 43 15% 82%;
     --input: 43 15% 90%;
-    --ring: 220 50% 25%;
+    --ring: 43 75% 45%;
 
     --radius: 0.5rem;
 
     /* BookQuest Ranking Colors */
     --bronze: 30 50% 40%;
-    --gold: 43 60% 50%;
+    --gold: 43 70% 50%;
     --sapphire: 210 55% 45%;
     --emerald: 150 40% 35%;
     --amethyst: 275 40% 50%;
     --ruby: 350 55% 40%;
     --diamond: 200 60% 65%;
-    --legendary: 43 70% 55%;
+    --legendary: 40 80% 55%;
 
     /* Book Theme Colors */
-    --theme-fantasy: 350 45% 28%; /* Ruby wine - Harry Potter */
+    --theme-fantasy: 43 75% 45%; /* Golden - Harry Potter */
     --theme-ocean: 210 55% 30%; /* Navy - Percy Jackson */
     --theme-epic: 275 40% 35%; /* Amethyst - Epic fantasy */
     --theme-mystery: 200 35% 30%; /* Petrol - Mystery */
     --theme-adventure: 150 40% 28%; /* Emerald - Adventure */
-    --theme-classic: 350 45% 28%; /* Wine - Classics */
+    --theme-classic: 43 75% 45%; /* Golden - Classics */
 
     --olive: 140 12% 33%;
     --success: 150 40% 35%;
-    --warning: 43 60% 50%;
+    --warning: 43 70% 50%;
     --info: 210 55% 45%;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(220 50% 25%), hsl(220 50% 35%));
-    --gradient-secondary: linear-gradient(135deg, hsl(350 45% 28%), hsl(350 45% 38%));
-    --gradient-achievement: linear-gradient(135deg, hsl(43 60% 45%), hsl(40 70% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(43 75% 40%), hsl(40 80% 55%));
+    --gradient-achievement: linear-gradient(135deg, hsl(40 80% 45%), hsl(35 85% 55%));
 
     --sidebar-background: 43 23% 93%;
     --sidebar-foreground: 220 30% 15%;
-    --sidebar-primary: 350 45% 28%;
-    --sidebar-primary-foreground: 43 23% 95%;
-    --sidebar-accent: 43 15% 88%;
+    --sidebar-primary: 43 75% 45%;
+    --sidebar-primary-foreground: 220 30% 12%;
+    --sidebar-accent: 43 25% 88%;
     --sidebar-accent-foreground: 220 30% 15%;
     --sidebar-border: 43 15% 80%;
-    --sidebar-ring: 220 50% 25%;
+    --sidebar-ring: 43 75% 45%;
   }
 
   .dark {
-    /* Dark theme - Royal Blue Night Sky */
-    --background: 220 40% 10%; /* #1B2A4A base */
+    /* Dark theme - Deep Blue Night Sky with Golden accents */
+    --background: 220 40% 10%; /* Deep navy base */
     --foreground: 43 20% 90%;
 
     --card: 220 35% 14%;
@@ -90,19 +90,19 @@
     --popover: 220 35% 14%;
     --popover-foreground: 43 20% 90%;
 
-    /* Primary: Lighter Royal Blue */
+    /* Primary: Rich Blue */
     --primary: 220 50% 45%;
     --primary-foreground: 43 23% 95%;
 
-    /* Secondary: Wine Ruby (elegant) */
-    --secondary: 350 50% 38%;
-    --secondary-foreground: 43 23% 95%;
+    /* Secondary: Golden Yellow (was Wine Ruby) */
+    --secondary: 43 80% 50%;
+    --secondary-foreground: 220 30% 10%;
 
     --muted: 220 25% 18%;
     --muted-foreground: 43 15% 55%;
 
-    /* Accent: Gold for achievements */
-    --accent: 43 65% 55%;
+    /* Accent: Bright Gold for achievements */
+    --accent: 40 85% 55%;
     --accent-foreground: 220 30% 10%;
 
     --destructive: 0 55% 50%;
@@ -110,16 +110,16 @@
 
     --border: 220 25% 20%;
     --input: 220 25% 16%;
-    --ring: 220 50% 45%;
+    --ring: 43 80% 50%;
 
     --sidebar-background: 220 40% 8%;
     --sidebar-foreground: 43 20% 90%;
-    --sidebar-primary: 350 50% 38%;
-    --sidebar-primary-foreground: 43 23% 95%;
+    --sidebar-primary: 43 80% 50%;
+    --sidebar-primary-foreground: 220 30% 10%;
     --sidebar-accent: 220 25% 16%;
     --sidebar-accent-foreground: 43 20% 90%;
     --sidebar-border: 220 25% 18%;
-    --sidebar-ring: 220 50% 45%;
+    --sidebar-ring: 43 80% 50%;
   }
 }
 
@@ -144,7 +144,7 @@
     @apply font-bold tracking-tight;
   }
 
-  /* Starry Background for Dark Mode */
+  /* Minimalist Starry Background for Dark Mode - Subtle & Elegant */
   .dark body::before {
     content: '';
     position: fixed;
@@ -153,25 +153,18 @@
     right: 0;
     bottom: 0;
     background-image: 
-      /* Radial glow behind content */
-      radial-gradient(ellipse 80% 50% at 50% 30%, hsl(220 50% 20% / 0.4) 0%, transparent 60%),
-      /* Subtle micro stars */
-      radial-gradient(1px 1px at 20% 30%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
-      radial-gradient(1px 1px at 40% 70%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
-      radial-gradient(1px 1px at 50% 20%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
-      radial-gradient(1px 1px at 60% 55%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
-      radial-gradient(1px 1px at 70% 40%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
-      radial-gradient(1px 1px at 80% 60%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
-      radial-gradient(1px 1px at 90% 20%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
-      radial-gradient(1px 1px at 10% 60%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
-      radial-gradient(1px 1px at 30% 80%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
-      radial-gradient(1px 1px at 15% 45%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
-      radial-gradient(1px 1px at 85% 75%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
-      radial-gradient(1px 1px at 55% 85%, hsl(43 30% 70% / 0.4) 1px, transparent 0),
-      radial-gradient(1px 1px at 25% 15%, hsl(43 30% 70% / 0.5) 1px, transparent 0),
-      radial-gradient(1px 1px at 75% 10%, hsl(43 30% 70% / 0.3) 1px, transparent 0),
-      radial-gradient(1px 1px at 45% 45%, hsl(43 30% 70% / 0.4) 1px, transparent 0);
-    background-size: 100% 100%, 250px 250px, 300px 300px, 350px 350px, 400px 400px, 280px 280px, 320px 320px, 260px 260px, 340px 340px, 290px 290px, 310px 310px, 270px 270px, 330px 330px, 380px 380px, 360px 360px, 240px 240px;
+      /* Very subtle radial glow */
+      radial-gradient(ellipse 60% 40% at 50% 30%, hsl(220 45% 18% / 0.25) 0%, transparent 70%),
+      /* Minimalist micro stars - smaller, softer, fewer */
+      radial-gradient(0.5px 0.5px at 15% 25%, hsl(43 20% 75% / 0.15) 1px, transparent 0),
+      radial-gradient(0.5px 0.5px at 35% 65%, hsl(43 20% 75% / 0.12) 1px, transparent 0),
+      radial-gradient(0.5px 0.5px at 55% 15%, hsl(43 20% 75% / 0.15) 1px, transparent 0),
+      radial-gradient(0.5px 0.5px at 75% 45%, hsl(43 20% 75% / 0.10) 1px, transparent 0),
+      radial-gradient(0.5px 0.5px at 85% 70%, hsl(43 20% 75% / 0.12) 1px, transparent 0),
+      radial-gradient(0.5px 0.5px at 25% 80%, hsl(43 20% 75% / 0.10) 1px, transparent 0),
+      radial-gradient(0.5px 0.5px at 65% 35%, hsl(43 20% 75% / 0.12) 1px, transparent 0),
+      radial-gradient(0.5px 0.5px at 45% 55%, hsl(43 20% 75% / 0.08) 1px, transparent 0);
+    background-size: 100% 100%, 400px 400px, 450px 450px, 500px 500px, 380px 380px, 420px 420px, 480px 480px, 520px 520px, 550px 550px;
     pointer-events: none;
     z-index: -1;
   }
@@ -516,12 +509,12 @@
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(350 45% 45%));
+    background-image: linear-gradient(135deg, hsl(var(--secondary)), hsl(40 80% 55%));
   }
 
   .text-gradient-accent {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(40 70% 60%));
+    background-image: linear-gradient(135deg, hsl(var(--accent)), hsl(35 85% 60%));
   }
 
   .text-gold {

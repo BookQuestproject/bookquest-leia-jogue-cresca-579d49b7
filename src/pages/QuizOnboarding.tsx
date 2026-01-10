@@ -126,46 +126,83 @@ interface BookRecommendation {
   level: "iniciante" | "intermediario" | "avancado";
 }
 
+// Page limits by experience level for progressive difficulty
+const pageLimitsByLevel = {
+  iniciante: { min: 0, max: 300 },       // Beginners: up to 300 pages
+  intermediario: { min: 200, max: 600 }, // Intermediate: 200-600 pages
+  avancado: { min: 400, max: 2000 },     // Advanced: 400+ pages
+};
+
 const genreBooks: Record<string, BookRecommendation[]> = {
   fantasia: [
+    // Iniciante (shorter books)
     { title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", pages: 96, readingTime: "2h", level: "iniciante" },
-    { title: "Percy Jackson - O Ladrão de Raios", author: "Rick Riordan", pages: 400, readingTime: "8h", level: "iniciante" },
+    { title: "Coraline", author: "Neil Gaiman", pages: 176, readingTime: "3h", level: "iniciante" },
+    { title: "O Hobbit", author: "J.R.R. Tolkien", pages: 288, readingTime: "6h", level: "iniciante" },
+    // Intermediário
     { title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", pages: 264, readingTime: "6h", level: "intermediario" },
-    { title: "As Crônicas de Nárnia", author: "C.S. Lewis", pages: 768, readingTime: "16h", level: "intermediario" },
-    { title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", pages: 1200, readingTime: "30h", level: "avancado" },
+    { title: "Percy Jackson - O Ladrão de Raios", author: "Rick Riordan", pages: 400, readingTime: "8h", level: "intermediario" },
+    { title: "As Crônicas de Nárnia", author: "C.S. Lewis", pages: 512, readingTime: "12h", level: "intermediario" },
+    // Avançado (longer books)
     { title: "O Nome do Vento", author: "Patrick Rothfuss", pages: 656, readingTime: "15h", level: "avancado" },
+    { title: "O Senhor dos Anéis - Trilogia", author: "J.R.R. Tolkien", pages: 1200, readingTime: "30h", level: "avancado" },
+    { title: "Duna", author: "Frank Herbert", pages: 896, readingTime: "22h", level: "avancado" },
   ],
   misterio: [
-    { title: "A Garota no Trem", author: "Paula Hawkins", pages: 336, readingTime: "7h", level: "iniciante" },
+    // Iniciante
     { title: "E Não Sobrou Nenhum", author: "Agatha Christie", pages: 272, readingTime: "5h", level: "iniciante" },
+    { title: "Assassinato no Expresso do Oriente", author: "Agatha Christie", pages: 208, readingTime: "4h", level: "iniciante" },
+    { title: "O Caso dos Dez Negrinhos", author: "Agatha Christie", pages: 192, readingTime: "4h", level: "iniciante" },
+    // Intermediário
+    { title: "A Garota no Trem", author: "Paula Hawkins", pages: 336, readingTime: "7h", level: "intermediario" },
     { title: "Gone Girl", author: "Gillian Flynn", pages: 432, readingTime: "9h", level: "intermediario" },
     { title: "O Código Da Vinci", author: "Dan Brown", pages: 480, readingTime: "10h", level: "intermediario" },
-    { title: "Sherlock Holmes - Obra Completa", author: "Arthur Conan Doyle", pages: 1408, readingTime: "35h", level: "avancado" },
+    // Avançado
     { title: "O Silêncio dos Inocentes", author: "Thomas Harris", pages: 352, readingTime: "8h", level: "avancado" },
+    { title: "Sherlock Holmes - Obra Completa", author: "Arthur Conan Doyle", pages: 1408, readingTime: "35h", level: "avancado" },
+    { title: "Crime e Castigo", author: "Fiódor Dostoiévski", pages: 672, readingTime: "16h", level: "avancado" },
   ],
   romance: [
+    // Iniciante
     { title: "A Culpa é das Estrelas", author: "John Green", pages: 288, readingTime: "5h", level: "iniciante" },
-    { title: "Como Eu Era Antes de Você", author: "Jojo Moyes", pages: 384, readingTime: "7h", level: "iniciante" },
-    { title: "Orgulho e Preconceito", author: "Jane Austen", pages: 432, readingTime: "9h", level: "intermediario" },
+    { title: "Querido John", author: "Nicholas Sparks", pages: 276, readingTime: "5h", level: "iniciante" },
+    { title: "Simplesmente Acontece", author: "Cecelia Ahern", pages: 256, readingTime: "5h", level: "iniciante" },
+    // Intermediário
+    { title: "Como Eu Era Antes de Você", author: "Jojo Moyes", pages: 384, readingTime: "7h", level: "intermediario" },
     { title: "Me Chame Pelo Seu Nome", author: "André Aciman", pages: 248, readingTime: "5h", level: "intermediario" },
-    { title: "Anna Karenina", author: "Liev Tolstói", pages: 864, readingTime: "20h", level: "avancado" },
+    { title: "Orgulho e Preconceito", author: "Jane Austen", pages: 432, readingTime: "9h", level: "intermediario" },
+    // Avançado
     { title: "O Morro dos Ventos Uivantes", author: "Emily Brontë", pages: 400, readingTime: "9h", level: "avancado" },
+    { title: "Anna Karenina", author: "Liev Tolstói", pages: 864, readingTime: "20h", level: "avancado" },
+    { title: "Os Miseráveis", author: "Victor Hugo", pages: 1488, readingTime: "35h", level: "avancado" },
   ],
   "nao-ficcao": [
-    { title: "O Poder do Hábito", author: "Charles Duhigg", pages: 408, readingTime: "8h", level: "iniciante" },
-    { title: "Mindset", author: "Carol S. Dweck", pages: 320, readingTime: "6h", level: "iniciante" },
+    // Iniciante
+    { title: "O Poder do Hábito", author: "Charles Duhigg", pages: 288, readingTime: "6h", level: "iniciante" },
+    { title: "Pai Rico, Pai Pobre", author: "Robert Kiyosaki", pages: 208, readingTime: "4h", level: "iniciante" },
+    { title: "Mindset", author: "Carol S. Dweck", pages: 280, readingTime: "6h", level: "iniciante" },
+    // Intermediário
     { title: "Sapiens", author: "Yuval Noah Harari", pages: 464, readingTime: "10h", level: "intermediario" },
-    { title: "Rápido e Devagar", author: "Daniel Kahneman", pages: 608, readingTime: "14h", level: "intermediario" },
+    { title: "Thinking, Fast and Slow", author: "Daniel Kahneman", pages: 512, readingTime: "12h", level: "intermediario" },
+    { title: "O Gene Egoísta", author: "Richard Dawkins", pages: 496, readingTime: "11h", level: "intermediario" },
+    // Avançado
     { title: "Uma Breve História do Tempo", author: "Stephen Hawking", pages: 256, readingTime: "7h", level: "avancado" },
-    { title: "O Gene Egoísta", author: "Richard Dawkins", pages: 544, readingTime: "12h", level: "avancado" },
+    { title: "Cosmos", author: "Carl Sagan", pages: 432, readingTime: "10h", level: "avancado" },
+    { title: "Homo Deus", author: "Yuval Noah Harari", pages: 528, readingTime: "13h", level: "avancado" },
   ],
   aventura: [
-    { title: "As Aventuras de Pi", author: "Yann Martel", pages: 320, readingTime: "6h", level: "iniciante" },
-    { title: "Jogos Vorazes", author: "Suzanne Collins", pages: 400, readingTime: "8h", level: "iniciante" },
+    // Iniciante
+    { title: "As Aventuras de Pi", author: "Yann Martel", pages: 288, readingTime: "6h", level: "iniciante" },
+    { title: "A Volta ao Mundo em 80 Dias", author: "Júlio Verne", pages: 224, readingTime: "5h", level: "iniciante" },
+    { title: "Robinson Crusoé", author: "Daniel Defoe", pages: 272, readingTime: "6h", level: "iniciante" },
+    // Intermediário
+    { title: "Jogos Vorazes", author: "Suzanne Collins", pages: 400, readingTime: "8h", level: "intermediario" },
     { title: "Maze Runner", author: "James Dashner", pages: 400, readingTime: "8h", level: "intermediario" },
     { title: "Divergente", author: "Veronica Roth", pages: 496, readingTime: "10h", level: "intermediario" },
+    // Avançado
     { title: "A Ilha do Tesouro", author: "Robert Louis Stevenson", pages: 304, readingTime: "7h", level: "avancado" },
     { title: "20.000 Léguas Submarinas", author: "Júlio Verne", pages: 448, readingTime: "10h", level: "avancado" },
+    { title: "Moby Dick", author: "Herman Melville", pages: 752, readingTime: "18h", level: "avancado" },
   ],
 };
 
@@ -269,16 +306,35 @@ const QuizOnboarding = () => {
 
   const getRecommendedBooks = () => {
     const allBooks = genreBooks[resultGenre] || [];
+    const pageLimit = pageLimitsByLevel[profile.level];
     
     return allBooks.filter(book => {
-      if (profile.level === "iniciante" && book.level !== "iniciante") return false;
-      if (profile.level === "intermediario" && book.level === "avancado") return false;
+      // Filter by experience level
+      if (book.level !== profile.level) {
+        // Allow one level up/down for variety
+        if (profile.level === "iniciante" && book.level === "avancado") return false;
+        if (profile.level === "avancado" && book.level === "iniciante") return false;
+      }
       
-      const estimatedDays = parseInt(book.readingTime) / (profile.timePerDay / 60);
-      if (profile.timePerDay <= 15 && estimatedDays > 30) return false;
+      // Apply page limits based on user level
+      if (book.pages > pageLimit.max) return false;
+      
+      // Time filter - estimate based on daily reading time
+      const readingHours = parseInt(book.readingTime);
+      const estimatedDays = readingHours / (profile.timePerDay / 60);
+      
+      // For beginners with little time, prefer shorter books
+      if (profile.level === "iniciante" && profile.timePerDay <= 15 && estimatedDays > 14) return false;
       
       return true;
-    }).slice(0, 5);
+    })
+    // Sort by pages ascending for beginners, descending for advanced
+    .sort((a, b) => {
+      if (profile.level === "iniciante") return a.pages - b.pages;
+      if (profile.level === "avancado") return b.pages - a.pages;
+      return 0;
+    })
+    .slice(0, 5);
   };
 
   const handleFinishQuiz = async () => {
