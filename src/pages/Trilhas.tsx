@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Castle, Anchor, Feather, Compass, Skull } from "lucide-react";
+import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,12 +9,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Chapter {
   id: number;
   title: string;
   status: "completed" | "current" | "locked";
   icon: string;
+  currentPage?: number;
+  totalPages?: number;
   question?: {
     text: string;
     options: string[];
@@ -32,7 +40,8 @@ interface BookTrail {
   chapters: Chapter[];
   isPremium: boolean;
   genre: string;
-  themeColor: string; // HSL color for dynamic theming
+  themeColor: string;
+  coverImage?: string;
 }
 
 const bookTrails: BookTrail[] = [
@@ -40,17 +49,19 @@ const bookTrails: BookTrail[] = [
     id: "harry-potter-1",
     title: "Harry Potter e a Pedra Filosofal",
     author: "J.K. Rowling",
-    cover: "📘",
+    cover: "🏰",
     totalChapters: 17,
     isPremium: false,
     genre: "Fantasia",
-    themeColor: "350 45% 38%", // Ruby wine
+    themeColor: "350 45% 32%", // Deep wine/burgundy
     chapters: [
       {
         id: 1,
         title: "O Menino que Sobreviveu",
-        status: "completed",
+        status: "current",
         icon: "🏠",
+        currentPage: 12,
+        totalPages: 24,
         question: {
           text: "Por que os Dursley tinham tanto medo de que os vizinhos descobrissem sobre os Potter?",
           options: [
@@ -66,89 +77,69 @@ const bookTrails: BookTrail[] = [
       {
         id: 2,
         title: "O Vidro que Sumiu",
-        status: "completed",
+        status: "locked",
         icon: "🐍",
-        question: {
-          text: "O que a cena do zoológico revela sobre a relação entre Harry e sua magia?",
-          options: [
-            "Harry controla perfeitamente seus poderes",
-            "A magia de Harry se manifesta em momentos de emoção intensa",
-            "Harry precisa de uma varinha para fazer mágica",
-            "Harry aprendeu a fazer mágica sozinho"
-          ],
-          correctAnswer: 1,
-          explanation: "A magia acidental de Harry se manifesta quando ele está emocionalmente afetado."
-        }
+        totalPages: 18,
       },
       {
         id: 3,
         title: "As Cartas de Ninguém",
-        status: "current",
+        status: "locked",
         icon: "✉️",
-        question: {
-          text: "Qual o significado simbólico da persistência das cartas chegando cada vez em maior quantidade?",
-          options: [
-            "Hogwarts estava desperdiçando recursos",
-            "Era um erro do sistema de correio mágico",
-            "Representava que o destino de Harry era inevitável",
-            "Os bruxos estavam tentando irritar os Dursley"
-          ],
-          correctAnswer: 2,
-          explanation: "As cartas simbolizam que não se pode fugir do próprio destino."
-        }
+        totalPages: 22,
       },
-      { id: 4, title: "O Guardião das Chaves", status: "locked", icon: "🗝️" },
-      { id: 5, title: "O Beco Diagonal", status: "locked", icon: "🏪" },
-      { id: 6, title: "A Viagem da Plataforma", status: "locked", icon: "🚂" },
-      { id: 7, title: "O Chapéu Seletor", status: "locked", icon: "🎩" },
-      { id: 8, title: "O Mestre das Poções", status: "locked", icon: "⚗️" },
-      { id: 9, title: "O Duelo à Meia-Noite", status: "locked", icon: "⚔️" },
-      { id: 10, title: "O Espelho de Ojesed", status: "locked", icon: "🪞" },
+      { id: 4, title: "O Guardião das Chaves", status: "locked", icon: "🗝️", totalPages: 20 },
+      { id: 5, title: "O Beco Diagonal", status: "locked", icon: "🏪", totalPages: 28 },
+      { id: 6, title: "A Viagem da Plataforma", status: "locked", icon: "🚂", totalPages: 18 },
+      { id: 7, title: "O Chapéu Seletor", status: "locked", icon: "🎩", totalPages: 16 },
+      { id: 8, title: "O Mestre das Poções", status: "locked", icon: "⚗️", totalPages: 20 },
+      { id: 9, title: "O Duelo à Meia-Noite", status: "locked", icon: "⚔️", totalPages: 22 },
+      { id: 10, title: "O Espelho de Ojesed", status: "locked", icon: "🪞", totalPages: 24 },
     ]
   },
   {
     id: "percy-jackson-1",
     title: "Percy Jackson e o Ladrão de Raios",
     author: "Rick Riordan",
-    cover: "📗",
+    cover: "⚡",
     totalChapters: 22,
     isPremium: false,
     genre: "Mitologia",
-    themeColor: "210 55% 35%", // Navy ocean
+    themeColor: "210 55% 30%", // Deep ocean blue
     chapters: [
-      { id: 1, title: "Eu Vaporizo Minha Professora", status: "completed", icon: "⚡" },
-      { id: 2, title: "Três Velhas Tricotando", status: "current", icon: "🧶" },
-      { id: 3, title: "Grover Perde as Calças", status: "locked", icon: "🐐" },
+      { id: 1, title: "Eu Vaporizo Minha Professora", status: "completed", icon: "⚡", currentPage: 15, totalPages: 15 },
+      { id: 2, title: "Três Velhas Tricotando", status: "current", icon: "🧶", currentPage: 8, totalPages: 18 },
+      { id: 3, title: "Grover Perde as Calças", status: "locked", icon: "🐐", totalPages: 20 },
     ]
   },
   {
     id: "dom-casmurro",
     title: "Dom Casmurro",
     author: "Machado de Assis",
-    cover: "📕",
+    cover: "📜",
     totalChapters: 15,
     isPremium: true,
     genre: "Romance Brasileiro",
-    themeColor: "350 45% 32%", // Deep wine
+    themeColor: "35 40% 28%", // Sepia brown
     chapters: [
-      { id: 1, title: "Do título", status: "locked", icon: "📜" },
-      { id: 2, title: "Do livro", status: "locked", icon: "📖" },
-      { id: 3, title: "A denúncia", status: "locked", icon: "🔔" },
+      { id: 1, title: "Do título", status: "locked", icon: "📜", totalPages: 8 },
+      { id: 2, title: "Do livro", status: "locked", icon: "📖", totalPages: 10 },
+      { id: 3, title: "A denúncia", status: "locked", icon: "🔔", totalPages: 12 },
     ]
   },
   {
     id: "o-pequeno-principe",
     title: "O Pequeno Príncipe",
     author: "Antoine de Saint-Exupéry",
-    cover: "📙",
+    cover: "⭐",
     totalChapters: 12,
     isPremium: false,
     genre: "Fábula",
-    themeColor: "40 60% 45%", // Warm amber
+    themeColor: "40 65% 45%", // Golden amber
     chapters: [
-      { id: 1, title: "O Desenho", status: "completed", icon: "🎨" },
-      { id: 2, title: "O Encontro", status: "current", icon: "⭐" },
-      { id: 3, title: "O Asteroide B-612", status: "locked", icon: "🪐" },
+      { id: 1, title: "O Desenho", status: "completed", icon: "🎨", currentPage: 6, totalPages: 6 },
+      { id: 2, title: "O Encontro", status: "current", icon: "⭐", currentPage: 3, totalPages: 10 },
+      { id: 3, title: "O Asteroide B-612", status: "locked", icon: "🪐", totalPages: 8 },
     ]
   },
 ];
@@ -201,155 +192,213 @@ const Trilhas = () => {
       <Layout isPremium={isPremium}>
         <div className="max-w-4xl mx-auto py-8">
           {/* Back Button */}
-          <Link to="/trilhas" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 text-sm">
+          <Link to="/trilhas" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 text-sm">
             <ArrowLeft className="w-4 h-4" />
             Voltar às trilhas
           </Link>
 
-          {/* Book Header */}
-          <header className="mb-10 animate-fade-in">
-            <div className="flex items-start gap-6">
-              <div 
-                className="w-24 h-32 rounded flex items-center justify-center flex-shrink-0"
-                style={{ 
-                  background: `linear-gradient(135deg, hsl(${themeColor} / 0.2), hsl(${themeColor} / 0.1))`,
-                  border: `2px solid hsl(${themeColor} / 0.3)`,
-                }}
-              >
-                <span className="text-5xl">{book.cover}</span>
-              </div>
-              <div className="flex-1">
-                <p 
-                  className="text-xs uppercase tracking-wider font-medium mb-1"
-                  style={{ color: `hsl(${themeColor})` }}
-                >
-                  {book.genre}
+          {/* Book Header - Burgundy banner like in reference */}
+          <header 
+            className="rounded-xl p-6 mb-8 animate-fade-in"
+            style={{
+              background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 8 + '%')}))`,
+            }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
+                  <BookOpen className="w-4 h-4" />
+                  Livro atual
+                </div>
+                <h1 className="text-2xl lg:text-3xl font-serif font-semibold text-white mb-1">
+                  {book.title}
+                </h1>
+                <p className="text-white/70">
+                  Capítulo {currentChapter?.id || 1} de {book.totalChapters}
                 </p>
-                <h1 className="text-2xl lg:text-3xl font-serif font-semibold mb-1">{book.title}</h1>
-                <p className="text-muted-foreground mb-4">{book.author}</p>
-                
-                <div className="flex items-center gap-4 text-sm">
-                  <span className="text-muted-foreground">{completedChapters} de {book.totalChapters} capítulos</span>
-                  <span className="font-semibold" style={{ color: `hsl(${themeColor})` }}>
-                    {Math.round(progress)}% concluído
-                  </span>
-                </div>
-                
-                <div className="progress-bar mt-3 max-w-sm">
-                  <div 
-                    className="progress-bar-fill"
-                    style={{ 
-                      width: `${progress}%`,
-                      background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 12 + '%')}))`,
-                    }}
-                  />
-                </div>
               </div>
+              <Button 
+                variant="outline" 
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                Ver Trilha
+              </Button>
             </div>
           </header>
 
-          {/* Current Chapter CTA */}
+          {/* Continue Reading CTA */}
           {currentChapter && (
-            <div 
-              className="journey-card current p-5 mb-8 animate-fade-in active-glow" 
-              style={{ 
-                animationDelay: "0.1s",
-                borderColor: `hsl(${themeColor} / 0.5)`,
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{currentChapter.icon}</span>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Continue de onde parou</p>
-                    <p className="font-semibold">Capítulo {currentChapter.id}: {currentChapter.title}</p>
-                  </div>
-                </div>
-                <Button 
-                  size="sm" 
-                  onClick={() => handleChapterClick(currentChapter)}
-                  style={{ 
-                    background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
-                  }}
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  Continuar
-                </Button>
-              </div>
+            <div className="flex justify-center mb-8">
+              <Button 
+                size="lg"
+                onClick={() => handleChapterClick(currentChapter)}
+                className="gap-2 px-8"
+                style={{ 
+                  background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                }}
+              >
+                <Play className="w-5 h-5" />
+                Continuar Leitura
+              </Button>
             </div>
           )}
 
-          {/* Chapters as Mini-Books Grid */}
-          <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <h2 className="font-serif text-xl font-semibold mb-6">Coleção de Capítulos</h2>
-            
-            {/* Mini-books grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-              {book.chapters.map((chapter, index) => (
-                <button
-                  key={chapter.id}
-                  onClick={() => handleChapterClick(chapter)}
-                  disabled={chapter.status === "locked"}
-                  className={`mini-book ${chapter.status} aspect-[3/4]`}
-                  style={chapter.status === "current" ? { 
-                    borderColor: `hsl(${themeColor} / 0.6)`,
-                    boxShadow: `0 0 20px hsl(${themeColor} / 0.25)`,
-                  } : chapter.status === "completed" ? {
-                    borderColor: `hsl(var(--accent) / 0.5)`,
-                  } : {}}
-                >
-                  {/* Book spine */}
-                  <div 
-                    className="absolute left-1 top-3 bottom-3 w-1 rounded"
-                    style={{ 
-                      background: chapter.status === "current" 
-                        ? `hsl(${themeColor})` 
-                        : chapter.status === "completed" 
-                        ? `hsl(var(--accent))` 
-                        : `hsl(var(--muted-foreground) / 0.2)`,
-                      boxShadow: chapter.status === "current" ? `0 0 8px hsl(${themeColor} / 0.6)` : 'none',
-                    }}
-                  />
-                  
-                  {/* Icon */}
-                  <div className="text-2xl mb-2 ml-2">
-                    {chapter.status === "locked" ? (
-                      <Lock className="w-5 h-5 text-muted-foreground/50" />
-                    ) : chapter.status === "completed" ? (
-                      <span className="relative">
-                        {chapter.icon}
-                        <CheckCircle className="w-4 h-4 text-accent absolute -bottom-1 -right-1" />
-                      </span>
-                    ) : (
-                      <span>{chapter.icon}</span>
+          {/* Chapters as Open/Closed Books */}
+          <div className="space-y-4 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            {book.chapters.map((chapter, index) => {
+              const isLocked = chapter.status === "locked";
+              const isCurrent = chapter.status === "current";
+              const isCompleted = chapter.status === "completed";
+              const isOpenBook = !isLocked;
+
+              return (
+                <TooltipProvider key={chapter.id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => handleChapterClick(chapter)}
+                        disabled={isLocked}
+                        className={`
+                          relative w-full rounded-lg overflow-hidden transition-all duration-300 text-left
+                          ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer hover:-translate-y-1'}
+                        `}
+                        style={{
+                          background: isOpenBook 
+                            ? `linear-gradient(145deg, hsl(43 30% 94%), hsl(35 25% 88%))`
+                            : `linear-gradient(145deg, hsl(${themeColor} / 0.12), hsl(${themeColor} / 0.06))`,
+                          border: isCurrent 
+                            ? `2px solid hsl(${themeColor})` 
+                            : `1px solid hsl(${themeColor} / ${isOpenBook ? '0.35' : '0.2'})`,
+                          minHeight: '100px',
+                          boxShadow: isCurrent 
+                            ? `0 8px 32px hsl(${themeColor} / 0.25)`
+                            : isOpenBook
+                            ? `0 4px 16px hsl(${themeColor} / 0.1)`
+                            : 'none',
+                        }}
+                      >
+                        {/* Paper texture for open books */}
+                        {isOpenBook && (
+                          <div 
+                            className="absolute inset-0 opacity-20"
+                            style={{
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                            }}
+                          />
+                        )}
+
+                        {/* Left book spine effect for open books */}
+                        {isOpenBook && (
+                          <div 
+                            className="absolute left-0 top-0 bottom-0 w-3"
+                            style={{
+                              background: `linear-gradient(90deg, hsl(${themeColor} / 0.25), transparent)`,
+                            }}
+                          />
+                        )}
+
+                        <div className="relative p-4 flex items-center gap-4">
+                          {/* Book cover / illustration area */}
+                          <div 
+                            className="w-20 h-24 rounded flex-shrink-0 flex items-center justify-center overflow-hidden"
+                            style={{
+                              background: `linear-gradient(135deg, hsl(${themeColor} / ${isOpenBook ? '0.2' : '0.15'}), hsl(${themeColor} / 0.08))`,
+                              border: `1px solid hsl(${themeColor} / 0.25)`,
+                            }}
+                          >
+                            <span className={`text-3xl ${isLocked ? 'opacity-50' : ''}`}>{chapter.icon}</span>
+                          </div>
+
+                          {/* Chapter info */}
+                          <div className="flex-1">
+                            <p 
+                              className="text-xs font-medium mb-1"
+                              style={{ color: `hsl(${themeColor})`, opacity: isLocked ? 0.6 : 1 }}
+                            >
+                              Capítulo {chapter.id}
+                            </p>
+                            <p className={`font-serif text-sm font-semibold line-clamp-2 mb-1 ${isLocked ? 'text-foreground/60' : 'text-foreground'}`}>
+                              {chapter.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Capítulo {chapter.id} de {book.totalChapters}
+                            </p>
+                          </div>
+
+                          {/* Right side: Lock or Bookmark */}
+                          {isLocked ? (
+                            <div 
+                              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                              style={{
+                                background: `hsl(${themeColor} / 0.1)`,
+                                border: `1px solid hsl(${themeColor} / 0.2)`,
+                              }}
+                            >
+                              <Lock className="w-4 h-4 text-muted-foreground/50" />
+                            </div>
+                          ) : (
+                            <div className="flex-shrink-0 relative group">
+                              {/* Bookmark marker */}
+                              <div 
+                                className="w-6 h-16 flex items-start justify-center relative transition-transform group-hover:scale-110"
+                                style={{
+                                  clipPath: 'polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%)',
+                                  background: isCompleted 
+                                    ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.85))`
+                                    : `linear-gradient(180deg, hsl(${themeColor}), hsl(${themeColor} / 0.85))`,
+                                  boxShadow: `2px 4px 8px hsl(${themeColor} / 0.3)`,
+                                }}
+                              >
+                                {isCompleted && (
+                                  <CheckCircle className="w-3 h-3 text-white mt-2" />
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Current chapter indicator bar */}
+                        {isCurrent && (
+                          <div 
+                            className="absolute bottom-0 left-0 right-0 h-1"
+                            style={{
+                              background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor} / 0.6))`,
+                            }}
+                          />
+                        )}
+                      </button>
+                    </TooltipTrigger>
+                    {!isLocked && (
+                      <TooltipContent side="right" className="p-3">
+                        {chapter.currentPage ? (
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground mb-1">Sua página atual</p>
+                            <p className="font-bold text-lg">{chapter.currentPage}/{chapter.totalPages}</p>
+                            <button className="text-xs text-primary hover:underline mt-1">
+                              Atualizar página
+                            </button>
+                          </div>
+                        ) : (
+                          <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
+                            <Plus className="w-4 h-4" />
+                            Marcar página atual
+                          </button>
+                        )}
+                      </TooltipContent>
                     )}
-                  </div>
-                  
-                  {/* Chapter number */}
-                  <span className="text-xs font-bold text-muted-foreground ml-2">
-                    {chapter.id}
-                  </span>
-                  
-                  {/* Title */}
-                  <span className="text-[10px] text-muted-foreground/70 line-clamp-2 text-center mt-1 ml-2 px-1">
-                    {chapter.title}
-                  </span>
-                  
-                  {/* Current badge */}
-                  {chapter.status === "current" && (
-                    <span 
-                      className="absolute -top-2 right-1 text-[10px] font-bold px-1.5 py-0.5 rounded"
-                      style={{ 
-                        backgroundColor: `hsl(${themeColor})`,
-                        color: 'white',
-                      }}
-                    >
-                      ▶
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })}
+          </div>
+
+          {/* Next chapters hint */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+              <ArrowLeft className="w-4 h-4 rotate-180" />
+              Próximo
+            </p>
           </div>
 
           {/* Question Modal */}
