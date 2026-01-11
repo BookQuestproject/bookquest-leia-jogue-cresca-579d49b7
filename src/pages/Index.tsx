@@ -111,7 +111,9 @@ const Index = () => {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto py-6 lg:py-10">
+      <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
+        {/* Mini Stars Background */}
+        <div className="mini-stars-bg" />
         {/* Header - Current Journey */}
         <header className="mb-10 animate-fade-in">
           <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -166,6 +168,69 @@ const Index = () => {
                 <Play className="w-5 h-5" />
                 Iniciar Leitura
               </Button>
+            </div>
+
+            {/* Current Trail Card - Styled like Trilhas page */}
+            <div 
+              className="rounded-xl p-5 mb-8 animate-fade-in relative overflow-hidden"
+              style={{
+                background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                animationDelay: "0.15s"
+              }}
+            >
+              {/* Decorative stars inside card */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-3 right-8 w-1 h-1 bg-white/20 rounded-full" />
+                <div className="absolute top-6 right-16 w-0.5 h-0.5 bg-white/15 rounded-full" />
+                <div className="absolute bottom-4 right-12 w-1 h-1 bg-white/10 rounded-full" />
+                <div className="absolute top-8 right-24 w-0.5 h-0.5 bg-white/20 rounded-full" />
+              </div>
+
+              <div className="flex items-center justify-between relative z-10">
+                <div className="flex items-center gap-4">
+                  <div 
+                    className="w-14 h-14 rounded-lg flex items-center justify-center bg-white/10 backdrop-blur-sm"
+                  >
+                    <span className="text-2xl">🏰</span>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 text-white/70 text-xs mb-1">
+                      <BookOpen className="w-3 h-3" />
+                      Trilha atual
+                    </div>
+                    <h3 className="text-lg font-serif font-semibold text-white mb-0.5">
+                      {userStats.currentBook}
+                    </h3>
+                    <p className="text-white/70 text-sm">
+                      Capítulo {userStats.currentChapter} de {userStats.totalChapters}
+                    </p>
+                  </div>
+                </div>
+                <Link to="/trilhas/harry-potter-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="bg-white/10 border-white/30 text-white hover:bg-white/20 gap-2"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    Ver Trilha
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Progress bar inside trail card */}
+              <div className="mt-4 pt-3 border-t border-white/20 relative z-10">
+                <div className="flex justify-between text-xs text-white/70 mb-2">
+                  <span>Progresso</span>
+                  <span className="font-semibold text-white">{Math.round((userStats.currentChapter / userStats.totalChapters) * 100)}%</span>
+                </div>
+                <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-white/80 rounded-full transition-all duration-500"
+                    style={{ width: `${(userStats.currentChapter / userStats.totalChapters) * 100}%` }}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Chapter Timeline as Mini-Books */}
