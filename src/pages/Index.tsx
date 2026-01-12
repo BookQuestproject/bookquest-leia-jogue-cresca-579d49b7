@@ -246,61 +246,128 @@ const Index = () => {
                 </Link>
               </div>
               
-              {/* Journey Path with Mini-Books */}
-              <div className="relative">
-                {/* Connection line */}
-                <div className="absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 z-0"
-                  style={{ 
-                    background: `linear-gradient(90deg, hsl(${themeColor} / 0.5) 0%, hsl(var(--muted) / 0.3) 100%)` 
-                  }}
-                />
-                
-                <div className="flex gap-4 overflow-x-auto pb-4 relative z-10">
-                  {chapters.map((chapter, index) => (
+              {/* Chapter Cards - Same style as Trilhas page */}
+              <div className="space-y-3">
+                {chapters.slice(0, 4).map((chapter) => {
+                  const isLocked = chapter.status === "locked";
+                  const isCurrent = chapter.status === "current";
+                  const isCompleted = chapter.status === "completed";
+                  const isOpenBook = !isLocked;
+
+                  return (
                     <button
                       key={chapter.id}
                       onClick={() => chapter.status === "current" && handleContinueReading()}
-                      disabled={chapter.status === "locked"}
-                      className={`mini-book ${chapter.status} flex-shrink-0`}
-                      style={chapter.status === "current" ? { 
-                        borderColor: `hsl(${themeColor} / 0.6)`,
-                        boxShadow: `0 0 20px hsl(${themeColor} / 0.2)`,
-                      } : {}}
+                      disabled={isLocked}
+                      className={`
+                        relative w-full rounded-lg overflow-hidden transition-all duration-300 text-left
+                        ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:-translate-y-0.5'}
+                      `}
+                      style={{
+                        background: isOpenBook 
+                          ? `linear-gradient(145deg, hsl(43 30% 94%), hsl(35 25% 88%))`
+                          : `linear-gradient(145deg, hsl(${themeColor} / 0.12), hsl(${themeColor} / 0.06))`,
+                        border: isCurrent 
+                          ? `2px solid hsl(${themeColor})` 
+                          : `1px solid hsl(${themeColor} / ${isOpenBook ? '0.35' : '0.2'})`,
+                        boxShadow: isCurrent 
+                          ? `0 6px 24px hsl(${themeColor} / 0.2)`
+                          : isOpenBook
+                          ? `0 2px 12px hsl(${themeColor} / 0.08)`
+                          : 'none',
+                      }}
                     >
-                      {/* Book spine indicator */}
-                      <div 
-                        className="absolute left-1 top-2 bottom-2 w-1 rounded"
-                        style={{ 
-                          background: chapter.status === "current" 
-                            ? `hsl(${themeColor})` 
-                            : chapter.status === "completed" 
-                            ? `hsl(var(--accent))` 
-                            : `hsl(var(--muted-foreground) / 0.2)`,
-                          boxShadow: chapter.status === "current" ? `0 0 8px hsl(${themeColor} / 0.6)` : 'none',
-                        }}
-                      />
-                      
-                      {/* Book content */}
-                      <div className="text-2xl mb-2 ml-2">
-                        {chapter.status === "locked" ? (
-                          <Lock className="w-6 h-6 text-muted-foreground/50" />
-                        ) : chapter.status === "completed" ? (
-                          <CheckCircle className="w-6 h-6 text-accent" />
+                      {/* Paper texture for open books */}
+                      {isOpenBook && (
+                        <div 
+                          className="absolute inset-0 opacity-20"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                          }}
+                        />
+                      )}
+
+                      {/* Left book spine effect for open books */}
+                      {isOpenBook && (
+                        <div 
+                          className="absolute left-0 top-0 bottom-0 w-2"
+                          style={{
+                            background: `linear-gradient(90deg, hsl(${themeColor} / 0.25), transparent)`,
+                          }}
+                        />
+                      )}
+
+                      <div className="relative p-3 flex items-center gap-3">
+                        {/* Book cover / illustration area */}
+                        <div 
+                          className="w-14 h-16 rounded flex-shrink-0 flex items-center justify-center overflow-hidden"
+                          style={{
+                            background: `linear-gradient(135deg, hsl(${themeColor} / ${isOpenBook ? '0.2' : '0.15'}), hsl(${themeColor} / 0.08))`,
+                            border: `1px solid hsl(${themeColor} / 0.25)`,
+                          }}
+                        >
+                          <span className={`text-2xl ${isLocked ? 'opacity-50' : ''}`}>{chapter.icon}</span>
+                        </div>
+
+                        {/* Chapter info */}
+                        <div className="flex-1 min-w-0">
+                          <p 
+                            className="text-xs font-medium mb-0.5"
+                            style={{ color: `hsl(${themeColor})`, opacity: isLocked ? 0.6 : 1 }}
+                          >
+                            Capítulo {chapter.id}
+                          </p>
+                          <p className={`font-serif text-sm font-semibold line-clamp-1 ${isLocked ? 'text-foreground/60' : 'text-foreground'}`}>
+                            {chapter.title}
+                          </p>
+                        </div>
+
+                        {/* Right side: Lock or Bookmark */}
+                        {isLocked ? (
+                          <div 
+                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{
+                              background: `hsl(${themeColor} / 0.1)`,
+                              border: `1px solid hsl(${themeColor} / 0.2)`,
+                            }}
+                          >
+                            <Lock className="w-3.5 h-3.5 text-muted-foreground/50" />
+                          </div>
                         ) : (
-                          <span>{chapter.icon}</span>
+                          <div className="flex-shrink-0 relative">
+                            {/* Bookmark marker */}
+                            <div 
+                              className="w-5 h-12 flex items-start justify-center transition-transform"
+                              style={{
+                                clipPath: 'polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%)',
+                                background: isCompleted 
+                                  ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.85))`
+                                  : `linear-gradient(180deg, hsl(${themeColor}), hsl(${themeColor} / 0.85))`,
+                                boxShadow: `1px 3px 6px hsl(${themeColor} / 0.25)`,
+                              }}
+                            >
+                              {isCompleted && (
+                                <CheckCircle className="w-2.5 h-2.5 text-white mt-1.5" />
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
-                      
-                      <span className="text-xs font-semibold text-muted-foreground ml-2">
-                        Cap. {chapter.id}
-                      </span>
-                      <span className="text-xs text-muted-foreground/70 line-clamp-2 text-center mt-1 ml-2 max-w-[80px]">
-                        {chapter.title}
-                      </span>
-                      
-                      {chapter.status === "current" && (
+
+                      {/* Current chapter indicator bar */}
+                      {isCurrent && (
+                        <div 
+                          className="absolute bottom-0 left-0 right-0 h-0.5"
+                          style={{
+                            background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor} / 0.6))`,
+                          }}
+                        />
+                      )}
+
+                      {/* Current badge */}
+                      {isCurrent && (
                         <span 
-                          className="absolute -top-2 -right-2 text-xs font-semibold px-2 py-0.5 rounded"
+                          className="absolute -top-1.5 -right-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded"
                           style={{ 
                             backgroundColor: `hsl(${themeColor})`,
                             color: 'white',
@@ -310,8 +377,8 @@ const Index = () => {
                         </span>
                       )}
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
 
               {/* Progress */}
