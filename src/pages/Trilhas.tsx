@@ -118,11 +118,11 @@ const bookTrails: BookTrail[] = [
     author: "Machado de Assis",
     cover: "📜",
     totalChapters: 15,
-    isPremium: true,
+    isPremium: false,
     genre: "Romance Brasileiro",
     themeColor: "35 40% 28%", // Sepia brown
     chapters: [
-      { id: 1, title: "Do título", status: "locked", icon: "📜", totalPages: 8 },
+      { id: 1, title: "Do título", status: "current", icon: "📜", currentPage: 4, totalPages: 8 },
       { id: 2, title: "Do livro", status: "locked", icon: "📖", totalPages: 10 },
       { id: 3, title: "A denúncia", status: "locked", icon: "🔔", totalPages: 12 },
     ]
