@@ -23,6 +23,7 @@ import Configuracoes from "./pages/Configuracoes";
 import Noticias from "./pages/Noticias";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import ChapterReading from "./pages/ChapterReading";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="/enem" element={<Enem />} />
               <Route path="/configuracoes" element={<Configuracoes />} />
               <Route path="/noticias" element={<Noticias />} />
+              <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

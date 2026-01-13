@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Bookmark, Castle, Sparkles, Plus } from "lucide-react";
 import {
   Tooltip,
@@ -35,6 +35,7 @@ const bookThemes = {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -108,10 +109,9 @@ const Index = () => {
     },
   ];
 
-  const handleContinueReading = () => {
-    setShowChapterQuestion(true);
-    setSelectedAnswer(null);
-    setShowResult(false);
+  const handleContinueReading = (chapterId?: number) => {
+    const targetChapter = chapterId || userStats.currentChapter;
+    navigate(`/ler/harry-potter-1/${targetChapter}`);
   };
 
   const handleAnswerSubmit = () => {
@@ -185,7 +185,7 @@ const Index = () => {
                   variant="hero" 
                   size="lg" 
                   className="gap-2" 
-                  onClick={handleContinueReading}
+                  onClick={() => handleContinueReading()}
                   style={{ 
                     background: `linear-gradient(135deg, hsl(0 0% 100% / 0.15), hsl(0 0% 100% / 0.05))`,
                     border: '1px solid hsl(0 0% 100% / 0.3)',
@@ -224,7 +224,7 @@ const Index = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button
-                          onClick={() => !isLocked && handleContinueReading()}
+                          onClick={() => !isLocked && handleContinueReading(chapter.id)}
                           disabled={isLocked}
                           className={`
                             relative w-full rounded-lg overflow-hidden transition-all duration-300 text-left
