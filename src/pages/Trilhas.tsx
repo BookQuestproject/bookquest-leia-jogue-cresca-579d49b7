@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -146,6 +146,7 @@ const bookTrails: BookTrail[] = [
 
 const Trilhas = () => {
   const { bookId } = useParams();
+  const navigate = useNavigate();
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -176,10 +177,8 @@ const Trilhas = () => {
 
     const handleChapterClick = (chapter: Chapter) => {
       if (chapter.status === "locked") return;
-      setSelectedChapter(chapter);
-      setShowQuestion(true);
-      setSelectedAnswer(null);
-      setShowResult(false);
+      // Navigate to chapter reading page
+      navigate(`/ler/${bookId}/${chapter.id}`);
     };
 
     const handleAnswerSubmit = () => {
