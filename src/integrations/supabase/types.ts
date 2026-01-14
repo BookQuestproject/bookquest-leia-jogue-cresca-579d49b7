@@ -113,6 +113,7 @@ export type Database = {
           id: string
           is_completed: boolean
           is_paused: boolean
+          notes: string | null
           updated_at: string
           user_id: string
         }
@@ -124,6 +125,7 @@ export type Database = {
           id?: string
           is_completed?: boolean
           is_paused?: boolean
+          notes?: string | null
           updated_at?: string
           user_id: string
         }
@@ -135,6 +137,7 @@ export type Database = {
           id?: string
           is_completed?: boolean
           is_paused?: boolean
+          notes?: string | null
           updated_at?: string
           user_id?: string
         }
