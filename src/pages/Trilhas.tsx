@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus } from "lucide-react";
+import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useChapterProgress } from "@/hooks/useChapterProgress";
+import CompletedChapterModal from "@/components/CompletedChapterModal";
 
 interface Chapter {
   id: number;
@@ -151,6 +153,8 @@ const Trilhas = () => {
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+  const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const isPremium = false;
 
   // Book detail view
@@ -175,10 +179,37 @@ const Trilhas = () => {
     const progress = (completedChapters / book.totalChapters) * 100;
     const currentChapter = book.chapters.find(c => c.status === "current");
 
+    // Hook to get reading progress from database
+    const { isChapterCompleted, getReadingTime, refetch } = useChapterProgress(bookId);
+
+    const formatReadingTime = (seconds: number) => {
+      const minutes = Math.floor(seconds / 60);
+      if (minutes > 0) {
+        return `${minutes}min`;
+      }
+      return `${seconds}s`;
+    };
+
     const handleChapterClick = (chapter: Chapter) => {
       if (chapter.status === "locked") return;
-      // Navigate to chapter reading page
-      navigate(`/ler/${bookId}/${chapter.id}`);
+      
+      // Check if chapter is completed from database
+      const isCompletedFromDB = isChapterCompleted(chapter.id);
+      
+      if (isCompletedFromDB || chapter.status === "completed") {
+        // Open the completed chapter modal
+        setCompletedChapterForModal(chapter);
+        setShowCompletedModal(true);
+      } else {
+        // Navigate to chapter reading page
+        navigate(`/ler/${bookId}/${chapter.id}`);
+      }
+    };
+
+    const handleRereadChapter = () => {
+      if (completedChapterForModal && bookId) {
+        navigate(`/ler/${bookId}/${completedChapterForModal.id}`);
+      }
     };
 
     const handleAnswerSubmit = () => {
@@ -248,8 +279,9 @@ const Trilhas = () => {
             {book.chapters.map((chapter, index) => {
               const isLocked = chapter.status === "locked";
               const isCurrent = chapter.status === "current";
-              const isCompleted = chapter.status === "completed";
+              const isCompleted = chapter.status === "completed" || isChapterCompleted(chapter.id);
               const isOpenBook = !isLocked;
+              const readingTime = getReadingTime(chapter.id);
 
               return (
                 <TooltipProvider key={chapter.id}>
@@ -323,6 +355,15 @@ const Trilhas = () => {
                             <p className="text-xs text-muted-foreground">
                               Capítulo {chapter.id} de {book.totalChapters}
                             </p>
+                            {/* Show reading time for completed chapters */}
+                            {isCompleted && readingTime > 0 && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <Clock className="w-3 h-3 text-green-600" />
+                                <span className="text-xs text-green-600 font-medium">
+                                  Lido em {formatReadingTime(readingTime)}
+                                </span>
+                              </div>
+                            )}
                           </div>
 
                           {/* Right side: Lock or Bookmark */}
@@ -486,6 +527,22 @@ const Trilhas = () => {
               )}
             </DialogContent>
           </Dialog>
+
+          {/* Completed Chapter Modal */}
+          {completedChapterForModal && (
+            <CompletedChapterModal
+              isOpen={showCompletedModal}
+              onClose={() => {
+                setShowCompletedModal(false);
+                setCompletedChapterForModal(null);
+                refetch(); // Refresh progress data
+              }}
+              chapter={completedChapterForModal}
+              bookId={bookId}
+              themeColor={themeColor}
+              onReread={handleRereadChapter}
+            />
+          )}
         </div>
       </Layout>
     );
