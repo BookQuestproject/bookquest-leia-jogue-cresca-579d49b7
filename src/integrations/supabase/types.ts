@@ -104,6 +104,42 @@ export type Database = {
         }
         Relationships: []
       }
+      reading_progress: {
+        Row: {
+          book_id: string
+          chapter_id: string
+          created_at: string
+          elapsed_time: number
+          id: string
+          is_completed: boolean
+          is_paused: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          chapter_id: string
+          created_at?: string
+          elapsed_time?: number
+          id?: string
+          is_completed?: boolean
+          is_paused?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          chapter_id?: string
+          created_at?: string
+          elapsed_time?: number
+          id?: string
+          is_completed?: boolean
+          is_paused?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

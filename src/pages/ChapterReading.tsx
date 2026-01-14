@@ -3,12 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Play, Pause, CheckCircle, Clock, BookOpen, Timer, HelpCircle, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useReadingProgress } from "@/hooks/useReadingProgress";
+import { useAuth } from "@/hooks/useAuth";
 
 // This would ideally come from a shared data source
 const bookData: Record<string, {
@@ -93,16 +89,30 @@ type ReadingState = "intro" | "reading" | "quiz" | "completed";
 const ChapterReading = () => {
   const { bookId, chapterId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { progress, loading: progressLoading, saveProgress, clearProgress } = useReadingProgress(bookId, chapterId);
+  
   const [readingState, setReadingState] = useState<ReadingState>("intro");
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const book = bookId ? bookData[bookId] : null;
   const chapter = book?.chapters.find(c => c.id === Number(chapterId));
   const themeColor = book?.themeColor || "350 45% 32%";
+
+  // Restore progress when loaded
+  useEffect(() => {
+    if (!progressLoading && progress && !hasRestoredProgress && !progress.is_completed) {
+      setElapsedTime(progress.elapsed_time);
+      setIsPaused(true);
+      setReadingState("reading");
+      setHasRestoredProgress(true);
+    }
+  }, [progress, progressLoading, hasRestoredProgress]);
 
   // Timer logic
   useEffect(() => {
@@ -119,6 +129,47 @@ const ChapterReading = () => {
     };
   }, [readingState, isPaused]);
 
+  // Auto-save when paused
+  useEffect(() => {
+    if (readingState === "reading" && isPaused && user && elapsedTime > 0) {
+      saveProgress(elapsedTime, true, false);
+    }
+  }, [isPaused, readingState, elapsedTime, user, saveProgress]);
+
+  // Save progress when leaving the page (beforeunload)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (readingState === "reading" && user && elapsedTime > 0) {
+        // Use sendBeacon for reliable save on page unload
+        const data = JSON.stringify({
+          user_id: user.id,
+          book_id: bookId,
+          chapter_id: chapterId,
+          elapsed_time: elapsedTime,
+          is_paused: true,
+          is_completed: false,
+        });
+        
+        navigator.sendBeacon(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/reading_progress?on_conflict=user_id,book_id,chapter_id`,
+          new Blob([data], { type: 'application/json' })
+        );
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [readingState, user, elapsedTime, bookId, chapterId]);
+
+  // Save progress when navigating away (component unmount)
+  useEffect(() => {
+    return () => {
+      if (readingState === "reading" && user && elapsedTime > 0) {
+        saveProgress(elapsedTime, true, false);
+      }
+    };
+  }, []);
+
   const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
@@ -132,7 +183,9 @@ const ChapterReading = () => {
 
   const handleStartReading = () => {
     setReadingState("reading");
-    setElapsedTime(0);
+    if (!hasRestoredProgress) {
+      setElapsedTime(0);
+    }
     setIsPaused(false);
   };
 
@@ -140,10 +193,16 @@ const ChapterReading = () => {
     setIsPaused(!isPaused);
   };
 
-  const handleChapterComplete = () => {
+  const handleChapterComplete = async () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
+    
+    // Mark as completed and clear progress
+    if (user) {
+      await saveProgress(elapsedTime, false, true);
+    }
+    
     if (chapter?.question) {
       setReadingState("quiz");
     } else {
@@ -157,7 +216,11 @@ const ChapterReading = () => {
     }
   };
 
-  const handleQuizComplete = () => {
+  const handleQuizComplete = async () => {
+    // Clear progress when chapter is fully completed
+    if (user) {
+      await clearProgress();
+    }
     setReadingState("completed");
   };
 
@@ -173,6 +236,20 @@ const ChapterReading = () => {
           <Link to="/trilhas">
             <Button variant="outline">Voltar às trilhas</Button>
           </Link>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Show loading while checking for saved progress
+  if (progressLoading && user) {
+    return (
+      <Layout>
+        <div className="max-w-2xl mx-auto py-8 text-center">
+          <div className="animate-pulse">
+            <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-4" />
+            <div className="h-6 bg-muted rounded w-48 mx-auto" />
+          </div>
         </div>
       </Layout>
     );
