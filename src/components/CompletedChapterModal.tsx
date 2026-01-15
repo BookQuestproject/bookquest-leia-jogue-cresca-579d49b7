@@ -1,11 +1,21 @@
 import { useState, useEffect } from "react";
-import { CheckCircle, Clock, BookOpen, RotateCcw, Save } from "lucide-react";
+import { CheckCircle, Clock, BookOpen, RotateCcw, Save, AlertTriangle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,6 +68,7 @@ const CompletedChapterModal = ({
   const [notes, setNotes] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showRereadConfirm, setShowRereadConfirm] = useState(false);
 
   useEffect(() => {
     const loadReadingData = async () => {
@@ -230,7 +241,7 @@ const CompletedChapterModal = ({
           {/* Reread Button */}
           <Button
             variant="outline"
-            onClick={handleReread}
+            onClick={() => setShowRereadConfirm(true)}
             className="w-full gap-2"
             style={{
               borderColor: `hsl(${themeColor} / 0.5)`,
@@ -242,6 +253,33 @@ const CompletedChapterModal = ({
           </Button>
         </div>
       </DialogContent>
+
+      {/* Confirmation Dialog for Rereading */}
+      <AlertDialog open={showRereadConfirm} onOpenChange={setShowRereadConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              Tem certeza que deseja reler?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Ao reler o capítulo, o cronômetro de leitura será zerado. 
+              Seu tempo de leitura atual ({readingData ? formatTime(readingData.elapsed_time) : '0s'}) será perdido.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleReread}
+              style={{
+                background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+              }}
+            >
+              Sim, reler capítulo
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };
