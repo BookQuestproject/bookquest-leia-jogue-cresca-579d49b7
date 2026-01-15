@@ -49,10 +49,21 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    // Validate origin header to prevent redirect attacks
+    const ALLOWED_ORIGINS = [
+      'https://bookquest-leia-jogue-cresca.lovable.app',
+      'https://id-preview--ffe3bb13-e7a9-43fe-bcb5-c768a8710786.lovable.app',
+      'http://localhost:8080',
+      'http://localhost:3000',
+    ];
+    const requestOrigin = req.headers.get("origin") || '';
+    const validOrigin = ALLOWED_ORIGINS.includes(requestOrigin) 
+      ? requestOrigin 
+      : ALLOWED_ORIGINS[0];
+
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${origin}/premium`,
+      return_url: `${validOrigin}/premium`,
     });
     logStep("Customer portal session created", { sessionId: portalSession.id });
 

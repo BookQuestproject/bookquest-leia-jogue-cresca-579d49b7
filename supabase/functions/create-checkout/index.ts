@@ -43,6 +43,18 @@ serve(async (req) => {
       logStep("Found existing customer", { customerId });
     }
 
+    // Validate origin header to prevent redirect attacks
+    const ALLOWED_ORIGINS = [
+      'https://bookquest-leia-jogue-cresca.lovable.app',
+      'https://id-preview--ffe3bb13-e7a9-43fe-bcb5-c768a8710786.lovable.app',
+      'http://localhost:8080',
+      'http://localhost:3000',
+    ];
+    const requestOrigin = req.headers.get("origin") || '';
+    const validOrigin = ALLOWED_ORIGINS.includes(requestOrigin) 
+      ? requestOrigin 
+      : ALLOWED_ORIGINS[0];
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -53,8 +65,8 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/premium?success=true`,
-      cancel_url: `${req.headers.get("origin")}/premium?canceled=true`,
+      success_url: `${validOrigin}/premium?success=true`,
+      cancel_url: `${validOrigin}/premium?canceled=true`,
     });
 
     logStep("Checkout session created", { sessionId: session.id });
