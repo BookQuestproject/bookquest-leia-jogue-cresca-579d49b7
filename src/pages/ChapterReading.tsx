@@ -90,7 +90,7 @@ const ChapterReading = () => {
   const { bookId, chapterId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { progress, loading: progressLoading, saveProgress, clearProgress } = useReadingProgress(bookId, chapterId);
+  const { progress, loading: progressLoading, saveProgress, markAsCompleted, clearProgress } = useReadingProgress(bookId, chapterId);
   
   const [readingState, setReadingState] = useState<ReadingState>("intro");
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -198,9 +198,9 @@ const ChapterReading = () => {
       clearInterval(timerRef.current);
     }
     
-    // Mark as completed and clear progress
+    // Mark as completed (keeps the record for showing in trail)
     if (user) {
-      await saveProgress(elapsedTime, false, true);
+      await markAsCompleted(elapsedTime);
     }
     
     if (chapter?.question) {
@@ -217,10 +217,7 @@ const ChapterReading = () => {
   };
 
   const handleQuizComplete = async () => {
-    // Clear progress when chapter is fully completed
-    if (user) {
-      await clearProgress();
-    }
+    // Keep the completed record (already marked in handleChapterComplete)
     setReadingState("completed");
   };
 

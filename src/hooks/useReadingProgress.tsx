@@ -75,7 +75,33 @@ export const useReadingProgress = (bookId: string | undefined, chapterId: string
     }
   }, [user, bookId, chapterId]);
 
-  // Clear progress (when chapter is completed)
+  // Mark chapter as fully completed (keeps the record)
+  const markAsCompleted = useCallback(async (elapsedTime: number) => {
+    if (!user || !bookId || !chapterId) return;
+
+    try {
+      const { error } = await supabase
+        .from('reading_progress')
+        .upsert({
+          user_id: user.id,
+          book_id: bookId,
+          chapter_id: chapterId,
+          elapsed_time: elapsedTime,
+          is_paused: false,
+          is_completed: true,
+        }, {
+          onConflict: 'user_id,book_id,chapter_id'
+        });
+
+      if (error) {
+        console.error('Error marking chapter as completed:', error);
+      }
+    } catch (err) {
+      console.error('Error marking chapter as completed:', err);
+    }
+  }, [user, bookId, chapterId]);
+
+  // Clear progress (resets the chapter for re-reading)
   const clearProgress = useCallback(async () => {
     if (!user || !bookId || !chapterId) return;
 
@@ -95,6 +121,7 @@ export const useReadingProgress = (bookId: string | undefined, chapterId: string
     progress,
     loading,
     saveProgress,
+    markAsCompleted,
     clearProgress,
   };
 };
