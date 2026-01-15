@@ -1,8 +1,11 @@
-import { BookOpen, Trophy, Flame, Star, Award, Crown, Settings, Edit2 } from "lucide-react";
+import { BookOpen, Trophy, Flame, Star, Award, Crown, Settings, Edit2, Clock, CheckCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
 import ProgressBar from "@/components/ProgressBar";
+import { useProfile } from "@/hooks/useProfile";
+import { useReadingStats } from "@/hooks/useReadingStats";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Badge {
   id: number;
@@ -11,18 +14,6 @@ interface Badge {
   description: string;
   earned: boolean;
 }
-
-const userProfile = {
-  name: "Você",
-  avatar: "VC",
-  email: "usuario@email.com",
-  booksRead: 2,
-  streak: 3,
-  quizzesCompleted: 1,
-  memberSince: "Janeiro 2024",
-  literaryGenre: "Fantasia",
-  isPremium: false,
-};
 
 const badges: Badge[] = [
   { id: 1, name: "Primeiro Livro", icon: "📖", description: "Registrou seu primeiro livro", earned: true },
@@ -39,7 +30,18 @@ const readingHistory = [
 ];
 
 const Perfil = () => {
-  const currentTier = getTierFromBooks(userProfile.booksRead);
+  const { profile, isPremium, loading: profileLoading } = useProfile();
+  const { stats, loading: statsLoading, formatTime } = useReadingStats();
+
+  // Use real data from profile or fallback to defaults
+  const userName = profile?.full_name || "Você";
+  const userEmail = profile?.email || "usuario@email.com";
+  const literaryProfile = profile?.literary_profile;
+  const literaryGenre = literaryProfile?.genre || "Não definido";
+
+  // Use reading stats for books read count
+  const booksRead = stats.booksCompleted || 0;
+  const currentTier = getTierFromBooks(booksRead);
   const nextTier = getNextTierInfo(currentTier);
 
   return (
@@ -52,7 +54,7 @@ const Perfil = () => {
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               <div className="relative">
                 <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-3xl font-bold text-primary-foreground">
-                  {userProfile.avatar}
+                  {userName.substring(0, 2).toUpperCase()}
                 </div>
                 <button className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-secondary border-2 border-background flex items-center justify-center">
                   <Edit2 className="w-4 h-4" />
@@ -61,9 +63,9 @@ const Perfil = () => {
               
               <div className="flex-1 text-center sm:text-left">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                  <h1 className="text-2xl font-bold">{userProfile.name}</h1>
+                  <h1 className="text-2xl font-bold">{userName}</h1>
                   <RankingBadge tier={currentTier} size="sm" />
-                  {userProfile.isPremium ? (
+                  {isPremium ? (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-bold">
                       <Crown className="w-3 h-3" />
                       Premium
@@ -74,23 +76,38 @@ const Perfil = () => {
                     </span>
                   )}
                 </div>
-                <p className="text-muted-foreground mb-4">{userProfile.email}</p>
+                <p className="text-muted-foreground mb-4">{userEmail}</p>
                 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center p-3 rounded-xl bg-secondary">
-                    <div className="text-xl font-bold text-primary">{userProfile.booksRead}</div>
+                    {statsLoading ? (
+                      <Skeleton className="h-6 w-8 mx-auto mb-1" />
+                    ) : (
+                      <div className="text-xl font-bold text-primary">{booksRead}</div>
+                    )}
                     <div className="text-xs text-muted-foreground">Livros</div>
                   </div>
                   <div className="text-center p-3 rounded-xl bg-secondary">
-                    <div className="text-xl font-bold text-accent flex items-center justify-center gap-1">
-                      <Flame className="w-4 h-4" />
-                      {userProfile.streak}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Sequência</div>
+                    {statsLoading ? (
+                      <Skeleton className="h-6 w-8 mx-auto mb-1" />
+                    ) : (
+                      <div className="text-xl font-bold text-accent flex items-center justify-center gap-1">
+                        <CheckCircle className="w-4 h-4" />
+                        {stats.completedChapters}
+                      </div>
+                    )}
+                    <div className="text-xs text-muted-foreground">Capítulos</div>
                   </div>
                   <div className="text-center p-3 rounded-xl bg-secondary">
-                    <div className="text-xl font-bold text-info">{userProfile.quizzesCompleted}</div>
-                    <div className="text-xs text-muted-foreground">Quizzes</div>
+                    {statsLoading ? (
+                      <Skeleton className="h-6 w-12 mx-auto mb-1" />
+                    ) : (
+                      <div className="text-xl font-bold text-info flex items-center justify-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {formatTime(stats.totalReadingTime)}
+                      </div>
+                    )}
+                    <div className="text-xs text-muted-foreground">Tempo</div>
                   </div>
                 </div>
               </div>
@@ -108,29 +125,64 @@ const Perfil = () => {
                     Próximo nível: <span className="text-foreground font-medium">{nextTier.label}</span>
                   </span>
                   <span className="text-sm font-bold text-primary">
-                    {userProfile.booksRead} / {nextTier.booksNeeded} livros
+                    {booksRead} / {nextTier.booksNeeded} livros
                   </span>
                 </div>
-                <ProgressBar value={userProfile.booksRead} max={nextTier.booksNeeded} />
+                <ProgressBar value={booksRead} max={nextTier.booksNeeded} />
               </div>
             )}
           </div>
 
-          {/* Literary Genre Card */}
+          {/* Reading Stats Card */}
           <div className="glass-card rounded-3xl p-6 lg:p-8 w-full lg:w-80 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-primary" />
+                <Clock className="w-8 h-8 text-primary" />
               </div>
+              <h3 className="text-sm text-muted-foreground mb-1">Estatísticas de Leitura</h3>
+              
+              {statsLoading ? (
+                <div className="space-y-3 mt-4">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4 mx-auto" />
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              ) : (
+                <div className="space-y-3 mt-4">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary">
+                    <span className="text-sm text-muted-foreground">Tempo total</span>
+                    <span className="font-bold text-primary">{formatTime(stats.totalReadingTime)}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary">
+                    <span className="text-sm text-muted-foreground">Livros iniciados</span>
+                    <span className="font-bold text-info">{stats.booksStarted}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary">
+                    <span className="text-sm text-muted-foreground">Média por capítulo</span>
+                    <span className="font-bold text-accent">{formatTime(Math.round(stats.averageReadingTime))}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Literary Genre Card */}
+        <div className="glass-card rounded-2xl p-6 mb-8 animate-fade-in" style={{ animationDelay: "0.15s" }}>
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Star className="w-8 h-8 text-primary" />
+            </div>
+            <div className="flex-1">
               <h3 className="text-sm text-muted-foreground mb-1">Seu gênero literário</h3>
-              <p className="text-2xl font-bold text-primary mb-2">{userProfile.literaryGenre}</p>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-2xl font-bold text-primary mb-1">{literaryGenre}</p>
+              <p className="text-sm text-muted-foreground">
                 Identificado pelo quiz literário
               </p>
-              <Button variant="outline" size="sm">
-                Refazer quiz
-              </Button>
             </div>
+            <Button variant="outline" size="sm">
+              Refazer quiz
+            </Button>
           </div>
         </div>
 
