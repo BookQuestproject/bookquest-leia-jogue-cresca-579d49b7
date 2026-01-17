@@ -20,7 +20,7 @@ const Perfil = () => {
   // Use real data from profile or fallback to defaults
   const userName = profile?.full_name || "Você";
   const userEmail = profile?.email || "usuario@email.com";
-  const literaryProfile = profile?.literary_profile;
+  const literaryProfile = profile?.literary_profile as { genre?: string } | null;
   const literaryGenre = literaryProfile?.genre || "Não definido";
 
   // Use reading stats for books read count
