@@ -1,4 +1,4 @@
-import { BookOpen, Trophy, Flame, Star, Award, Crown, Settings, Edit2, Clock, CheckCircle } from "lucide-react";
+import { BookOpen, Star, Crown, Settings, Edit2, Clock, CheckCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
@@ -6,23 +6,7 @@ import ProgressBar from "@/components/ProgressBar";
 import { useProfile } from "@/hooks/useProfile";
 import { useReadingStats } from "@/hooks/useReadingStats";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface Badge {
-  id: number;
-  name: string;
-  icon: string;
-  description: string;
-  earned: boolean;
-}
-
-const badges: Badge[] = [
-  { id: 1, name: "Primeiro Livro", icon: "📖", description: "Registrou seu primeiro livro", earned: true },
-  { id: 2, name: "Quiz Master", icon: "🧠", description: "Completou o quiz literário", earned: true },
-  { id: 3, name: "Sequência de 3", icon: "🔥", description: "3 dias seguidos lendo", earned: true },
-  { id: 4, name: "Leitor Ávido", icon: "📚", description: "Leia 10 livros", earned: false },
-  { id: 5, name: "Sequência de 7", icon: "⚡", description: "7 dias seguidos lendo", earned: false },
-  { id: 6, name: "Social Reader", icon: "💬", description: "10 posts na comunidade", earned: false },
-];
+import AchievementsSection from "@/components/AchievementsSection";
 
 const readingHistory = [
   { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", completedAt: "Dez 2023", pages: 208 },
@@ -186,28 +170,9 @@ const Perfil = () => {
           </div>
         </div>
 
-        {/* Badges Section */}
-        <div className="glass-card rounded-2xl p-6 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Award className="w-6 h-6 text-accent" />
-            Conquistas
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {badges.map((badge) => (
-              <div
-                key={badge.id}
-                className={`p-4 rounded-xl text-center transition-all ${
-                  badge.earned
-                    ? "bg-secondary"
-                    : "bg-secondary/50 opacity-50"
-                }`}
-              >
-                <div className="text-3xl mb-2">{badge.icon}</div>
-                <p className="font-medium text-sm">{badge.name}</p>
-                <p className="text-xs text-muted-foreground">{badge.description}</p>
-              </div>
-            ))}
-          </div>
+        {/* Achievements Section - Dynamic */}
+        <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <AchievementsSection />
         </div>
 
         {/* Reading History */}
