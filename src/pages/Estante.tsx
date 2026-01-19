@@ -92,7 +92,7 @@ const Estante = () => {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-8 overflow-x-auto py-1 -my-1">
           {categories.map((category) => (
             <button
               key={category.id}

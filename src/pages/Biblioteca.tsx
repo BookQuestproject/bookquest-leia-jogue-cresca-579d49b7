@@ -194,7 +194,7 @@ const Biblioteca = () => {
         </div>
 
         {/* Genre Pills */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-6 overflow-x-auto py-1 -my-1">
           {genres.map((genre) => (
             <button
               key={genre}
