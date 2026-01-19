@@ -130,8 +130,8 @@ const Noticias = () => {
               onClick={() => setSelectedType(filter.id as any)}
               className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 selectedType === filter.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary hover:bg-secondary/80"
+                  ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
+                  : "bg-muted text-primary hover:bg-muted/80"
               }`}
             >
               {filter.label}

@@ -99,8 +99,8 @@ const Estante = () => {
               onClick={() => setSelectedCategory(category.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all whitespace-nowrap ${
                 selectedCategory === category.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-muted-foreground hover:text-foreground"
+                  ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
+                  : "bg-muted text-primary hover:bg-muted/80"
               }`}
             >
               <span>{category.icon}</span>
@@ -229,8 +229,8 @@ const Estante = () => {
                       }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                         selectedBook?.category === cat.id
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary hover:bg-secondary/80"
+                          ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
+                          : "bg-muted text-primary hover:bg-muted/80"
                       }`}
                     >
                       <span>{cat.icon}</span>
