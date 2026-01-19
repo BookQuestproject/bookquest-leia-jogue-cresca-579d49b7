@@ -38,18 +38,18 @@ interface SuggestedBook {
 }
 
 const allBooks: Book[] = [
-  { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", cover: "📘", genre: "Fantasia", pages: 264, rating: 4.8, popularity: 95, description: "Um jovem descobre que é um bruxo e entra para a escola de magia de Hogwarts." },
-  { id: 2, title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", cover: "📗", genre: "Fantasia", pages: 1200, rating: 4.9, popularity: 92, description: "Uma jornada épica para destruir o Um Anel e derrotar o Senhor das Trevas." },
-  { id: 3, title: "Orgulho e Preconceito", author: "Jane Austen", cover: "📕", genre: "Romance", pages: 432, rating: 4.7, popularity: 88, description: "A história de Elizabeth Bennet e Mr. Darcy na Inglaterra do século XIX." },
-  { id: 4, title: "1984", author: "George Orwell", cover: "📙", genre: "Ficção Científica", pages: 328, rating: 4.6, popularity: 90, description: "Uma distopia sobre vigilância e controle governamental totalitário." },
-  { id: 5, title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", cover: "📒", genre: "Clássico", pages: 96, rating: 4.9, popularity: 97, description: "As reflexões de um pequeno príncipe sobre amor, amizade e natureza humana." },
-  { id: 6, title: "E Não Sobrou Nenhum", author: "Agatha Christie", cover: "📓", genre: "Mistério", pages: 272, rating: 4.7, popularity: 85, description: "Dez pessoas são convidadas para uma ilha isolada e começam a morrer uma a uma." },
-  { id: 7, title: "A Culpa é das Estrelas", author: "John Green", cover: "💚", genre: "Romance", pages: 288, rating: 4.5, popularity: 82, description: "Dois adolescentes com câncer se conhecem e vivem uma história de amor." },
-  { id: 8, title: "Dom Casmurro", author: "Machado de Assis", cover: "📕", genre: "Clássico", pages: 256, rating: 4.4, popularity: 78, description: "A história de Bentinho e Capitu, com o famoso enigma da traição." },
-  { id: 9, title: "Jogos Vorazes", author: "Suzanne Collins", cover: "🔥", genre: "Aventura", pages: 400, rating: 4.5, popularity: 88, description: "Em uma distopia, jovens lutam até a morte em um reality show brutal." },
-  { id: 10, title: "O Hobbit", author: "J.R.R. Tolkien", cover: "🏔️", genre: "Fantasia", pages: 320, rating: 4.8, popularity: 91, description: "Bilbo Bolseiro parte em uma aventura com anões para recuperar um tesouro." },
-  { id: 11, title: "Percy Jackson e o Ladrão de Raios", author: "Rick Riordan", cover: "⚡", genre: "Fantasia", pages: 400, rating: 4.6, popularity: 86, description: "Um adolescente descobre que é filho de um deus grego." },
-  { id: 12, title: "Sapiens", author: "Yuval Noah Harari", cover: "🧠", genre: "Não-Ficção", pages: 464, rating: 4.7, popularity: 84, description: "Uma breve história da humanidade desde os primeiros humanos." },
+  { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", cover: "https://m.media-amazon.com/images/I/81ibfYk4qmL._AC_UF1000,1000_QL80_.jpg", genre: "Fantasia", pages: 264, rating: 4.8, popularity: 95, description: "Um jovem descobre que é um bruxo e entra para a escola de magia de Hogwarts." },
+  { id: 2, title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", cover: "https://m.media-amazon.com/images/I/81j7E0oFdRL._AC_UF1000,1000_QL80_.jpg", genre: "Fantasia", pages: 1200, rating: 4.9, popularity: 92, description: "Uma jornada épica para destruir o Um Anel e derrotar o Senhor das Trevas." },
+  { id: 3, title: "Orgulho e Preconceito", author: "Jane Austen", cover: "https://m.media-amazon.com/images/I/71Q1tPupKjL._AC_UF1000,1000_QL80_.jpg", genre: "Romance", pages: 432, rating: 4.7, popularity: 88, description: "A história de Elizabeth Bennet e Mr. Darcy na Inglaterra do século XIX." },
+  { id: 4, title: "1984", author: "George Orwell", cover: "https://m.media-amazon.com/images/I/819js3EQwbL._AC_UF1000,1000_QL80_.jpg", genre: "Ficção Científica", pages: 328, rating: 4.6, popularity: 90, description: "Uma distopia sobre vigilância e controle governamental totalitário." },
+  { id: 5, title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", cover: "https://m.media-amazon.com/images/I/71OZY035QKL._AC_UF1000,1000_QL80_.jpg", genre: "Clássico", pages: 96, rating: 4.9, popularity: 97, description: "As reflexões de um pequeno príncipe sobre amor, amizade e natureza humana." },
+  { id: 6, title: "E Não Sobrou Nenhum", author: "Agatha Christie", cover: "https://m.media-amazon.com/images/I/91rZGpDkoFL._AC_UF1000,1000_QL80_.jpg", genre: "Mistério", pages: 272, rating: 4.7, popularity: 85, description: "Dez pessoas são convidadas para uma ilha isolada e começam a morrer uma a uma." },
+  { id: 7, title: "A Culpa é das Estrelas", author: "John Green", cover: "https://m.media-amazon.com/images/I/71VtYjKByoL._AC_UF1000,1000_QL80_.jpg", genre: "Romance", pages: 288, rating: 4.5, popularity: 82, description: "Dois adolescentes com câncer se conhecem e vivem uma história de amor." },
+  { id: 8, title: "Dom Casmurro", author: "Machado de Assis", cover: "https://m.media-amazon.com/images/I/61wezcT0yJL._AC_UF1000,1000_QL80_.jpg", genre: "Clássico", pages: 256, rating: 4.4, popularity: 78, description: "A história de Bentinho e Capitu, com o famoso enigma da traição." },
+  { id: 9, title: "Jogos Vorazes", author: "Suzanne Collins", cover: "https://m.media-amazon.com/images/I/71un2hI4mcL._AC_UF1000,1000_QL80_.jpg", genre: "Aventura", pages: 400, rating: 4.5, popularity: 88, description: "Em uma distopia, jovens lutam até a morte em um reality show brutal." },
+  { id: 10, title: "O Hobbit", author: "J.R.R. Tolkien", cover: "https://m.media-amazon.com/images/I/91b0C2YNSrL._AC_UF1000,1000_QL80_.jpg", genre: "Fantasia", pages: 320, rating: 4.8, popularity: 91, description: "Bilbo Bolseiro parte em uma aventura com anões para recuperar um tesouro." },
+  { id: 11, title: "Percy Jackson e o Ladrão de Raios", author: "Rick Riordan", cover: "https://m.media-amazon.com/images/I/91WH7-RsiOL._AC_UF1000,1000_QL80_.jpg", genre: "Fantasia", pages: 400, rating: 4.6, popularity: 86, description: "Um adolescente descobre que é filho de um deus grego." },
+  { id: 12, title: "Sapiens", author: "Yuval Noah Harari", cover: "https://m.media-amazon.com/images/I/71N3-FFSDxL._AC_UF1000,1000_QL80_.jpg", genre: "Não-Ficção", pages: 464, rating: 4.7, popularity: 84, description: "Uma breve história da humanidade desde os primeiros humanos." },
 ];
 
 const genres = ["Todos", "Fantasia", "Romance", "Mistério", "Clássico", "Ficção Científica", "Aventura", "Não-Ficção"];
@@ -256,8 +256,12 @@ const Biblioteca = () => {
               style={{ animationDelay: `${index * 0.05}s` }}
             >
               <div className="flex gap-4 p-4">
-                <div className="w-20 h-28 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <span className="text-4xl">{book.cover}</span>
+                <div className="w-20 h-28 rounded-xl flex-shrink-0 overflow-hidden shadow-md">
+                  <img 
+                    src={book.cover} 
+                    alt={`Capa de ${book.title}`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
