@@ -256,9 +256,9 @@ const Mentoria = () => {
                       onClick={() => !isPast && setSelectedDate(day)}
                       disabled={isPast}
                       className={`aspect-square rounded-lg flex flex-col items-center justify-center text-sm transition-all relative
-                        ${isPast ? 'text-muted-foreground/50 cursor-not-allowed' : 'hover:bg-secondary cursor-pointer'}
-                        ${isToday(day) ? 'ring-2 ring-primary' : ''}
-                        ${isSelected ? 'bg-primary text-primary-foreground' : ''}
+                        ${isPast ? 'text-muted-foreground/50 cursor-not-allowed' : 'hover:bg-muted cursor-pointer text-primary'}
+                        ${isToday(day) ? 'ring-2 ring-secondary' : ''}
+                        ${isSelected ? 'bg-secondary text-secondary-foreground' : ''}
                         ${hasSession ? 'bg-accent/20' : ''}
                       `}
                     >
@@ -287,8 +287,8 @@ const Mentoria = () => {
                         disabled={!slot.available}
                         className={`p-3 rounded-xl text-center transition-all text-sm font-medium
                           ${!slot.available ? 'bg-muted text-muted-foreground line-through cursor-not-allowed' : ''}
-                          ${slot.available && selectedSlot !== slot.time ? 'bg-secondary hover:bg-secondary/80' : ''}
-                          ${selectedSlot === slot.time ? 'bg-primary text-primary-foreground' : ''}
+                          ${slot.available && selectedSlot !== slot.time ? 'bg-muted text-primary hover:bg-muted/80' : ''}
+                          ${selectedSlot === slot.time ? 'bg-secondary text-secondary-foreground ring-2 ring-secondary' : ''}
                         `}
                       >
                         {slot.time}
