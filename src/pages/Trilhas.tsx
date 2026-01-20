@@ -157,6 +157,9 @@ const Trilhas = () => {
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const isPremium = false;
 
+  // Hook must be called unconditionally at the top level
+  const { isChapterCompleted, getReadingTime, refetch } = useChapterProgress(bookId || "");
+
   // Book detail view
   if (bookId) {
     const book = bookTrails.find(b => b.id === bookId);
@@ -178,9 +181,6 @@ const Trilhas = () => {
     const completedChapters = book.chapters.filter(c => c.status === "completed").length;
     const progress = (completedChapters / book.totalChapters) * 100;
     const currentChapter = book.chapters.find(c => c.status === "current");
-
-    // Hook to get reading progress from database
-    const { isChapterCompleted, getReadingTime, refetch } = useChapterProgress(bookId);
 
     const formatReadingTime = (seconds: number) => {
       const minutes = Math.floor(seconds / 60);
