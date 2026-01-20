@@ -23,12 +23,12 @@ interface Book {
 }
 
 const mockBooks: Book[] = [
-  { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", cover: "📘", category: "lendo", progress: 65 },
-  { id: 2, title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", cover: "📗", category: "quero-ler" },
-  { id: 3, title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", cover: "📙", category: "lido", rating: 5, review: "Leitura incrível!" },
-  { id: 4, title: "1984", author: "George Orwell", cover: "📕", category: "lido", rating: 4 },
-  { id: 5, title: "Dom Casmurro", author: "Machado de Assis", cover: "📓", category: "abandonado" },
-  { id: 6, title: "O Hobbit", author: "J.R.R. Tolkien", cover: "📒", category: "favoritos", rating: 5 },
+  { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", cover: "https://m.media-amazon.com/images/I/81ibfYk4qmL._AC_UF1000,1000_QL80_.jpg", category: "lendo", progress: 65 },
+  { id: 2, title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", cover: "https://m.media-amazon.com/images/I/81j7E0oFdRL._AC_UF1000,1000_QL80_.jpg", category: "quero-ler" },
+  { id: 3, title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", cover: "https://m.media-amazon.com/images/I/71OZY035QKL._AC_UF1000,1000_QL80_.jpg", category: "lido", rating: 5, review: "Leitura incrível!" },
+  { id: 4, title: "1984", author: "George Orwell", cover: "https://m.media-amazon.com/images/I/819js3EQwbL._AC_UF1000,1000_QL80_.jpg", category: "lido", rating: 4 },
+  { id: 5, title: "Dom Casmurro", author: "Machado de Assis", cover: "https://m.media-amazon.com/images/I/61wezcT0yJL._AC_UF1000,1000_QL80_.jpg", category: "abandonado" },
+  { id: 6, title: "O Hobbit", author: "J.R.R. Tolkien", cover: "https://m.media-amazon.com/images/I/91b0C2YNSrL._AC_UF1000,1000_QL80_.jpg", category: "favoritos", rating: 5 },
 ];
 
 const categories = [
@@ -122,8 +122,12 @@ const Estante = () => {
                 style={{ animationDelay: `${index * 0.05}s` }}
                 onClick={() => handleOpenBook(book)}
               >
-                <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                  <span className="text-5xl">{book.cover}</span>
+                <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={book.cover} 
+                    alt={`Capa de ${book.title}`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="p-3">
                   <h3 className="font-bold text-sm truncate">{book.title}</h3>
@@ -177,7 +181,13 @@ const Estante = () => {
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-3">
-                <span className="text-3xl">{selectedBook?.cover}</span>
+                <div className="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                  <img 
+                    src={selectedBook?.cover} 
+                    alt={`Capa de ${selectedBook?.title}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <div>
                   <p className="text-xl">{selectedBook?.title}</p>
                   <p className="text-sm text-muted-foreground font-normal">{selectedBook?.author}</p>
