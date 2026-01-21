@@ -277,10 +277,25 @@ const Trilhas = () => {
           {/* Chapters as Open/Closed Books */}
           <div className="space-y-4 animate-fade-in" style={{ animationDelay: "0.2s" }}>
             {book.chapters.map((chapter, index) => {
-              const isLocked = chapter.status === "locked";
-              const isCurrent = chapter.status === "current";
-              const isCompleted = chapter.status === "completed" || isChapterCompleted(chapter.id);
-              const isOpenBook = !isLocked;
+              // Dynamic unlock logic: chapter is unlocked if:
+              // 1. It's the first chapter (always unlocked)
+              // 2. The previous chapter is completed (from DB or static status)
+              const previousChapter = index > 0 ? book.chapters[index - 1] : null;
+              const isPreviousCompleted = previousChapter 
+                ? (previousChapter.status === "completed" || isChapterCompleted(previousChapter.id))
+                : true;
+              
+              const isCompletedFromDB = isChapterCompleted(chapter.id);
+              const isCompleted = chapter.status === "completed" || isCompletedFromDB;
+              
+              // A chapter is unlocked if it's the first one, or previous is completed
+              const isUnlocked = index === 0 || isPreviousCompleted;
+              const isLocked = !isUnlocked;
+              
+              // Current chapter is the first unlocked but not completed
+              const isCurrent = isUnlocked && !isCompleted;
+              
+              const isOpenBook = isUnlocked;
               const readingTime = getReadingTime(chapter.id);
 
               return (
