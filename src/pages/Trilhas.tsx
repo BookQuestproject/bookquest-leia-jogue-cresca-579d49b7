@@ -190,8 +190,15 @@ const Trilhas = () => {
       return `${seconds}s`;
     };
 
-    const handleChapterClick = (chapter: Chapter) => {
-      if (chapter.status === "locked") return;
+    const handleChapterClick = (chapter: Chapter, chapterIndex: number) => {
+      // Dynamic unlock check - same logic as rendering
+      const previousChapter = chapterIndex > 0 ? book.chapters[chapterIndex - 1] : null;
+      const isPreviousCompleted = previousChapter 
+        ? (previousChapter.status === "completed" || isChapterCompleted(previousChapter.id))
+        : true;
+      const isUnlocked = chapterIndex === 0 || isPreviousCompleted;
+      
+      if (!isUnlocked) return; // Use dynamic check instead of static status
       
       // Check if chapter is completed from database
       const isCompletedFromDB = isChapterCompleted(chapter.id);
@@ -262,7 +269,7 @@ const Trilhas = () => {
             <div className="flex justify-center mb-8">
               <Button 
                 size="lg"
-                onClick={() => handleChapterClick(currentChapter)}
+                onClick={() => handleChapterClick(currentChapter, book.chapters.findIndex(c => c.id === currentChapter.id))}
                 className="gap-2 px-8"
                 style={{ 
                   background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
@@ -303,7 +310,7 @@ const Trilhas = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
-                        onClick={() => handleChapterClick(chapter)}
+                        onClick={() => handleChapterClick(chapter, index)}
                         disabled={isLocked}
                         className={`
                           relative w-full rounded-lg overflow-hidden transition-all duration-300 text-left

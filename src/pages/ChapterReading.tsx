@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Play, Pause, CheckCircle, Clock, BookOpen, Timer, HelpCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, Play, Pause, CheckCircle, Clock, BookOpen, Timer, HelpCircle, Sparkles, AlertCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 // This would ideally come from a shared data source
 const bookData: Record<string, {
@@ -193,7 +194,20 @@ const ChapterReading = () => {
     setIsPaused(!isPaused);
   };
 
+  // Minimum reading time: 30 seconds to prevent accidental/invalid completions
+  const MIN_READING_TIME = 30;
+
   const handleChapterComplete = async () => {
+    // Validate minimum reading time
+    if (elapsedTime < MIN_READING_TIME) {
+      const remainingSeconds = MIN_READING_TIME - elapsedTime;
+      toast.error("Tempo de leitura insuficiente", {
+        description: `Você precisa ler por pelo menos ${MIN_READING_TIME} segundos. Faltam ${remainingSeconds} segundos.`,
+        icon: <AlertCircle className="w-5 h-5" />,
+      });
+      return;
+    }
+
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
