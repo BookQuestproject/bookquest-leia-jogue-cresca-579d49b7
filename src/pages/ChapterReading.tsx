@@ -99,6 +99,7 @@ const ChapterReading = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
+  const [isTimerError, setIsTimerError] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const book = bookId ? bookData[bookId] : null;
@@ -200,11 +201,9 @@ const ChapterReading = () => {
   const handleChapterComplete = async () => {
     // Validate minimum reading time
     if (elapsedTime < MIN_READING_TIME) {
-      const remainingSeconds = MIN_READING_TIME - elapsedTime;
-      toast.error("Tempo de leitura insuficiente", {
-        description: `Você precisa ler por pelo menos ${MIN_READING_TIME} segundos. Faltam ${remainingSeconds} segundos.`,
-        icon: <AlertCircle className="w-5 h-5" />,
-      });
+      // Trigger shake animation and red background
+      setIsTimerError(true);
+      setTimeout(() => setIsTimerError(false), 600);
       return;
     }
 
@@ -381,9 +380,13 @@ const ChapterReading = () => {
 
             {/* Timer Display */}
             <div 
-              className="rounded-2xl p-8 text-center"
+              className={`rounded-2xl p-8 text-center transition-all duration-200 ${
+                isTimerError ? 'animate-[shake_0.5s_ease-in-out]' : ''
+              }`}
               style={{
-                background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                background: isTimerError 
+                  ? 'linear-gradient(135deg, hsl(0 65% 45%), hsl(0 65% 35%))'
+                  : `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
               }}
             >
               <div className="flex items-center justify-center gap-2 text-white/70 text-sm mb-3">
