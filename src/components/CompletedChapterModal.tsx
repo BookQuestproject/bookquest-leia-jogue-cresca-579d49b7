@@ -239,18 +239,20 @@ const CompletedChapterModal = ({
           </div>
 
           {/* Reread Button */}
-          <Button
-            variant="outline"
-            onClick={() => setShowRereadConfirm(true)}
-            className="w-full gap-2"
-            style={{
-              borderColor: `hsl(${themeColor} / 0.5)`,
-              color: `hsl(${themeColor})`,
-            }}
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reler Capítulo (zerar tempo)
-          </Button>
+          <div className="pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowRereadConfirm(true)}
+              className="w-full gap-2"
+              style={{
+                borderColor: `hsl(${themeColor} / 0.5)`,
+                color: `hsl(${themeColor})`,
+              }}
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reler Capítulo (zerar tempo)
+            </Button>
+          </div>
         </div>
       </DialogContent>
 
