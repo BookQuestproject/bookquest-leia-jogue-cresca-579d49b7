@@ -9,7 +9,7 @@ interface LayoutProps {
 
 const Layout = ({ children, isPremium = false }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <Sidebar isPremium={isPremium} />
