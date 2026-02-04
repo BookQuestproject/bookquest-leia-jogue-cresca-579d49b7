@@ -121,8 +121,6 @@ const Index = () => {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
-        {/* Mini Stars Background */}
-        <div className="mini-stars-bg" />
         {/* Header - Current Journey */}
         <header className="mb-10 animate-fade-in">
           <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
