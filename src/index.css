@@ -87,44 +87,44 @@
 
   .dark {
     /* Dark theme - Galactic Blue Sky with Golden accents */
-    --background: 220 55% 8%; /* Deeper galactic base */
-    --foreground: 210 20% 95%;
+    --background: 215 60% 6%; /* Deeper galactic base */
+    --foreground: 210 20% 96%;
 
-    --card: 220 45% 12%;
-    --card-foreground: 210 20% 95%;
+    --card: 215 50% 10%;
+    --card-foreground: 210 20% 96%;
 
-    --popover: 220 45% 12%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 215 50% 10%;
+    --popover-foreground: 210 20% 96%;
 
     /* Primary: Lighter Blue */
-    --primary: 210 60% 55%;
-    --primary-foreground: 220 55% 8%;
+    --primary: 200 70% 55%;
+    --primary-foreground: 215 60% 6%;
 
     /* Secondary: Golden Yellow */
     --secondary: 43 80% 50%;
     --secondary-foreground: 25 60% 15%;
 
-    --muted: 220 35% 16%;
-    --muted-foreground: 210 15% 60%;
+    --muted: 215 40% 14%;
+    --muted-foreground: 200 20% 60%;
 
     /* Accent: Bright Gold for achievements */
     --accent: 40 85% 55%;
     --accent-foreground: 25 60% 15%;
 
     --destructive: 0 55% 50%;
-    --destructive-foreground: 210 20% 95%;
+    --destructive-foreground: 210 20% 96%;
 
-    --border: 220 35% 18%;
-    --input: 220 35% 14%;
+    --border: 215 40% 16%;
+    --input: 215 40% 12%;
     --ring: 43 80% 50%;
 
-    --sidebar-background: 220 55% 6%;
-    --sidebar-foreground: 210 20% 95%;
+    --sidebar-background: 215 60% 5%;
+    --sidebar-foreground: 210 20% 96%;
     --sidebar-primary: 43 80% 50%;
-    --sidebar-primary-foreground: 220 30% 10%;
-    --sidebar-accent: 220 35% 14%;
-    --sidebar-accent-foreground: 210 20% 95%;
-    --sidebar-border: 220 35% 16%;
+    --sidebar-primary-foreground: 215 30% 10%;
+    --sidebar-accent: 215 40% 12%;
+    --sidebar-accent-foreground: 210 20% 96%;
+    --sidebar-border: 215 40% 14%;
     --sidebar-ring: 43 80% 50%;
   }
 }
@@ -151,6 +151,16 @@
   }
 
   /* Galactic Starry Background for Dark Mode - Impactful & Minimalist */
+  .dark body {
+    background: linear-gradient(
+      180deg,
+      hsl(215 60% 6%) 0%,
+      hsl(210 55% 10%) 30%,
+      hsl(220 50% 8%) 60%,
+      hsl(215 60% 5%) 100%
+    ) !important;
+  }
+
   .dark body::before {
     content: '';
     position: fixed;
@@ -159,37 +169,33 @@
     right: 0;
     bottom: 0;
     background-image: 
-      /* Galactic nebula glow - lighter blue */
-      radial-gradient(ellipse 80% 50% at 20% 20%, hsl(210 70% 35% / 0.15) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 70%, hsl(220 60% 30% / 0.12) 0%, transparent 50%),
-      radial-gradient(ellipse 50% 30% at 50% 50%, hsl(200 65% 40% / 0.08) 0%, transparent 40%),
-      /* Bright white stars - different sizes */
-      radial-gradient(1.5px 1.5px at 10% 15%, hsl(0 0% 100% / 0.9) 50%, transparent 100%),
-      radial-gradient(1px 1px at 25% 35%, hsl(0 0% 100% / 0.85) 50%, transparent 100%),
-      radial-gradient(2px 2px at 40% 10%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
-      radial-gradient(1px 1px at 55% 45%, hsl(0 0% 100% / 0.8) 50%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 70% 25%, hsl(0 0% 100% / 0.9) 50%, transparent 100%),
-      radial-gradient(1px 1px at 85% 55%, hsl(0 0% 100% / 0.85) 50%, transparent 100%),
-      radial-gradient(2px 2px at 15% 70%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
-      radial-gradient(1px 1px at 30% 85%, hsl(0 0% 100% / 0.8) 50%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 60% 75%, hsl(0 0% 100% / 0.9) 50%, transparent 100%),
-      radial-gradient(1px 1px at 75% 90%, hsl(0 0% 100% / 0.85) 50%, transparent 100%),
-      radial-gradient(2px 2px at 90% 40%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
-      radial-gradient(1px 1px at 5% 50%, hsl(0 0% 100% / 0.8) 50%, transparent 100%),
-      /* Smaller distant stars */
-      radial-gradient(0.5px 0.5px at 18% 28%, hsl(0 0% 100% / 0.6) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 38% 58%, hsl(0 0% 100% / 0.5) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 52% 22%, hsl(0 0% 100% / 0.55) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 68% 68%, hsl(0 0% 100% / 0.5) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 82% 32%, hsl(0 0% 100% / 0.6) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 92% 78%, hsl(0 0% 100% / 0.55) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 8% 88%, hsl(0 0% 100% / 0.5) 50%, transparent 100%),
-      radial-gradient(0.5px 0.5px at 45% 95%, hsl(0 0% 100% / 0.6) 50%, transparent 100%);
-    background-size: 
-      100% 100%, 100% 100%, 100% 100%,
-      100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
-      100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
-      100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+      /* Galactic nebula glow - lighter blue, more visible */
+      radial-gradient(ellipse 90% 60% at 15% 10%, hsl(200 80% 45% / 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 85% 80%, hsl(210 70% 40% / 0.10) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 50% 40%, hsl(195 75% 50% / 0.08) 0%, transparent 45%),
+      /* Bright white stars - larger and more visible */
+      radial-gradient(2.5px 2.5px at 8% 12%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(2px 2px at 22% 28%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(3px 3px at 38% 8%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 52% 42%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
+      radial-gradient(2.5px 2.5px at 68% 18%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(2px 2px at 82% 52%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(3px 3px at 12% 68%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 28% 82%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
+      radial-gradient(2.5px 2.5px at 58% 72%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(2px 2px at 72% 88%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(3px 3px at 88% 35%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 5% 48%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
+      radial-gradient(2px 2px at 95% 62%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(2.5px 2.5px at 42% 92%, hsl(0 0% 100%) 50%, transparent 100%),
+      /* Medium stars */
+      radial-gradient(1px 1px at 15% 35%, hsl(0 0% 100% / 0.8) 50%, transparent 100%),
+      radial-gradient(1px 1px at 35% 55%, hsl(0 0% 100% / 0.75) 50%, transparent 100%),
+      radial-gradient(1px 1px at 48% 25%, hsl(0 0% 100% / 0.8) 50%, transparent 100%),
+      radial-gradient(1px 1px at 65% 65%, hsl(0 0% 100% / 0.75) 50%, transparent 100%),
+      radial-gradient(1px 1px at 78% 28%, hsl(0 0% 100% / 0.8) 50%, transparent 100%),
+      radial-gradient(1px 1px at 92% 75%, hsl(0 0% 100% / 0.75) 50%, transparent 100%);
+    background-size: 100% 100%;
     pointer-events: none;
     z-index: -1;
   }
@@ -203,21 +209,21 @@
     right: 0;
     bottom: 0;
     background-image:
-      radial-gradient(1.5px 1.5px at 20% 40%, hsl(0 0% 100% / 0.9) 50%, transparent 100%),
-      radial-gradient(2px 2px at 45% 20%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 65% 60%, hsl(0 0% 100% / 0.9) 50%, transparent 100%),
-      radial-gradient(1px 1px at 80% 15%, hsl(0 0% 100% / 0.85) 50%, transparent 100%),
-      radial-gradient(2px 2px at 35% 80%, hsl(0 0% 100% / 0.95) 50%, transparent 100%),
-      radial-gradient(1.5px 1.5px at 90% 65%, hsl(0 0% 100% / 0.9) 50%, transparent 100%);
+      radial-gradient(2.5px 2.5px at 18% 38%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(3px 3px at 42% 15%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(2.5px 2.5px at 62% 58%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(2px 2px at 78% 12%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(3px 3px at 32% 78%, hsl(0 0% 100%) 50%, transparent 100%),
+      radial-gradient(2.5px 2.5px at 88% 62%, hsl(0 0% 100%) 50%, transparent 100%);
     background-size: 100% 100%;
     pointer-events: none;
     z-index: -1;
-    animation: twinkle 4s ease-in-out infinite;
+    animation: twinkle 3s ease-in-out infinite;
   }
 
   @keyframes twinkle {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+    50% { opacity: 0.2; }
   }
 }
 
