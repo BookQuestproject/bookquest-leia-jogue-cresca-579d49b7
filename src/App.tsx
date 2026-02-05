@@ -25,6 +25,7 @@ import Noticias from "./pages/Noticias";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
+ import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
                 <Route path="/configuracoes" element={<Configuracoes />} />
                 <Route path="/noticias" element={<Noticias />} />
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
