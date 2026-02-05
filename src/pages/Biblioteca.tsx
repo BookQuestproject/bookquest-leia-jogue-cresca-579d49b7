@@ -16,6 +16,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { useBookSuggestions } from "@/hooks/useBookSuggestions";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 interface Book {
@@ -28,13 +31,6 @@ interface Book {
   rating: number;
   popularity: number;
   description: string;
-}
-
-interface SuggestedBook {
-  title: string;
-  author: string;
-  status: "pendente" | "validando" | "aprovado" | "rejeitado";
-  submittedAt: Date;
 }
 
 const allBooks: Book[] = [
@@ -60,8 +56,11 @@ const Biblioteca = () => {
   const [selectedGenre, setSelectedGenre] = useState("Todos");
   const [sortBy, setSortBy] = useState("Popularidade");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [suggestedBooks, setSuggestedBooks] = useState<SuggestedBook[]>([]);
-  const [newBook, setNewBook] = useState({ title: "", author: "" });
+  const [newBook, setNewBook] = useState({ title: "", author: "", reason: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { user } = useAuth();
+  const { suggestions, createSuggestion } = useBookSuggestions();
 
   const filteredBooks = allBooks
     .filter(book => {
@@ -89,55 +88,33 @@ const Biblioteca = () => {
     });
   };
 
-  const handleSuggestBook = () => {
+  const handleSuggestBook = async () => {
     if (!newBook.title.trim() || !newBook.author.trim()) {
       toast.error("Preencha título e autor do livro");
       return;
     }
 
-    const suggestion: SuggestedBook = {
-      title: newBook.title,
-      author: newBook.author,
-      status: "pendente",
-      submittedAt: new Date(),
-    };
-
-    setSuggestedBooks([...suggestedBooks, suggestion]);
-    setNewBook({ title: "", author: "" });
+    setIsSubmitting(true);
+    const success = await createSuggestion(newBook.title, newBook.author, newBook.reason);
+    setIsSubmitting(false);
     
-    toast.success("Livro enviado para validação!", {
-      description: "Verificaremos se o livro existe e está correto."
-    });
-
-    // Simulate validation after 3 seconds
-    setTimeout(() => {
-      setSuggestedBooks(prev => 
-        prev.map(s => 
-          s.title === suggestion.title && s.author === suggestion.author
-            ? { ...s, status: "validando" }
-            : s
-        )
-      );
-    }, 1500);
-
-    setTimeout(() => {
-      const isValid = Math.random() > 0.3;
-      setSuggestedBooks(prev => 
-        prev.map(s => 
-          s.title === suggestion.title && s.author === suggestion.author
-            ? { ...s, status: isValid ? "aprovado" : "rejeitado" }
-            : s
-        )
-      );
-      
-      if (isValid) {
-        toast.success(`"${suggestion.title}" foi aprovado e adicionado!`);
-      } else {
-        toast.error(`"${suggestion.title}" não foi encontrado em nossa base de dados.`);
-      }
-    }, 4000);
-
-    setShowAddModal(false);
+    if (success) {
+      setNewBook({ title: "", author: "", reason: "" });
+      setShowAddModal(false);
+    }
+  };
+  
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "pending":
+        return { text: "⏳ Pendente", className: "bg-warning/20 text-warning" };
+      case "approved":
+        return { text: "✅ Aprovado", className: "bg-success/20 text-success" };
+      case "rejected":
+        return { text: "❌ Rejeitado", className: "bg-destructive/20 text-destructive" };
+      default:
+        return { text: status, className: "bg-muted text-muted-foreground" };
+    }
   };
 
   return (
@@ -211,33 +188,27 @@ const Biblioteca = () => {
         </div>
 
         {/* Pending Suggestions */}
-        {suggestedBooks.filter(s => s.status !== "aprovado").length > 0 && (
+        {user && suggestions.filter(s => s.status !== "approved").length > 0 && (
           <div className="glass-card rounded-2xl p-4 mb-6">
             <h3 className="font-bold mb-3 flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary" />
               Suas sugestões
             </h3>
             <div className="space-y-2">
-              {suggestedBooks.filter(s => s.status !== "aprovado").map((book, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-secondary">
+              {suggestions.filter(s => s.status !== "approved").map((suggestion) => {
+                const statusInfo = getStatusLabel(suggestion.status);
+                return (
+                <div key={suggestion.id} className="flex items-center gap-3 p-3 rounded-xl bg-secondary">
                   <BookOpen className="w-5 h-5 text-muted-foreground" />
                   <div className="flex-1">
-                    <p className="font-medium">{book.title}</p>
-                    <p className="text-xs text-muted-foreground">{book.author}</p>
+                    <p className="font-medium">{suggestion.title}</p>
+                    <p className="text-xs text-muted-foreground">{suggestion.author || "Autor não informado"}</p>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    book.status === "pendente" ? "bg-yellow-500/20 text-yellow-500" :
-                    book.status === "validando" ? "bg-blue-500/20 text-blue-500" :
-                    book.status === "aprovado" ? "bg-green-500/20 text-green-500" :
-                    "bg-red-500/20 text-red-500"
-                  }`}>
-                    {book.status === "pendente" && "⏳ Pendente"}
-                    {book.status === "validando" && "🔍 Validando..."}
-                    {book.status === "aprovado" && "✅ Aprovado"}
-                    {book.status === "rejeitado" && "❌ Não encontrado"}
+                  <span className={`text-xs px-2 py-1 rounded-full ${statusInfo.className}`}>
+                    {statusInfo.text}
                   </span>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         )}
@@ -349,15 +320,36 @@ const Biblioteca = () => {
                 />
               </div>
 
+              <div>
+                <label className="text-sm font-medium mb-2 block">Por que recomendar? (opcional)</label>
+                <Textarea
+                  placeholder="Conte-nos por que você gosta deste livro..."
+                  value={newBook.reason}
+                  onChange={(e) => setNewBook({ ...newBook, reason: e.target.value })}
+                  rows={3}
+                />
+              </div>
+
               <div className="flex gap-3">
                 <Button variant="outline" className="flex-1" onClick={() => setShowAddModal(false)}>
                   Cancelar
                 </Button>
-                <Button variant="hero" className="flex-1 gap-2" onClick={handleSuggestBook}>
+                <Button 
+                  variant="hero" 
+                  className="flex-1 gap-2" 
+                  onClick={handleSuggestBook}
+                  disabled={isSubmitting || !user}
+                >
                   <Check className="w-4 h-4" />
-                  Enviar para Validação
+                  {isSubmitting ? "Enviando..." : "Enviar Sugestão"}
                 </Button>
               </div>
+              
+              {!user && (
+                <p className="text-xs text-center text-muted-foreground">
+                  Você precisa estar logado para sugerir um livro
+                </p>
+              )}
             </div>
           </DialogContent>
         </Dialog>

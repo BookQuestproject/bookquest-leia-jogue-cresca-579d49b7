@@ -19,8 +19,10 @@ import {
   LogIn,
   LogOut,
   User,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+ import { useAdmin } from "@/hooks/useAdmin";
 
 interface SidebarProps {
   isPremium?: boolean;
@@ -29,6 +31,7 @@ interface SidebarProps {
 const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
 
   const menuItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -138,6 +141,15 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
       {/* Settings & User Actions */}
       <div className="p-3 border-t border-sidebar-border space-y-0.5">
+        {isAdmin && (
+          <Link
+            to="/admin"
+            className={`sidebar-item ${isActive("/admin") ? "active" : ""}`}
+          >
+            <Shield className="w-5 h-5 text-accent" />
+            <span className="text-sm">Painel Admin</span>
+          </Link>
+        )}
         {user && (
           <Link
             to="/perfil"
