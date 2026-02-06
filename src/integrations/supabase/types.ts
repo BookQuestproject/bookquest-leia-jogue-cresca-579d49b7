@@ -38,9 +38,14 @@ export type Database = {
       book_suggestions: {
         Row: {
           admin_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
           author: string | null
+          book_summary: string | null
+          chapters_list: Json | null
           created_at: string
           id: string
+          narrative_context: string | null
           reason: string | null
           status: string
           title: string
@@ -49,9 +54,14 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           author?: string | null
+          book_summary?: string | null
+          chapters_list?: Json | null
           created_at?: string
           id?: string
+          narrative_context?: string | null
           reason?: string | null
           status?: string
           title: string
@@ -60,9 +70,14 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           author?: string | null
+          book_summary?: string | null
+          chapters_list?: Json | null
           created_at?: string
           id?: string
+          narrative_context?: string | null
           reason?: string | null
           status?: string
           title?: string
@@ -70,6 +85,155 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      group_session_participants: {
+        Row: {
+          attended: boolean | null
+          enrolled_at: string | null
+          id: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          attended?: boolean | null
+          enrolled_at?: string | null
+          id?: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          attended?: boolean | null
+          enrolled_at?: string | null
+          id?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_session_participants_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "mentorship_group_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentor_tracks: {
+        Row: {
+          id: string
+          mentor_id: string
+          track_id: string
+        }
+        Insert: {
+          id?: string
+          mentor_id: string
+          track_id: string
+        }
+        Update: {
+          id?: string
+          mentor_id?: string
+          track_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentor_tracks_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "mentors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mentor_tracks_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "mentorship_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mentors: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      mentorship_group_sessions: {
+        Row: {
+          created_at: string | null
+          id: string
+          max_participants: number | null
+          mentor_id: string | null
+          min_participants: number | null
+          notes: string | null
+          session_date: string
+          session_time: string
+          status: string | null
+          track_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          max_participants?: number | null
+          mentor_id?: string | null
+          min_participants?: number | null
+          notes?: string | null
+          session_date: string
+          session_time: string
+          status?: string | null
+          track_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          max_participants?: number | null
+          mentor_id?: string | null
+          min_participants?: number | null
+          notes?: string | null
+          session_date?: string
+          session_time?: string
+          status?: string | null
+          track_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mentorship_group_sessions_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "mentors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mentorship_group_sessions_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "mentorship_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mentorship_sessions: {
         Row: {
@@ -98,6 +262,42 @@ export type Database = {
           session_time?: string
           status?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      mentorship_tracks: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          objectives: string[] | null
+          slug: string
+          updated_at: string | null
+          weekly_script: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          objectives?: string[] | null
+          slug: string
+          updated_at?: string | null
+          weekly_script?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          objectives?: string[] | null
+          slug?: string
+          updated_at?: string | null
+          weekly_script?: Json | null
         }
         Relationships: []
       }
