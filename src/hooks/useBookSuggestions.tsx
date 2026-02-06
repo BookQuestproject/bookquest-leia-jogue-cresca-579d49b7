@@ -3,19 +3,24 @@
  import { useAuth } from "@/hooks/useAuth";
  import { toast } from "sonner";
  
- export interface BookSuggestion {
-   id: string;
-   user_id: string;
-   title: string;
-   author: string | null;
-   reason: string | null;
-   status: string;
-   admin_notes: string | null;
-   created_at: string;
-   updated_at: string;
-   user_email?: string;
-   user_name?: string;
- }
+export interface BookSuggestion {
+  id: string;
+  user_id: string;
+  title: string;
+  author: string | null;
+  reason: string | null;
+  status: string;
+  admin_notes: string | null;
+  created_at: string;
+  updated_at: string;
+  user_email?: string;
+  user_name?: string;
+  chapters_list: any;
+  book_summary: string | null;
+  narrative_context: string | null;
+  approved_at: string | null;
+  approved_by: string | null;
+}
  
  export const useBookSuggestions = () => {
    const { user } = useAuth();
@@ -107,31 +112,45 @@
      fetchAllSuggestions();
    }, []);
  
-   const updateSuggestionStatus = async (
-     id: string,
-     status: string,
-     adminNotes?: string
-   ) => {
-     try {
-       const { error } = await supabase
-         .from("book_suggestions")
-         .update({
-           status,
-           admin_notes: adminNotes || null,
-         })
-         .eq("id", id);
- 
-       if (error) throw error;
- 
-       toast.success(`Sugestão ${status === "approved" ? "aprovada" : "rejeitada"}`);
-       await fetchAllSuggestions();
-       return true;
-     } catch (err) {
-       console.error("Error updating suggestion:", err);
-       toast.error("Erro ao atualizar sugestão");
-       return false;
-     }
-   };
+  const updateSuggestionStatus = async (
+    id: string,
+    status: string,
+    adminNotes?: string,
+    detailedInfo?: {
+      chapters_list?: string[];
+      book_summary?: string;
+      narrative_context?: string;
+    }
+  ) => {
+    try {
+      const updateData: any = {
+        status,
+        admin_notes: adminNotes || null,
+      };
+
+      if (status === "approved" && detailedInfo) {
+        updateData.chapters_list = detailedInfo.chapters_list || null;
+        updateData.book_summary = detailedInfo.book_summary || null;
+        updateData.narrative_context = detailedInfo.narrative_context || null;
+        updateData.approved_at = new Date().toISOString();
+      }
+
+      const { error } = await supabase
+        .from("book_suggestions")
+        .update(updateData)
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast.success(`Sugestão ${status === "approved" ? "aprovada" : "rejeitada"}`);
+      await fetchAllSuggestions();
+      return true;
+    } catch (err) {
+      console.error("Error updating suggestion:", err);
+      toast.error("Erro ao atualizar sugestão");
+      return false;
+    }
+  };
  
    const deleteSuggestion = async (id: string) => {
      try {

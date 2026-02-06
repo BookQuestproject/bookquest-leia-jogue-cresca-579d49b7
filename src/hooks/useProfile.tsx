@@ -17,6 +17,7 @@ interface ProfileContextType {
   profile: Profile | null;
   loading: boolean;
   isPremium: boolean;
+  isAdmin: boolean;
   quizCompleted: boolean;
   refreshProfile: () => Promise<void>;
   checkSubscription: () => Promise<void>;
@@ -28,24 +29,37 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   const { user, session } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async () => {
     if (!user) {
       setProfile(null);
+      setIsAdmin(false);
       setLoading(false);
       return;
     }
 
     try {
-      const { data, error } = await supabase
+      // Fetch profile
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
 
-      if (error) throw error;
-      setProfile(data);
+      if (profileError) throw profileError;
+      setProfile(profileData);
+
+      // Check admin role
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      setIsAdmin(!!roleData);
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -100,10 +114,14 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [session]);
 
+  // Admins always have premium access
+  const isPremium = isAdmin || (profile?.is_premium ?? false);
+
   const value: ProfileContextType = {
     profile,
     loading,
-    isPremium: profile?.is_premium ?? false,
+    isPremium,
+    isAdmin,
     quizCompleted: profile?.quiz_completed ?? false,
     refreshProfile,
     checkSubscription,
