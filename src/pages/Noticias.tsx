@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Newspaper, Bell, Sparkles, BookOpen, Star, Calendar, ChevronRight } from "lucide-react";
+import { Newspaper, Bell, Sparkles, Star, Calendar, TrendingUp, BookOpen, Flame } from "lucide-react";
 import Layout from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
 
 interface NewsItem {
   id: number;
@@ -10,6 +9,7 @@ interface NewsItem {
   content: string;
   date: string;
   isNew?: boolean;
+  isPinned?: boolean;
 }
 
 const newsItems: NewsItem[] = [
@@ -20,6 +20,7 @@ const newsItems: NewsItem[] = [
     content: "Agora cada trilha representa um livro completo. Cada capítulo tem uma pergunta estratégica para testar sua compreensão. Experimente agora!",
     date: "04 Jan 2026",
     isNew: true,
+    isPinned: true,
   },
   {
     id: 2,
@@ -76,23 +77,35 @@ const newsItems: NewsItem[] = [
 const typeConfig = {
   update: {
     icon: Bell,
-    color: "text-blue-500",
-    bg: "bg-blue-500/10",
     label: "Atualização",
+    gradient: "from-blue-500/20 to-blue-600/10",
+    iconBg: "bg-blue-500/15",
+    iconColor: "text-blue-400",
+    border: "border-blue-500/20",
   },
   curiosity: {
     icon: Sparkles,
-    color: "text-purple-500",
-    bg: "bg-purple-500/10",
     label: "Curiosidade",
+    gradient: "from-purple-500/20 to-purple-600/10",
+    iconBg: "bg-purple-500/15",
+    iconColor: "text-purple-400",
+    border: "border-purple-500/20",
   },
   announcement: {
     icon: Star,
-    color: "text-accent",
-    bg: "bg-accent/10",
     label: "Anúncio",
+    gradient: "from-accent/20 to-accent/10",
+    iconBg: "bg-accent/15",
+    iconColor: "text-accent",
+    border: "border-accent/20",
   },
 };
+
+const quickStats = [
+  { icon: BookOpen, label: "Livros disponíveis", value: "50+" },
+  { icon: Flame, label: "Leitores ativos", value: "1.2K" },
+  { icon: TrendingUp, label: "Capítulos lidos hoje", value: "340" },
+];
 
 const Noticias = () => {
   const [selectedType, setSelectedType] = useState<"all" | "update" | "curiosity" | "announcement">("all");
@@ -100,6 +113,9 @@ const Noticias = () => {
   const filteredNews = newsItems.filter(
     item => selectedType === "all" || item.type === selectedType
   );
+
+  const pinnedNews = filteredNews.filter(item => item.isPinned);
+  const regularNews = filteredNews.filter(item => !item.isPinned);
 
   const filters = [
     { id: "all", label: "Todas" },
@@ -110,16 +126,33 @@ const Noticias = () => {
 
   return (
     <Layout>
-      <div className="py-8">
-        {/* Header */}
-        <div className="mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-            <Newspaper className="w-8 h-8 text-primary" />
-            Notícias
-          </h1>
-          <p className="text-muted-foreground">
-            Atualizações do app, curiosidades literárias e novidades
-          </p>
+      <div className="py-8 max-w-4xl mx-auto">
+        {/* Hero Header */}
+        <div className="mb-10 animate-fade-in">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-secondary/15 flex items-center justify-center">
+              <Newspaper className="w-7 h-7 text-secondary" />
+            </div>
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-serif font-semibold">
+                Notícias
+              </h1>
+              <p className="text-muted-foreground">
+                Atualizações, curiosidades literárias e novidades do BookQuest
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats Bar */}
+        <div className="grid grid-cols-3 gap-3 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          {quickStats.map((stat, i) => (
+            <div key={i} className="editorial-card p-4 text-center">
+              <stat.icon className="w-5 h-5 text-secondary mx-auto mb-2" />
+              <p className="text-xl font-bold">{stat.value}</p>
+              <p className="text-xs text-muted-foreground">{stat.label}</p>
+            </div>
+          ))}
         </div>
 
         {/* Filters */}
@@ -128,7 +161,7 @@ const Noticias = () => {
             <button
               key={filter.id}
               onClick={() => setSelectedType(filter.id as any)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+              className={`px-5 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 selectedType === filter.id
                   ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
                   : "bg-muted text-primary hover:bg-muted/80"
@@ -139,26 +172,66 @@ const Noticias = () => {
           ))}
         </div>
 
-        {/* News List */}
+        {/* Pinned / Featured News */}
+        {pinnedNews.length > 0 && (
+          <div className="mb-8 space-y-4">
+            {pinnedNews.map((item) => {
+              const config = typeConfig[item.type];
+              const Icon = config.icon;
+              return (
+                <div
+                  key={item.id}
+                  className={`rounded-2xl p-6 border-2 ${config.border} bg-gradient-to-br ${config.gradient} animate-fade-in`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={`w-14 h-14 rounded-xl ${config.iconBg} flex items-center justify-center flex-shrink-0`}>
+                      <Icon className={`w-7 h-7 ${config.iconColor}`} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground font-bold">
+                          DESTAQUE
+                        </span>
+                        {item.isNew && (
+                          <span className="text-xs px-2.5 py-1 rounded-full bg-primary text-primary-foreground font-bold">
+                            NOVO
+                          </span>
+                        )}
+                      </div>
+                      <h2 className="text-xl font-serif font-semibold mb-2">{item.title}</h2>
+                      <p className="text-muted-foreground leading-relaxed">{item.content}</p>
+                      <div className="flex items-center gap-2 mt-4 text-xs text-muted-foreground">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {item.date}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Regular News */}
         <div className="space-y-4">
-          {filteredNews.map((item, index) => {
+          {regularNews.map((item, index) => {
             const config = typeConfig[item.type];
             const Icon = config.icon;
 
             return (
-              <div 
+              <div
                 key={item.id}
                 className="glass-card rounded-2xl p-5 animate-fade-in card-hover"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-xl ${config.bg} flex items-center justify-center flex-shrink-0`}>
-                    <Icon className={`w-6 h-6 ${config.color}`} />
+                  <div className={`w-12 h-12 rounded-xl ${config.iconBg} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className={`w-6 h-6 ${config.iconColor}`} />
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${config.bg} ${config.color} font-medium`}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${config.iconBg} ${config.iconColor} font-medium`}>
                         {config.label}
                       </span>
                       {item.isNew && (
@@ -167,10 +240,10 @@ const Noticias = () => {
                         </span>
                       )}
                     </div>
-                    
-                    <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground text-sm">{item.content}</p>
-                    
+
+                    <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{item.content}</p>
+
                     <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
                       <Calendar className="w-3 h-3" />
                       {item.date}
@@ -183,12 +256,10 @@ const Noticias = () => {
         </div>
 
         {filteredNews.length === 0 && (
-          <div className="text-center py-16">
+          <div className="text-center py-20">
             <Newspaper className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-bold mb-2">Nenhuma notícia encontrada</h3>
-            <p className="text-muted-foreground">
-              Tente selecionar outra categoria
-            </p>
+            <h3 className="text-lg font-semibold mb-2">Nenhuma notícia encontrada</h3>
+            <p className="text-muted-foreground">Tente selecionar outra categoria</p>
           </div>
         )}
       </div>

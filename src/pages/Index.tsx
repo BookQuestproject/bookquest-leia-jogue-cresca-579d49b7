@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Castle, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
+import GuidedTutorial from "@/components/GuidedTutorial";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
 import StreakFlame from "@/components/StreakFlame";
@@ -120,6 +121,7 @@ const Index = () => {
 
   return (
     <Layout>
+      <GuidedTutorial />
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
         {/* Header - Current Journey */}
         <header className="mb-10 animate-fade-in">

@@ -12,37 +12,37 @@
 
 @layer base {
   :root {
-    /* BookQuest - Light Mode (Marfim with Golden Yellow accent) */
-    --background: 43 23% 95%;
-    --foreground: 220 30% 15%;
+    /* BookQuest - Light Mode - Improved readability */
+    --background: 40 20% 96%;
+    --foreground: 220 35% 12%;
 
-    --card: 43 23% 97%;
-    --card-foreground: 220 30% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 35% 12%;
 
-    --popover: 43 23% 98%;
-    --popover-foreground: 220 30% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 35% 12%;
 
     /* Primary: Deep Navy Blue */
     --primary: 220 50% 25%;
-    --primary-foreground: 43 23% 95%;
+    --primary-foreground: 0 0% 98%;
 
-    /* Secondary: Golden Yellow (was Wine Ruby) */
+    /* Secondary: Golden Yellow */
     --secondary: 43 75% 45%;
     --secondary-foreground: 25 60% 18%;
 
-    /* Muted */
-    --muted: 43 15% 88%;
-    --muted-foreground: 220 15% 45%;
+    /* Muted - Better contrast */
+    --muted: 40 12% 90%;
+    --muted-foreground: 220 15% 40%;
 
-    /* Accent: Rich Gold for achievements */
+    /* Accent: Rich Gold */
     --accent: 40 80% 50%;
     --accent-foreground: 25 60% 18%;
 
     --destructive: 0 55% 45%;
-    --destructive-foreground: 43 23% 95%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 43 15% 82%;
-    --input: 43 15% 90%;
+    --border: 40 12% 84%;
+    --input: 40 12% 92%;
     --ring: 43 75% 45%;
 
     --radius: 0.5rem;
@@ -58,12 +58,12 @@
     --legendary: 40 80% 55%;
 
     /* Book Theme Colors */
-    --theme-fantasy: 43 75% 45%; /* Golden - Harry Potter */
-    --theme-ocean: 210 55% 30%; /* Navy - Percy Jackson */
-    --theme-epic: 275 40% 35%; /* Amethyst - Epic fantasy */
-    --theme-mystery: 200 35% 30%; /* Petrol - Mystery */
-    --theme-adventure: 150 40% 28%; /* Emerald - Adventure */
-    --theme-classic: 43 75% 45%; /* Golden - Classics */
+    --theme-fantasy: 43 75% 45%;
+    --theme-ocean: 210 55% 30%;
+    --theme-epic: 275 40% 35%;
+    --theme-mystery: 200 35% 30%;
+    --theme-adventure: 150 40% 28%;
+    --theme-classic: 43 75% 45%;
 
     --olive: 140 12% 33%;
     --success: 150 40% 35%;
@@ -75,56 +75,57 @@
     --gradient-secondary: linear-gradient(135deg, hsl(43 75% 40%), hsl(40 80% 55%));
     --gradient-achievement: linear-gradient(135deg, hsl(40 80% 45%), hsl(35 85% 55%));
 
-    --sidebar-background: 43 23% 93%;
-    --sidebar-foreground: 220 30% 15%;
+    --sidebar-background: 40 15% 94%;
+    --sidebar-foreground: 220 35% 12%;
     --sidebar-primary: 43 75% 45%;
     --sidebar-primary-foreground: 220 30% 12%;
-    --sidebar-accent: 43 25% 88%;
-    --sidebar-accent-foreground: 220 30% 15%;
-    --sidebar-border: 43 15% 80%;
+    --sidebar-accent: 40 18% 90%;
+    --sidebar-accent-foreground: 220 35% 12%;
+    --sidebar-border: 40 12% 84%;
     --sidebar-ring: 43 75% 45%;
   }
 
   .dark {
-    /* Dark theme - Galactic Blue Sky with Golden accents */
-    --background: 215 60% 6%; /* Deeper galactic base */
-    --foreground: 210 20% 96%;
+    /* Dark theme - Deeper Galactic Blue, better contrast */
+    --background: 220 65% 5%;
+    --foreground: 210 25% 95%;
 
-    --card: 215 50% 10%;
-    --card-foreground: 210 20% 96%;
+    --card: 220 50% 9%;
+    --card-foreground: 210 25% 95%;
 
-    --popover: 215 50% 10%;
-    --popover-foreground: 210 20% 96%;
+    --popover: 220 50% 9%;
+    --popover-foreground: 210 25% 95%;
 
-    /* Primary: Lighter Blue */
-    --primary: 200 70% 55%;
-    --primary-foreground: 215 60% 6%;
+    /* Primary: Brighter Blue for dark mode */
+    --primary: 200 75% 58%;
+    --primary-foreground: 220 65% 5%;
 
     /* Secondary: Golden Yellow */
     --secondary: 43 80% 50%;
     --secondary-foreground: 25 60% 15%;
 
-    --muted: 215 40% 14%;
-    --muted-foreground: 200 20% 60%;
+    /* Muted - Better separation */
+    --muted: 220 40% 13%;
+    --muted-foreground: 210 20% 55%;
 
-    /* Accent: Bright Gold for achievements */
+    /* Accent: Bright Gold */
     --accent: 40 85% 55%;
     --accent-foreground: 25 60% 15%;
 
     --destructive: 0 55% 50%;
-    --destructive-foreground: 210 20% 96%;
+    --destructive-foreground: 210 25% 95%;
 
-    --border: 215 40% 16%;
-    --input: 215 40% 12%;
+    --border: 220 35% 16%;
+    --input: 220 40% 11%;
     --ring: 43 80% 50%;
 
-    --sidebar-background: 215 60% 5%;
-    --sidebar-foreground: 210 20% 96%;
+    --sidebar-background: 220 65% 4%;
+    --sidebar-foreground: 210 25% 95%;
     --sidebar-primary: 43 80% 50%;
-    --sidebar-primary-foreground: 215 30% 10%;
-    --sidebar-accent: 215 40% 12%;
-    --sidebar-accent-foreground: 210 20% 96%;
-    --sidebar-border: 215 40% 14%;
+    --sidebar-primary-foreground: 220 30% 10%;
+    --sidebar-accent: 220 40% 11%;
+    --sidebar-accent-foreground: 210 25% 95%;
+    --sidebar-border: 220 35% 14%;
     --sidebar-ring: 43 80% 50%;
   }
 }
