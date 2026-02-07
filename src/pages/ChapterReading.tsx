@@ -85,7 +85,9 @@ const bookData: Record<string, {
   },
 };
 
-type ReadingState = "intro" | "reading" | "quiz" | "completed";
+import ReadingCountdown from "@/components/ReadingCountdown";
+
+type ReadingState = "intro" | "countdown" | "reading" | "quiz" | "completed";
 
 const ChapterReading = () => {
   const { bookId, chapterId } = useParams();
@@ -184,10 +186,18 @@ const ChapterReading = () => {
   };
 
   const handleStartReading = () => {
-    setReadingState("reading");
-    if (!hasRestoredProgress) {
-      setElapsedTime(0);
+    if (hasRestoredProgress) {
+      // Resuming - skip countdown
+      setReadingState("reading");
+      setIsPaused(false);
+    } else {
+      setReadingState("countdown");
     }
+  };
+
+  const handleCountdownComplete = () => {
+    setElapsedTime(0);
+    setReadingState("reading");
     setIsPaused(false);
   };
 
@@ -366,6 +376,15 @@ const ChapterReading = () => {
               Iniciar Leitura
             </Button>
           </div>
+        )}
+
+        {/* Countdown State */}
+        {readingState === "countdown" && (
+          <ReadingCountdown
+            onComplete={handleCountdownComplete}
+            themeColor={themeColor}
+            chapterTitle={chapter.title}
+          />
         )}
 
         {/* Reading State - Timer Active */}
