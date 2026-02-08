@@ -575,7 +575,7 @@ const Trilhas = () => {
     <Layout isPremium={isPremium}>
       <div className="max-w-5xl mx-auto py-8">
         {/* Header */}
-        <header className="mb-10 animate-fade-in">
+        <header className="mb-10 animate-fade-in" data-tutorial="trilhas-header">
           <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Biblioteca de Jornadas</p>
           <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Trilhas Literárias</h1>
           <p className="text-muted-foreground max-w-xl">

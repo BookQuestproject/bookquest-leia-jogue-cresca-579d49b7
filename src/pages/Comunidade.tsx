@@ -448,7 +448,7 @@ const Comunidade = () => {
     <Layout>
       <div className="py-8">
         {/* Header */}
-        <div className="mb-8 animate-fade-in">
+        <div className="mb-8 animate-fade-in" data-tutorial="comunidade-header">
           <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
             <Users className="w-8 h-8 text-secondary" />
             Comunidades Literárias

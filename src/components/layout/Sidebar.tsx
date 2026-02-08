@@ -66,7 +66,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       </div>
 
       {/* User Stats Quick View */}
-      <div className="px-5 py-3 border-b border-sidebar-border">
+      <div className="px-5 py-3 border-b border-sidebar-border" data-tutorial="user-stats">
         {user ? (
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5 text-accent">
@@ -90,7 +90,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto" data-tutorial="sidebar-nav">
         {menuItems.map((item) => (
           <Link
             key={item.path}
@@ -125,7 +125,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
       {/* Premium CTA for non-premium users */}
       {!isPremium && (
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="p-4 border-t border-sidebar-border" data-tutorial="premium-cta">
           <Link
             to="/premium"
             className="flex items-center gap-3 px-4 py-3 rounded bg-accent/10 text-accent hover:bg-accent/15 transition-colors"

@@ -75,7 +75,7 @@ const Estante = () => {
     <Layout>
       <div className="py-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 animate-fade-in">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 animate-fade-in" data-tutorial="estante-header">
           <div>
             <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
               <BookMarked className="w-8 h-8 text-primary" />
