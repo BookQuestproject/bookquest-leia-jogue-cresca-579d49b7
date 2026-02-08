@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Castle, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
-import GuidedTutorial from "@/components/GuidedTutorial";
+
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
 import StreakFlame from "@/components/StreakFlame";
@@ -121,7 +121,7 @@ const Index = () => {
 
   return (
     <Layout>
-      <GuidedTutorial />
+      
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
         {/* Header - Current Journey */}
         <header className="mb-10 animate-fade-in">
@@ -140,8 +140,9 @@ const Index = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 order-2 lg:order-1">
-            {/* Current Trail Card - Styled like Trilhas page */}
-            <div 
+            {/* Current Trail Card */}
+            <div
+              data-tutorial="current-trail"
               className="rounded-xl p-5 mb-8 animate-fade-in relative overflow-hidden"
               style={{
                 background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
@@ -207,7 +208,7 @@ const Index = () => {
             </div>
 
             {/* Complete Chapter Trail */}
-            <div className="animate-fade-in space-y-3" style={{ animationDelay: "0.2s" }}>
+            <div className="animate-fade-in space-y-3" data-tutorial="chapter-list" style={{ animationDelay: "0.2s" }}>
               {chapters.map((chapter) => {
                 const isLocked = chapter.status === "locked";
                 const isCurrent = chapter.status === "current";
@@ -347,7 +348,7 @@ const Index = () => {
           {/* Sidebar */}
           <div className="space-y-6 order-1 lg:order-2">
             {/* Ranking Card */}
-            <div className="editorial-card p-5 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <div className="editorial-card p-5 animate-fade-in" data-tutorial="ranking-card" style={{ animationDelay: "0.2s" }}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Seu Ranking</h3>
                 <Link to="/ranking" className="text-xs text-secondary hover:underline font-medium">
@@ -389,7 +390,7 @@ const Index = () => {
             </div>
 
             {/* Daily Missions */}
-            <div className="editorial-card p-5 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+            <div className="editorial-card p-5 animate-fade-in" data-tutorial="missions-card" style={{ animationDelay: "0.4s" }}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Missões do Dia</h3>
                 <Link to="/missoes" className="text-xs text-secondary hover:underline font-medium">

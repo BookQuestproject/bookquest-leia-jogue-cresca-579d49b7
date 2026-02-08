@@ -148,7 +148,7 @@ const Ranking = () => {
     <Layout>
       <div className="max-w-5xl mx-auto py-8">
         {/* Header */}
-        <header className="mb-10 animate-fade-in">
+        <header className="mb-10 animate-fade-in" data-tutorial="ranking-header">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Competição por Nível</p>

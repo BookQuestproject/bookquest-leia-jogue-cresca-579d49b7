@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { Settings, User, Bell, Moon, Sun, Globe, Shield, LogOut, ChevronRight, BookOpen, Users } from "lucide-react";
+import { Settings, User, Bell, Moon, Sun, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { useTutorial } from "@/contexts/TutorialContext";
 
 const Configuracoes = () => {
   const { toast } = useToast();
+  const { startTutorial, isCompleted: tutorialCompleted } = useTutorial();
   
   // Estados das configurações
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -273,6 +275,27 @@ const Configuracoes = () => {
                   onCheckedChange={(checked) => updatePrivacy("showInCommunity", checked)}
                 />
               </div>
+            </div>
+          </section>
+
+          {/* Tutorial */}
+          <section className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-4 border-b border-border">
+              <h2 className="font-bold flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-primary" />
+                Tutorial
+              </h2>
+            </div>
+            <div className="p-4">
+              <p className="text-sm text-muted-foreground mb-3">
+                {tutorialCompleted
+                  ? "Você já completou o tutorial. Quer ver novamente?"
+                  : "Aprenda a usar todas as funcionalidades do BookQuest."}
+              </p>
+              <Button variant="outline" className="w-full gap-2" onClick={startTutorial}>
+                <HelpCircle className="w-4 h-4" />
+                Ver tutorial novamente
+              </Button>
             </div>
           </section>
 

@@ -132,7 +132,7 @@ const Mentoria = () => {
         )}
 
         {/* Header */}
-        <div className="mb-8 animate-fade-in">
+        <div className="mb-8 animate-fade-in" data-tutorial="mentoria-header">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-bold mb-4">
             <Crown className="w-4 h-4" />
             Exclusivo para Assinantes

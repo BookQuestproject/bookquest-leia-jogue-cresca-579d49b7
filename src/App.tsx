@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileProvider } from "@/hooks/useProfile";
+import { TutorialProvider } from "@/contexts/TutorialContext";
+import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
 import QuizGate from "@/components/QuizGate";
 import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
@@ -39,8 +41,10 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <QuizGate>
-                <Routes>
+              <TutorialProvider>
+                <SpotlightOverlay />
+                <QuizGate>
+                  <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/quiz" element={<Quiz />} />
@@ -62,8 +66,9 @@ const App = () => (
                   <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="*" element={<NotFound />} />
-                </Routes>
-              </QuizGate>
+                  </Routes>
+                </QuizGate>
+              </TutorialProvider>
             </BrowserRouter>
           </TooltipProvider>
         </ProfileProvider>

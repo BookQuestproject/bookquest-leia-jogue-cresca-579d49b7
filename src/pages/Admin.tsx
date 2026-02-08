@@ -55,7 +55,7 @@ const Admin = () => {
     <Layout>
       <div className="py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8 animate-fade-in">
+        <div className="flex items-center justify-between mb-8 animate-fade-in" data-tutorial="admin-panel">
           <div>
             <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
               <Shield className="w-8 h-8 text-primary" />
@@ -108,11 +108,11 @@ const Admin = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="suggestions">
+          <TabsContent value="suggestions" data-tutorial="admin-suggestions">
             <AdminBookSuggestionsPanel />
           </TabsContent>
 
-          <TabsContent value="tracks">
+          <TabsContent value="tracks" data-tutorial="admin-tracks">
             <AdminTracksPanel />
           </TabsContent>
 
