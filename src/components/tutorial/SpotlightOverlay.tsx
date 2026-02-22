@@ -65,30 +65,53 @@ const SpotlightOverlay = () => {
     // Scroll element into view
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Calculate tooltip position
+    // Calculate tooltip position clamped to viewport
     const placement = currentStepData.placement || "bottom";
-    const tooltipW = 340;
-    const tooltipH = 160;
-    let style: React.CSSProperties = { position: "absolute", width: tooltipW, zIndex: 10002 };
+    const tooltipW = 320;
+    const tooltipH = 180;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    
+    let style: React.CSSProperties = { position: "fixed", width: tooltipW, zIndex: 10002 };
 
-    switch (placement) {
-      case "bottom":
-        style.top = newRect.top + newRect.height + 12;
-        style.left = Math.max(16, Math.min(newRect.left + newRect.width / 2 - tooltipW / 2, window.innerWidth - tooltipW - 16));
-        break;
-      case "top":
-        style.top = newRect.top - tooltipH - 12;
-        style.left = Math.max(16, Math.min(newRect.left + newRect.width / 2 - tooltipW / 2, window.innerWidth - tooltipW - 16));
-        break;
-      case "right":
-        style.top = Math.max(16, newRect.top + newRect.height / 2 - tooltipH / 2);
-        style.left = newRect.left + newRect.width + 12;
-        break;
-      case "left":
-        style.top = Math.max(16, newRect.top + newRect.height / 2 - tooltipH / 2);
-        style.left = newRect.left - tooltipW - 12;
-        break;
+    // Use viewport-relative coords (fixed positioning)
+    const elRect = el.getBoundingClientRect();
+    const centerX = elRect.left + elRect.width / 2;
+    const centerY = elRect.top + elRect.height / 2;
+
+    // Try placement, then fallback if off-screen
+    let top = 0;
+    let left = 0;
+
+    if (placement === "bottom" && elRect.bottom + 12 + tooltipH < vh) {
+      top = elRect.bottom + 12;
+      left = centerX - tooltipW / 2;
+    } else if (placement === "top" && elRect.top - 12 - tooltipH > 0) {
+      top = elRect.top - 12 - tooltipH;
+      left = centerX - tooltipW / 2;
+    } else if (placement === "right" && elRect.right + 12 + tooltipW < vw) {
+      top = centerY - tooltipH / 2;
+      left = elRect.right + 12;
+    } else if (placement === "left" && elRect.left - 12 - tooltipW > 0) {
+      top = centerY - tooltipH / 2;
+      left = elRect.left - 12 - tooltipW;
+    } else {
+      // Auto: prefer bottom, then top, then center of screen
+      if (elRect.bottom + 12 + tooltipH < vh) {
+        top = elRect.bottom + 12;
+        left = centerX - tooltipW / 2;
+      } else if (elRect.top - 12 - tooltipH > 0) {
+        top = elRect.top - 12 - tooltipH;
+        left = centerX - tooltipW / 2;
+      } else {
+        top = Math.max(16, vh / 2 - tooltipH / 2);
+        left = Math.max(16, vw / 2 - tooltipW / 2);
+      }
     }
+
+    // Clamp to viewport
+    style.top = Math.max(8, Math.min(top, vh - tooltipH - 8));
+    style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
 
     setTooltipStyle(style);
   }, [currentStepData, location.pathname, navigate]);
