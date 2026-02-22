@@ -12,121 +12,126 @@
 
 @layer base {
   :root {
-    /* BookQuest - Light Mode - Improved readability */
-    --background: 40 20% 96%;
-    --foreground: 220 35% 12%;
+    /* BookQuest - Modern Vibrant Light Theme */
+    --background: 210 20% 98%;
+    --foreground: 215 28% 17%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 35% 12%;
+    --card-foreground: 215 28% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 35% 12%;
+    --popover-foreground: 215 28% 17%;
 
-    /* Primary: Deep Navy Blue */
-    --primary: 220 50% 25%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary: Vibrant Blue #2563EB */
+    --primary: 217 91% 53%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Golden Yellow */
-    --secondary: 43 75% 45%;
-    --secondary-foreground: 25 60% 18%;
+    /* Secondary: Active Blue #1D4ED8 */
+    --secondary: 224 76% 48%;
+    --secondary-foreground: 0 0% 100%;
 
-    /* Muted - Better contrast */
-    --muted: 40 12% 90%;
-    --muted-foreground: 220 15% 40%;
+    /* Muted */
+    --muted: 210 16% 93%;
+    --muted-foreground: 220 9% 46%;
 
-    /* Accent: Rich Gold */
-    --accent: 40 80% 50%;
-    --accent-foreground: 25 60% 18%;
+    /* Accent: Golden Yellow #FACC15 */
+    --accent: 48 96% 53%;
+    --accent-foreground: 215 28% 17%;
 
-    --destructive: 0 55% 45%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 40 12% 84%;
-    --input: 40 12% 92%;
-    --ring: 43 75% 45%;
+    --border: 214 20% 88%;
+    --input: 214 20% 92%;
+    --ring: 217 91% 53%;
 
     --radius: 0.5rem;
 
+    /* Amber for legacy amber token */
+    --amber: 48 96% 53%;
+
     /* BookQuest Ranking Colors */
     --bronze: 30 50% 40%;
-    --gold: 43 70% 50%;
-    --sapphire: 210 55% 45%;
+    --gold: 48 96% 53%;
+    --sapphire: 217 91% 53%;
     --emerald: 150 40% 35%;
     --amethyst: 275 40% 50%;
     --ruby: 350 55% 40%;
     --diamond: 200 60% 65%;
-    --legendary: 40 80% 55%;
+    --legendary: 48 96% 53%;
 
     /* Book Theme Colors */
-    --theme-fantasy: 43 75% 45%;
-    --theme-ocean: 210 55% 30%;
+    --theme-fantasy: 48 96% 53%;
+    --theme-ocean: 217 91% 53%;
     --theme-epic: 275 40% 35%;
     --theme-mystery: 200 35% 30%;
     --theme-adventure: 150 40% 28%;
-    --theme-classic: 43 75% 45%;
+    --theme-classic: 48 96% 53%;
 
     --olive: 140 12% 33%;
-    --success: 150 40% 35%;
-    --warning: 43 70% 50%;
-    --info: 210 55% 45%;
+    --success: 150 50% 40%;
+    --warning: 48 96% 53%;
+    --info: 217 91% 53%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(220 50% 25%), hsl(220 50% 35%));
-    --gradient-secondary: linear-gradient(135deg, hsl(43 75% 40%), hsl(40 80% 55%));
-    --gradient-achievement: linear-gradient(135deg, hsl(40 80% 45%), hsl(35 85% 55%));
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 53%), hsl(224 76% 48%));
+    --gradient-secondary: linear-gradient(135deg, hsl(224 76% 48%), hsl(221 73% 40%));
+    --gradient-achievement: linear-gradient(135deg, hsl(48 96% 53%), hsl(40 90% 50%));
 
-    --sidebar-background: 40 15% 94%;
-    --sidebar-foreground: 220 35% 12%;
-    --sidebar-primary: 43 75% 45%;
-    --sidebar-primary-foreground: 220 30% 12%;
-    --sidebar-accent: 40 18% 90%;
-    --sidebar-accent-foreground: 220 35% 12%;
-    --sidebar-border: 40 12% 84%;
-    --sidebar-ring: 43 75% 45%;
+    --sidebar-background: 210 20% 97%;
+    --sidebar-foreground: 215 28% 17%;
+    --sidebar-primary: 217 91% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 91% 96%;
+    --sidebar-accent-foreground: 215 28% 17%;
+    --sidebar-border: 214 20% 88%;
+    --sidebar-ring: 217 91% 53%;
   }
 
   .dark {
-    /* Dark theme - Deeper Galactic Blue, better contrast */
-    --background: 220 65% 5%;
-    --foreground: 210 25% 95%;
+    /* Dark theme - Modern blue-tech */
+    --background: 220 25% 8%;
+    --foreground: 210 20% 95%;
 
-    --card: 220 50% 9%;
-    --card-foreground: 210 25% 95%;
+    --card: 220 25% 11%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 220 50% 9%;
-    --popover-foreground: 210 25% 95%;
+    --popover: 220 25% 11%;
+    --popover-foreground: 210 20% 95%;
 
-    /* Primary: Brighter Blue for dark mode */
-    --primary: 200 75% 58%;
-    --primary-foreground: 220 65% 5%;
+    /* Primary: Vibrant Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Golden Yellow */
-    --secondary: 43 80% 50%;
-    --secondary-foreground: 25 60% 15%;
+    /* Secondary: Active Blue */
+    --secondary: 224 76% 55%;
+    --secondary-foreground: 0 0% 100%;
 
-    /* Muted - Better separation */
-    --muted: 220 40% 13%;
-    --muted-foreground: 210 20% 55%;
+    /* Muted */
+    --muted: 220 20% 16%;
+    --muted-foreground: 220 9% 55%;
 
-    /* Accent: Bright Gold */
-    --accent: 40 85% 55%;
-    --accent-foreground: 25 60% 15%;
+    /* Accent: Golden Yellow */
+    --accent: 48 96% 53%;
+    --accent-foreground: 215 28% 10%;
 
-    --destructive: 0 55% 50%;
-    --destructive-foreground: 210 25% 95%;
+    --amber: 48 96% 53%;
 
-    --border: 220 35% 16%;
-    --input: 220 40% 11%;
-    --ring: 43 80% 50%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 95%;
 
-    --sidebar-background: 220 65% 4%;
-    --sidebar-foreground: 210 25% 95%;
-    --sidebar-primary: 43 80% 50%;
-    --sidebar-primary-foreground: 220 30% 10%;
-    --sidebar-accent: 220 40% 11%;
-    --sidebar-accent-foreground: 210 25% 95%;
-    --sidebar-border: 220 35% 14%;
-    --sidebar-ring: 43 80% 50%;
+    --border: 220 20% 18%;
+    --input: 220 20% 14%;
+    --ring: 217 91% 60%;
+
+    --sidebar-background: 220 25% 6%;
+    --sidebar-foreground: 210 20% 95%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 14%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 220 20% 16%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -162,11 +167,11 @@
   .dark body {
     background: linear-gradient(
       180deg,
-      hsl(220 65% 5%) 0%,
-      hsl(215 60% 8%) 25%,
-      hsl(210 55% 10%) 50%,
-      hsl(215 60% 7%) 75%,
-      hsl(220 65% 4%) 100%
+      hsl(220 25% 8%) 0%,
+      hsl(220 22% 10%) 25%,
+      hsl(218 20% 12%) 50%,
+      hsl(220 22% 9%) 75%,
+      hsl(220 25% 7%) 100%
     ) !important;
     background-attachment: fixed !important;
   }
@@ -174,7 +179,7 @@
   /* Light Mode - Clean Background */
   html:not(.dark),
   body:not(.dark *) {
-    background: hsl(43 23% 95%);
+    background: hsl(210 20% 98%);
   }
 
   /* Stars Layer - Fixed Position */
