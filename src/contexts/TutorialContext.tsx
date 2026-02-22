@@ -36,7 +36,7 @@ const TUTORIAL_COMPLETED_KEY = "bookquest_spotlight_tutorial_done";
 const allSteps: TutorialStep[] = [
   // --- Navigation ---
   {
-    target: '[data-tutorial="sidebar-nav"]',
+    target: '[data-tutorial="sidebar-full"]',
     title: "Navegação Principal",
     description: "Use o menu lateral para acessar todas as seções do BookQuest: trilhas, missões, ranking e muito mais.",
     route: "/",
