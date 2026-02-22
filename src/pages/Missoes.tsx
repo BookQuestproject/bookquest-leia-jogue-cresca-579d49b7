@@ -166,7 +166,7 @@ const Missoes = () => {
         </div>
 
         {/* Daily Missions */}
-        <section className="mb-10 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <section className="mb-10 animate-fade-in" data-tutorial="missoes-daily" style={{ animationDelay: "0.2s" }}>
           <div className="flex items-center gap-2 mb-5">
             <Clock className="w-5 h-5 text-secondary" />
             <h2 className="font-serif text-xl font-semibold">Missões Diárias</h2>

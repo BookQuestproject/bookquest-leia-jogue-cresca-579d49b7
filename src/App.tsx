@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileProvider } from "@/hooks/useProfile";
 import { TutorialProvider } from "@/contexts/TutorialContext";
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
+import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
 import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
@@ -43,6 +44,7 @@ const App = () => (
             <BrowserRouter>
               <TutorialProvider>
                 <SpotlightOverlay />
+                <CategoryIntro />
                 <QuizGate>
                   <Routes>
                   <Route path="/" element={<Index />} />
