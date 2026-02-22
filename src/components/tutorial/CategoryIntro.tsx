@@ -150,14 +150,6 @@ const categorySteps: Record<string, CategoryStep[]> = {
       placement: "bottom",
     },
   ],
-  "/quiz": [
-    {
-      target: '[data-tutorial="quiz-header"]',
-      title: "❓ Quiz Literário",
-      description: "Responda perguntas sobre seus gostos e hábitos para descobrir seu perfil de leitor. O resultado personaliza sua experiência!",
-      placement: "bottom",
-    },
-  ],
   "/perfil": [
     {
       target: '[data-tutorial="perfil-header"]',
@@ -213,7 +205,7 @@ const CategoryIntro = () => {
   // Detect first visit to a category
   useEffect(() => {
     const path = location.pathname;
-    if (path === "/" || path === "/auth" || path === "/quiz-onboarding") return;
+    if (path === "/" || path === "/auth" || path === "/quiz-onboarding" || path === "/quiz") return;
 
     const stepsForCategory = categorySteps[path];
     if (!stepsForCategory) return;
