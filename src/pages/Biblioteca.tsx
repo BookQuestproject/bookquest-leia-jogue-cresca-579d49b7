@@ -189,16 +189,16 @@ const Biblioteca = () => {
 
         {/* Pending Suggestions */}
         {user && suggestions.filter(s => s.status !== "approved").length > 0 && (
-          <div className="glass-card rounded-2xl p-4 mb-6">
-            <h3 className="font-bold mb-3 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-primary" />
+          <div className="rounded-lg border border-border/60 p-4 mb-6 bg-muted/30">
+            <h3 className="font-medium text-sm mb-3 flex items-center gap-2 text-muted-foreground">
+              <Clock className="w-4 h-4" />
               Suas sugestões
             </h3>
             <div className="space-y-2">
               {suggestions.filter(s => s.status !== "approved").map((suggestion) => {
                 const statusInfo = getStatusLabel(suggestion.status);
                 return (
-                <div key={suggestion.id} className="flex items-center gap-3 p-3 rounded-xl bg-secondary">
+                <div key={suggestion.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/40">
                   <BookOpen className="w-5 h-5 text-muted-foreground" />
                   <div className="flex-1">
                     <p className="font-medium">{suggestion.title}</p>
