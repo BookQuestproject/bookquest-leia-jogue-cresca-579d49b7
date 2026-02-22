@@ -111,9 +111,9 @@ const allSteps: TutorialStep[] = [
   },
   // --- Missões ---
   {
-    target: '[data-tutorial="missoes-header"]',
-    title: "Missões",
-    description: "Missões diárias e semanais que recompensam sua dedicação. Complete-as para subir no ranking!",
+    target: '[data-tutorial="missoes-daily"]',
+    title: "Missões Diárias",
+    description: "Complete missões diárias para ganhar pontos e manter sua sequência ativa. Novas missões toda meia-noite!",
     route: "/missoes",
     placement: "bottom",
   },

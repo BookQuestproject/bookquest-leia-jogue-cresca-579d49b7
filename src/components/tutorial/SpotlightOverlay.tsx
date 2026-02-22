@@ -209,16 +209,16 @@ const SpotlightOverlay = () => {
       >
         {/* Step indicator */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex gap-1.5">
+          <div className="flex gap-1 overflow-hidden flex-1 mr-3">
             {Array.from({ length: totalSteps }).map((_, i) => (
               <div
                 key={i}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-full transition-all duration-300 flex-shrink-0 ${
                   i === currentStep
-                    ? "w-6 bg-secondary"
+                    ? "w-4 bg-secondary"
                     : i < currentStep
-                    ? "w-3 bg-secondary/50"
-                    : "w-3 bg-muted"
+                    ? "w-2 bg-secondary/50"
+                    : "w-2 bg-muted"
                 }`}
               />
             ))}
