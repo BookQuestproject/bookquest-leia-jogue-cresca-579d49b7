@@ -54,7 +54,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
+    <aside data-tutorial="sidebar-full" className="fixed left-0 top-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
       {/* Logo */}
       <div className="p-5 border-b border-sidebar-border">
         <Link to="/" className="flex items-center gap-3">
