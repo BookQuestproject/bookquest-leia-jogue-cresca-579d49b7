@@ -584,7 +584,7 @@ const Trilhas = () => {
         </header>
 
         {/* Books Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-tutorial="trilhas-grid">
           {bookTrails.map((book, index) => {
             const completedChapters = book.chapters.filter(c => c.status === "completed").length;
             const progress = (completedChapters / book.totalChapters) * 100;

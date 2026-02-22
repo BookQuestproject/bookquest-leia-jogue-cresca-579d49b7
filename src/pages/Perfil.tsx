@@ -32,7 +32,7 @@ const Perfil = () => {
     <Layout>
       <div className="py-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-8">
+        <div className="flex flex-col lg:flex-row gap-6 mb-8" data-tutorial="perfil-header">
           {/* Profile Card */}
           <div className="glass-card rounded-3xl p-6 lg:p-8 flex-1 animate-fade-in">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">

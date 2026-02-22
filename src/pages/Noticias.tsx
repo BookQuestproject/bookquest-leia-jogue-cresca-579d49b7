@@ -128,7 +128,7 @@ const Noticias = () => {
     <Layout>
       <div className="py-8 max-w-4xl mx-auto">
         {/* Hero Header */}
-        <div className="mb-10 animate-fade-in">
+        <div className="mb-10 animate-fade-in" data-tutorial="noticias-header">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-secondary/15 flex items-center justify-center">
               <Newspaper className="w-7 h-7 text-secondary" />
@@ -156,7 +156,7 @@ const Noticias = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 mb-8 overflow-x-auto py-1 -my-1">
+        <div className="flex gap-2 mb-8 overflow-x-auto py-1 -my-1" data-tutorial="noticias-filters">
           {filters.map((filter) => (
             <button
               key={filter.id}

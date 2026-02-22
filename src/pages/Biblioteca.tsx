@@ -131,14 +131,14 @@ const Biblioteca = () => {
               Explore nossa coleção de livros e adicione à sua estante
             </p>
           </div>
-          <Button variant="hero" className="gap-2" onClick={() => setShowAddModal(true)}>
+          <Button variant="hero" className="gap-2" onClick={() => setShowAddModal(true)} data-tutorial="biblioteca-suggest">
             <Plus className="w-5 h-5" />
             Sugerir Livro
           </Button>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col md:flex-row gap-4 mb-8" data-tutorial="biblioteca-search">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
@@ -171,7 +171,7 @@ const Biblioteca = () => {
         </div>
 
         {/* Genre Pills */}
-        <div className="flex gap-2 mb-6 overflow-x-auto py-1 -my-1">
+        <div className="flex gap-2 mb-6 overflow-x-auto py-1 -my-1" data-tutorial="biblioteca-genres">
           {genres.map((genre) => (
             <button
               key={genre}

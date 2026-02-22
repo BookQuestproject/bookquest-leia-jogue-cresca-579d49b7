@@ -85,14 +85,14 @@ const Estante = () => {
               Organize seus livros e acompanhe suas leituras
             </p>
           </div>
-          <Button variant="hero" className="gap-2">
+          <Button variant="hero" className="gap-2" data-tutorial="estante-add">
             <Plus className="w-5 h-5" />
             Adicionar Livro
           </Button>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex gap-2 mb-8 overflow-x-auto py-1 -my-1">
+        <div className="flex gap-2 mb-8 overflow-x-auto py-1 -my-1" data-tutorial="estante-tabs">
           {categories.map((category) => (
             <button
               key={category.id}

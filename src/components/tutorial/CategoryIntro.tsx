@@ -1,72 +1,179 @@
-import { useEffect, useState } from "react";
-import { X, Sparkles } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const VISITED_KEY = "bookquest_visited_categories";
 
-interface CategoryInfo {
+interface CategoryStep {
+  target: string;
   title: string;
   description: string;
+  placement?: "top" | "bottom" | "left" | "right";
 }
 
-const categoryMap: Record<string, CategoryInfo> = {
-  "/biblioteca": {
-    title: "📚 Biblioteca",
-    description: "Explore todos os livros disponíveis no BookQuest. Use os filtros para encontrar por gênero, tema ou formato e adicione à sua estante.",
-  },
-  "/trilhas": {
-    title: "🗺️ Trilhas Literárias",
-    description: "Cada livro vira uma trilha com capítulos, cronômetro e quizzes. Leia no seu ritmo e acompanhe seu progresso capítulo a capítulo.",
-  },
-  "/estante": {
-    title: "📖 Minha Estante",
-    description: "Organize seus livros: lendo, quero ler, lido ou abandonado. Adicione avaliações e resenhas para compartilhar com a comunidade.",
-  },
-  "/missoes": {
-    title: "🎯 Missões",
-    description: "Complete missões diárias, semanais e mensais para ganhar pontos e subir no ranking. Novas missões aparecem automaticamente!",
-  },
-  "/ranking": {
-    title: "🏆 Ranking Literário",
-    description: "Compare seu progresso com outros leitores. Suba de Bronze a Lendário completando livros e missões!",
-  },
-  "/mentoria": {
-    title: "✨ Mentoria Literária",
-    description: "Sessões em grupo com mentores para criar e manter o hábito de leitura. Recurso exclusivo para assinantes Premium.",
-  },
-  "/comunidade": {
-    title: "💬 Comunidade",
-    description: "Participe de comunidades temáticas, discuta livros e conheça outros leitores. Troque ideias e recomendações!",
-  },
-  "/quiz": {
-    title: "❓ Quiz Literário",
-    description: "Descubra seu perfil de leitor respondendo perguntas sobre seus gostos e hábitos. O resultado personaliza sua experiência.",
-  },
-  "/noticias": {
-    title: "📰 Notícias",
-    description: "Fique por dentro das novidades do BookQuest: novos livros, funcionalidades e curiosidades literárias.",
-  },
-  "/bookclub": {
-    title: "📕 Book Club",
-    description: "Leia junto com outros membros Premium. Discussões semanais, metas de leitura compartilhadas e encontros virtuais.",
-  },
-  "/enem": {
-    title: "🎓 ENEM e Vestibulares",
-    description: "Materiais de estudo, resumos de obras obrigatórias e exercícios focados nos principais vestibulares do Brasil.",
-  },
-  "/perfil": {
-    title: "👤 Meu Perfil",
-    description: "Veja suas estatísticas de leitura, conquistas e personalize sua conta.",
-  },
-  "/configuracoes": {
-    title: "⚙️ Configurações",
-    description: "Ajuste tema, notificações e preferências da sua conta. Você também pode reiniciar o tutorial guiado aqui.",
-  },
-  "/admin": {
-    title: "🛡️ Painel Admin",
-    description: "Gerencie trilhas, livros, sessões de mentoria, materiais ENEM e configurações premium do BookQuest.",
-  },
+/** Per-category guided tutorial steps */
+const categorySteps: Record<string, CategoryStep[]> = {
+  "/biblioteca": [
+    {
+      target: '[data-tutorial="biblioteca-header"]',
+      title: "📚 Biblioteca",
+      description: "Bem-vindo à Biblioteca! Aqui você encontra todos os livros disponíveis no BookQuest.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="biblioteca-search"]',
+      title: "🔍 Busca e Filtros",
+      description: "Use a busca e os filtros de gênero para encontrar exatamente o livro que procura.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="biblioteca-suggest"]',
+      title: "💡 Sugerir Livro",
+      description: "Não encontrou um livro? Sugira e nossa equipe avaliará para adicionar à plataforma.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="biblioteca-genres"]',
+      title: "🏷️ Gêneros",
+      description: "Filtre rapidamente por gênero clicando nas categorias disponíveis.",
+      placement: "bottom",
+    },
+  ],
+  "/trilhas": [
+    {
+      target: '[data-tutorial="trilhas-header"]',
+      title: "🗺️ Trilhas Literárias",
+      description: "Cada trilha é um livro completo dividido em capítulos para você ler no seu ritmo.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="trilhas-grid"]',
+      title: "📖 Escolha sua Trilha",
+      description: "Clique em uma trilha para ver os capítulos, cronômetro de leitura e quizzes de compreensão.",
+      placement: "bottom",
+    },
+  ],
+  "/estante": [
+    {
+      target: '[data-tutorial="estante-header"]',
+      title: "📖 Minha Estante",
+      description: "Aqui ficam todos os seus livros organizados por status de leitura.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="estante-add"]',
+      title: "➕ Adicionar Livro",
+      description: "Adicione novos livros à sua estante para acompanhar seu progresso de leitura.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="estante-tabs"]',
+      title: "📂 Categorias",
+      description: "Organize seus livros entre: Lendo, Quero Ler, Lido, Abandonado e Favoritos.",
+      placement: "bottom",
+    },
+  ],
+  "/missoes": [
+    {
+      target: '[data-tutorial="missoes-header"]',
+      title: "🎯 Missões",
+      description: "Complete missões para ganhar pontos e subir no ranking. Veja seu progresso aqui!",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="missoes-daily"]',
+      title: "⏰ Missões Diárias",
+      description: "Essas missões reiniciam toda meia-noite. Complete-as todos os dias para manter sua sequência!",
+      placement: "bottom",
+    },
+  ],
+  "/ranking": [
+    {
+      target: '[data-tutorial="ranking-header"]',
+      title: "🏆 Ranking Literário",
+      description: "Você compete com leitores do seu nível. Suba de Bronze a Lendário lendo mais livros!",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="ranking-addbook"]',
+      title: "📗 Adicionar Livro Lido",
+      description: "Registre livros lidos fora da plataforma. Há um sistema anti-fraude com perguntas de verificação.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="ranking-tiers"]',
+      title: "🎖️ Patamares",
+      description: "Explore os diferentes patamares e veja quem são os maiores leitores de cada nível.",
+      placement: "bottom",
+    },
+  ],
+  "/comunidade": [
+    {
+      target: '[data-tutorial="comunidade-header"]',
+      title: "💬 Comunidades",
+      description: "Cada livro tem sua comunidade. Discuta, compartilhe teorias e conecte-se com outros leitores!",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="comunidade-search"]',
+      title: "🔍 Buscar Comunidade",
+      description: "Encontre a comunidade do seu livro favorito usando a busca por título ou autor.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="comunidade-grid"]',
+      title: "📚 Comunidades Disponíveis",
+      description: "Clique em uma comunidade para ver discussões, enviar mensagens e participar das conversas.",
+      placement: "bottom",
+    },
+  ],
+  "/noticias": [
+    {
+      target: '[data-tutorial="noticias-header"]',
+      title: "📰 Notícias",
+      description: "Fique por dentro das novidades do BookQuest: anúncios, atualizações e curiosidades literárias.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="noticias-filters"]',
+      title: "🏷️ Filtros",
+      description: "Filtre as notícias por tipo: anúncios, atualizações ou curiosidades.",
+      placement: "bottom",
+    },
+  ],
+  "/mentoria": [
+    {
+      target: '[data-tutorial="mentoria-header"]',
+      title: "✨ Mentoria Literária",
+      description: "Sessões em grupo com mentores para ajudar a criar e manter o hábito de leitura. Recurso Premium!",
+      placement: "bottom",
+    },
+  ],
+  "/quiz": [
+    {
+      target: '[data-tutorial="quiz-header"]',
+      title: "❓ Quiz Literário",
+      description: "Responda perguntas sobre seus gostos e hábitos para descobrir seu perfil de leitor. O resultado personaliza sua experiência!",
+      placement: "bottom",
+    },
+  ],
+  "/perfil": [
+    {
+      target: '[data-tutorial="perfil-header"]',
+      title: "👤 Meu Perfil",
+      description: "Veja suas estatísticas, conquistas, ranking e todo seu histórico de leitura num só lugar.",
+      placement: "bottom",
+    },
+  ],
+  "/configuracoes": [
+    {
+      target: '[data-tutorial="config-header"]',
+      title: "⚙️ Configurações",
+      description: "Ajuste tema, notificações e preferências da sua conta. Você também pode reiniciar tutoriais aqui.",
+      placement: "bottom",
+    },
+  ],
 };
 
 function getVisited(): string[] {
@@ -85,73 +192,299 @@ function markVisited(path: string) {
   }
 }
 
+interface Rect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+const PADDING = 8;
+
 const CategoryIntro = () => {
   const location = useLocation();
-  const [show, setShow] = useState(false);
-  const [info, setInfo] = useState<CategoryInfo | null>(null);
+  const [active, setActive] = useState(false);
+  const [steps, setSteps] = useState<CategoryStep[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [targetRect, setTargetRect] = useState<Rect | null>(null);
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
+  const [isVisible, setIsVisible] = useState(false);
 
+  // Detect first visit to a category
   useEffect(() => {
     const path = location.pathname;
-    // Skip home page
     if (path === "/" || path === "/auth" || path === "/quiz-onboarding") return;
 
-    const cat = categoryMap[path];
-    if (!cat) return;
+    const stepsForCategory = categorySteps[path];
+    if (!stepsForCategory) return;
 
     const visited = getVisited();
     if (visited.includes(path)) return;
 
-    // Show intro after a short delay
     const timer = setTimeout(() => {
-      setInfo(cat);
-      setShow(true);
+      setSteps(stepsForCategory);
+      setCurrentStep(0);
+      setActive(true);
     }, 800);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
-  const handleDismiss = () => {
-    setShow(false);
-    markVisited(location.pathname);
-  };
+  const findAndHighlight = useCallback(() => {
+    if (!steps.length || !active) return;
 
-  if (!show || !info) return null;
+    const step = steps[currentStep];
+    if (!step) return;
+
+    const el = document.querySelector(step.target);
+    if (!el) {
+      setTargetRect(null);
+      return;
+    }
+
+    const rect = el.getBoundingClientRect();
+    const scrollTop = window.scrollY;
+    const scrollLeft = window.scrollX;
+
+    const newRect: Rect = {
+      top: rect.top + scrollTop - PADDING,
+      left: rect.left + scrollLeft - PADDING,
+      width: rect.width + PADDING * 2,
+      height: rect.height + PADDING * 2,
+    };
+    setTargetRect(newRect);
+
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Calculate tooltip position
+    const placement = step.placement || "bottom";
+    const tooltipW = 320;
+    const tooltipH = 180;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const style: React.CSSProperties = { position: "fixed", width: tooltipW, zIndex: 10002 };
+
+    const elRect = el.getBoundingClientRect();
+    const centerX = elRect.left + elRect.width / 2;
+
+    let top = 0;
+    let left = 0;
+
+    if (placement === "bottom" && elRect.bottom + 12 + tooltipH < vh) {
+      top = elRect.bottom + 12;
+      left = centerX - tooltipW / 2;
+    } else if (placement === "top" && elRect.top - 12 - tooltipH > 0) {
+      top = elRect.top - 12 - tooltipH;
+      left = centerX - tooltipW / 2;
+    } else if (placement === "right" && elRect.right + 12 + tooltipW < vw) {
+      top = elRect.top + elRect.height / 2 - tooltipH / 2;
+      left = elRect.right + 12;
+    } else if (placement === "left" && elRect.left - 12 - tooltipW > 0) {
+      top = elRect.top + elRect.height / 2 - tooltipH / 2;
+      left = elRect.left - 12 - tooltipW;
+    } else {
+      if (elRect.bottom + 12 + tooltipH < vh) {
+        top = elRect.bottom + 12;
+        left = centerX - tooltipW / 2;
+      } else if (elRect.top - 12 - tooltipH > 0) {
+        top = elRect.top - 12 - tooltipH;
+        left = centerX - tooltipW / 2;
+      } else {
+        top = Math.max(16, vh / 2 - tooltipH / 2);
+        left = Math.max(16, vw / 2 - tooltipW / 2);
+      }
+    }
+
+    style.top = Math.max(8, Math.min(top, vh - tooltipH - 8));
+    style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
+
+    setTooltipStyle(style);
+  }, [steps, currentStep, active]);
+
+  // Recalculate on step change
+  useEffect(() => {
+    if (!active) return;
+    const timer = setTimeout(findAndHighlight, 200);
+    return () => clearTimeout(timer);
+  }, [active, currentStep, findAndHighlight]);
+
+  // Recalculate on resize
+  useEffect(() => {
+    if (!active) return;
+    const handler = () => findAndHighlight();
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, [active, findAndHighlight]);
+
+  // Block scroll
+  useEffect(() => {
+    if (active) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [active]);
+
+  // Animate in
+  useEffect(() => {
+    if (active) {
+      const t = setTimeout(() => setIsVisible(true), 50);
+      return () => clearTimeout(t);
+    } else {
+      setIsVisible(false);
+    }
+  }, [active]);
+
+  const dismiss = useCallback(() => {
+    setActive(false);
+    setIsVisible(false);
+    markVisited(location.pathname);
+  }, [location.pathname]);
+
+  const nextStep = useCallback(() => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      dismiss();
+    }
+  }, [currentStep, steps.length, dismiss]);
+
+  const prevStep = useCallback(() => {
+    setCurrentStep((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  if (!active || !steps.length) return null;
+
+  const stepData = steps[currentStep];
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={handleDismiss}>
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-sm animate-fade-in" />
-
-      {/* Card */}
-      <div
-        className="relative bg-card border border-border rounded-2xl shadow-2xl p-6 max-w-sm w-full animate-scale-in z-10"
-        onClick={(e) => e.stopPropagation()}
+    <div className="fixed inset-0 z-[10000]" style={{ pointerEvents: "auto" }}>
+      {/* Dark overlay with cutout */}
+      <svg
+        className="absolute inset-0 w-full h-full transition-opacity duration-300"
+        style={{
+          opacity: isVisible ? 1 : 0,
+          height: Math.max(document.documentElement.scrollHeight, window.innerHeight),
+        }}
       >
-        <button
-          onClick={handleDismiss}
-          className="absolute top-3 right-3 p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        <defs>
+          <mask id="category-spotlight-mask">
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            {targetRect && (
+              <rect
+                x={targetRect.left}
+                y={targetRect.top}
+                width={targetRect.width}
+                height={targetRect.height}
+                rx="12"
+                fill="black"
+              />
+            )}
+          </mask>
+        </defs>
+        <rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          fill="hsl(var(--background) / 0.82)"
+          mask="url(#category-spotlight-mask)"
+        />
+      </svg>
 
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-5 h-5 text-secondary" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-secondary">Primeira visita</span>
+      {/* Spotlight border glow */}
+      {targetRect && (
+        <div
+          className="absolute rounded-xl border-2 border-primary shadow-[0_0_24px_hsl(var(--primary)/0.4)] transition-all duration-500 pointer-events-none"
+          style={{
+            top: targetRect.top,
+            left: targetRect.left,
+            width: targetRect.width,
+            height: targetRect.height,
+          }}
+        />
+      )}
+
+      {/* Tooltip card */}
+      <div
+        className="bg-card border border-border rounded-xl shadow-2xl p-5 transition-all duration-500"
+        style={{
+          ...tooltipStyle,
+          opacity: isVisible && targetRect ? 1 : 0,
+          transform: isVisible && targetRect ? "translateY(0)" : "translateY(8px)",
+        }}
+      >
+        {/* Step indicator */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex gap-1 overflow-hidden flex-1 mr-3">
+            {steps.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 rounded-full transition-all duration-300 flex-shrink-0 ${
+                  i === currentStep
+                    ? "w-4 bg-primary"
+                    : i < currentStep
+                    ? "w-2 bg-primary/50"
+                    : "w-2 bg-muted"
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={dismiss}
+            className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        <h3 className="text-xl font-serif font-semibold mb-2">{info.title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-          {info.description}
+        <h4 className="text-base font-serif font-semibold mb-1.5">{stepData.title}</h4>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+          {stepData.description}
         </p>
 
-        <Button
-          onClick={handleDismiss}
-          className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90"
-          size="sm"
-        >
-          Entendi, vamos lá!
-        </Button>
+        {/* Navigation */}
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">
+            {currentStep + 1} / {steps.length}
+          </span>
+          <div className="flex gap-2">
+            {currentStep > 0 && (
+              <Button variant="ghost" size="sm" onClick={prevStep} className="gap-1">
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Voltar
+              </Button>
+            )}
+            <Button
+              size="sm"
+              onClick={nextStep}
+              className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {currentStep < steps.length - 1 ? (
+                <>
+                  Próximo
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              ) : (
+                "Entendi!"
+              )}
+            </Button>
+          </div>
+        </div>
       </div>
+
+      {/* Click catcher */}
+      <div
+        className="absolute inset-0 -z-10"
+        onClick={(e) => e.stopPropagation()}
+      />
     </div>
   );
 };

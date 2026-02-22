@@ -164,7 +164,7 @@ const Ranking = () => {
               else setIsAddBookOpen(true);
             }}>
               <DialogTrigger asChild>
-                <Button variant="hero" size="lg" className="gap-2">
+                <Button variant="hero" size="lg" className="gap-2" data-tutorial="ranking-addbook">
                   <Plus className="w-5 h-5" />
                   Adicionar Livro
                 </Button>
@@ -300,7 +300,7 @@ const Ranking = () => {
         </header>
 
         {/* Tier Selector */}
-        <div className="editorial-card p-5 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+        <div className="editorial-card p-5 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }} data-tutorial="ranking-tiers">
           <div className="flex items-center gap-2 mb-4">
             <BookOpen className="w-5 h-5 text-secondary" />
             <h2 className="font-semibold">Selecione o Patamar</h2>

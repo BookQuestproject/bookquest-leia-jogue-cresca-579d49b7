@@ -60,7 +60,7 @@ const Configuracoes = () => {
     <Layout>
       <div className="py-8 max-w-2xl mx-auto">
         {/* Header */}
-        <div className="mb-8 animate-fade-in">
+        <div className="mb-8 animate-fade-in" data-tutorial="config-header">
           <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
             <Settings className="w-8 h-8 text-primary" />
             Configurações

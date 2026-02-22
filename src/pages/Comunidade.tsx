@@ -459,7 +459,7 @@ const Comunidade = () => {
         </div>
 
         {/* Search */}
-        <div className="relative mb-8">
+        <div className="relative mb-8" data-tutorial="comunidade-search">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
             placeholder="Buscar comunidade por título ou autor..."
@@ -470,7 +470,7 @@ const Comunidade = () => {
         </div>
 
         {/* Communities Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-tutorial="comunidade-grid">
           {filteredCommunities.map((community, index) => (
             <button
               key={community.id}
