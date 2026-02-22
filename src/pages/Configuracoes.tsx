@@ -1,17 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Settings, User, Bell, Moon, Sun, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
+import { useTheme } from "next-themes";
 
 const Configuracoes = () => {
   const { toast } = useToast();
   const { startTutorial, isCompleted: tutorialCompleted } = useTutorial();
+  const { theme, setTheme: setNextTheme } = useTheme();
   
   // Estados das configurações
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [notifications, setNotifications] = useState({
     readingReminder: true,
     newMissions: true,
@@ -26,21 +27,10 @@ const Configuracoes = () => {
     preferredGenres: ["Fantasia", "Romance"],
   });
 
-  // Carregar tema salvo
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("bookquest-theme") as "light" | "dark" | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle("dark", savedTheme === "dark");
-    }
-  }, []);
-
   // Alternar tema
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    localStorage.setItem("bookquest-theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    setNextTheme(newTheme);
     
     toast({
       title: `Tema ${newTheme === "dark" ? "escuro" : "claro"} ativado`,
