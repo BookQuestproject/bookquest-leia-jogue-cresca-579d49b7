@@ -53,11 +53,12 @@ export function useBookshelf() {
   const currentBooks = useSyncExternalStore(subscribe, getSnapshot);
 
   const addBook = useCallback((book: { id: number; title: string; author: string; cover: string }, category: ShelfCategory) => {
-    const exists = books.find(b => b.id === book.id);
+    const exists = books.find(b => b.title === book.title && b.author === book.author);
     if (exists) {
-      books = books.map(b => b.id === book.id ? { ...b, category } : b);
+      books = books.map(b => (b.title === book.title && b.author === book.author) ? { ...b, ...book, category } : b);
     } else {
-      books = [...books, { ...book, category }];
+      const maxId = books.reduce((max, b) => Math.max(max, b.id), 0);
+      books = [...books, { ...book, id: maxId + 1, category }];
     }
     emitChange();
   }, []);
