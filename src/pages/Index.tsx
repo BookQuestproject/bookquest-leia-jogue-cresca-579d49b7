@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Castle, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
+import { useActiveTrail } from "@/hooks/useActiveTrail";
 
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
@@ -32,53 +33,37 @@ const bookThemes = {
 
 const Index = () => {
   const navigate = useNavigate();
+  const { activeTrail } = useActiveTrail();
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
 
-  // User data - new account starts at 0
+  // Derive stats from active trail
+  const hasActiveTrailData = !!activeTrail;
+  const currentChapter = activeTrail?.chapters.find(c => c.status === "current");
+  const completedChapters = activeTrail?.chapters.filter(c => c.status === "completed").length || 0;
+
   const userStats = {
     booksRead: 0,
     streak: 0,
-    currentBook: null as string | null,
-    currentBookId: null as string | null,
-    currentChapter: 0,
-    totalChapters: 0,
+    currentBook: activeTrail?.title || null,
+    currentBookId: activeTrail?.bookId || null,
+    currentChapter: currentChapter?.id || 0,
+    totalChapters: activeTrail?.totalChapters || 0,
   };
 
-  const hasActiveTrail = !!userStats.currentBookId;
-  const currentBookTheme = hasActiveTrail ? bookThemes[userStats.currentBookId as keyof typeof bookThemes] : null;
+  const hasActiveTrail = hasActiveTrailData;
+  const currentBookTheme = hasActiveTrail ? { color: activeTrail!.themeColor, genre: activeTrail!.genre } : null;
   const currentTier = getTierFromBooks(userStats.booksRead);
   const nextTier = getNextTierInfo(currentTier);
 
-  const chapters: { id: number; title: string; status: "completed" | "current" | "locked"; icon: string; currentPage?: number; totalPages?: number }[] = [
-    { id: 1, title: "O Menino que Sobreviveu", status: "current", icon: "🏠", currentPage: 12, totalPages: 24 },
-    { id: 2, title: "O Vidro que Sumiu", status: "locked", icon: "🐍", totalPages: 18 },
-    { id: 3, title: "As Cartas de Ninguém", status: "locked", icon: "✉️", totalPages: 22 },
-    { id: 4, title: "O Guardião das Chaves", status: "locked", icon: "🗝️", totalPages: 20 },
-    { id: 5, title: "O Beco Diagonal", status: "locked", icon: "🏪", totalPages: 28 },
-    { id: 6, title: "A Viagem da Plataforma", status: "locked", icon: "🚂", totalPages: 18 },
-    { id: 7, title: "O Chapéu Seletor", status: "locked", icon: "🎩", totalPages: 16 },
-    { id: 8, title: "O Mestre das Poções", status: "locked", icon: "⚗️", totalPages: 20 },
-    { id: 9, title: "O Duelo à Meia-Noite", status: "locked", icon: "⚔️", totalPages: 22 },
-    { id: 10, title: "O Espelho de Ojesed", status: "locked", icon: "🪞", totalPages: 24 },
-    { id: 11, title: "Nicolau Flamel", status: "locked", icon: "📚", totalPages: 18 },
-    { id: 12, title: "A Floresta Proibida", status: "locked", icon: "🌲", totalPages: 26 },
-    { id: 13, title: "Através do Alçapão", status: "locked", icon: "🚪", totalPages: 30 },
-    { id: 14, title: "O Homem de Duas Caras", status: "locked", icon: "🎭", totalPages: 28 },
-  ];
+  const chapters = activeTrail?.chapters || [];
 
-  const currentChapterQuestion = {
-    text: "Por que os Dursley tinham tanto medo de que os vizinhos descobrissem sobre os Potter?",
-    options: [
-      "Porque os Potter eram criminosos procurados",
-      "Porque não queriam ser associados a algo 'anormal'",
-      "Porque deviam dinheiro aos Potter",
-      "Porque os Potter eram celebridades famosas",
-      "Porque tinham vergonha de serem parentes de bruxos"
-    ],
-    correctAnswer: 1,
-    explanation: "Os Dursley valorizavam acima de tudo a 'normalidade' e temiam qualquer associação com o mundo mágico."
+  const currentChapterQuestion = currentChapter?.question || {
+    text: "",
+    options: [],
+    correctAnswer: 0,
+    explanation: ""
   };
 
   const dailyMissions = [
@@ -107,8 +92,9 @@ const Index = () => {
   ];
 
   const handleContinueReading = (chapterId?: number) => {
+    if (!activeTrail) return;
     const targetChapter = chapterId || userStats.currentChapter;
-    navigate(`/ler/harry-potter-1/${targetChapter}`);
+    navigate(`/ler/${activeTrail.bookId}/${targetChapter}`);
   };
 
   const handleAnswerSubmit = () => {
@@ -125,7 +111,7 @@ const Index = () => {
       
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
         {/* Header - Current Journey */}
-        <header className="mb-10 animate-fade-in">
+        <header className="mb-10 animate-fade-in" data-tutorial="welcome-header">
           {hasActiveTrail ? (
             <>
               <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -182,7 +168,7 @@ const Index = () => {
                   <div 
                     className="w-14 h-14 rounded-lg flex items-center justify-center bg-white/10 backdrop-blur-sm"
                   >
-                    <span className="text-2xl">🏰</span>
+                    <span className="text-2xl">{activeTrail?.cover || '📖'}</span>
                   </div>
                   <div>
                     <div className="flex items-center gap-2 text-white/70 text-xs mb-1">
@@ -366,7 +352,7 @@ const Index = () => {
             </>
             ) : (
               /* Empty state - No active trail */
-              <div className="rounded-xl border-2 border-dashed border-muted-foreground/20 p-10 text-center animate-fade-in mb-8">
+              <div className="rounded-xl border-2 border-dashed border-muted-foreground/20 p-10 text-center animate-fade-in mb-8" data-tutorial="explore-trails-cta">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <BookOpen className="w-8 h-8 text-primary" />
                 </div>
