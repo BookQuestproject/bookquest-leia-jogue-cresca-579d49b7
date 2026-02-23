@@ -22,7 +22,7 @@ const Layout = ({
 
       {/* Main Content */}
       <main className="lg:ml-64 min-h-screen pb-20 lg:pb-0">
-        <div className="p-4 lg:p-8 max-w-6xl mx-auto bg-card">
+        <div className="p-4 lg:p-8 max-w-6xl mx-auto">
           {children}
         </div>
       </main>

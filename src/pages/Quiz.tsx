@@ -474,7 +474,7 @@ const Quiz = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto py-8">
+      <div className="max-w-2xl mx-auto py-8 section-bg-quiz">
         {/* Header */}
         <div className="mb-8 animate-fade-in" data-tutorial="quiz-header">
           <div className="flex items-center justify-between mb-4">

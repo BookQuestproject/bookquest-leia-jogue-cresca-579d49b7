@@ -124,7 +124,7 @@ const Missoes = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto py-8">
+      <div className="max-w-4xl mx-auto py-8 section-bg-missions">
         {/* Header */}
         <header className="mb-10 animate-fade-in" data-tutorial="missoes-header">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
