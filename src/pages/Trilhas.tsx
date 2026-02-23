@@ -227,7 +227,7 @@ const Trilhas = () => {
 
     return (
       <Layout isPremium={isPremium}>
-        <div className="max-w-4xl mx-auto py-8">
+        <div className="max-w-4xl mx-auto py-8 section-bg-challenges">
           {/* Back Button */}
           <Link to="/trilhas" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 text-sm">
             <ArrowLeft className="w-4 h-4" />
@@ -573,7 +573,7 @@ const Trilhas = () => {
   // Books listing view
   return (
     <Layout isPremium={isPremium}>
-      <div className="max-w-5xl mx-auto py-8">
+      <div className="max-w-5xl mx-auto py-8 section-bg-challenges">
         {/* Header */}
         <header className="mb-10 animate-fade-in" data-tutorial="trilhas-header">
           <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Biblioteca de Jornadas</p>
