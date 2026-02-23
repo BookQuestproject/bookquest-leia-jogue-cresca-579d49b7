@@ -32,11 +32,11 @@ const mockBooks: Book[] = [
 ];
 
 const categories = [
-  { id: "lendo", label: "Lendo", icon: "📖", color: "text-primary" },
-  { id: "quero-ler", label: "Quero Ler", icon: "📚", color: "text-accent" },
-  { id: "lido", label: "Lido", icon: "✅", color: "text-success" },
-  { id: "abandonado", label: "Abandonado", icon: "❌", color: "text-destructive" },
-  { id: "favoritos", label: "Favoritos", icon: "⭐", color: "text-warning" },
+  { id: "lendo", label: "Lendo", color: "text-primary" },
+  { id: "quero-ler", label: "Quero Ler", color: "text-accent" },
+  { id: "lido", label: "Lido", color: "text-success" },
+  { id: "abandonado", label: "Abandonado", color: "text-destructive" },
+  { id: "favoritos", label: "Favoritos", color: "text-warning" },
 ];
 
 const Estante = () => {
@@ -73,7 +73,7 @@ const Estante = () => {
 
   return (
     <Layout>
-      <div className="py-8">
+      <div className="py-8 min-h-screen">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 animate-fade-in" data-tutorial="estante-header">
           <div>
@@ -103,7 +103,6 @@ const Estante = () => {
                   : "bg-muted text-primary hover:bg-muted/80"
               }`}
             >
-              <span>{category.icon}</span>
               <span>{category.label}</span>
               <span className="text-xs opacity-70">
                 ({books.filter(b => b.category === category.id).length})
@@ -243,7 +242,6 @@ const Estante = () => {
                           : "bg-muted text-primary hover:bg-muted/80"
                       }`}
                     >
-                      <span>{cat.icon}</span>
                       <span>{cat.label}</span>
                     </button>
                   ))}
