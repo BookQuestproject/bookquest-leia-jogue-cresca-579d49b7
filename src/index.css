@@ -161,8 +161,8 @@
 
   /* Literary Kingdom Background System */
   :root {
-    --kingdom-symbol-opacity: 0.55;
-    --kingdom-emblem-opacity: 0.6;
+    --kingdom-symbol-opacity: 0;
+    --kingdom-emblem-opacity: 0;
   }
 
   html {
