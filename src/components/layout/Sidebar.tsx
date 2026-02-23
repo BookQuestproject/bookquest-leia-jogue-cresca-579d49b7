@@ -22,7 +22,8 @@ import {
   Shield,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
- import { useAdmin } from "@/hooks/useAdmin";
+import { useAdmin } from "@/hooks/useAdmin";
+import { useProfile } from "@/hooks/useProfile";
 
 interface SidebarProps {
   isPremium?: boolean;
@@ -32,6 +33,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
+  const { profile } = useProfile();
 
   const menuItems = [
     { icon: Home, label: "Home", path: "/" },
@@ -52,6 +54,8 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const userName = profile?.full_name || "Você";
 
   return (
     <aside data-tutorial="sidebar-full" className="fixed left-0 top-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
@@ -123,24 +127,20 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
         ))}
       </nav>
 
-      {/* Premium CTA for non-premium users */}
-      {!isPremium && (
-        <div className="px-3 py-2 border-t border-sidebar-border" data-tutorial="premium-cta">
+      {/* Bottom section: Premium CTA + Profile + Settings */}
+      <div className="px-2 py-2 border-t border-sidebar-border space-y-0">
+        {/* Premium CTA */}
+        {!isPremium && (
           <Link
             to="/premium"
-            className="flex items-center gap-2 px-3 py-2 rounded bg-accent/10 text-accent hover:bg-accent/15 transition-colors"
+            className="sidebar-item text-accent hover:bg-accent/10"
+            data-tutorial="premium-cta"
           >
             <Crown className="w-4 h-4" />
-            <div>
-              <p className="text-xs font-semibold">Assine o Premium</p>
-              <p className="text-[10px] opacity-80">R$ 19,90/mês</p>
-            </div>
+            <span className="text-sm font-semibold">Assine o Premium</span>
           </Link>
-        </div>
-      )}
+        )}
 
-      {/* Settings & User Actions */}
-      <div className="px-2 py-2 border-t border-sidebar-border space-y-0">
         {isAdmin && (
           <>
             <Link
@@ -164,7 +164,17 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             to="/perfil"
             className={`sidebar-item ${isActive("/perfil") ? "active" : ""}`}
           >
-            <User className="w-4 h-4" />
+            {profile?.avatar_url ? (
+              <img 
+                src={profile.avatar_url} 
+                alt="Avatar" 
+                className="w-5 h-5 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground">
+                {userName.substring(0, 1).toUpperCase()}
+              </div>
+            )}
             <span className="text-sm">Meu Perfil</span>
           </Link>
         )}
