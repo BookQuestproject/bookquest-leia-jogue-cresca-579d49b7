@@ -40,13 +40,14 @@ const Index = () => {
   const userStats = {
     booksRead: 0,
     streak: 0,
-    currentBook: "Harry Potter e a Pedra Filosofal",
-    currentBookId: "harry-potter",
-    currentChapter: 1,
-    totalChapters: 17,
+    currentBook: null as string | null,
+    currentBookId: null as string | null,
+    currentChapter: 0,
+    totalChapters: 0,
   };
 
-  const currentBookTheme = bookThemes[userStats.currentBookId as keyof typeof bookThemes];
+  const hasActiveTrail = !!userStats.currentBookId;
+  const currentBookTheme = hasActiveTrail ? bookThemes[userStats.currentBookId as keyof typeof bookThemes] : null;
   const currentTier = getTierFromBooks(userStats.booksRead);
   const nextTier = getNextTierInfo(currentTier);
 
@@ -117,7 +118,7 @@ const Index = () => {
   };
 
   // Dynamic styles based on current book theme
-  const themeColor = currentBookTheme?.color || "350 45% 38%";
+  const themeColor = currentBookTheme?.color || "220 60% 50%";
 
   return (
     <Layout>
@@ -125,21 +126,40 @@ const Index = () => {
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
         {/* Header - Current Journey */}
         <header className="mb-10 animate-fade-in">
-          <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
-            <MapPin className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
-            Sua Jornada Atual
-          </p>
-          <h1 className="text-3xl lg:text-4xl font-serif font-semibold text-foreground mb-1">
-            {userStats.currentBook}
-          </h1>
-          <p className="text-muted-foreground">
-            Capítulo {userStats.currentChapter} de {userStats.totalChapters} • {currentBookTheme?.genre}
-          </p>
+          {hasActiveTrail ? (
+            <>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                <MapPin className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
+                Sua Jornada Atual
+              </p>
+              <h1 className="text-3xl lg:text-4xl font-serif font-semibold text-foreground mb-1">
+                {userStats.currentBook}
+              </h1>
+              <p className="text-muted-foreground">
+                Capítulo {userStats.currentChapter} de {userStats.totalChapters} • {currentBookTheme?.genre}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Bem-vindo ao BookQuest
+              </p>
+              <h1 className="text-3xl lg:text-4xl font-serif font-semibold text-foreground mb-1">
+                Comece sua jornada literária
+              </h1>
+              <p className="text-muted-foreground">
+                Escolha uma trilha para iniciar sua aventura
+              </p>
+            </>
+          )}
         </header>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 order-2 lg:order-1">
+            {hasActiveTrail ? (
+            <>
             {/* Current Trail Card */}
             <div
               data-tutorial="current-trail"
@@ -343,6 +363,23 @@ const Index = () => {
                 </div>
               </div>
             </div>
+            </>
+            ) : (
+              /* Empty state - No active trail */
+              <div className="rounded-xl border-2 border-dashed border-muted-foreground/20 p-10 text-center animate-fade-in mb-8">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <BookOpen className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-serif font-semibold mb-2">Nenhuma trilha ativa</h3>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                  Explore nossas trilhas literárias e escolha um livro para começar sua jornada de leitura.
+                </p>
+                <Button variant="hero" size="lg" className="gap-2" onClick={() => navigate('/trilhas')}>
+                  <BookOpen className="w-5 h-5" />
+                  Explorar Trilhas
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
