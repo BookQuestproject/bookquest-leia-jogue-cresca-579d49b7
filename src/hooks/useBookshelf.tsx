@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 export type ShelfCategory = "lendo" | "quero-ler" | "lido" | "abandonado" | "favoritos" | "reelendo";
 
@@ -24,49 +24,53 @@ const defaultBooks: ShelfBook[] = [
   { id: 6, title: "O Hobbit", author: "J.R.R. Tolkien", cover: "https://m.media-amazon.com/images/I/91b0C2YNSrL._AC_UF1000,1000_QL80_.jpg", category: "favoritos", rating: 5 },
 ];
 
-function loadBooks(): ShelfBook[] {
+// Global singleton store
+let books: ShelfBook[] = (() => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return JSON.parse(stored);
   } catch {}
   return defaultBooks;
+})();
+
+const listeners = new Set<() => void>();
+
+function emitChange() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+  listeners.forEach(l => l());
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function getSnapshot() {
+  return books;
 }
 
 export function useBookshelf() {
-  const [books, setBooks] = useState<ShelfBook[]>(loadBooks);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
-  }, [books]);
-
-  // Listen for changes from other tabs/components
-  useEffect(() => {
-    const handler = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY && e.newValue) {
-        setBooks(JSON.parse(e.newValue));
-      }
-    };
-    window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
-  }, []);
+  const currentBooks = useSyncExternalStore(subscribe, getSnapshot);
 
   const addBook = useCallback((book: { id: number; title: string; author: string; cover: string }, category: ShelfCategory) => {
-    setBooks(prev => {
-      const exists = prev.find(b => b.id === book.id);
-      if (exists) {
-        return prev.map(b => b.id === book.id ? { ...b, category } : b);
-      }
-      return [...prev, { ...book, category }];
-    });
+    const exists = books.find(b => b.id === book.id);
+    if (exists) {
+      books = books.map(b => b.id === book.id ? { ...b, category } : b);
+    } else {
+      books = [...books, { ...book, category }];
+    }
+    emitChange();
   }, []);
 
   const moveBook = useCallback((bookId: number, newCategory: ShelfCategory) => {
-    setBooks(prev => prev.map(b => b.id === bookId ? { ...b, category: newCategory } : b));
+    books = books.map(b => b.id === bookId ? { ...b, category: newCategory } : b);
+    emitChange();
   }, []);
 
   const updateBook = useCallback((bookId: number, updates: Partial<ShelfBook>) => {
-    setBooks(prev => prev.map(b => b.id === bookId ? { ...b, ...updates } : b));
+    books = books.map(b => b.id === bookId ? { ...b, ...updates } : b);
+    emitChange();
   }, []);
 
-  return { books, addBook, moveBook, updateBook, setBooks };
+  return { books: currentBooks, addBook, moveBook, updateBook };
 }
