@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Eye } from "lucide-react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,8 +54,11 @@ const sortOptions = ["Popularidade", "Avaliação", "Título A-Z", "Autor A-Z"];
 
 const Biblioteca = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const isFromEstante = searchParams.get("from") === "estante";
+  const estanteCategory = searchParams.get("category") || "lendo";
   const [searchQuery, setSearchQuery] = useState("");
+  const [inspectedBook, setInspectedBook] = useState<Book | null>(null);
   const [selectedGenre, setSelectedGenre] = useState("Todos");
   const [sortBy, setSortBy] = useState("Popularidade");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -89,6 +92,13 @@ const Biblioteca = () => {
     toast.success(`"${book.title}" adicionado à sua estante!`, {
       description: `O livro foi adicionado em '${category}'`,
     });
+    if (isFromEstante) {
+      navigate(`/estante`);
+    }
+  };
+
+  const handleInspect = (book: Book) => {
+    setInspectedBook(book);
   };
 
   const handleSuggestBook = async () => {
@@ -233,15 +243,25 @@ const Biblioteca = () => {
                   {book.description}
                 </p>
                 <div className="flex gap-2">
-                  <Button 
-                    variant="hero" 
-                    size="sm"
-                    className="flex-1 gap-1"
-                    onClick={() => handleAddToShelf(book, isFromEstante ? searchParams.get("category") || "lendo" : "lendo")}
-                  >
-                    <Eye className="w-4 h-4" />
-                    {isFromEstante ? "Selecionar" : "Inspecionar"}
-                  </Button>
+                  {isFromEstante ? (
+                    <Button 
+                      variant="hero" 
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => handleAddToShelf(book, estanteCategory)}
+                    >
+                      Selecionar
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="hero" 
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => handleInspect(book)}
+                    >
+                      Inspecionar
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -321,6 +341,41 @@ const Biblioteca = () => {
                 </p>
               )}
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Inspect Book Modal */}
+        <Dialog open={!!inspectedBook} onOpenChange={(open) => !open && setInspectedBook(null)}>
+          <DialogContent className="max-w-lg">
+            {inspectedBook && (
+              <>
+                <DialogHeader>
+                  <DialogTitle>{inspectedBook.title}</DialogTitle>
+                </DialogHeader>
+                <div className="flex gap-6 py-4">
+                  <div className="w-32 h-44 rounded-xl flex-shrink-0 overflow-hidden shadow-md">
+                    <img
+                      src={inspectedBook.cover}
+                      alt={`Capa de ${inspectedBook.title}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <p className="text-sm text-muted-foreground">{inspectedBook.author}</p>
+                    <div className="flex items-center gap-2">
+                      <Star className="w-4 h-4 text-accent fill-accent" />
+                      <span className="text-sm font-bold">{inspectedBook.rating}</span>
+                      <span className="text-xs text-muted-foreground">• {inspectedBook.pages} páginas</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">{inspectedBook.genre}</span>
+                    </div>
+                    <p className="text-sm text-foreground leading-relaxed">{inspectedBook.description}</p>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button variant="outline" onClick={() => setInspectedBook(null)}>Fechar</Button>
+                </div>
+              </>
+            )}
           </DialogContent>
         </Dialog>
       </div>
