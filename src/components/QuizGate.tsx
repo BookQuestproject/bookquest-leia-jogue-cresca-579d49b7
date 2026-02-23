@@ -9,11 +9,11 @@ interface QuizGateProps {
 
 /**
  * Redirects authenticated users who haven't completed the quiz
- * to the quiz onboarding page. Allows unauthenticated users through.
+ * to the quiz onboarding page. Allows unauthenticated users and admins through.
  */
 const QuizGate = ({ children }: QuizGateProps) => {
   const { user, loading: authLoading } = useAuth();
-  const { quizCompleted, loading: profileLoading } = useProfile();
+  const { quizCompleted, isAdmin, loading: profileLoading } = useProfile();
   const location = useLocation();
 
   // Don't gate these routes
@@ -29,6 +29,11 @@ const QuizGate = ({ children }: QuizGateProps) => {
 
   // Not logged in - let them browse freely
   if (!user) {
+    return <>{children}</>;
+  }
+
+  // Admins skip quiz gate
+  if (isAdmin) {
     return <>{children}</>;
   }
 
