@@ -372,8 +372,34 @@ const Biblioteca = () => {
                     <p className="text-sm text-foreground leading-relaxed">{inspectedBook.detailedDescription}</p>
                   </div>
                 </div>
-                <div className="flex justify-end">
-                  <Button variant="outline" onClick={() => setInspectedBook(null)}>Fechar</Button>
+                <div className="space-y-3 pt-2 border-t border-border">
+                  <p className="text-sm font-medium">Adicionar à estante:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {["lendo", "quero-ler", "lido", "favoritos", "reelendo", "abandonado"].map((cat) => {
+                      const labels: Record<string, string> = {
+                        "lendo": "Lendo",
+                        "quero-ler": "Quero Ler",
+                        "lido": "Lido",
+                        "favoritos": "Favoritos",
+                        "reelendo": "Reelendo",
+                        "abandonado": "Abandonado",
+                      };
+                      return (
+                        <Button
+                          key={cat}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            handleAddToShelf(inspectedBook, cat);
+                            setInspectedBook(null);
+                          }}
+                        >
+                          <Plus className="w-3 h-3 mr-1" />
+                          {labels[cat]}
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </div>
               </>
             )}
