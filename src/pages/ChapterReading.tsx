@@ -45,42 +45,132 @@ const bookData: Record<string, {
           explanation: "Os Dursley valorizavam acima de tudo a 'normalidade' e temiam qualquer associação com o mundo mágico."
         }
       },
-      { id: 2, title: "O Vidro que Sumiu", icon: "🐍", totalPages: 18 },
-      { id: 3, title: "As Cartas de Ninguém", icon: "✉️", totalPages: 22 },
-      { id: 4, title: "O Guardião das Chaves", icon: "🗝️", totalPages: 20 },
-      { id: 5, title: "O Beco Diagonal", icon: "🏪", totalPages: 28 },
-      { id: 6, title: "A Viagem da Plataforma", icon: "🚂", totalPages: 18 },
-      { id: 7, title: "O Chapéu Seletor", icon: "🎩", totalPages: 16 },
-      { id: 8, title: "O Mestre das Poções", icon: "⚗️", totalPages: 20 },
-      { id: 9, title: "O Duelo à Meia-Noite", icon: "⚔️", totalPages: 22 },
-      { id: 10, title: "O Espelho de Ojesed", icon: "🪞", totalPages: 24 },
+      { id: 2, title: "O Vidro que Sumiu", icon: "🐍", totalPages: 18, question: {
+        text: "O que aconteceu no zoológico que deixou os Dursley furiosos?",
+        options: ["Harry comprou um sorvete", "O vidro do terrário da cobra desapareceu", "Harry falou com outros visitantes sobre magia", "Dudley caiu em uma poça"],
+        correctAnswer: 1,
+        explanation: "Harry involuntariamente fez o vidro do terrário desaparecer, permitindo que a cobra escapasse."
+      }},
+      { id: 3, title: "As Cartas de Ninguém", icon: "✉️", totalPages: 22, question: {
+        text: "Por que o tio Válter tentou impedir Harry de receber as cartas?",
+        options: ["As cartas continham ameaças", "Ele sabia que eram de Hogwarts e queria esconder a verdade", "As cartas eram cobranças de dívidas", "Ele achava que eram propagandas"],
+        correctAnswer: 1,
+        explanation: "Válter sabia que as cartas vinham de Hogwarts e queria impedir Harry de descobrir sobre o mundo bruxo."
+      }},
+      { id: 4, title: "O Guardião das Chaves", icon: "🗝️", totalPages: 20, question: {
+        text: "Quem é o 'Guardião das Chaves' que aparece para Harry?",
+        options: ["Dumbledore", "Hagrid", "Snape", "McGonagall"],
+        correctAnswer: 1,
+        explanation: "Hagrid é o Guardião das Chaves e Terrenos de Hogwarts, e foi ele quem revelou a Harry que ele era um bruxo."
+      }},
+      { id: 5, title: "O Beco Diagonal", icon: "🏪", totalPages: 28, question: {
+        text: "Qual foi a primeira coisa que Harry comprou no Beco Diagonal?",
+        options: ["Sua varinha", "Seu uniforme", "Seus livros", "Ele primeiro foi ao Gringotes trocar dinheiro"],
+        correctAnswer: 3,
+        explanation: "Antes de comprar qualquer material, Harry e Hagrid foram ao banco Gringotes para acessar o cofre dos Potter."
+      }},
+      { id: 6, title: "A Viagem da Plataforma", icon: "🚂", totalPages: 18, question: {
+        text: "Quem ajudou Harry a encontrar a Plataforma 9¾?",
+        options: ["Hagrid deixou instruções escritas", "A família Weasley", "Um funcionário do trem", "Ele encontrou sozinho"],
+        correctAnswer: 1,
+        explanation: "A Sra. Weasley e seus filhos ajudaram Harry a atravessar a barreira para a Plataforma 9¾."
+      }},
+      { id: 7, title: "O Chapéu Seletor", icon: "🎩", totalPages: 16, question: {
+        text: "O que o Chapéu Seletor considerou antes de colocar Harry na Grifinória?",
+        options: ["Colocá-lo na Corvinal", "Colocá-lo na Sonserina", "Colocá-lo na Lufa-Lufa", "Não selecioná-lo"],
+        correctAnswer: 1,
+        explanation: "O Chapéu considerou colocar Harry na Sonserina, mas Harry pediu para não ir para lá."
+      }},
+      { id: 8, title: "O Mestre das Poções", icon: "⚗️", totalPages: 20, question: {
+        text: "Por que Snape parecia não gostar de Harry desde o início?",
+        options: ["Harry errou uma poção", "Harry lembrava seu pai, com quem Snape tinha rivalidade", "Harry chegou atrasado na aula", "Harry desrespeitou Snape"],
+        correctAnswer: 1,
+        explanation: "Snape tinha uma antiga rivalidade com Tiago Potter, pai de Harry, e transferiu esses sentimentos para o filho."
+      }},
+      { id: 9, title: "O Duelo à Meia-Noite", icon: "⚔️", totalPages: 22, question: {
+        text: "Quem desafiou Harry para um duelo à meia-noite?",
+        options: ["Rony Weasley", "Neville Longbottom", "Draco Malfoy", "Fred Weasley"],
+        correctAnswer: 2,
+        explanation: "Draco Malfoy desafiou Harry para um duelo, mas na verdade era uma armadilha para que ele fosse pego fora da cama."
+      }},
+      { id: 10, title: "O Espelho de Ojesed", icon: "🪞", totalPages: 24, question: {
+        text: "O que Harry viu quando olhou no Espelho de Ojesed?",
+        options: ["Ele mesmo como capitão de Quadribol", "Sua família, incluindo seus pais", "Dumbledore sorrindo", "O mundo trouxa"],
+        correctAnswer: 1,
+        explanation: "O Espelho de Ojesed mostra o desejo mais profundo do coração. Harry viu seus pais e sua família ao redor dele."
+      }},
     ]
   },
   "percy-jackson-1": {
     title: "Percy Jackson e o Ladrão de Raios",
     themeColor: "210 55% 30%",
     chapters: [
-      { id: 1, title: "Eu Vaporizo Minha Professora", icon: "⚡", totalPages: 15 },
-      { id: 2, title: "Três Velhas Tricotando", icon: "🧶", totalPages: 18 },
-      { id: 3, title: "Grover Perde as Calças", icon: "🐐", totalPages: 20 },
+      { id: 1, title: "Eu Vaporizo Minha Professora", icon: "⚡", totalPages: 15, question: {
+        text: "O que aconteceu com a Sra. Dodds durante a excursão ao museu?",
+        options: ["Ela desmaiou", "Ela se transformou em uma Fúria e atacou Percy", "Ela foi demitida", "Ela desapareceu misteriosamente"],
+        correctAnswer: 1,
+        explanation: "A Sra. Dodds era na verdade uma Fúria disfarçada e atacou Percy no museu, sendo vaporizada por ele."
+      }},
+      { id: 2, title: "Três Velhas Tricotando", icon: "🧶", totalPages: 18, question: {
+        text: "O que as três velhas tricotando representavam na mitologia?",
+        options: ["As Musas", "As Moiras (Parcas), que controlam o destino", "As Harpias", "As Ninfas"],
+        correctAnswer: 1,
+        explanation: "As três velhas eram as Moiras, que na mitologia grega tecem, medem e cortam o fio da vida de cada pessoa."
+      }},
+      { id: 3, title: "Grover Perde as Calças", icon: "🐐", totalPages: 20, question: {
+        text: "Qual segredo de Grover foi revelado neste capítulo?",
+        options: ["Ele era um espião", "Ele era um sátiro com pernas de bode", "Ele podia voar", "Ele era filho de um deus"],
+        correctAnswer: 1,
+        explanation: "Percy descobriu que Grover era um sátiro — metade humano, metade bode — enviado para protegê-lo."
+      }},
     ]
   },
   "dom-casmurro": {
     title: "Dom Casmurro",
     themeColor: "35 40% 28%",
     chapters: [
-      { id: 1, title: "Do título", icon: "📜", totalPages: 8 },
-      { id: 2, title: "Do livro", icon: "📖", totalPages: 10 },
-      { id: 3, title: "A denúncia", icon: "🔔", totalPages: 12 },
+      { id: 1, title: "Do título", icon: "📜", totalPages: 8, question: {
+        text: "Por que o narrador se autodenomina 'Dom Casmurro'?",
+        options: ["Era seu nome de batismo", "Foi um apelido dado por um poeta por ele ser fechado e calado", "Era um título de nobreza", "Ele escolheu esse nome por diversão"],
+        correctAnswer: 1,
+        explanation: "O apelido 'Dom Casmurro' foi dado por um jovem poeta porque Bentinho cochilou durante seus versos no trem."
+      }},
+      { id: 2, title: "Do livro", icon: "📖", totalPages: 10, question: {
+        text: "Qual era a intenção do narrador ao escrever o livro?",
+        options: ["Ficar famoso como escritor", "Atar as duas pontas da vida e restaurar a adolescência na velhice", "Denunciar injustiças sociais", "Contar a história de seus pais"],
+        correctAnswer: 1,
+        explanation: "Bentinho queria reconstruir a casa de Matacavalos e, com ela, reviver as memórias de sua juventude."
+      }},
+      { id: 3, title: "A denúncia", icon: "🔔", totalPages: 12, question: {
+        text: "O que José Dias denunciou a D. Glória?",
+        options: ["Que Bentinho estava doente", "Que Bentinho e Capitu estavam sempre juntos e namorando", "Que Bentinho queria fugir de casa", "Que Capitu roubava livros"],
+        correctAnswer: 1,
+        explanation: "José Dias alertou D. Glória sobre a proximidade entre Bentinho e Capitu, sugerindo que estavam namorando."
+      }},
     ]
   },
   "o-pequeno-principe": {
     title: "O Pequeno Príncipe",
     themeColor: "40 65% 45%",
     chapters: [
-      { id: 1, title: "O Desenho", icon: "🎨", totalPages: 6 },
-      { id: 2, title: "O Encontro", icon: "⭐", totalPages: 10 },
-      { id: 3, title: "O Asteroide B-612", icon: "🪐", totalPages: 8 },
+      { id: 1, title: "O Desenho", icon: "🎨", totalPages: 6, question: {
+        text: "O que os adultos viam no desenho do narrador quando criança?",
+        options: ["Uma jiboia engolindo um elefante", "Um chapéu", "Uma montanha", "Um barco"],
+        correctAnswer: 1,
+        explanation: "Os adultos viam apenas um chapéu, sem perceber que era uma jiboia que engoliu um elefante, mostrando a falta de imaginação dos crescidos."
+      }},
+      { id: 2, title: "O Encontro", icon: "⭐", totalPages: 10, question: {
+        text: "Onde o narrador encontrou o Pequeno Príncipe pela primeira vez?",
+        options: ["Em uma floresta encantada", "No deserto do Saara, após uma pane no avião", "Em uma cidade grande", "Em um navio no oceano"],
+        correctAnswer: 1,
+        explanation: "O aviador encontrou o Pequeno Príncipe no deserto do Saara, onde havia feito um pouso forçado."
+      }},
+      { id: 3, title: "O Asteroide B-612", icon: "🪐", totalPages: 8, question: {
+        text: "Por que o Pequeno Príncipe precisava cuidar dos baobás em seu asteroide?",
+        options: ["Para ter sombra", "Porque se crescessem, destruiriam o pequeno planeta", "Para colher frutas", "Para decorar o asteroide"],
+        correctAnswer: 1,
+        explanation: "Os baobás, se não arrancados quando pequenos, cresceriam tanto que suas raízes destruiriam o minúsculo asteroide."
+      }},
     ]
   },
 };
@@ -183,6 +273,20 @@ const ChapterReading = () => {
       return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const formatTimeReadable = (seconds: number) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hrs > 0) {
+      return `${hrs}h ${mins}min ${secs}s`;
+    }
+    if (mins > 0) {
+      return `${mins}min ${secs}s`;
+    }
+    return `${secs}s`;
   };
 
   const handleStartReading = () => {
@@ -480,7 +584,7 @@ const ChapterReading = () => {
               >
                 <HelpCircle className="w-8 h-8" style={{ color: `hsl(${themeColor})` }} />
               </div>
-              <p className="text-sm text-muted-foreground mb-1">Você leu por {formatTime(elapsedTime)}</p>
+              <p className="text-sm text-muted-foreground mb-1">Você leu por {formatTimeReadable(elapsedTime)}</p>
               <h2 className="text-xl font-serif font-semibold">Pergunta do Capítulo</h2>
             </div>
 
@@ -570,7 +674,7 @@ const ChapterReading = () => {
             <div>
               <h2 className="text-2xl font-serif font-semibold mb-2">Capítulo Concluído!</h2>
               <p className="text-muted-foreground">
-                Você completou "{chapter.title}" em {formatTime(elapsedTime)}
+                Você completou "{chapter.title}"
               </p>
             </div>
 
@@ -586,8 +690,13 @@ const ChapterReading = () => {
                 </div>
                 <div className="w-px h-10 bg-border" />
                 <div className="text-center">
-                  <p className="text-3xl font-bold">{formatTime(elapsedTime)}</p>
-                  <p className="text-xs text-muted-foreground">tempo de leitura</p>
+                  <div className="flex items-center gap-1.5 justify-center mb-1">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">tempo de leitura</p>
+                  </div>
+                  <p className="text-3xl font-bold" style={{ color: `hsl(${themeColor})` }}>
+                    {formatTimeReadable(elapsedTime)}
+                  </p>
                 </div>
               </div>
             </div>
