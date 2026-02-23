@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock } from "lucide-react";
+import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin } from "lucide-react";
+import { useActiveTrail } from "@/hooks/useActiveTrail";
+import { toast } from "sonner";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -149,6 +151,7 @@ const bookTrails: BookTrail[] = [
 const Trilhas = () => {
   const { bookId } = useParams();
   const navigate = useNavigate();
+  const { activeTrail, setActiveTrail } = useActiveTrail();
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -156,6 +159,21 @@ const Trilhas = () => {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const isPremium = false;
+
+  const handleSelectTrail = (book: BookTrail) => {
+    setActiveTrail({
+      bookId: book.id,
+      title: book.title,
+      author: book.author,
+      cover: book.cover,
+      genre: book.genre,
+      themeColor: book.themeColor,
+      totalChapters: book.totalChapters,
+      chapters: book.chapters,
+    });
+    toast.success(`"${book.title}" definida como sua trilha atual!`);
+    navigate("/");
+  };
 
   // Hook must be called unconditionally at the top level
   const { isChapterCompleted, getReadingTime, refetch } = useChapterProgress(bookId || "");
@@ -590,6 +608,7 @@ const Trilhas = () => {
             const progress = (completedChapters / book.totalChapters) * 100;
             const currentChapter = book.chapters.find(c => c.status === "current");
             const themeColor = book.themeColor;
+            const isCurrentTrail = activeTrail?.bookId === book.id;
 
             return (
               <Link
@@ -671,6 +690,38 @@ const Trilhas = () => {
                       />
                     </div>
                   </div>
+
+                  {/* Start Trail Button */}
+                  {!book.isPremium || isPremium ? (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSelectTrail(book);
+                      }}
+                      className={`w-full mt-4 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                        isCurrentTrail
+                          ? "bg-accent/10 text-accent cursor-default"
+                          : "text-white hover:opacity-90"
+                      }`}
+                      style={!isCurrentTrail ? {
+                        background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                      } : {}}
+                      disabled={isCurrentTrail}
+                    >
+                      {isCurrentTrail ? (
+                        <>
+                          <CheckCircle className="w-4 h-4" />
+                          Trilha Atual
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4" />
+                          Começar Trilha
+                        </>
+                      )}
+                    </button>
+                  ) : null}
                 </div>
               </Link>
             );

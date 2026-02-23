@@ -34,6 +34,21 @@ const TUTORIAL_COMPLETED_KEY = "bookquest_spotlight_tutorial_done";
 
 /** All tutorial steps across the site */
 const allSteps: TutorialStep[] = [
+  // --- Welcome / Empty Home ---
+  {
+    target: '[data-tutorial="welcome-header"]',
+    title: "Bem-vindo ao BookQuest! 🎉",
+    description: "Esta é sua página inicial. Aqui você acompanha sua jornada de leitura, trilhas, ranking e missões.",
+    route: "/",
+    placement: "bottom",
+  },
+  {
+    target: '[data-tutorial="explore-trails-cta"]',
+    title: "Escolha sua Trilha",
+    description: "Clique aqui para explorar nossas trilhas literárias e escolher o livro que vai iniciar sua jornada!",
+    route: "/",
+    placement: "bottom",
+  },
   // --- Navigation ---
   {
     target: '[data-tutorial="sidebar-full"]',
@@ -56,7 +71,7 @@ const allSteps: TutorialStep[] = [
     route: "/",
     placement: "right",
   },
-  // --- Home ---
+  // --- Home with active trail ---
   {
     target: '[data-tutorial="current-trail"]',
     title: "Trilha Atual",
