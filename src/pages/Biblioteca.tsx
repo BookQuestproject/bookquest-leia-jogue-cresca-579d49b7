@@ -4,6 +4,7 @@ import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircl
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useBookshelf, type ShelfCategory } from "@/hooks/useBookshelf";
 import {
   Select,
   SelectContent,
@@ -67,6 +68,7 @@ const Biblioteca = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { user } = useAuth();
+  const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
 
   const filteredBooks = allBooks
@@ -90,6 +92,10 @@ const Biblioteca = () => {
     });
 
   const handleAddToShelf = (book: Book, category: string) => {
+    addBook(
+      { id: book.id, title: book.title, author: book.author, cover: book.cover },
+      category as ShelfCategory
+    );
     toast.success(`"${book.title}" adicionado à sua estante!`, {
       description: `O livro foi adicionado em '${category}'`,
     });

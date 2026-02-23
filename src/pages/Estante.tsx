@@ -1,58 +1,38 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookMarked, Plus, ArrowRightLeft, Star, BookOpen, X, Check } from "lucide-react";
+import { BookMarked, Plus, Star, Check } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  cover: string;
-  category: "lendo" | "quero-ler" | "lido" | "abandonado" | "favoritos" | "reelendo";
-  progress?: number;
-  rating?: number;
-  review?: string;
-}
-
-const mockBooks: Book[] = [
-  { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", cover: "https://m.media-amazon.com/images/I/81ibfYk4qmL._AC_UF1000,1000_QL80_.jpg", category: "lendo", progress: 65 },
-  { id: 2, title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", cover: "https://m.media-amazon.com/images/I/81j7E0oFdRL._AC_UF1000,1000_QL80_.jpg", category: "quero-ler" },
-  { id: 3, title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", cover: "https://m.media-amazon.com/images/I/71OZY035QKL._AC_UF1000,1000_QL80_.jpg", category: "lido", rating: 5, review: "Leitura incrível!" },
-  { id: 4, title: "1984", author: "George Orwell", cover: "https://m.media-amazon.com/images/I/819js3EQwbL._AC_UF1000,1000_QL80_.jpg", category: "lido", rating: 4 },
-  { id: 5, title: "Dom Casmurro", author: "Machado de Assis", cover: "https://m.media-amazon.com/images/I/61wezcT0yJL._AC_UF1000,1000_QL80_.jpg", category: "abandonado" },
-  { id: 6, title: "O Hobbit", author: "J.R.R. Tolkien", cover: "https://m.media-amazon.com/images/I/91b0C2YNSrL._AC_UF1000,1000_QL80_.jpg", category: "favoritos", rating: 5 },
-];
+import { useBookshelf, type ShelfCategory } from "@/hooks/useBookshelf";
 
 const categories = [
-  { id: "lendo", label: "Lendo", color: "text-primary" },
-  { id: "reelendo", label: "Reelendo", color: "text-primary" },
-  { id: "quero-ler", label: "Quero Ler", color: "text-accent" },
-  { id: "lido", label: "Lido", color: "text-success" },
-  { id: "abandonado", label: "Abandonado", color: "text-destructive" },
-  { id: "favoritos", label: "Favoritos", color: "text-warning" },
+  { id: "lendo", label: "Lendo" },
+  { id: "reelendo", label: "Reelendo" },
+  { id: "quero-ler", label: "Quero Ler" },
+  { id: "lido", label: "Lido" },
+  { id: "abandonado", label: "Abandonado" },
+  { id: "favoritos", label: "Favoritos" },
 ];
 
 const Estante = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState<Book[]>(mockBooks);
+  const { books, moveBook, updateBook } = useBookshelf();
   const [selectedCategory, setSelectedCategory] = useState("lendo");
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [selectedBook, setSelectedBook] = useState<typeof books[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
 
   const filteredBooks = books.filter(book => book.category === selectedCategory);
 
-  const handleOpenBook = (book: Book) => {
+  const handleOpenBook = (book: typeof books[0]) => {
     setSelectedBook(book);
     setRating(book.rating || 0);
     setReview(book.review || "");
@@ -61,17 +41,9 @@ const Estante = () => {
 
   const handleSaveReview = () => {
     if (selectedBook) {
-      setBooks(books.map(b => 
-        b.id === selectedBook.id ? { ...b, rating, review } : b
-      ));
+      updateBook(selectedBook.id, { rating, review });
       setIsModalOpen(false);
     }
-  };
-
-  const handleMoveBook = (bookId: number, newCategory: Book["category"]) => {
-    setBooks(books.map(b => 
-      b.id === bookId ? { ...b, category: newCategory } : b
-    ));
   };
 
   return (
@@ -88,7 +60,7 @@ const Estante = () => {
               Organize seus livros e acompanhe suas leituras
             </p>
           </div>
-          <Button variant="hero" className="gap-2" data-tutorial="estante-add">
+          <Button variant="hero" className="gap-2" data-tutorial="estante-add" onClick={() => navigate(`/biblioteca?from=estante&category=${selectedCategory}`)}>
             <Plus className="w-5 h-5" />
             Adicionar Livro
           </Button>
@@ -116,7 +88,6 @@ const Estante = () => {
 
         {/* Books Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {/* Add book button */}
           <div
             onClick={() => navigate(`/biblioteca?from=estante&category=${selectedCategory}`)}
             className="glass-card rounded-xl overflow-hidden card-hover cursor-pointer animate-fade-in flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 transition-colors"
@@ -196,7 +167,6 @@ const Estante = () => {
             </DialogHeader>
 
             <div className="space-y-6 py-4">
-              {/* Rating */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Sua avaliação</label>
                 <div className="flex gap-2">
@@ -214,7 +184,6 @@ const Estante = () => {
                 </div>
               </div>
 
-              {/* Review */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Sua resenha</label>
                 <Textarea
@@ -225,7 +194,6 @@ const Estante = () => {
                 />
               </div>
 
-              {/* Move to category */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Mover para</label>
                 <div className="flex flex-wrap gap-2">
@@ -234,7 +202,8 @@ const Estante = () => {
                       key={cat.id}
                       onClick={() => {
                         if (selectedBook) {
-                          handleMoveBook(selectedBook.id, cat.id as Book["category"]);
+                          moveBook(selectedBook.id, cat.id as ShelfCategory);
+                          setSelectedBook({ ...selectedBook, category: cat.id as ShelfCategory });
                         }
                       }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
@@ -249,7 +218,6 @@ const Estante = () => {
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex gap-3 pt-4">
                 <Button variant="outline" className="flex-1" onClick={() => setIsModalOpen(false)}>
                   Cancelar
