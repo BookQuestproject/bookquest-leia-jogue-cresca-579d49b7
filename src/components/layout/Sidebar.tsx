@@ -56,17 +56,17 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   return (
     <aside data-tutorial="sidebar-full" className="fixed left-0 top-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
       {/* Logo */}
-      <div className="p-5 border-b border-sidebar-border">
+      <div className="px-5 py-3 border-b border-sidebar-border">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded bg-secondary flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-secondary-foreground" />
+          <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
+            <BookOpen className="w-4 h-4 text-secondary-foreground" />
           </div>
           <span className="text-lg font-serif font-semibold text-foreground">BookQuest</span>
         </Link>
       </div>
 
       {/* User Stats Quick View */}
-      <div className="px-5 py-3 border-b border-sidebar-border" data-tutorial="user-stats">
+      <div className="px-5 py-2 border-b border-sidebar-border" data-tutorial="user-stats">
         {user ? (
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5 text-accent">
@@ -90,20 +90,20 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto" data-tutorial="sidebar-nav">
+      <nav className="flex-1 px-2 py-1 space-y-0 overflow-y-auto" data-tutorial="sidebar-nav">
         {menuItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
             className={`sidebar-item ${isActive(item.path) ? "active" : ""}`}
           >
-            <item.icon className="w-5 h-5" />
+            <item.icon className="w-4 h-4" />
             <span className="text-sm">{item.label}</span>
           </Link>
         ))}
 
         {/* Premium Section */}
-        <div className="pt-5 pb-2">
+        <div className="pt-3 pb-1">
           <span className="px-4 text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
             <Crown className="w-3 h-3" />
             Premium
@@ -116,45 +116,45 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             to={item.path}
             className={`sidebar-item ${isActive(item.path) ? "active" : ""} ${!isPremium ? "premium-locked" : ""}`}
           >
-            <item.icon className="w-5 h-5" />
+            <item.icon className="w-4 h-4" />
             <span className="text-sm">{item.label}</span>
-            {!isPremium && <Lock className="w-4 h-4 text-muted-foreground ml-auto" />}
+            {!isPremium && <Lock className="w-3 h-3 text-muted-foreground ml-auto" />}
           </Link>
         ))}
       </nav>
 
       {/* Premium CTA for non-premium users */}
       {!isPremium && (
-        <div className="p-4 border-t border-sidebar-border" data-tutorial="premium-cta">
+        <div className="px-3 py-2 border-t border-sidebar-border" data-tutorial="premium-cta">
           <Link
             to="/premium"
-            className="flex items-center gap-3 px-4 py-3 rounded bg-accent/10 text-accent hover:bg-accent/15 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded bg-accent/10 text-accent hover:bg-accent/15 transition-colors"
           >
-            <Crown className="w-5 h-5" />
+            <Crown className="w-4 h-4" />
             <div>
-              <p className="text-sm font-semibold">Assine o Premium</p>
-              <p className="text-xs opacity-80">R$ 19,90/mês</p>
+              <p className="text-xs font-semibold">Assine o Premium</p>
+              <p className="text-[10px] opacity-80">R$ 19,90/mês</p>
             </div>
           </Link>
         </div>
       )}
 
       {/* Settings & User Actions */}
-      <div className="p-3 border-t border-sidebar-border space-y-0.5">
+      <div className="px-2 py-2 border-t border-sidebar-border space-y-0">
         {isAdmin && (
           <>
             <Link
               to="/admin"
               className={`sidebar-item ${isActive("/admin") ? "active" : ""}`}
             >
-              <Shield className="w-5 h-5 text-accent" />
+              <Shield className="w-4 h-4 text-accent" />
               <span className="text-sm">Painel Admin</span>
             </Link>
             <Link
               to="/quiz-onboarding"
               className={`sidebar-item ${isActive("/quiz-onboarding") ? "active" : ""}`}
             >
-              <HelpCircle className="w-5 h-5 text-accent" />
+              <HelpCircle className="w-4 h-4 text-accent" />
               <span className="text-sm">Testar Quiz</span>
             </Link>
           </>
@@ -164,7 +164,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             to="/perfil"
             className={`sidebar-item ${isActive("/perfil") ? "active" : ""}`}
           >
-            <User className="w-5 h-5" />
+            <User className="w-4 h-4" />
             <span className="text-sm">Meu Perfil</span>
           </Link>
         )}
@@ -172,7 +172,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
           to="/configuracoes"
           className={`sidebar-item ${isActive("/configuracoes") ? "active" : ""}`}
         >
-          <Settings className="w-5 h-5" />
+          <Settings className="w-4 h-4" />
           <span className="text-sm">Configurações</span>
         </Link>
         {user && (
@@ -180,7 +180,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             onClick={() => signOut()}
             className="sidebar-item w-full text-left hover:text-destructive"
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="w-4 h-4" />
             <span className="text-sm">Sair</span>
           </button>
         )}
