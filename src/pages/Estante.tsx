@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BookMarked, Plus, ArrowRightLeft, Star, BookOpen, X, Check } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ interface Book {
   title: string;
   author: string;
   cover: string;
-  category: "lendo" | "quero-ler" | "lido" | "abandonado" | "favoritos";
+  category: "lendo" | "quero-ler" | "lido" | "abandonado" | "favoritos" | "reelendo";
   progress?: number;
   rating?: number;
   review?: string;
@@ -33,6 +34,7 @@ const mockBooks: Book[] = [
 
 const categories = [
   { id: "lendo", label: "Lendo", color: "text-primary" },
+  { id: "reelendo", label: "Reelendo", color: "text-primary" },
   { id: "quero-ler", label: "Quero Ler", color: "text-accent" },
   { id: "lido", label: "Lido", color: "text-success" },
   { id: "abandonado", label: "Abandonado", color: "text-destructive" },
@@ -40,6 +42,7 @@ const categories = [
 ];
 
 const Estante = () => {
+  const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>(mockBooks);
   const [selectedCategory, setSelectedCategory] = useState("lendo");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -112,68 +115,66 @@ const Estante = () => {
         </div>
 
         {/* Books Grid */}
-        {filteredBooks.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredBooks.map((book, index) => (
-              <div 
-                key={book.id} 
-                className="glass-card rounded-xl overflow-hidden card-hover cursor-pointer animate-fade-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
-                onClick={() => handleOpenBook(book)}
-              >
-                <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={book.cover} 
-                    alt={`Capa de ${book.title}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-3">
-                  <h3 className="font-bold text-sm truncate">{book.title}</h3>
-                  <p className="text-xs text-muted-foreground truncate">{book.author}</p>
-                  
-                  {book.progress !== undefined && (
-                    <div className="mt-2">
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-muted-foreground">Progresso</span>
-                        <span className="font-bold">{book.progress}%</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-primary rounded-full"
-                          style={{ width: `${book.progress}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {book.rating && (
-                    <div className="flex items-center gap-1 mt-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-3 h-3 ${i < book.rating! ? "text-accent fill-accent" : "text-muted"}`}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {/* Add book button */}
+          <div
+            onClick={() => navigate("/biblioteca")}
+            className="glass-card rounded-xl overflow-hidden card-hover cursor-pointer animate-fade-in flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 transition-colors"
+          >
+            <Plus className="w-10 h-10 text-muted-foreground mb-2" />
+            <span className="text-sm font-medium text-muted-foreground">Adicionar livro</span>
+            <span className="text-xs text-muted-foreground/70 mt-1">
+              em "{categories.find(c => c.id === selectedCategory)?.label}"
+            </span>
+          </div>
+
+          {filteredBooks.map((book, index) => (
+            <div 
+              key={book.id} 
+              className="glass-card rounded-xl overflow-hidden card-hover cursor-pointer animate-fade-in"
+              style={{ animationDelay: `${(index + 1) * 0.05}s` }}
+              onClick={() => handleOpenBook(book)}
+            >
+              <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
+                <img 
+                  src={book.cover} 
+                  alt={`Capa de ${book.title}`}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-bold mb-2">Nenhum livro aqui</h3>
-            <p className="text-muted-foreground mb-4">
-              Adicione livros da biblioteca para esta categoria
-            </p>
-            <Button variant="outline" className="gap-2">
-              <Plus className="w-4 h-4" />
-              Adicionar livro
-            </Button>
-          </div>
-        )}
+              <div className="p-3">
+                <h3 className="font-bold text-sm truncate">{book.title}</h3>
+                <p className="text-xs text-muted-foreground truncate">{book.author}</p>
+                
+                {book.progress !== undefined && (
+                  <div className="mt-2">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-muted-foreground">Progresso</span>
+                      <span className="font-bold">{book.progress}%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary rounded-full"
+                        style={{ width: `${book.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {book.rating && (
+                  <div className="flex items-center gap-1 mt-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-3 h-3 ${i < book.rating! ? "text-accent fill-accent" : "text-muted"}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Book Detail Modal */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
