@@ -559,7 +559,7 @@ const ChapterReading = () => {
 
         {/* Completed State */}
         {readingState === "completed" && (
-          <div className="animate-fade-in text-center space-y-6">
+          <div className="animate-fade-in text-center space-y-8">
             <div 
               className="w-24 h-24 rounded-full flex items-center justify-center mx-auto"
               style={{ background: `hsl(${themeColor} / 0.15)` }}
@@ -592,15 +592,17 @@ const ChapterReading = () => {
               </div>
             </div>
 
-            <Button 
-              size="lg"
-              onClick={handleBackToTrail}
-              style={{ 
-                background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
-              }}
-            >
-              Voltar para Trilha
-            </Button>
+            <div className="pt-4">
+              <Button 
+                size="lg"
+                onClick={handleBackToTrail}
+                style={{ 
+                  background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                }}
+              >
+                Voltar para Trilha
+              </Button>
+            </div>
           </div>
         )}
       </div>
