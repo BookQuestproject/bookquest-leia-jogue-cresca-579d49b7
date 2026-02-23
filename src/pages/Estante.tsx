@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { BookMarked, Plus, Star, Check } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,11 @@ const categories = [
 
 const Estante = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { books, moveBook, updateBook } = useBookshelf();
-  const [selectedCategory, setSelectedCategory] = useState("lendo");
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || "lendo"
+  );
   const [selectedBook, setSelectedBook] = useState<typeof books[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rating, setRating] = useState(0);

@@ -100,7 +100,7 @@ const Biblioteca = () => {
       description: `O livro foi adicionado em '${category}'`,
     });
     if (isFromEstante) {
-      navigate(`/estante`);
+      navigate(`/estante?category=${category}`);
     }
   };
 
