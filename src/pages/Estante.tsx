@@ -118,7 +118,7 @@ const Estante = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {/* Add book button */}
           <div
-            onClick={() => navigate("/biblioteca")}
+            onClick={() => navigate(`/biblioteca?from=estante&category=${selectedCategory}`)}
             className="glass-card rounded-xl overflow-hidden card-hover cursor-pointer animate-fade-in flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 transition-colors"
           >
             <Plus className="w-10 h-10 text-muted-foreground mb-2" />

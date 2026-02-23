@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Eye } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +53,8 @@ const genres = ["Todos", "Fantasia", "Romance", "Mistério", "Clássico", "Ficç
 const sortOptions = ["Popularidade", "Avaliação", "Título A-Z", "Autor A-Z"];
 
 const Biblioteca = () => {
+  const [searchParams] = useSearchParams();
+  const isFromEstante = searchParams.get("from") === "estante";
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("Todos");
   const [sortBy, setSortBy] = useState("Popularidade");
@@ -231,22 +234,13 @@ const Biblioteca = () => {
                 </p>
                 <div className="flex gap-2">
                   <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="flex-1 gap-1"
-                    onClick={() => handleAddToShelf(book, "Quero Ler")}
-                  >
-                    <Plus className="w-4 h-4" />
-                    Quero Ler
-                  </Button>
-                  <Button 
                     variant="hero" 
                     size="sm"
                     className="flex-1 gap-1"
-                    onClick={() => handleAddToShelf(book, "Lendo")}
+                    onClick={() => handleAddToShelf(book, isFromEstante ? searchParams.get("category") || "lendo" : "lendo")}
                   >
-                    <BookOpen className="w-4 h-4" />
-                    Lendo
+                    <Eye className="w-4 h-4" />
+                    {isFromEstante ? "Selecionar" : "Inspecionar"}
                   </Button>
                 </div>
               </div>
