@@ -12,14 +12,12 @@ import {
   GraduationCap,
   MessageSquare,
   Sparkles,
-  Settings,
   Lock,
   Flame,
   Newspaper,
   LogIn,
   LogOut,
   User,
-  Shield,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -45,16 +43,12 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
     ...(!isAdmin ? [{ icon: HelpCircle, label: "Quiz Literário", path: "/quiz" }] : []),
     { icon: Users, label: "Comunidades", path: "/comunidade" },
     { icon: Newspaper, label: "Notícias", path: "/noticias" },
-  ];
-
-  const premiumItems = [
-    { icon: MessageSquare, label: "Book Club", path: "/bookclub" },
-    { icon: Sparkles, label: "Mentoria", path: "/mentoria" },
-    { icon: GraduationCap, label: "ENEM e Vestibulares", path: "/enem" },
+    { icon: MessageSquare, label: "Book Club", path: "/bookclub", premium: true },
+    { icon: Sparkles, label: "Mentoria", path: "/mentoria", premium: true },
+    { icon: GraduationCap, label: "ENEM e Vestibulares", path: "/enem", premium: true },
   ];
 
   const isActive = (path: string) => location.pathname === path;
-
   const userName = profile?.full_name || "Você";
 
   return (
@@ -83,8 +77,8 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             </div>
           </div>
         ) : (
-          <Link 
-            to="/auth" 
+          <Link
+            to="/auth"
             className="flex items-center gap-2 text-sm text-secondary hover:text-secondary/80 transition-colors"
           >
             <LogIn className="w-4 h-4" />
@@ -93,105 +87,63 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
         )}
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-2 py-1 space-y-0 overflow-y-auto" data-tutorial="sidebar-nav">
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`sidebar-item ${isActive(item.path) ? "active" : ""}`}
-          >
-            <item.icon className="w-4 h-4" />
-            <span className="text-sm">{item.label}</span>
-          </Link>
-        ))}
-
-        {/* Premium Section */}
-        <div className="pt-3 pb-1">
-          <span className="px-4 text-xs font-semibold text-accent uppercase tracking-wider flex items-center gap-2">
-            <Crown className="w-3 h-3" />
-            Premium
-          </span>
-        </div>
-        
-        {premiumItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`sidebar-item ${isActive(item.path) ? "active" : ""} ${!isPremium ? "premium-locked" : ""}`}
-          >
-            <item.icon className="w-4 h-4" />
-            <span className="text-sm">{item.label}</span>
-            {!isPremium && <Lock className="w-3 h-3 text-muted-foreground ml-auto" />}
-          </Link>
-        ))}
+      {/* Navigation - all items unified */}
+      <nav className="flex-1 px-2 py-2 overflow-y-auto" data-tutorial="sidebar-nav">
+        {menuItems.map((item) => {
+          const isPremiumItem = (item as any).premium;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`sidebar-item ${isActive(item.path) ? "active" : ""} ${isPremiumItem && !isPremium ? "premium-locked" : ""}`}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-[15px]">{item.label}</span>
+              {isPremiumItem && !isPremium && <Lock className="w-3.5 h-3.5 text-muted-foreground ml-auto" />}
+            </Link>
+          );
+        })}
       </nav>
 
-      {/* Bottom section: Premium CTA + Profile + Settings */}
+      {/* Bottom section */}
       <div className="px-2 py-2 border-t border-sidebar-border space-y-0">
-        {/* Premium CTA */}
         {!isPremium && (
           <Link
             to="/premium"
             className="sidebar-item text-accent hover:bg-accent/10"
             data-tutorial="premium-cta"
           >
-            <Crown className="w-4 h-4" />
-            <span className="text-sm font-semibold">Assine o Premium</span>
+            <Crown className="w-5 h-5" />
+            <span className="text-[15px] font-semibold">Assine o Premium</span>
           </Link>
         )}
 
-        {isAdmin && (
-          <>
-            <Link
-              to="/admin"
-              className={`sidebar-item ${isActive("/admin") ? "active" : ""}`}
-            >
-              <Shield className="w-4 h-4 text-accent" />
-              <span className="text-sm">Painel Admin</span>
-            </Link>
-            <Link
-              to="/quiz-onboarding"
-              className={`sidebar-item ${isActive("/quiz-onboarding") ? "active" : ""}`}
-            >
-              <HelpCircle className="w-4 h-4 text-accent" />
-              <span className="text-sm">Testar Quiz</span>
-            </Link>
-          </>
-        )}
         {user && (
           <Link
             to="/perfil"
             className={`sidebar-item ${isActive("/perfil") ? "active" : ""}`}
           >
             {profile?.avatar_url ? (
-              <img 
-                src={profile.avatar_url} 
-                alt="Avatar" 
-                className="w-5 h-5 rounded-full object-cover"
+              <img
+                src={profile.avatar_url}
+                alt="Avatar"
+                className="w-6 h-6 rounded-full object-cover"
               />
             ) : (
-              <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground">
+              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[11px] font-bold text-primary-foreground">
                 {userName.substring(0, 1).toUpperCase()}
               </div>
             )}
-            <span className="text-sm">Meu Perfil</span>
+            <span className="text-[15px]">Meu Perfil</span>
           </Link>
         )}
-        <Link
-          to="/configuracoes"
-          className={`sidebar-item ${isActive("/configuracoes") ? "active" : ""}`}
-        >
-          <Settings className="w-4 h-4" />
-          <span className="text-sm">Configurações</span>
-        </Link>
         {user && (
           <button
             onClick={() => signOut()}
             className="sidebar-item w-full text-left hover:text-destructive"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="text-sm">Sair</span>
+            <LogOut className="w-5 h-5" />
+            <span className="text-[15px]">Sair</span>
           </button>
         )}
       </div>
