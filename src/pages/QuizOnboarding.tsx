@@ -353,6 +353,12 @@ const QuizOnboarding = () => {
     navigate('/');
   };
 
+  const handleSkipQuiz = async () => {
+    setIsSaving(true);
+    await updateQuizCompleted({ skipped: true, completedAt: new Date().toISOString() });
+    navigate('/');
+  };
+
   // Profile Step
   if (step === "profile") {
     return (
@@ -363,9 +369,16 @@ const QuizOnboarding = () => {
               <BookOpen className="w-10 h-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold mb-2">Bem-vindo ao BookQuest!</h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-4">
               Antes de começar, vamos descobrir seu perfil literário para personalizar sua experiência.
             </p>
+            <button
+              onClick={handleSkipQuiz}
+              disabled={isSaving}
+              className="text-sm text-muted-foreground underline hover:text-foreground transition-colors"
+            >
+              Pular quiz e entrar direto
+            </button>
           </div>
 
           <div className="glass-card rounded-3xl p-8">
