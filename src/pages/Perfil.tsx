@@ -1,12 +1,16 @@
-import { BookOpen, Star, Crown, Settings, Edit2, Clock, CheckCircle } from "lucide-react";
+import { BookOpen, Star, Crown, Settings, Edit2, Clock, CheckCircle, Camera } from "lucide-react";
+import { useRef, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
 import ProgressBar from "@/components/ProgressBar";
 import { useProfile } from "@/hooks/useProfile";
 import { useReadingStats } from "@/hooks/useReadingStats";
+import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import AchievementsSection from "@/components/AchievementsSection";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const readingHistory = [
   { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", completedAt: "Dez 2023", pages: 208 },
@@ -14,19 +18,70 @@ const readingHistory = [
 ];
 
 const Perfil = () => {
-  const { profile, isPremium, loading: profileLoading } = useProfile();
+  const { profile, isPremium, loading: profileLoading, refreshProfile } = useProfile();
   const { stats, loading: statsLoading, formatTime } = useReadingStats();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
-  // Use real data from profile or fallback to defaults
   const userName = profile?.full_name || "Você";
   const userEmail = profile?.email || "usuario@email.com";
   const literaryProfile = profile?.literary_profile as { genre?: string } | null;
   const literaryGenre = literaryProfile?.genre || "Não definido";
 
-  // Use reading stats for books read count
   const booksRead = stats.booksCompleted || 0;
   const currentTier = getTierFromBooks(booksRead);
   const nextTier = getNextTierInfo(currentTier);
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({ title: "Formato inválido", description: "Use JPG, PNG ou WebP.", variant: "destructive" });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Arquivo muito grande", description: "Máximo de 5MB.", variant: "destructive" });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${user.id}/avatar.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: avatarUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      await refreshProfile();
+      toast({ title: "Foto atualizada!", description: "Sua foto de perfil foi salva." });
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast({ title: "Erro ao enviar foto", description: error.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <Layout>
@@ -37,11 +92,34 @@ const Perfil = () => {
           <div className="glass-card rounded-3xl p-6 lg:p-8 flex-1 animate-fade-in">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               <div className="relative">
-                <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-3xl font-bold text-primary-foreground">
-                  {userName.substring(0, 2).toUpperCase()}
-                </div>
-                <button className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-secondary border-2 border-background flex items-center justify-center">
-                  <Edit2 className="w-4 h-4" />
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Avatar"
+                    className="w-24 h-24 rounded-full object-cover border-2 border-primary/20"
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-3xl font-bold text-primary-foreground">
+                    {userName.substring(0, 2).toUpperCase()}
+                  </div>
+                )}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleAvatarUpload}
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-secondary border-2 border-background flex items-center justify-center hover:bg-secondary/80 transition-colors disabled:opacity-50"
+                >
+                  {uploading ? (
+                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Camera className="w-4 h-4" />
+                  )}
                 </button>
               </div>
               
