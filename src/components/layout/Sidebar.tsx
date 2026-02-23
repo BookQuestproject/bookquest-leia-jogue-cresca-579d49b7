@@ -40,7 +40,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
     { icon: Library, label: "Biblioteca", path: "/biblioteca" },
     { icon: Target, label: "Missões", path: "/missoes" },
     { icon: Trophy, label: "Ranking Literário", path: "/ranking" },
-    { icon: HelpCircle, label: "Quiz Literário", path: "/quiz" },
+    ...(!isAdmin ? [{ icon: HelpCircle, label: "Quiz Literário", path: "/quiz" }] : []),
     { icon: Users, label: "Comunidades", path: "/comunidade" },
     { icon: Newspaper, label: "Notícias", path: "/noticias" },
   ];
@@ -142,13 +142,22 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       {/* Settings & User Actions */}
       <div className="p-3 border-t border-sidebar-border space-y-0.5">
         {isAdmin && (
-          <Link
-            to="/admin"
-            className={`sidebar-item ${isActive("/admin") ? "active" : ""}`}
-          >
-            <Shield className="w-5 h-5 text-accent" />
-            <span className="text-sm">Painel Admin</span>
-          </Link>
+          <>
+            <Link
+              to="/admin"
+              className={`sidebar-item ${isActive("/admin") ? "active" : ""}`}
+            >
+              <Shield className="w-5 h-5 text-accent" />
+              <span className="text-sm">Painel Admin</span>
+            </Link>
+            <Link
+              to="/quiz-onboarding"
+              className={`sidebar-item ${isActive("/quiz-onboarding") ? "active" : ""}`}
+            >
+              <HelpCircle className="w-5 h-5 text-accent" />
+              <span className="text-sm">Testar Quiz</span>
+            </Link>
+          </>
         )}
         {user && (
           <Link
