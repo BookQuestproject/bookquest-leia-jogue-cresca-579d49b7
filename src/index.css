@@ -873,8 +873,12 @@
   }
 
   .ranking-tier-btn-default {
-    @apply hover:bg-muted/40;
     background: hsl(var(--muted) / 0.3);
+  }
+
+  .ranking-tier-btn-default:hover {
+    background: hsl(var(--accent) / 0.15);
+    color: hsl(var(--accent));
   }
 
   .ranking-classification-header {
@@ -885,6 +889,24 @@
   .ranking-podium-card {
     @apply text-center p-4 rounded-xl border border-border/60;
     background: hsl(var(--card));
+    position: relative;
+  }
+
+  .ranking-podium-position {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: hsl(var(--muted-foreground));
+    background: hsl(var(--muted) / 0.5);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .ranking-podium-position-first {
+    color: hsl(var(--accent));
+    background: hsl(var(--accent) / 0.15);
   }
 
   .ranking-podium-first {
@@ -925,6 +947,36 @@
     @apply p-4 rounded-xl border border-border/60;
     background: hsl(var(--card));
   }
+
+  /* Zona de classificação divider */
+  .ranking-zone-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+
+  .ranking-zone-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.5), transparent);
+  }
+
+  .ranking-zone-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: hsl(var(--accent));
+    white-space: nowrap;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: hsl(var(--accent) / 0.1);
+    border: 1px solid hsl(var(--accent) / 0.3);
+  }
 }
 
 /* Dark mode ranking overrides */
@@ -949,7 +1001,8 @@
 }
 
 .dark .ranking-tier-btn-default:hover {
-  background: hsl(225 35% 22%);
+  background: hsl(var(--accent) / 0.2);
+  color: hsl(var(--accent));
 }
 
 .dark .ranking-podium-first {
