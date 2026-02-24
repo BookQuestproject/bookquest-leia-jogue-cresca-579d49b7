@@ -134,19 +134,23 @@ const Ranking = () => {
 
   const currentUserPosition = tierUsers.findIndex(u => u.name === "Você") + 1;
 
-  const handleSimulateClimb = () => {
+  const handleSimulateClimb = (amount: number) => {
     const prevPosition = currentUserPosition;
-    setUserXpBoost(prev => prev + 20);
-    // Trigger climb animation after state update
+    setUserXpBoost(prev => prev + amount);
     setTimeout(() => {
-      const newPosition = prevPosition; // will be recalculated
       setClimbingFrom(prevPosition);
       setShowClimbEffect(true);
       setTimeout(() => {
         setShowClimbEffect(false);
         setClimbingFrom(null);
-      }, 1200);
+      }, 1500);
     }, 50);
+  };
+
+  const handleResetXp = () => {
+    setUserXpBoost(0);
+    setShowClimbEffect(false);
+    setClimbingFrom(null);
   };
 
   const isInPromotionZone = (position: number) => {
@@ -370,13 +374,26 @@ const Ranking = () => {
                     </div>
                   )}
                 </div>
-                <button
-                  onClick={handleSimulateClimb}
-                  className="ranking-simulate-btn mt-3 w-full"
-                >
-                  <Zap className="w-3.5 h-3.5" />
-                  Simular +20 XP
-                </button>
+                <div className="space-y-2 mt-3">
+                  <p className="text-xs text-muted-foreground">XP atual: <span className="text-accent font-bold">{35 + userXpBoost}</span></p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {[5, 10, 20].map(amount => (
+                      <button
+                        key={amount}
+                        onClick={() => handleSimulateClimb(amount)}
+                        className="ranking-simulate-btn"
+                      >
+                        +{amount}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleResetXp}
+                    className="ranking-simulate-btn w-full opacity-60 hover:opacity-100"
+                  >
+                    Resetar
+                  </button>
+                </div>
               </div>
             )}
 
