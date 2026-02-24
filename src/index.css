@@ -845,4 +845,124 @@
   .book-icon {
     @apply text-secondary;
   }
+
+  /* === Ranking Page Styles === */
+  .ranking-countdown-card {
+    @apply px-4 py-3 rounded-xl border border-border/60;
+    background: hsl(var(--card));
+  }
+
+  .ranking-tier-selector {
+    @apply p-3 rounded-xl border border-border/60;
+    background: hsl(var(--card));
+  }
+
+  .ranking-tier-btn {
+    @apply flex flex-col items-center px-3 py-2.5 rounded-lg transition-all;
+  }
+
+  .ranking-tier-btn-locked {
+    @apply opacity-40 cursor-not-allowed;
+    background: hsl(var(--muted) / 0.2);
+  }
+
+  .ranking-tier-btn-active {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    box-shadow: 0 0 12px hsl(var(--accent) / 0.4);
+  }
+
+  .ranking-tier-btn-default {
+    @apply hover:bg-muted/40;
+    background: hsl(var(--muted) / 0.3);
+  }
+
+  .ranking-classification-header {
+    @apply p-4 rounded-xl border border-border/60;
+    background: hsl(var(--card));
+  }
+
+  .ranking-podium-card {
+    @apply text-center p-4 rounded-xl border border-border/60;
+    background: hsl(var(--card));
+  }
+
+  .ranking-podium-first {
+    border-color: hsl(var(--accent) / 0.5);
+    box-shadow: 0 4px 20px hsl(var(--accent) / 0.15);
+  }
+
+  .ranking-promotion-zone {
+    border-color: hsl(var(--accent) / 0.3);
+    background: hsl(var(--card));
+    position: relative;
+  }
+
+  .ranking-promotion-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: hsl(var(--accent) / 0.05);
+    pointer-events: none;
+  }
+
+  .ranking-list-card {
+    @apply rounded-xl border border-border/60;
+    background: hsl(var(--card));
+  }
+
+  .ranking-row-promotion {
+    background: hsl(var(--accent) / 0.06);
+    border-left: 3px solid hsl(var(--accent));
+  }
+
+  .ranking-row-current {
+    background: hsl(var(--accent) / 0.08) !important;
+  }
+
+  .ranking-info-card {
+    @apply p-4 rounded-xl border border-border/60;
+    background: hsl(var(--card));
+  }
+}
+
+/* Dark mode ranking overrides */
+.dark .ranking-countdown-card,
+.dark .ranking-tier-selector,
+.dark .ranking-classification-header,
+.dark .ranking-list-card,
+.dark .ranking-info-card,
+.dark .ranking-podium-card {
+  background: hsl(225 40% 14%);
+  border-color: hsl(225 30% 22%);
+}
+
+.dark .ranking-tier-btn-active {
+  background: hsl(var(--accent));
+  color: hsl(222 47% 11%);
+  box-shadow: 0 0 16px hsl(var(--accent) / 0.5);
+}
+
+.dark .ranking-tier-btn-default {
+  background: hsl(225 35% 18%);
+}
+
+.dark .ranking-tier-btn-default:hover {
+  background: hsl(225 35% 22%);
+}
+
+.dark .ranking-podium-first {
+  background: hsl(225 40% 16%);
+  border-color: hsl(var(--accent) / 0.5);
+  box-shadow: 0 4px 24px hsl(var(--accent) / 0.2);
+}
+
+.dark .ranking-row-promotion {
+  background: hsl(var(--accent) / 0.08);
+  border-left-color: hsl(var(--accent));
+}
+
+.dark .ranking-row-current {
+  background: hsl(var(--accent) / 0.1) !important;
 }
