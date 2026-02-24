@@ -977,6 +977,102 @@
     background: hsl(var(--accent) / 0.1);
     border: 1px solid hsl(var(--accent) / 0.3);
   }
+
+  /* Climb animations */
+  @keyframes ranking-climb {
+    0% {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    30% {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 24px hsl(var(--accent) / 0.3);
+    }
+    50% {
+      transform: translateY(-12px);
+      box-shadow: 0 12px 32px hsl(var(--accent) / 0.4);
+    }
+    70% {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px hsl(var(--accent) / 0.2);
+    }
+    100% {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+  }
+
+  @keyframes ranking-glow-pulse {
+    0%, 100% {
+      background: hsl(var(--accent) / 0.08);
+      border-left-color: hsl(var(--accent));
+    }
+    50% {
+      background: hsl(var(--accent) / 0.18);
+      border-left-color: hsl(var(--accent));
+      box-shadow: inset 0 0 20px hsl(var(--accent) / 0.1);
+    }
+  }
+
+  @keyframes ranking-position-bounce {
+    0% { transform: scale(1); }
+    20% { transform: scale(1.4); color: hsl(var(--accent)); }
+    40% { transform: scale(0.9); }
+    60% { transform: scale(1.15); }
+    80% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes ranking-badge-enter {
+    0% { transform: translateY(10px) scale(0.8); opacity: 0; }
+    60% { transform: translateY(-4px) scale(1.05); opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  .ranking-climb-animation {
+    animation: ranking-climb 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+               ranking-glow-pulse 1.2s ease-in-out;
+  }
+
+  .ranking-position-bounce {
+    animation: ranking-position-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .ranking-climb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: hsl(var(--accent));
+    background: hsl(var(--accent) / 0.12);
+    border: 1px solid hsl(var(--accent) / 0.3);
+    padding: 3px 10px;
+    border-radius: 999px;
+    animation: ranking-badge-enter 0.5s ease-out 0.3s both;
+  }
+
+  .ranking-simulate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: hsl(var(--accent) / 0.1);
+    color: hsl(var(--accent));
+    border: 1px solid hsl(var(--accent) / 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ranking-simulate-btn:hover {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    box-shadow: 0 0 16px hsl(var(--accent) / 0.4);
+  }
 }
 
 /* Dark mode ranking overrides */
