@@ -104,11 +104,15 @@ const getDaysUntilWeekEnd = () => {
   return daysLeft;
 };
 
+const ROW_HEIGHT = 52; // px per row
+
 const Ranking = () => {
   const [selectedTier, setSelectedTier] = useState<RankingTier>("bronze");
   const [userXpBoost, setUserXpBoost] = useState(0);
   const [climbingFrom, setClimbingFrom] = useState<number | null>(null);
   const [showClimbEffect, setShowClimbEffect] = useState(false);
+  const [animatingPositions, setAnimatingPositions] = useState(false);
+  const prevPositionsRef = useRef<Map<number, number>>(new Map());
   const currentUserTier: RankingTier = "bronze";
   const currentTierIndex = tierOrder.indexOf(currentUserTier);
   const daysLeft = getDaysUntilWeekEnd();
@@ -134,23 +138,43 @@ const Ranking = () => {
 
   const currentUserPosition = tierUsers.findIndex(u => u.name === "Você") + 1;
 
+  // Store previous positions for animation
+  useEffect(() => {
+    const map = new Map<number, number>();
+    restUsers.forEach((user, idx) => {
+      map.set(user.id, idx);
+    });
+    // Only update ref AFTER animation completes
+    if (!animatingPositions) {
+      prevPositionsRef.current = map;
+    }
+  }, [restUsers, animatingPositions]);
+
   const handleSimulateClimb = (amount: number) => {
-    const prevPosition = currentUserPosition;
+    // Snapshot positions before the boost
+    const snapshotMap = new Map<number, number>();
+    restUsers.forEach((user, idx) => {
+      snapshotMap.set(user.id, idx);
+    });
+    prevPositionsRef.current = snapshotMap;
+
     setUserXpBoost(prev => prev + amount);
+    // Trigger animation
+    setAnimatingPositions(true);
+    setShowClimbEffect(true);
+    setClimbingFrom(currentUserPosition);
     setTimeout(() => {
-      setClimbingFrom(prevPosition);
-      setShowClimbEffect(true);
-      setTimeout(() => {
-        setShowClimbEffect(false);
-        setClimbingFrom(null);
-      }, 1500);
-    }, 50);
+      setAnimatingPositions(false);
+      setShowClimbEffect(false);
+      setClimbingFrom(null);
+    }, 1800);
   };
 
   const handleResetXp = () => {
     setUserXpBoost(0);
     setShowClimbEffect(false);
     setClimbingFrom(null);
+    setAnimatingPositions(false);
   };
 
   const isInPromotionZone = (position: number) => {
@@ -280,21 +304,36 @@ const Ranking = () => {
             {/* Full Ranking List (starting from #4) */}
             {restUsers.length > 0 && (
               <div className="ranking-list-card overflow-hidden animate-fade-in">
-                <div className="divide-y divide-border/40">
+                <div className="relative" style={{ height: restUsers.length * ROW_HEIGHT }}>
                   {restUsers.map((user, index) => {
                     const position = index + 4;
                     const inPromotion = isInPromotionZone(position);
                     const isCurrentUser = user.name === "Você";
                     const isLastPromoted = position === selectedTierInfo.slots;
 
+                    // Calculate translateY for smooth position transitions
+                    const prevIdx = prevPositionsRef.current.get(user.id);
+                    const currentY = index * ROW_HEIGHT;
+                    const shouldAnimate = animatingPositions && prevIdx !== undefined && prevIdx !== index;
+
                     return (
-                      <div key={user.id}>
+                      <div
+                        key={user.id}
+                        className="absolute left-0 right-0"
+                        style={{
+                          top: 0,
+                          transform: `translateY(${currentY}px)`,
+                          transition: animatingPositions ? 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+                          zIndex: isCurrentUser && animatingPositions ? 10 : 1,
+                        }}
+                      >
                         <div
-                          className={`flex items-center gap-3 px-4 py-3 transition-all duration-500 ${
+                          className={`flex items-center gap-3 px-4 transition-colors duration-500 ${
                             inPromotion ? 'ranking-row-promotion' : 'hover:bg-muted/20'
                           } ${isCurrentUser ? 'ranking-row-current' : ''} ${
                             isCurrentUser && showClimbEffect ? 'ranking-climb-animation' : ''
                           }`}
+                          style={{ height: ROW_HEIGHT }}
                         >
                           <span className={`text-base font-bold w-7 text-center ${
                             inPromotion ? 'text-accent' : 'text-muted-foreground'
@@ -324,21 +363,27 @@ const Ranking = () => {
                             <p className="text-xs text-muted-foreground">{user.streak}d</p>
                           </div>
                         </div>
-                        {/* Zona de classificação divider after the last promoted user */}
-                        {isLastPromoted && (
-                          <div className="ranking-zone-divider">
-                            <div className="ranking-zone-line" />
-                            <span className="ranking-zone-label">
-                              <ArrowUp className="w-3.5 h-3.5" />
-                              Zona de Classificação
-                            </span>
-                            <div className="ranking-zone-line" />
-                          </div>
-                        )}
                       </div>
                     );
                   })}
                 </div>
+                {/* Zona de classificação divider */}
+                {selectedTierInfo.slots > 3 && (
+                  <div
+                    className="ranking-zone-divider absolute left-0 right-0 pointer-events-none"
+                    style={{
+                      top: (selectedTierInfo.slots - 3) * ROW_HEIGHT,
+                      transition: 'top 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
+                  >
+                    <div className="ranking-zone-line" />
+                    <span className="ranking-zone-label">
+                      <ArrowUp className="w-3.5 h-3.5" />
+                      Zona de Classificação
+                    </span>
+                    <div className="ranking-zone-line" />
+                  </div>
+                )}
               </div>
             )}
 
