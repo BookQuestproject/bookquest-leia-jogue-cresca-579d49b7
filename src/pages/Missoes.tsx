@@ -66,6 +66,7 @@ const Missoes = () => {
   const [completedMission, setCompletedMission] = useState<{ title: string; xp: number } | null>(null);
   const [leveledUp, setLeveledUp] = useState(false);
   const [newLevelName, setNewLevelName] = useState("");
+  const [previousLevelName, setPreviousLevelName] = useState("");
 
   const dailyMissions = missions.filter(m => m.type === "daily");
   const weeklyMissions = missions.filter(m => m.type === "weekly");
@@ -87,6 +88,7 @@ const Missoes = () => {
     setCompletedMission({ title: mission.title, xp: mission.xpValue });
     setLeveledUp(didLevelUp);
     setNewLevelName(didLevelUp ? newLevel.current : "");
+    setPreviousLevelName(didLevelUp ? prevLevel.current : "");
     setModalOpen(true);
   };
 
@@ -194,6 +196,7 @@ const Missoes = () => {
           nextLevelXp={level.nextXp}
           leveledUp={leveledUp}
           newLevel={newLevelName}
+          previousLevel={previousLevelName}
         />
       )}
     </Layout>
