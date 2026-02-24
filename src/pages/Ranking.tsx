@@ -1,8 +1,11 @@
-import { useState, useEffect, useRef } from "react";
-import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock, ArrowUp, ChevronUp } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock, ArrowUp, ChevronUp, Eye } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import RankingBadge, { RankingTier, tierConfig, getTierFromXp } from "@/components/RankingBadge";
 import { Button } from "@/components/ui/button";
+import TierTransitionModal from "@/components/TierTransitionModal";
+import { useAdmin } from "@/hooks/useAdmin";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RankingUser {
   id: number;
@@ -117,6 +120,16 @@ const Ranking = () => {
   const currentUserTier: RankingTier = "bronze";
   const currentTierIndex = tierOrder.indexOf(currentUserTier);
   const daysLeft = getDaysUntilWeekEnd();
+
+  // Tier transition modal state
+  const [tierTransition, setTierTransition] = useState<{ from: RankingTier; to: RankingTier } | null>(null);
+  const [adminFromTier, setAdminFromTier] = useState<RankingTier>("bronze");
+  const [adminToTier, setAdminToTier] = useState<RankingTier>("silver");
+  const { isAdmin } = useAdmin();
+
+  const handleCloseTierTransition = useCallback(() => {
+    setTierTransition(null);
+  }, []);
 
   const isTierLocked = (tier: RankingTier) => {
     return tierOrder.indexOf(tier) > currentTierIndex;
@@ -508,6 +521,60 @@ const Ranking = () => {
             </div>
           </div>
         </div>
+        {/* Admin Tier Transition Preview */}
+        {isAdmin && (
+          <div className="mt-8 ranking-info-card animate-fade-in">
+            <div className="flex items-center gap-2 mb-3">
+              <Eye className="w-4 h-4 text-accent" />
+              <h3 className="font-semibold text-sm">Admin: Simular Transição de Patamar</h3>
+            </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-3">
+              <div className="flex-1 w-full">
+                <label className="text-xs text-muted-foreground mb-1 block">De</label>
+                <Select value={adminFromTier} onValueChange={(v) => setAdminFromTier(v as RankingTier)}>
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tierOrder.map(t => (
+                      <SelectItem key={t} value={t}>{tierConfig[t].label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-1 w-full">
+                <label className="text-xs text-muted-foreground mb-1 block">Para</label>
+                <Select value={adminToTier} onValueChange={(v) => setAdminToTier(v as RankingTier)}>
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tierOrder.map(t => (
+                      <SelectItem key={t} value={t}>{tierConfig[t].label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                size="sm"
+                className="shrink-0"
+                disabled={adminFromTier === adminToTier}
+                onClick={() => setTierTransition({ from: adminFromTier, to: adminToTier })}
+              >
+                <Eye className="w-4 h-4 mr-1.5" />
+                Visualizar
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Tier Transition Modal */}
+        <TierTransitionModal
+          isOpen={!!tierTransition}
+          fromTier={tierTransition?.from ?? "bronze"}
+          toTier={tierTransition?.to ?? "silver"}
+          onClose={handleCloseTierTransition}
+        />
       </div>
     </Layout>
   );
