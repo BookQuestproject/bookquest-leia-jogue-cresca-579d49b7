@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock, ArrowUp } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock, ArrowUp, ChevronUp } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import RankingBadge, { RankingTier, tierConfig, getTierFromXp } from "@/components/RankingBadge";
 import { Button } from "@/components/ui/button";
@@ -106,6 +106,9 @@ const getDaysUntilWeekEnd = () => {
 
 const Ranking = () => {
   const [selectedTier, setSelectedTier] = useState<RankingTier>("bronze");
+  const [userXpBoost, setUserXpBoost] = useState(0);
+  const [climbingFrom, setClimbingFrom] = useState<number | null>(null);
+  const [showClimbEffect, setShowClimbEffect] = useState(false);
   const currentUserTier: RankingTier = "bronze";
   const currentTierIndex = tierOrder.indexOf(currentUserTier);
   const daysLeft = getDaysUntilWeekEnd();
@@ -114,13 +117,37 @@ const Ranking = () => {
     return tierOrder.indexOf(tier) > currentTierIndex;
   };
 
-  const tierUsers = allUsers
+  // Apply XP boost to the current user for demo
+  const boostedUsers = allUsers.map(u =>
+    u.name === "Você" && u.tier === selectedTier
+      ? { ...u, xp: u.xp + userXpBoost }
+      : u
+  );
+
+  const tierUsers = boostedUsers
     .filter(user => user.tier === selectedTier)
     .sort((a, b) => b.xp - a.xp);
 
   const selectedTierInfo = rankingTiers.find(t => t.tier === selectedTier)!;
   const top3 = tierUsers.slice(0, 3);
   const restUsers = tierUsers.slice(3);
+
+  const currentUserPosition = tierUsers.findIndex(u => u.name === "Você") + 1;
+
+  const handleSimulateClimb = () => {
+    const prevPosition = currentUserPosition;
+    setUserXpBoost(prev => prev + 20);
+    // Trigger climb animation after state update
+    setTimeout(() => {
+      const newPosition = prevPosition; // will be recalculated
+      setClimbingFrom(prevPosition);
+      setShowClimbEffect(true);
+      setTimeout(() => {
+        setShowClimbEffect(false);
+        setClimbingFrom(null);
+      }, 1200);
+    }, 50);
+  };
 
   const isInPromotionZone = (position: number) => {
     return position <= selectedTierInfo.slots;
@@ -259,9 +286,11 @@ const Ranking = () => {
                     return (
                       <div key={user.id}>
                         <div
-                          className={`flex items-center gap-3 px-4 py-3 transition-colors ${
+                          className={`flex items-center gap-3 px-4 py-3 transition-all duration-500 ${
                             inPromotion ? 'ranking-row-promotion' : 'hover:bg-muted/20'
-                          } ${isCurrentUser ? 'ranking-row-current' : ''}`}
+                          } ${isCurrentUser ? 'ranking-row-current' : ''} ${
+                            isCurrentUser && showClimbEffect ? 'ranking-climb-animation' : ''
+                          }`}
                         >
                           <span className={`text-base font-bold w-7 text-center ${
                             inPromotion ? 'text-accent' : 'text-muted-foreground'
@@ -330,11 +359,24 @@ const Ranking = () => {
                   <h3 className="font-semibold text-sm">Sua Posição</h3>
                 </div>
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-accent">
-                    #{tierUsers.findIndex(u => u.name === "Você") + 1}
+                  <p className={`text-3xl font-bold text-accent ${showClimbEffect ? 'ranking-position-bounce' : ''}`}>
+                    #{currentUserPosition}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">de {tierUsers.length} participantes</p>
+                  {showClimbEffect && climbingFrom && climbingFrom > currentUserPosition && (
+                    <div className="ranking-climb-badge mt-2">
+                      <ChevronUp className="w-3.5 h-3.5" />
+                      Subiu {climbingFrom - currentUserPosition} posição{climbingFrom - currentUserPosition > 1 ? 'ões' : ''}!
+                    </div>
+                  )}
                 </div>
+                <button
+                  onClick={handleSimulateClimb}
+                  className="ranking-simulate-btn mt-3 w-full"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  Simular +20 XP
+                </button>
               </div>
             )}
 
