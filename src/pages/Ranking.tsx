@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import RankingBadge, { RankingTier, tierConfig, getTierFromPoints } from "@/components/RankingBadge";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,8 @@ const allUsers: RankingUser[] = [
   { id: 802, name: "Carlos Pereira", avatar: "CP", points: 13200, tier: "legendary", streak: 120 },
 ];
 
+const tierOrder: RankingTier[] = ["bronze", "silver", "gold", "sapphire", "emerald", "amethyst", "ruby", "quartz", "diamond", "legendary"];
+
 const rankingTiers: { tier: RankingTier; range: string; label: string }[] = [
   { tier: "bronze", range: "0-99", label: "Bronze" },
   { tier: "silver", range: "100-249", label: "Prata" },
@@ -79,9 +81,23 @@ const rankingTiers: { tier: RankingTier; range: string; label: string }[] = [
   { tier: "legendary", range: "12K+", label: "Lendário" },
 ];
 
+const getDaysUntilWeekEnd = () => {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0=Sun, 6=Sat
+  // Week ends on Sunday (0). Days remaining until next Sunday.
+  const daysLeft = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
+  return daysLeft;
+};
+
 const Ranking = () => {
   const [selectedTier, setSelectedTier] = useState<RankingTier>("bronze");
   const currentUserTier: RankingTier = "bronze";
+  const currentTierIndex = tierOrder.indexOf(currentUserTier);
+  const daysLeft = getDaysUntilWeekEnd();
+
+  const isTierLocked = (tier: RankingTier) => {
+    return tierOrder.indexOf(tier) > currentTierIndex;
+  };
 
   const tierUsers = allUsers
     .filter(user => user.tier === selectedTier)
@@ -95,12 +111,23 @@ const Ranking = () => {
       <div className="max-w-5xl mx-auto py-8 section-bg-ranking">
         {/* Header */}
         <header className="mb-10 animate-fade-in" data-tutorial="ranking-header">
-          <div className="mb-4">
-            <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Sistema de Evolução</p>
-            <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Ranking Literário</h1>
-            <p className="text-muted-foreground max-w-xl">
-              Evolua através de engajamento, consistência e dedicação. Acumule tochas completando atividades, desafios e mantendo sua sequência.
-            </p>
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+            <div>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Sistema de Evolução</p>
+              <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Ranking Literário</h1>
+              <p className="text-muted-foreground max-w-xl">
+                Evolua através de engajamento, consistência e dedicação. Acumule tochas completando atividades, desafios e mantendo sua sequência.
+              </p>
+            </div>
+            <div className="editorial-card p-4 flex items-center gap-3 shrink-0">
+              <Clock className="w-5 h-5 text-accent" />
+              <div>
+                <p className="text-xs text-muted-foreground">Classificação semanal encerra em</p>
+                <p className="font-semibold text-lg">
+                  {daysLeft === 0 ? "Hoje!" : `${daysLeft} dia${daysLeft > 1 ? "s" : ""}`}
+                </p>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -149,21 +176,30 @@ const Ranking = () => {
             <h2 className="font-semibold">Selecione o Patamar</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
-            {rankingTiers.map(({ tier, range, label }) => (
-              <button
-                key={tier}
-                onClick={() => setSelectedTier(tier)}
-                className={`text-center p-3 rounded transition-all ${
-                  selectedTier === tier 
-                    ? "bg-secondary text-secondary-foreground" 
-                    : "bg-muted/30 hover:bg-muted/50"
-                }`}
-              >
-                <RankingBadge tier={tier} showLabel={false} size="sm" />
-                <p className="font-medium mt-2 text-xs">{label}</p>
-                <p className="text-xs text-muted-foreground">{range} 🔥</p>
-              </button>
-            ))}
+            {rankingTiers.map(({ tier, range, label }) => {
+              const locked = isTierLocked(tier);
+              return (
+                <button
+                  key={tier}
+                  onClick={() => !locked && setSelectedTier(tier)}
+                  disabled={locked}
+                  className={`text-center p-3 rounded transition-all relative ${
+                    locked
+                      ? "bg-muted/20 opacity-50 cursor-not-allowed"
+                      : selectedTier === tier 
+                        ? "bg-secondary text-secondary-foreground" 
+                        : "bg-muted/30 hover:bg-muted/50"
+                  }`}
+                >
+                  {locked && (
+                    <Lock className="w-3.5 h-3.5 absolute top-1.5 right-1.5 text-muted-foreground" />
+                  )}
+                  <RankingBadge tier={tier} showLabel={false} size="sm" />
+                  <p className="font-medium mt-2 text-xs">{label}</p>
+                  <p className="text-xs text-muted-foreground">{range} 🔥</p>
+                </button>
+              );
+            })}
           </div>
         </div>
 
