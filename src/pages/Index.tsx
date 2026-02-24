@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Castle, Sparkles } from "lucide-react";
+import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Castle, Sparkles, Repeat } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
@@ -183,19 +183,30 @@ const Index = () => {
                     </p>
                   </div>
                 </div>
-                <Button 
-                  variant="hero" 
-                  size="lg" 
-                  className="gap-2" 
-                  onClick={() => handleContinueReading()}
-                  style={{ 
-                    background: `linear-gradient(135deg, hsl(0 0% 100% / 0.15), hsl(0 0% 100% / 0.05))`,
-                    border: '1px solid hsl(0 0% 100% / 0.3)',
-                  }}
-                >
-                  <Play className="w-5 h-5" />
-                  Continuar Leitura
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-white/70 hover:text-white hover:bg-white/10"
+                    onClick={(e) => { e.stopPropagation(); navigate('/trilhas'); }}
+                    title="Trocar de trilha"
+                  >
+                    <Repeat className="w-5 h-5" />
+                  </Button>
+                  <Button 
+                    variant="hero" 
+                    size="lg" 
+                    className="gap-2" 
+                    onClick={() => handleContinueReading()}
+                    style={{ 
+                      background: `linear-gradient(135deg, hsl(0 0% 100% / 0.15), hsl(0 0% 100% / 0.05))`,
+                      border: '1px solid hsl(0 0% 100% / 0.3)',
+                    }}
+                  >
+                    <Play className="w-5 h-5" />
+                    Continuar Leitura
+                  </Button>
+                </div>
               </div>
 
               {/* Progress bar inside trail card */}
