@@ -112,6 +112,7 @@ const Ranking = () => {
   const [climbingFrom, setClimbingFrom] = useState<number | null>(null);
   const [showClimbEffect, setShowClimbEffect] = useState(false);
   const [animatingPositions, setAnimatingPositions] = useState(false);
+  const [animationPhase, setAnimationPhase] = useState<'idle' | 'start' | 'move'>('idle');
   const prevPositionsRef = useRef<Map<number, number>>(new Map());
   const currentUserTier: RankingTier = "bronze";
   const currentTierIndex = tierOrder.indexOf(currentUserTier);
@@ -159,12 +160,22 @@ const Ranking = () => {
     prevPositionsRef.current = snapshotMap;
 
     setUserXpBoost(prev => prev + amount);
-    // Trigger animation
+    // Phase 1: render at OLD positions (no transition)
     setAnimatingPositions(true);
+    setAnimationPhase('start');
     setShowClimbEffect(true);
     setClimbingFrom(currentUserPosition);
+
+    // Phase 2: after a frame, animate to NEW positions
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setAnimationPhase('move');
+      });
+    });
+
     setTimeout(() => {
       setAnimatingPositions(false);
+      setAnimationPhase('idle');
       setShowClimbEffect(false);
       setClimbingFrom(null);
     }, 2800);
@@ -314,7 +325,12 @@ const Ranking = () => {
                     // Calculate translateY for smooth position transitions
                     const prevIdx = prevPositionsRef.current.get(user.id);
                     const currentY = index * ROW_HEIGHT;
-                    const shouldAnimate = animatingPositions && prevIdx !== undefined && prevIdx !== index;
+                    // In 'start' phase, show at old position; in 'move' phase, animate to new
+                    const displayY = animationPhase === 'start' && prevIdx !== undefined
+                      ? prevIdx * ROW_HEIGHT
+                      : currentY;
+                    const shouldAnimate = animationPhase === 'move';
+                    const isDisplaced = shouldAnimate && prevIdx !== undefined && prevIdx !== index && !isCurrentUser;
 
                     return (
                       <div
@@ -322,8 +338,8 @@ const Ranking = () => {
                         className="absolute left-0 right-0"
                         style={{
                           top: 0,
-                          transform: `translateY(${currentY}px)`,
-                          transition: animatingPositions ? 'transform 1.6s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
+                          transform: `translateY(${displayY}px)`,
+                          transition: shouldAnimate ? 'transform 1.6s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
                           zIndex: isCurrentUser && animatingPositions ? 10 : 1,
                         }}
                       >
