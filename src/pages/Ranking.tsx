@@ -363,7 +363,7 @@ const Ranking = () => {
                   <h3 className="font-semibold text-sm">Sua Posição</h3>
                 </div>
                 <div className="text-center">
-                  <p className={`text-3xl font-bold text-accent ${showClimbEffect ? 'ranking-position-bounce' : ''}`}>
+                  <p className="text-3xl font-bold text-accent">
                     #{currentUserPosition}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">de {tierUsers.length} participantes</p>
