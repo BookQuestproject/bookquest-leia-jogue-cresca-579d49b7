@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Target, CheckCircle, Clock, Flame, Trophy, Star, Gift, Info } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import ProgressBar from "@/components/ProgressBar";
+import MissionCompletedModal from "@/components/MissionCompletedModal";
 import {
   Tooltip,
   TooltipContent,
@@ -16,111 +18,79 @@ interface Mission {
   progress: number;
   goal: number;
   reward: string;
+  xpValue: number;
   type: "daily" | "weekly" | "monthly";
   completed: boolean;
   howToComplete: string;
 }
 
-// Todas as missões são verificáveis automaticamente pelo sistema
-const missions: Mission[] = [
+const initialMissions: Mission[] = [
   // Daily
-  { 
-    id: 1, 
-    title: "Responder pergunta de capítulo", 
-    description: "Responda uma pergunta de qualquer capítulo", 
-    icon: Target, 
-    progress: 0, 
-    goal: 1, 
-    reward: "+10 pts", 
-    type: "daily", 
-    completed: false,
-    howToComplete: "Clique em 'Continuar Leitura' e responda a pergunta do capítulo atual."
-  },
-  { 
-    id: 2, 
-    title: "Fazer login hoje", 
-    description: "Acesse o BookQuest", 
-    icon: CheckCircle, 
-    progress: 1, 
-    goal: 1, 
-    reward: "+5 pts", 
-    type: "daily", 
-    completed: true,
-    howToComplete: "Detectado automaticamente ao acessar o site."
-  },
-  { 
-    id: 3, 
-    title: "Completar quiz literário", 
-    description: "Responda o quiz de perfil literário", 
-    icon: Star, 
-    progress: 0, 
-    goal: 1, 
-    reward: "+25 pts", 
-    type: "daily", 
-    completed: false,
-    howToComplete: "Acesse o Quiz Literário no menu lateral e complete todas as perguntas."
-  },
-  
+  { id: 1, title: "Responder pergunta de capítulo", description: "Responda uma pergunta de qualquer capítulo", icon: Target, progress: 0, goal: 1, reward: "+10 pts", xpValue: 10, type: "daily", completed: false, howToComplete: "Clique em 'Continuar Leitura' e responda a pergunta do capítulo atual." },
+  { id: 2, title: "Fazer login hoje", description: "Acesse o BookQuest", icon: CheckCircle, progress: 1, goal: 1, reward: "+5 pts", xpValue: 5, type: "daily", completed: true, howToComplete: "Detectado automaticamente ao acessar o site." },
+  { id: 3, title: "Completar quiz literário", description: "Responda o quiz de perfil literário", icon: Star, progress: 0, goal: 1, reward: "+25 pts", xpValue: 25, type: "daily", completed: false, howToComplete: "Acesse o Quiz Literário no menu lateral e complete todas as perguntas." },
   // Weekly
-  { 
-    id: 5, 
-    title: "Completar 5 unidades de trilha", 
-    description: "Responda 5 perguntas de capítulos", 
-    icon: Target, 
-    progress: 0, 
-    goal: 5, 
-    reward: "+50 pts", 
-    type: "weekly", 
-    completed: false,
-    howToComplete: "Responda corretamente 5 perguntas de capítulos em qualquer trilha."
-  },
-  { 
-    id: 6, 
-    title: "Sequência de 7 dias", 
-    description: "Faça login por 7 dias seguidos", 
-    icon: Flame, 
-    progress: 0, 
-    goal: 7, 
-    reward: "+100 pts", 
-    type: "weekly", 
-    completed: false,
-    howToComplete: "Acesse o BookQuest todos os dias por uma semana."
-  },
-  
+  { id: 5, title: "Completar 5 unidades de trilha", description: "Responda 5 perguntas de capítulos", icon: Target, progress: 0, goal: 5, reward: "+50 pts", xpValue: 50, type: "weekly", completed: false, howToComplete: "Responda corretamente 5 perguntas de capítulos em qualquer trilha." },
+  { id: 6, title: "Sequência de 7 dias", description: "Faça login por 7 dias seguidos", icon: Flame, progress: 0, goal: 7, reward: "+100 pts", xpValue: 100, type: "weekly", completed: false, howToComplete: "Acesse o BookQuest todos os dias por uma semana." },
   // Monthly
-  { 
-    id: 8, 
-    title: "Marcar livro como concluído", 
-    description: "Complete todas as unidades de uma trilha", 
-    icon: Trophy, 
-    progress: 0, 
-    goal: 1, 
-    reward: "+200 pts", 
-    type: "monthly", 
-    completed: false,
-    howToComplete: "Complete todas as perguntas de uma trilha e clique em 'Marcar como Concluído'."
-  },
-  { 
-    id: 9, 
-    title: "Responder 20 perguntas", 
-    description: "Complete 20 unidades de trilha", 
-    icon: Target, 
-    progress: 0, 
-    goal: 20, 
-    reward: "+150 pts", 
-    type: "monthly", 
-    completed: false,
-    howToComplete: "Responda corretamente 20 perguntas em qualquer trilha."
-  },
+  { id: 8, title: "Marcar livro como concluído", description: "Complete todas as unidades de uma trilha", icon: Trophy, progress: 0, goal: 1, reward: "+200 pts", xpValue: 200, type: "monthly", completed: false, howToComplete: "Complete todas as perguntas de uma trilha e clique em 'Marcar como Concluído'." },
+  { id: 9, title: "Responder 20 perguntas", description: "Complete 20 unidades de trilha", icon: Target, progress: 0, goal: 20, reward: "+150 pts", xpValue: 150, type: "monthly", completed: false, howToComplete: "Responda corretamente 20 perguntas em qualquer trilha." },
 ];
 
+const LEVELS = [
+  { name: "Iniciante", xp: 0 },
+  { name: "Explorador", xp: 100 },
+  { name: "Aventureiro", xp: 300 },
+  { name: "Mestre Leitor", xp: 600 },
+  { name: "Lenda Literária", xp: 1000 },
+];
+
+const getLevel = (xp: number) => {
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (xp >= LEVELS[i].xp) {
+      const nextLevel = LEVELS[i + 1];
+      return {
+        current: LEVELS[i].name,
+        nextXp: nextLevel ? nextLevel.xp : LEVELS[i].xp,
+        next: nextLevel ? nextLevel.name : null,
+      };
+    }
+  }
+  return { current: LEVELS[0].name, nextXp: LEVELS[1].xp, next: LEVELS[1].name };
+};
+
 const Missoes = () => {
+  const [missions, setMissions] = useState(initialMissions);
+  const [totalXp, setTotalXp] = useState(35);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [completedMission, setCompletedMission] = useState<{ title: string; xp: number } | null>(null);
+  const [leveledUp, setLeveledUp] = useState(false);
+  const [newLevelName, setNewLevelName] = useState("");
+
   const dailyMissions = missions.filter(m => m.type === "daily");
   const weeklyMissions = missions.filter(m => m.type === "weekly");
   const monthlyMissions = missions.filter(m => m.type === "monthly");
-
   const completedToday = dailyMissions.filter(m => m.completed).length;
   const totalDaily = dailyMissions.length;
+
+  const handleCompleteMission = (missionId: number) => {
+    const mission = missions.find(m => m.id === missionId);
+    if (!mission || mission.completed) return;
+
+    const prevLevel = getLevel(totalXp);
+    const newXp = totalXp + mission.xpValue;
+    const newLevel = getLevel(newXp);
+    const didLevelUp = newLevel.current !== prevLevel.current;
+
+    setMissions(prev => prev.map(m => m.id === missionId ? { ...m, completed: true, progress: m.goal } : m));
+    setTotalXp(newXp);
+    setCompletedMission({ title: mission.title, xp: mission.xpValue });
+    setLeveledUp(didLevelUp);
+    setNewLevelName(didLevelUp ? newLevel.current : "");
+    setModalOpen(true);
+  };
+
+  const level = getLevel(totalXp);
 
   return (
     <Layout>
@@ -148,6 +118,11 @@ const Missoes = () => {
                   <p className="text-xs text-muted-foreground">sequência</p>
                 </div>
               </div>
+              <div className="w-px h-10 bg-border/60" />
+              <div className="text-center">
+                <p className="text-lg font-bold text-accent">{totalXp} XP</p>
+                <p className="text-xs text-muted-foreground">{level.current}</p>
+              </div>
             </div>
           </div>
         </header>
@@ -159,7 +134,7 @@ const Missoes = () => {
             <div>
               <p className="font-medium text-sm mb-1">Como funcionam as missões?</p>
               <p className="text-sm text-muted-foreground">
-                Todas as missões são verificadas automaticamente. Ao completar uma ação, o progresso é atualizado.
+                Todas as missões são verificadas automaticamente. Clique em uma missão incompleta para simulá-la como concluída e ver a animação.
               </p>
             </div>
           </div>
@@ -174,7 +149,7 @@ const Missoes = () => {
           </div>
           <div className="space-y-3">
             {dailyMissions.map((mission, index) => (
-              <MissionCard key={mission.id} mission={mission} index={index} />
+              <MissionCardInline key={mission.id} mission={mission} index={index} onComplete={handleCompleteMission} />
             ))}
           </div>
         </section>
@@ -188,7 +163,7 @@ const Missoes = () => {
           </div>
           <div className="space-y-3">
             {weeklyMissions.map((mission, index) => (
-              <MissionCard key={mission.id} mission={mission} index={index} />
+              <MissionCardInline key={mission.id} mission={mission} index={index} onComplete={handleCompleteMission} />
             ))}
           </div>
         </section>
@@ -202,23 +177,38 @@ const Missoes = () => {
           </div>
           <div className="space-y-3">
             {monthlyMissions.map((mission, index) => (
-              <MissionCard key={mission.id} mission={mission} index={index} />
+              <MissionCardInline key={mission.id} mission={mission} index={index} onComplete={handleCompleteMission} />
             ))}
           </div>
         </section>
       </div>
+
+      {/* Modal */}
+      {completedMission && (
+        <MissionCompletedModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          missionTitle={completedMission.title}
+          xpGained={completedMission.xp}
+          currentXp={totalXp}
+          nextLevelXp={level.nextXp}
+          leveledUp={leveledUp}
+          newLevel={newLevelName}
+        />
+      )}
     </Layout>
   );
 };
 
-const MissionCard = ({ mission, index }: { mission: Mission; index: number }) => {
+const MissionCardInline = ({ mission, index, onComplete }: { mission: Mission; index: number; onComplete: (id: number) => void }) => {
   const Icon = mission.icon;
-  
+
   return (
-    <div 
-      className={`editorial-card p-4 ${
-        mission.completed ? "border-l-4 border-accent bg-accent/5" : ""
+    <div
+      className={`editorial-card p-4 transition-all duration-200 ${
+        mission.completed ? "border-l-4 border-accent bg-accent/5" : "cursor-pointer hover:shadow-md hover:border-secondary/40"
       }`}
+      onClick={() => !mission.completed && onComplete(mission.id)}
     >
       <div className="flex items-start gap-4">
         <div className={`w-10 h-10 rounded flex items-center justify-center flex-shrink-0 ${
@@ -226,7 +216,7 @@ const MissionCard = ({ mission, index }: { mission: Mission; index: number }) =>
         }`}>
           {mission.completed ? <CheckCircle className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
@@ -236,7 +226,7 @@ const MissionCard = ({ mission, index }: { mission: Mission; index: number }) =>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="p-0.5 rounded hover:bg-muted transition-colors">
+                    <button className="p-0.5 rounded hover:bg-muted transition-colors" onClick={(e) => e.stopPropagation()}>
                       <Info className="w-3.5 h-3.5 text-muted-foreground" />
                     </button>
                   </TooltipTrigger>
@@ -252,7 +242,7 @@ const MissionCard = ({ mission, index }: { mission: Mission; index: number }) =>
             </span>
           </div>
           <p className="text-sm text-muted-foreground mb-2">{mission.description}</p>
-          
+
           {!mission.completed && (
             <div className="flex items-center gap-3">
               <div className="flex-1">
@@ -263,7 +253,7 @@ const MissionCard = ({ mission, index }: { mission: Mission; index: number }) =>
               </span>
             </div>
           )}
-          
+
           {mission.completed && (
             <div className="flex items-center gap-2 text-sm text-accent font-medium">
               <CheckCircle className="w-4 h-4" />
