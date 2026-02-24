@@ -167,7 +167,7 @@ const Ranking = () => {
       setAnimatingPositions(false);
       setShowClimbEffect(false);
       setClimbingFrom(null);
-    }, 1800);
+    }, 2800);
   };
 
   const handleResetXp = () => {
@@ -323,7 +323,7 @@ const Ranking = () => {
                         style={{
                           top: 0,
                           transform: `translateY(${currentY}px)`,
-                          transition: animatingPositions ? 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+                          transition: animatingPositions ? 'transform 1.6s cubic-bezier(0.22, 1, 0.36, 1)' : 'none',
                           zIndex: isCurrentUser && animatingPositions ? 10 : 1,
                         }}
                       >
@@ -373,7 +373,7 @@ const Ranking = () => {
                     className="ranking-zone-divider absolute left-0 right-0 pointer-events-none"
                     style={{
                       top: (selectedTierInfo.slots - 3) * ROW_HEIGHT,
-                      transition: 'top 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                      transition: 'top 1.6s cubic-bezier(0.22, 1, 0.36, 1)',
                     }}
                   >
                     <div className="ranking-zone-line" />
