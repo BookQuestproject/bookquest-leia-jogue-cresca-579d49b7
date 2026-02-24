@@ -397,7 +397,7 @@ const Index = () => {
                 <div>
                   <RankingBadge tier={currentTier} size="sm" />
                   <p className="text-sm text-muted-foreground mt-1">
-                    {userStats.points} tochas 🔥
+                    {userStats.points} XP ⚡
                   </p>
                 </div>
               </div>
@@ -406,7 +406,7 @@ const Index = () => {
                 <div className="pt-4 border-t border-border/60">
                   <div className="flex justify-between text-xs mb-2">
                     <span className="text-muted-foreground">Próximo: {nextTier.label}</span>
-                    <span className="font-semibold text-accent">{userStats.points}/{nextTier.pointsNeeded} 🔥</span>
+                    <span className="font-semibold text-accent">{userStats.points}/{nextTier.pointsNeeded} XP</span>
                   </div>
                   <div className="progress-bar">
                     <div 

@@ -1,84 +1,99 @@
 import { useState, useMemo } from "react";
-import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock } from "lucide-react";
+import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock, ArrowUp } from "lucide-react";
 import Layout from "@/components/layout/Layout";
-import RankingBadge, { RankingTier, tierConfig, getTierFromPoints } from "@/components/RankingBadge";
+import RankingBadge, { RankingTier, tierConfig, getTierFromXp } from "@/components/RankingBadge";
 import { Button } from "@/components/ui/button";
 
 interface RankingUser {
   id: number;
   name: string;
   avatar: string;
-  points: number;
+  xp: number;
   tier: RankingTier;
   streak: number;
 }
 
-// Mock users organized by tier with point-based system
+// Mock users organized by tier with XP-based system
 const allUsers: RankingUser[] = [
-  // Bronze (0-99 tochas)
-  { id: 101, name: "Você", avatar: "VC", points: 35, tier: "bronze", streak: 2 },
-  { id: 102, name: "Fernanda Rocha", avatar: "FR", points: 80, tier: "bronze", streak: 5 },
-  { id: 103, name: "Bruno Dias", avatar: "BD", points: 65, tier: "bronze", streak: 3 },
-  { id: 104, name: "Amanda Costa", avatar: "AC", points: 45, tier: "bronze", streak: 1 },
-  
-  // Prata (100-249 tochas)
-  { id: 151, name: "Marcos Ribeiro", avatar: "MR", points: 120, tier: "silver", streak: 7 },
-  { id: 152, name: "Letícia Nunes", avatar: "LN", points: 195, tier: "silver", streak: 10 },
-  { id: 153, name: "Igor Moreira", avatar: "IM", points: 230, tier: "silver", streak: 8 },
+  // Bronze (0-99 XP)
+  { id: 101, name: "Você", avatar: "VC", xp: 35, tier: "bronze", streak: 2 },
+  { id: 102, name: "Fernanda Rocha", avatar: "FR", xp: 80, tier: "bronze", streak: 5 },
+  { id: 103, name: "Bruno Dias", avatar: "BD", xp: 65, tier: "bronze", streak: 3 },
+  { id: 104, name: "Amanda Costa", avatar: "AC", xp: 45, tier: "bronze", streak: 1 },
+  { id: 105, name: "Gustavo Pereira", avatar: "GP", xp: 72, tier: "bronze", streak: 4 },
+  { id: 106, name: "Clara Melo", avatar: "CM", xp: 58, tier: "bronze", streak: 2 },
+  { id: 107, name: "Diego Farias", avatar: "DF", xp: 41, tier: "bronze", streak: 1 },
+  { id: 108, name: "Natália Reis", avatar: "NR", xp: 33, tier: "bronze", streak: 1 },
+  { id: 109, name: "Otávio Cruz", avatar: "OC", xp: 28, tier: "bronze", streak: 0 },
+  { id: 110, name: "Valentina Lopes", avatar: "VL", xp: 22, tier: "bronze", streak: 0 },
+  { id: 111, name: "Henrique Barros", avatar: "HB", xp: 15, tier: "bronze", streak: 0 },
+  { id: 112, name: "Sofia Duarte", avatar: "SD", xp: 10, tier: "bronze", streak: 0 },
 
-  // Ouro (250-499 tochas)
-  { id: 201, name: "Rafael Lima", avatar: "RL", points: 310, tier: "gold", streak: 12 },
-  { id: 202, name: "Juliana Mendes", avatar: "JM", points: 420, tier: "gold", streak: 15 },
-  { id: 203, name: "Thiago Souza", avatar: "TS", points: 380, tier: "gold", streak: 10 },
-  
-  // Safira (500-999 tochas)
-  { id: 301, name: "Carla Souza", avatar: "CS", points: 580, tier: "sapphire", streak: 18 },
-  { id: 302, name: "Felipe Santos", avatar: "FS", points: 750, tier: "sapphire", streak: 22 },
-  { id: 303, name: "Mariana Luz", avatar: "ML", points: 890, tier: "sapphire", streak: 25 },
-  
-  // Esmeralda (1000-1999 tochas)
-  { id: 401, name: "Lucas Almeida", avatar: "LA", points: 1200, tier: "emerald", streak: 28 },
-  { id: 402, name: "Patricia Gomes", avatar: "PG", points: 1650, tier: "emerald", streak: 32 },
-  { id: 403, name: "Ricardo Nunes", avatar: "RN", points: 1800, tier: "emerald", streak: 35 },
-  
-  // Ametista (2000-3499 tochas)
-  { id: 501, name: "Julia Ferreira", avatar: "JF", points: 2200, tier: "amethyst", streak: 38 },
-  { id: 502, name: "Eduardo Pinto", avatar: "EP", points: 2800, tier: "amethyst", streak: 42 },
-  { id: 503, name: "Isabela Martins", avatar: "IM", points: 3100, tier: "amethyst", streak: 50 },
-  
-  // Rubi (3500-5499 tochas)
-  { id: 601, name: "Pedro Costa", avatar: "PC", points: 3800, tier: "ruby", streak: 45 },
-  { id: 602, name: "Camila Araújo", avatar: "CA", points: 4500, tier: "ruby", streak: 55 },
-  { id: 603, name: "Guilherme Reis", avatar: "GR", points: 5200, tier: "ruby", streak: 60 },
-  
-  // Quartzo (5500-7999 tochas)
-  { id: 651, name: "Renata Oliveira", avatar: "RO", points: 6000, tier: "quartz", streak: 65 },
-  { id: 652, name: "Daniel Vieira", avatar: "DV", points: 7200, tier: "quartz", streak: 72 },
-  { id: 653, name: "Beatriz Lima", avatar: "BL", points: 7800, tier: "quartz", streak: 78 },
+  // Prata (100-299 XP)
+  { id: 151, name: "Marcos Ribeiro", avatar: "MR", xp: 120, tier: "silver", streak: 7 },
+  { id: 152, name: "Letícia Nunes", avatar: "LN", xp: 195, tier: "silver", streak: 10 },
+  { id: 153, name: "Igor Moreira", avatar: "IM", xp: 230, tier: "silver", streak: 8 },
+  { id: 154, name: "Renata Silva", avatar: "RS", xp: 175, tier: "silver", streak: 6 },
+  { id: 155, name: "Tomás Alves", avatar: "TA", xp: 260, tier: "silver", streak: 9 },
+  { id: 156, name: "Bruna Cardoso", avatar: "BC", xp: 145, tier: "silver", streak: 5 },
+  { id: 157, name: "André Monteiro", avatar: "AM", xp: 110, tier: "silver", streak: 4 },
+  { id: 158, name: "Luísa Teixeira", avatar: "LT", xp: 280, tier: "silver", streak: 11 },
+  { id: 159, name: "Caio Martins", avatar: "CM", xp: 205, tier: "silver", streak: 7 },
+  { id: 160, name: "Helena Barbosa", avatar: "HB", xp: 155, tier: "silver", streak: 5 },
 
-  // Diamante (8000-11999 tochas)
-  { id: 701, name: "João Santos", avatar: "JS", points: 8500, tier: "diamond", streak: 80 },
-  { id: 702, name: "Ana Oliveira", avatar: "AO", points: 10200, tier: "diamond", streak: 90 },
-  { id: 703, name: "Fernando Lopes", avatar: "FL", points: 11500, tier: "diamond", streak: 100 },
-  
-  // Lendário (12000+ tochas)
-  { id: 801, name: "Maria Silva", avatar: "MS", points: 15000, tier: "legendary", streak: 150 },
-  { id: 802, name: "Carlos Pereira", avatar: "CP", points: 13200, tier: "legendary", streak: 120 },
+  // Ouro (300-599 XP)
+  { id: 201, name: "Rafael Lima", avatar: "RL", xp: 380, tier: "gold", streak: 12 },
+  { id: 202, name: "Juliana Mendes", avatar: "JM", xp: 520, tier: "gold", streak: 15 },
+  { id: 203, name: "Thiago Souza", avatar: "TS", xp: 450, tier: "gold", streak: 10 },
+
+  // Safira (600-1099 XP)
+  { id: 301, name: "Carla Souza", avatar: "CS", xp: 680, tier: "sapphire", streak: 18 },
+  { id: 302, name: "Felipe Santos", avatar: "FS", xp: 850, tier: "sapphire", streak: 22 },
+  { id: 303, name: "Mariana Luz", avatar: "ML", xp: 990, tier: "sapphire", streak: 25 },
+
+  // Esmeralda (1100-1899 XP)
+  { id: 401, name: "Lucas Almeida", avatar: "LA", xp: 1200, tier: "emerald", streak: 28 },
+  { id: 402, name: "Patricia Gomes", avatar: "PG", xp: 1650, tier: "emerald", streak: 32 },
+  { id: 403, name: "Ricardo Nunes", avatar: "RN", xp: 1800, tier: "emerald", streak: 35 },
+
+  // Ametista (1900-3199 XP)
+  { id: 501, name: "Julia Ferreira", avatar: "JF", xp: 2200, tier: "amethyst", streak: 38 },
+  { id: 502, name: "Eduardo Pinto", avatar: "EP", xp: 2800, tier: "amethyst", streak: 42 },
+  { id: 503, name: "Isabela Martins", avatar: "IM", xp: 3100, tier: "amethyst", streak: 50 },
+
+  // Rubi (3200-5199 XP)
+  { id: 601, name: "Pedro Costa", avatar: "PC", xp: 3800, tier: "ruby", streak: 45 },
+  { id: 602, name: "Camila Araújo", avatar: "CA", xp: 4500, tier: "ruby", streak: 55 },
+  { id: 603, name: "Guilherme Reis", avatar: "GR", xp: 5100, tier: "ruby", streak: 60 },
+
+  // Quartzo (5200-7999 XP)
+  { id: 651, name: "Renata Oliveira", avatar: "RO", xp: 6000, tier: "quartz", streak: 65 },
+  { id: 652, name: "Daniel Vieira", avatar: "DV", xp: 7200, tier: "quartz", streak: 72 },
+  { id: 653, name: "Beatriz Lima", avatar: "BL", xp: 7800, tier: "quartz", streak: 78 },
+
+  // Diamante (8000-12999 XP)
+  { id: 701, name: "João Santos", avatar: "JS", xp: 8500, tier: "diamond", streak: 80 },
+  { id: 702, name: "Ana Oliveira", avatar: "AO", xp: 10200, tier: "diamond", streak: 90 },
+  { id: 703, name: "Fernando Lopes", avatar: "FL", xp: 12500, tier: "diamond", streak: 100 },
+
+  // Lendário (13000+ XP)
+  { id: 801, name: "Maria Silva", avatar: "MS", xp: 15000, tier: "legendary", streak: 150 },
+  { id: 802, name: "Carlos Pereira", avatar: "CP", xp: 13500, tier: "legendary", streak: 120 },
 ];
 
 const tierOrder: RankingTier[] = ["bronze", "silver", "gold", "sapphire", "emerald", "amethyst", "ruby", "quartz", "diamond", "legendary"];
 
-const rankingTiers: { tier: RankingTier; range: string; label: string }[] = [
-  { tier: "bronze", range: "0-99", label: "Bronze" },
-  { tier: "silver", range: "100-249", label: "Prata" },
-  { tier: "gold", range: "250-499", label: "Ouro" },
-  { tier: "sapphire", range: "500-999", label: "Safira" },
-  { tier: "emerald", range: "1K-2K", label: "Esmeralda" },
-  { tier: "amethyst", range: "2K-3.5K", label: "Ametista" },
-  { tier: "ruby", range: "3.5K-5.5K", label: "Rubi" },
-  { tier: "quartz", range: "5.5K-8K", label: "Quartzo" },
-  { tier: "diamond", range: "8K-12K", label: "Diamante" },
-  { tier: "legendary", range: "12K+", label: "Lendário" },
+const rankingTiers: { tier: RankingTier; range: string; label: string; slots: number }[] = [
+  { tier: "bronze", range: "0-99", label: "Bronze", slots: 10 },
+  { tier: "silver", range: "100-299", label: "Prata", slots: 8 },
+  { tier: "gold", range: "300-599", label: "Ouro", slots: 7 },
+  { tier: "sapphire", range: "600-1.1K", label: "Safira", slots: 6 },
+  { tier: "emerald", range: "1.1K-1.9K", label: "Esmeralda", slots: 5 },
+  { tier: "amethyst", range: "1.9K-3.2K", label: "Ametista", slots: 5 },
+  { tier: "ruby", range: "3.2K-5.2K", label: "Rubi", slots: 4 },
+  { tier: "quartz", range: "5.2K-8K", label: "Quartzo", slots: 3 },
+  { tier: "diamond", range: "8K-13K", label: "Diamante", slots: 2 },
+  { tier: "legendary", range: "13K+", label: "Lendário", slots: 1 },
 ];
 
 const getDaysUntilWeekEnd = () => {
@@ -101,8 +116,9 @@ const Ranking = () => {
 
   const tierUsers = allUsers
     .filter(user => user.tier === selectedTier)
-    .sort((a, b) => b.points - a.points);
+    .sort((a, b) => b.xp - a.xp);
 
+  const selectedTierInfo = rankingTiers.find(t => t.tier === selectedTier)!;
   const top3 = tierUsers.slice(0, 3);
   const restUsers = tierUsers.slice(3);
 
@@ -135,7 +151,7 @@ const Ranking = () => {
         <div className="editorial-card p-5 mb-8 animate-fade-in" style={{ animationDelay: "0.05s" }}>
           <h2 className="font-semibold mb-4 flex items-center gap-2">
             <Zap className="w-5 h-5 text-accent" />
-            Como ganhar tochas 🔥
+            Como ganhar XP ⚡
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
@@ -176,7 +192,7 @@ const Ranking = () => {
             <h2 className="font-semibold">Selecione o Patamar</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
-            {rankingTiers.map(({ tier, range, label }) => {
+            {rankingTiers.map(({ tier, range, label, slots }) => {
               const locked = isTierLocked(tier);
               return (
                 <button
@@ -196,7 +212,7 @@ const Ranking = () => {
                   )}
                   <RankingBadge tier={tier} showLabel={false} size="sm" />
                   <p className="font-medium mt-2 text-xs">{label}</p>
-                  <p className="text-xs text-muted-foreground">{range} 🔥</p>
+                  <p className="text-xs text-muted-foreground">{range} XP</p>
                 </button>
               );
             })}
@@ -205,7 +221,7 @@ const Ranking = () => {
 
         {/* Selected Tier Info */}
         <div className="editorial-card p-5 mb-8 border-l-4 border-secondary animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-4">
               <RankingBadge tier={selectedTier} size="lg" />
               <div>
@@ -217,12 +233,18 @@ const Ranking = () => {
                 </p>
               </div>
             </div>
-            {currentUserTier === selectedTier && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-secondary/10 text-secondary text-sm font-medium">
-                <Users className="w-4 h-4" />
-                Seu patamar
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-primary/10 text-primary text-sm font-medium">
+                <ArrowUp className="w-4 h-4" />
+                Top {selectedTierInfo.slots} sobem de ranking
               </div>
-            )}
+              {currentUserTier === selectedTier && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-secondary/10 text-secondary text-sm font-medium">
+                  <Users className="w-4 h-4" />
+                  Seu patamar
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -241,8 +263,8 @@ const Ranking = () => {
               </h3>
               <div className="flex justify-center gap-4 mt-3 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Tochas</p>
-                  <p className="font-semibold">{top3[1]?.points} 🔥</p>
+                  <p className="text-muted-foreground">XP</p>
+                  <p className="font-semibold">{top3[1]?.xp} ⚡</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Sequência</p>
@@ -264,8 +286,8 @@ const Ranking = () => {
               </h3>
               <div className="flex justify-center gap-4 mt-3">
                 <div>
-                  <p className="text-muted-foreground text-sm">Tochas</p>
-                  <p className="font-semibold">{top3[0]?.points} 🔥</p>
+                  <p className="text-muted-foreground text-sm">XP</p>
+                  <p className="font-semibold">{top3[0]?.xp} ⚡</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground text-sm">Sequência</p>
@@ -286,8 +308,8 @@ const Ranking = () => {
               </h3>
               <div className="flex justify-center gap-4 mt-3 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Tochas</p>
-                  <p className="font-semibold">{top3[2]?.points} 🔥</p>
+                  <p className="text-muted-foreground">XP</p>
+                  <p className="font-semibold">{top3[2]?.xp} ⚡</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Sequência</p>
@@ -330,7 +352,7 @@ const Ranking = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-secondary">{user.points} 🔥</p>
+                    <p className="font-semibold text-secondary">{user.xp} ⚡</p>
                     <p className="text-xs text-muted-foreground">{user.streak} dias</p>
                   </div>
                 </div>
