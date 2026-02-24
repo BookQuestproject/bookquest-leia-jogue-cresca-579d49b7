@@ -6,7 +6,7 @@ import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 
 import { Button } from "@/components/ui/button";
-import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
+import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
 import StreakFlame from "@/components/StreakFlame";
 import {
   Dialog,
@@ -44,7 +44,7 @@ const Index = () => {
   const completedChapters = activeTrail?.chapters.filter(c => c.status === "completed").length || 0;
 
   const userStats = {
-    booksRead: 0,
+    points: 35, // Will come from real data
     streak: 0,
     currentBook: activeTrail?.title || null,
     currentBookId: activeTrail?.bookId || null,
@@ -54,7 +54,7 @@ const Index = () => {
 
   const hasActiveTrail = hasActiveTrailData;
   const currentBookTheme = hasActiveTrail ? { color: activeTrail!.themeColor, genre: activeTrail!.genre } : null;
-  const currentTier = getTierFromBooks(userStats.booksRead);
+  const currentTier = getTierFromPoints(userStats.points);
   const nextTier = getNextTierInfo(currentTier);
 
   const chapters = activeTrail?.chapters || [];
@@ -397,7 +397,7 @@ const Index = () => {
                 <div>
                   <RankingBadge tier={currentTier} size="sm" />
                   <p className="text-sm text-muted-foreground mt-1">
-                    {userStats.booksRead} livros lidos
+                    {userStats.points} tochas 🔥
                   </p>
                 </div>
               </div>
@@ -406,12 +406,12 @@ const Index = () => {
                 <div className="pt-4 border-t border-border/60">
                   <div className="flex justify-between text-xs mb-2">
                     <span className="text-muted-foreground">Próximo: {nextTier.label}</span>
-                    <span className="font-semibold text-accent">{userStats.booksRead}/{nextTier.booksNeeded}</span>
+                    <span className="font-semibold text-accent">{userStats.points}/{nextTier.pointsNeeded} 🔥</span>
                   </div>
                   <div className="progress-bar">
                     <div 
                       className="progress-bar-fill achievement"
-                      style={{ width: `${(userStats.booksRead / nextTier.booksNeeded) * 100}%` }}
+                      style={{ width: `${(userStats.points / nextTier.pointsNeeded) * 100}%` }}
                     />
                   </div>
                 </div>

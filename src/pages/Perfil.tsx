@@ -2,7 +2,7 @@ import { BookOpen, Star, Crown, Settings, Edit2, Clock, CheckCircle, Camera } fr
 import { useRef, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import RankingBadge, { getTierFromBooks, getNextTierInfo } from "@/components/RankingBadge";
+import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
 import ProgressBar from "@/components/ProgressBar";
 import { useProfile } from "@/hooks/useProfile";
 import { useReadingStats } from "@/hooks/useReadingStats";
@@ -31,7 +31,9 @@ const Perfil = () => {
   const literaryGenre = literaryProfile?.genre || "Não definido";
 
   const booksRead = stats.booksCompleted || 0;
-  const currentTier = getTierFromBooks(booksRead);
+  // Points based on engagement: chapters completed * 10 + reading time bonus
+  const userPoints = (stats.completedChapters * 10) + Math.floor(stats.totalReadingTime / 60);
+  const currentTier = getTierFromPoints(userPoints);
   const nextTier = getNextTierInfo(currentTier);
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,10 +189,10 @@ const Perfil = () => {
                     Próximo nível: <span className="text-foreground font-medium">{nextTier.label}</span>
                   </span>
                   <span className="text-sm font-bold text-primary">
-                    {booksRead} / {nextTier.booksNeeded} livros
+                    {userPoints} / {nextTier.pointsNeeded} 🔥
                   </span>
                 </div>
-                <ProgressBar value={booksRead} max={nextTier.booksNeeded} />
+                <ProgressBar value={userPoints} max={nextTier.pointsNeeded} />
               </div>
             )}
           </div>

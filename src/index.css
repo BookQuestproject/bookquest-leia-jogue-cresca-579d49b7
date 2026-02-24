@@ -622,6 +622,11 @@
     @apply text-white;
   }
 
+  .ranking-silver {
+    background: linear-gradient(135deg, hsl(210 8% 55%), hsl(210 8% 72%));
+    @apply text-gray-900;
+  }
+
   .ranking-gold {
     background: linear-gradient(135deg, hsl(43 60% 45%), hsl(43 60% 58%));
     @apply text-gray-900;
@@ -645,6 +650,11 @@
   .ranking-ruby {
     background: linear-gradient(135deg, hsl(350 55% 35%), hsl(350 55% 48%));
     @apply text-white;
+  }
+
+  .ranking-quartz {
+    background: linear-gradient(135deg, hsl(320 30% 60%), hsl(340 35% 72%));
+    @apply text-gray-900;
   }
 
   .ranking-diamond {

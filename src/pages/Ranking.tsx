@@ -1,312 +1,155 @@
 import { useState } from "react";
-import { Trophy, Crown, TrendingUp, BookOpen, Users, Plus, Check, X, AlertTriangle } from "lucide-react";
+import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen } from "lucide-react";
 import Layout from "@/components/layout/Layout";
-import RankingBadge, { RankingTier, tierConfig, getTierFromBooks } from "@/components/RankingBadge";
+import RankingBadge, { RankingTier, tierConfig, getTierFromPoints } from "@/components/RankingBadge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 interface RankingUser {
   id: number;
   name: string;
   avatar: string;
-  booksRead: number;
+  points: number;
   tier: RankingTier;
   streak: number;
 }
 
-// Mock users organized by tier
+// Mock users organized by tier with point-based system
 const allUsers: RankingUser[] = [
-  // Bronze (0-5 livros)
-  { id: 101, name: "Você", avatar: "VC", booksRead: 0, tier: "bronze", streak: 0 },
-  { id: 102, name: "Fernanda Rocha", avatar: "FR", booksRead: 4, tier: "bronze", streak: 5 },
-  { id: 103, name: "Bruno Dias", avatar: "BD", booksRead: 5, tier: "bronze", streak: 2 },
-  { id: 104, name: "Amanda Costa", avatar: "AC", booksRead: 3, tier: "bronze", streak: 1 },
+  // Bronze (0-99 tochas)
+  { id: 101, name: "Você", avatar: "VC", points: 35, tier: "bronze", streak: 2 },
+  { id: 102, name: "Fernanda Rocha", avatar: "FR", points: 80, tier: "bronze", streak: 5 },
+  { id: 103, name: "Bruno Dias", avatar: "BD", points: 65, tier: "bronze", streak: 3 },
+  { id: 104, name: "Amanda Costa", avatar: "AC", points: 45, tier: "bronze", streak: 1 },
   
-  // Ouro (6-15 livros)
-  { id: 201, name: "Rafael Lima", avatar: "RL", booksRead: 8, tier: "gold", streak: 8 },
-  { id: 202, name: "Juliana Mendes", avatar: "JM", booksRead: 12, tier: "gold", streak: 10 },
-  { id: 203, name: "Thiago Souza", avatar: "TS", booksRead: 14, tier: "gold", streak: 6 },
+  // Prata (100-249 tochas)
+  { id: 151, name: "Marcos Ribeiro", avatar: "MR", points: 120, tier: "silver", streak: 7 },
+  { id: 152, name: "Letícia Nunes", avatar: "LN", points: 195, tier: "silver", streak: 10 },
+  { id: 153, name: "Igor Moreira", avatar: "IM", points: 230, tier: "silver", streak: 8 },
+
+  // Ouro (250-499 tochas)
+  { id: 201, name: "Rafael Lima", avatar: "RL", points: 310, tier: "gold", streak: 12 },
+  { id: 202, name: "Juliana Mendes", avatar: "JM", points: 420, tier: "gold", streak: 15 },
+  { id: 203, name: "Thiago Souza", avatar: "TS", points: 380, tier: "gold", streak: 10 },
   
-  // Safira (16-30 livros)
-  { id: 301, name: "Carla Souza", avatar: "CS", booksRead: 18, tier: "sapphire", streak: 12 },
-  { id: 302, name: "Felipe Santos", avatar: "FS", booksRead: 25, tier: "sapphire", streak: 15 },
-  { id: 303, name: "Mariana Luz", avatar: "ML", booksRead: 28, tier: "sapphire", streak: 20 },
+  // Safira (500-999 tochas)
+  { id: 301, name: "Carla Souza", avatar: "CS", points: 580, tier: "sapphire", streak: 18 },
+  { id: 302, name: "Felipe Santos", avatar: "FS", points: 750, tier: "sapphire", streak: 22 },
+  { id: 303, name: "Mariana Luz", avatar: "ML", points: 890, tier: "sapphire", streak: 25 },
   
-  // Esmeralda (31-50 livros)
-  { id: 401, name: "Lucas Almeida", avatar: "LA", booksRead: 35, tier: "emerald", streak: 14 },
-  { id: 402, name: "Patricia Gomes", avatar: "PG", booksRead: 42, tier: "emerald", streak: 18 },
-  { id: 403, name: "Ricardo Nunes", avatar: "RN", booksRead: 48, tier: "emerald", streak: 22 },
+  // Esmeralda (1000-1999 tochas)
+  { id: 401, name: "Lucas Almeida", avatar: "LA", points: 1200, tier: "emerald", streak: 28 },
+  { id: 402, name: "Patricia Gomes", avatar: "PG", points: 1650, tier: "emerald", streak: 32 },
+  { id: 403, name: "Ricardo Nunes", avatar: "RN", points: 1800, tier: "emerald", streak: 35 },
   
-  // Ametista (51-80 livros)
-  { id: 501, name: "Julia Ferreira", avatar: "JF", booksRead: 55, tier: "amethyst", streak: 18 },
-  { id: 502, name: "Eduardo Pinto", avatar: "EP", booksRead: 68, tier: "amethyst", streak: 25 },
-  { id: 503, name: "Isabela Martins", avatar: "IM", booksRead: 75, tier: "amethyst", streak: 30 },
+  // Ametista (2000-3499 tochas)
+  { id: 501, name: "Julia Ferreira", avatar: "JF", points: 2200, tier: "amethyst", streak: 38 },
+  { id: 502, name: "Eduardo Pinto", avatar: "EP", points: 2800, tier: "amethyst", streak: 42 },
+  { id: 503, name: "Isabela Martins", avatar: "IM", points: 3100, tier: "amethyst", streak: 50 },
   
-  // Rubi (81-120 livros)
-  { id: 601, name: "Pedro Costa", avatar: "PC", booksRead: 85, tier: "ruby", streak: 21 },
-  { id: 602, name: "Camila Araújo", avatar: "CA", booksRead: 98, tier: "ruby", streak: 35 },
-  { id: 603, name: "Guilherme Reis", avatar: "GR", booksRead: 115, tier: "ruby", streak: 40 },
+  // Rubi (3500-5499 tochas)
+  { id: 601, name: "Pedro Costa", avatar: "PC", points: 3800, tier: "ruby", streak: 45 },
+  { id: 602, name: "Camila Araújo", avatar: "CA", points: 4500, tier: "ruby", streak: 55 },
+  { id: 603, name: "Guilherme Reis", avatar: "GR", points: 5200, tier: "ruby", streak: 60 },
   
-  // Diamante (121-199 livros)
-  { id: 701, name: "João Santos", avatar: "JS", booksRead: 130, tier: "diamond", streak: 30 },
-  { id: 702, name: "Ana Oliveira", avatar: "AO", booksRead: 156, tier: "diamond", streak: 28 },
-  { id: 703, name: "Fernando Lopes", avatar: "FL", booksRead: 180, tier: "diamond", streak: 45 },
+  // Quartzo (5500-7999 tochas)
+  { id: 651, name: "Renata Oliveira", avatar: "RO", points: 6000, tier: "quartz", streak: 65 },
+  { id: 652, name: "Daniel Vieira", avatar: "DV", points: 7200, tier: "quartz", streak: 72 },
+  { id: 653, name: "Beatriz Lima", avatar: "BL", points: 7800, tier: "quartz", streak: 78 },
+
+  // Diamante (8000-11999 tochas)
+  { id: 701, name: "João Santos", avatar: "JS", points: 8500, tier: "diamond", streak: 80 },
+  { id: 702, name: "Ana Oliveira", avatar: "AO", points: 10200, tier: "diamond", streak: 90 },
+  { id: 703, name: "Fernando Lopes", avatar: "FL", points: 11500, tier: "diamond", streak: 100 },
   
-  // Lendário (200+ livros)
-  { id: 801, name: "Maria Silva", avatar: "MS", booksRead: 250, tier: "legendary", streak: 100 },
-  { id: 802, name: "Carlos Pereira", avatar: "CP", booksRead: 215, tier: "legendary", streak: 85 },
+  // Lendário (12000+ tochas)
+  { id: 801, name: "Maria Silva", avatar: "MS", points: 15000, tier: "legendary", streak: 150 },
+  { id: 802, name: "Carlos Pereira", avatar: "CP", points: 13200, tier: "legendary", streak: 120 },
 ];
 
-const rankingTiers: { tier: RankingTier; books: string; label: string }[] = [
-  { tier: "bronze", books: "0-5", label: "Bronze" },
-  { tier: "gold", books: "6-15", label: "Ouro" },
-  { tier: "sapphire", books: "16-30", label: "Safira" },
-  { tier: "emerald", books: "31-50", label: "Esmeralda" },
-  { tier: "amethyst", books: "51-80", label: "Ametista" },
-  { tier: "ruby", books: "81-120", label: "Rubi" },
-  { tier: "diamond", books: "121-199", label: "Diamante" },
-  { tier: "legendary", books: "200+", label: "Lendário" },
+const rankingTiers: { tier: RankingTier; range: string; label: string }[] = [
+  { tier: "bronze", range: "0-99", label: "Bronze" },
+  { tier: "silver", range: "100-249", label: "Prata" },
+  { tier: "gold", range: "250-499", label: "Ouro" },
+  { tier: "sapphire", range: "500-999", label: "Safira" },
+  { tier: "emerald", range: "1K-2K", label: "Esmeralda" },
+  { tier: "amethyst", range: "2K-3.5K", label: "Ametista" },
+  { tier: "ruby", range: "3.5K-5.5K", label: "Rubi" },
+  { tier: "quartz", range: "5.5K-8K", label: "Quartzo" },
+  { tier: "diamond", range: "8K-12K", label: "Diamante" },
+  { tier: "legendary", range: "12K+", label: "Lendário" },
 ];
-
-// Book verification questions for anti-fraud
-interface VerificationQuestion {
-  question: string;
-  options: string[];
-  correctIndex: number;
-}
-
-const bookVerificationQuestions: Record<string, VerificationQuestion[]> = {
-  default: [
-    {
-      question: "Você realmente leu este livro até o final?",
-      options: ["Sim, li completamente", "Li parcialmente", "Ainda não terminei"],
-      correctIndex: 0,
-    },
-    {
-      question: "Quanto tempo levou para ler este livro?",
-      options: ["Menos de 1 semana", "1-2 semanas", "Mais de 2 semanas", "Mais de 1 mês"],
-      correctIndex: -1, // Any answer is valid
-    },
-  ],
-};
 
 const Ranking = () => {
   const [selectedTier, setSelectedTier] = useState<RankingTier>("bronze");
-  const [isAddBookOpen, setIsAddBookOpen] = useState(false);
-  const [bookTitle, setBookTitle] = useState("");
-  const [bookAuthor, setBookAuthor] = useState("");
-  const [verificationStep, setVerificationStep] = useState(0);
-  const [verificationAnswers, setVerificationAnswers] = useState<number[]>([]);
-  const [isVerified, setIsVerified] = useState<boolean | null>(null);
   const currentUserTier: RankingTier = "bronze";
 
   const tierUsers = allUsers
     .filter(user => user.tier === selectedTier)
-    .sort((a, b) => b.booksRead - a.booksRead);
+    .sort((a, b) => b.points - a.points);
 
   const top3 = tierUsers.slice(0, 3);
   const restUsers = tierUsers.slice(3);
-
-  const handleAddBook = () => {
-    if (!bookTitle.trim() || !bookAuthor.trim()) return;
-    setVerificationStep(1);
-  };
-
-  const handleVerificationAnswer = (answerIndex: number) => {
-    const newAnswers = [...verificationAnswers, answerIndex];
-    setVerificationAnswers(newAnswers);
-
-    const questions = bookVerificationQuestions.default;
-    if (newAnswers.length >= questions.length) {
-      // Check if first question was answered correctly (user claims to have read the book)
-      const claimedToRead = newAnswers[0] === 0;
-      setIsVerified(claimedToRead);
-      setVerificationStep(2);
-    }
-  };
-
-  const resetAddBook = () => {
-    setBookTitle("");
-    setBookAuthor("");
-    setVerificationStep(0);
-    setVerificationAnswers([]);
-    setIsVerified(null);
-    setIsAddBookOpen(false);
-  };
-
-  const questions = bookVerificationQuestions.default;
 
   return (
     <Layout>
       <div className="max-w-5xl mx-auto py-8 section-bg-ranking">
         {/* Header */}
         <header className="mb-10 animate-fade-in" data-tutorial="ranking-header">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Competição por Nível</p>
-              <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Ranking Literário</h1>
-              <p className="text-muted-foreground max-w-xl">
-                Você compete apenas com leitores do seu nível. Suba de patamar lendo mais livros.
-              </p>
-            </div>
-            
-            {/* Add Book Button */}
-            <Dialog open={isAddBookOpen} onOpenChange={(open) => {
-              if (!open) resetAddBook();
-              else setIsAddBookOpen(true);
-            }}>
-              <DialogTrigger asChild>
-                <Button variant="hero" size="lg" className="gap-2" data-tutorial="ranking-addbook">
-                  <Plus className="w-5 h-5" />
-                  Adicionar Livro
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-secondary" />
-                    {verificationStep === 0 && "Adicionar Livro Lido"}
-                    {verificationStep === 1 && "Verificação de Leitura"}
-                    {verificationStep === 2 && (isVerified ? "Livro Adicionado!" : "Verificação Falhou")}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {verificationStep === 0 && "Informe os dados do livro que você terminou de ler."}
-                    {verificationStep === 1 && "Por favor, responda algumas perguntas para confirmar sua leitura."}
-                    {verificationStep === 2 && (isVerified 
-                      ? "Sua leitura foi verificada com sucesso!" 
-                      : "Não foi possível verificar sua leitura."
-                    )}
-                  </DialogDescription>
-                </DialogHeader>
-
-                {verificationStep === 0 && (
-                  <div className="space-y-4 py-4">
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Título do Livro</label>
-                      <Input
-                        placeholder="Ex: Harry Potter e a Pedra Filosofal"
-                        value={bookTitle}
-                        onChange={(e) => setBookTitle(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Autor</label>
-                      <Input
-                        placeholder="Ex: J.K. Rowling"
-                        value={bookAuthor}
-                        onChange={(e) => setBookAuthor(e.target.value)}
-                      />
-                    </div>
-                    <div className="flex items-start gap-2 p-3 rounded-lg bg-secondary/10 text-sm">
-                      <AlertTriangle className="w-4 h-4 text-secondary mt-0.5 flex-shrink-0" />
-                      <p className="text-muted-foreground">
-                        Sistema antifraude: você precisará responder perguntas para verificar sua leitura.
-                      </p>
-                    </div>
-                    <Button 
-                      variant="hero" 
-                      className="w-full" 
-                      onClick={handleAddBook}
-                      disabled={!bookTitle.trim() || !bookAuthor.trim()}
-                    >
-                      Continuar
-                    </Button>
-                  </div>
-                )}
-
-                {verificationStep === 1 && (
-                  <div className="space-y-4 py-4">
-                    <div className="p-4 bg-muted/30 rounded-lg">
-                      <p className="text-sm text-muted-foreground mb-1">Livro:</p>
-                      <p className="font-semibold">{bookTitle}</p>
-                      <p className="text-sm text-muted-foreground">{bookAuthor}</p>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <p className="font-medium">{questions[verificationAnswers.length]?.question}</p>
-                      <div className="space-y-2">
-                        {questions[verificationAnswers.length]?.options.map((option, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleVerificationAnswer(idx)}
-                            className="w-full p-3 text-left rounded-lg border border-border hover:border-secondary hover:bg-secondary/5 transition-all"
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-center gap-1">
-                      {questions.map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={`w-2 h-2 rounded-full transition-all ${
-                            idx < verificationAnswers.length
-                              ? "bg-secondary"
-                              : idx === verificationAnswers.length
-                              ? "bg-secondary/50"
-                              : "bg-muted"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {verificationStep === 2 && (
-                  <div className="py-6 text-center">
-                    {isVerified ? (
-                      <>
-                        <div className="w-16 h-16 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-4">
-                          <Check className="w-8 h-8 text-success" />
-                        </div>
-                        <p className="font-semibold mb-2">{bookTitle}</p>
-                        <p className="text-sm text-muted-foreground mb-4">por {bookAuthor}</p>
-                        <p className="text-sm text-muted-foreground mb-6">
-                          Parabéns! O livro foi adicionado à sua estante e sua contagem foi atualizada.
-                        </p>
-                        <Button variant="hero" onClick={resetAddBook}>
-                          Fechar
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="w-16 h-16 rounded-full bg-destructive/20 flex items-center justify-center mx-auto mb-4">
-                          <X className="w-8 h-8 text-destructive" />
-                        </div>
-                        <p className="font-semibold mb-2">Verificação não concluída</p>
-                        <p className="text-sm text-muted-foreground mb-6">
-                          Você indicou que ainda não terminou de ler o livro. Adicione-o quando concluir a leitura!
-                        </p>
-                        <Button variant="outline" onClick={resetAddBook}>
-                          Tentar novamente
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </DialogContent>
-            </Dialog>
+          <div className="mb-4">
+            <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Sistema de Evolução</p>
+            <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Ranking Literário</h1>
+            <p className="text-muted-foreground max-w-xl">
+              Evolua através de engajamento, consistência e dedicação. Acumule tochas completando atividades, desafios e mantendo sua sequência.
+            </p>
           </div>
         </header>
+
+        {/* How it works */}
+        <div className="editorial-card p-5 mb-8 animate-fade-in" style={{ animationDelay: "0.05s" }}>
+          <h2 className="font-semibold mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-accent" />
+            Como ganhar tochas 🔥
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+              <Target className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Missões</p>
+                <p className="text-xs text-muted-foreground">Diárias, semanais e mensais</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+              <BookOpen className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Atividades</p>
+                <p className="text-xs text-muted-foreground">Capítulos, quizzes e trilhas</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+              <Flame className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Sequência</p>
+                <p className="text-xs text-muted-foreground">Bônus por dias consecutivos</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+              <Calendar className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Consistência</p>
+                <p className="text-xs text-muted-foreground">Frequência de uso semanal</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Tier Selector */}
         <div className="editorial-card p-5 mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }} data-tutorial="ranking-tiers">
           <div className="flex items-center gap-2 mb-4">
-            <BookOpen className="w-5 h-5 text-secondary" />
+            <Trophy className="w-5 h-5 text-secondary" />
             <h2 className="font-semibold">Selecione o Patamar</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
-            {rankingTiers.map(({ tier, books, label }) => (
+          <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
+            {rankingTiers.map(({ tier, range, label }) => (
               <button
                 key={tier}
                 onClick={() => setSelectedTier(tier)}
@@ -318,7 +161,7 @@ const Ranking = () => {
               >
                 <RankingBadge tier={tier} showLabel={false} size="sm" />
                 <p className="font-medium mt-2 text-xs">{label}</p>
-                <p className="text-xs text-muted-foreground">{books}</p>
+                <p className="text-xs text-muted-foreground">{range} 🔥</p>
               </button>
             ))}
           </div>
@@ -334,7 +177,7 @@ const Ranking = () => {
                   Ranking {tierConfig[selectedTier].label}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {tierUsers.length} leitores neste patamar
+                  {tierUsers.length} participantes neste patamar
                 </p>
               </div>
             </div>
@@ -362,8 +205,8 @@ const Ranking = () => {
               </h3>
               <div className="flex justify-center gap-4 mt-3 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Livros</p>
-                  <p className="font-semibold">{top3[1]?.booksRead}</p>
+                  <p className="text-muted-foreground">Tochas</p>
+                  <p className="font-semibold">{top3[1]?.points} 🔥</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Sequência</p>
@@ -385,8 +228,8 @@ const Ranking = () => {
               </h3>
               <div className="flex justify-center gap-4 mt-3">
                 <div>
-                  <p className="text-muted-foreground text-sm">Livros</p>
-                  <p className="font-semibold">{top3[0]?.booksRead}</p>
+                  <p className="text-muted-foreground text-sm">Tochas</p>
+                  <p className="font-semibold">{top3[0]?.points} 🔥</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground text-sm">Sequência</p>
@@ -407,8 +250,8 @@ const Ranking = () => {
               </h3>
               <div className="flex justify-center gap-4 mt-3 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Livros</p>
-                  <p className="font-semibold">{top3[2]?.booksRead}</p>
+                  <p className="text-muted-foreground">Tochas</p>
+                  <p className="font-semibold">{top3[2]?.points} 🔥</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Sequência</p>
@@ -451,7 +294,7 @@ const Ranking = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-secondary">{user.booksRead} livros</p>
+                    <p className="font-semibold text-secondary">{user.points} 🔥</p>
                     <p className="text-xs text-muted-foreground">{user.streak} dias</p>
                   </div>
                 </div>
@@ -463,7 +306,7 @@ const Ranking = () => {
         {tierUsers.length === 0 && (
           <div className="text-center py-12 editorial-card">
             <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-serif text-lg font-semibold mb-2">Nenhum leitor neste patamar</h3>
+            <h3 className="font-serif text-lg font-semibold mb-2">Nenhum participante neste patamar</h3>
             <p className="text-muted-foreground">
               Seja o primeiro a alcançar o nível {tierConfig[selectedTier].label}!
             </p>
