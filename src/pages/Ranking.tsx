@@ -203,6 +203,7 @@ const Ranking = () => {
               <div className="grid grid-cols-3 gap-3 mb-4 animate-fade-in">
                 {/* 2nd Place */}
                 <div className={`ranking-podium-card mt-4 ${isInPromotionZone(2) ? 'ranking-promotion-zone' : ''}`}>
+                  <span className="ranking-podium-position">2º</span>
                   <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-2 text-base font-semibold">
                     {top3[1]?.avatar}
                   </div>
@@ -216,6 +217,7 @@ const Ranking = () => {
 
                 {/* 1st Place */}
                 <div className={`ranking-podium-card ranking-podium-first ${isInPromotionZone(1) ? 'ranking-promotion-zone' : ''}`}>
+                  <span className="ranking-podium-position ranking-podium-position-first">1º</span>
                   <Crown className="w-5 h-5 text-accent mx-auto mb-1" />
                   <div className="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-2 text-lg font-semibold text-accent">
                     {top3[0]?.avatar}
@@ -230,6 +232,7 @@ const Ranking = () => {
 
                 {/* 3rd Place */}
                 <div className={`ranking-podium-card mt-6 ${isInPromotionZone(3) ? 'ranking-promotion-zone' : ''}`}>
+                  <span className="ranking-podium-position">3º</span>
                   <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-2 text-base font-semibold">
                     {top3[2]?.avatar}
                   </div>
@@ -243,52 +246,68 @@ const Ranking = () => {
               </div>
             )}
 
-            {/* Full Ranking List */}
-            <div className="ranking-list-card overflow-hidden animate-fade-in">
-              <div className="divide-y divide-border/40">
-                {tierUsers.map((user, index) => {
-                  const position = index + 1;
-                  const inPromotion = isInPromotionZone(position);
-                  const isCurrentUser = user.name === "Você";
-                  return (
-                    <div
-                      key={user.id}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors ${
-                        inPromotion ? 'ranking-row-promotion' : 'hover:bg-muted/20'
-                      } ${isCurrentUser ? 'ranking-row-current' : ''}`}
-                    >
-                      <span className={`text-base font-bold w-7 text-center ${
-                        inPromotion ? 'text-accent' : 'text-muted-foreground'
-                      }`}>
-                        {position}
-                      </span>
-                      {inPromotion && (
-                        <ArrowUp className="w-3.5 h-3.5 text-accent -ml-1" />
-                      )}
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-medium text-sm ${
-                        inPromotion ? 'bg-accent/20 text-accent' : 'bg-muted'
-                      }`}>
-                        {user.avatar}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`font-medium text-sm truncate ${isCurrentUser ? 'text-accent' : ''}`}>
-                          {user.name}
-                          {isCurrentUser && (
-                            <span className="ml-1.5 text-xs opacity-70">(você)</span>
+            {/* Full Ranking List (starting from #4) */}
+            {restUsers.length > 0 && (
+              <div className="ranking-list-card overflow-hidden animate-fade-in">
+                <div className="divide-y divide-border/40">
+                  {restUsers.map((user, index) => {
+                    const position = index + 4;
+                    const inPromotion = isInPromotionZone(position);
+                    const isCurrentUser = user.name === "Você";
+                    const isLastPromoted = position === selectedTierInfo.slots;
+
+                    return (
+                      <div key={user.id}>
+                        <div
+                          className={`flex items-center gap-3 px-4 py-3 transition-colors ${
+                            inPromotion ? 'ranking-row-promotion' : 'hover:bg-muted/20'
+                          } ${isCurrentUser ? 'ranking-row-current' : ''}`}
+                        >
+                          <span className={`text-base font-bold w-7 text-center ${
+                            inPromotion ? 'text-accent' : 'text-muted-foreground'
+                          }`}>
+                            {position}
+                          </span>
+                          {inPromotion && (
+                            <ArrowUp className="w-3.5 h-3.5 text-accent -ml-1" />
                           )}
-                        </p>
+                          <div className={`w-9 h-9 rounded-full flex items-center justify-center font-medium text-sm ${
+                            inPromotion ? 'bg-accent/20 text-accent' : 'bg-muted'
+                          }`}>
+                            {user.avatar}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`font-medium text-sm truncate ${isCurrentUser ? 'text-accent' : ''}`}>
+                              {user.name}
+                              {isCurrentUser && (
+                                <span className="ml-1.5 text-xs opacity-70">(você)</span>
+                              )}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className={`font-bold text-sm ${inPromotion ? 'text-accent' : 'text-foreground'}`}>
+                              {user.xp} XP
+                            </p>
+                            <p className="text-xs text-muted-foreground">{user.streak}d</p>
+                          </div>
+                        </div>
+                        {/* Zona de classificação divider after the last promoted user */}
+                        {isLastPromoted && (
+                          <div className="ranking-zone-divider">
+                            <div className="ranking-zone-line" />
+                            <span className="ranking-zone-label">
+                              <ArrowUp className="w-3.5 h-3.5" />
+                              Zona de Classificação
+                            </span>
+                            <div className="ranking-zone-line" />
+                          </div>
+                        )}
                       </div>
-                      <div className="text-right">
-                        <p className={`font-bold text-sm ${inPromotion ? 'text-accent' : 'text-foreground'}`}>
-                          {user.xp} XP
-                        </p>
-                        <p className="text-xs text-muted-foreground">{user.streak}d</p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {tierUsers.length === 0 && (
               <div className="text-center py-12 ranking-list-card">
