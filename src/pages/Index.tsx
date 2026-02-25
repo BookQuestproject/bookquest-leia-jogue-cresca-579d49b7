@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAdmin } from "@/hooks/useAdmin";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Castle, Sparkles, Repeat } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
@@ -34,6 +35,7 @@ const bookThemes = {
 const Index = () => {
   const navigate = useNavigate();
   const { activeTrail } = useActiveTrail();
+  const { isAdmin } = useAdmin();
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -420,7 +422,7 @@ const Index = () => {
 
             {/* Streak Card */}
             <div className="editorial-card p-5 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-              <StreakFlame days={userStats.streak} showInfo={true} />
+              <StreakFlame days={userStats.streak} showInfo={true} isAdmin={isAdmin} />
             </div>
 
             {/* Daily Missions */}
