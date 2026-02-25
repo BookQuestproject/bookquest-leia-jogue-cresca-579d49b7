@@ -131,7 +131,7 @@ export const AdminGroupSessionsPanel = () => {
                 {upcomingSessions.map((session) => (
                   <div
                     key={session.id}
-                    className="p-4 rounded-xl bg-secondary/50 border border-border/50"
+                    className="p-4 rounded-xl bg-muted border border-border/50"
                   >
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div>

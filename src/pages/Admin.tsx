@@ -200,7 +200,7 @@ const IndividualSessionsPanel = ({ sessions }: { sessions: MentorshipSession[] }
               <h3 className="font-semibold mb-3">Próximas ({upcomingSessions.length})</h3>
               <div className="space-y-2">
                 {upcomingSessions.map((session) => (
-                  <div key={session.id} className="p-4 rounded-xl bg-secondary/50 border border-border/50">
+                  <div key={session.id} className="p-4 rounded-xl bg-muted border border-border/50">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2 mb-1">

@@ -506,7 +506,7 @@ const QuizOnboarding = () => {
             <h2 className="text-2xl font-bold text-primary mb-4">{genre?.title}</h2>
             <p className="text-lg text-muted-foreground mb-6">{genre?.description}</p>
             
-            <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-secondary rounded-xl">
+            <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted rounded-xl">
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">Nível</p>
                 <p className="font-bold capitalize">{profile.level}</p>
@@ -521,7 +521,7 @@ const QuizOnboarding = () => {
               <h3 className="font-bold mb-4">Livros recomendados para você:</h3>
               <div className="space-y-3">
                 {recommendedBooks.map((book, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 bg-secondary/50 rounded-xl">
+                  <div key={index} className="flex items-center gap-3 p-3 bg-muted rounded-xl">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                       <BookOpen className="w-5 h-5 text-primary" />
                     </div>

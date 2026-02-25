@@ -115,7 +115,7 @@ const Perfil = () => {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-secondary border-2 border-background flex items-center justify-center hover:bg-secondary/80 transition-colors disabled:opacity-50"
+                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-secondary border-2 border-background flex items-center justify-center hover:bg-secondary/80 transition-colors disabled:opacity-50 text-secondary-foreground"
                 >
                   {uploading ? (
                     <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -135,7 +135,7 @@ const Perfil = () => {
                       Premium
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-muted-foreground text-xs font-bold">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-bold">
                       Free
                     </span>
                   )}
@@ -143,7 +143,7 @@ const Perfil = () => {
                 <p className="text-muted-foreground mb-4">{userEmail}</p>
                 
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-3 rounded-xl bg-secondary">
+                  <div className="text-center p-3 rounded-xl bg-muted">
                     {statsLoading ? (
                       <Skeleton className="h-6 w-8 mx-auto mb-1" />
                     ) : (
@@ -151,7 +151,7 @@ const Perfil = () => {
                     )}
                     <div className="text-xs text-muted-foreground">Livros</div>
                   </div>
-                  <div className="text-center p-3 rounded-xl bg-secondary">
+                  <div className="text-center p-3 rounded-xl bg-muted">
                     {statsLoading ? (
                       <Skeleton className="h-6 w-8 mx-auto mb-1" />
                     ) : (
@@ -162,7 +162,7 @@ const Perfil = () => {
                     )}
                     <div className="text-xs text-muted-foreground">Capítulos</div>
                   </div>
-                  <div className="text-center p-3 rounded-xl bg-secondary">
+                  <div className="text-center p-3 rounded-xl bg-muted">
                     {statsLoading ? (
                       <Skeleton className="h-6 w-12 mx-auto mb-1" />
                     ) : (
@@ -213,15 +213,15 @@ const Perfil = () => {
                 </div>
               ) : (
                 <div className="space-y-3 mt-4">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-muted">
                     <span className="text-sm text-muted-foreground">Tempo total</span>
                     <span className="font-bold text-primary">{formatTime(stats.totalReadingTime)}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-muted">
                     <span className="text-sm text-muted-foreground">Livros iniciados</span>
                     <span className="font-bold text-info">{stats.booksStarted}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-secondary">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-muted">
                     <span className="text-sm text-muted-foreground">Média por capítulo</span>
                     <span className="font-bold text-accent">{formatTime(Math.round(stats.averageReadingTime))}</span>
                   </div>
@@ -265,7 +265,7 @@ const Perfil = () => {
             {readingHistory.map((book) => (
               <div
                 key={book.id}
-                className="flex items-center gap-4 p-4 rounded-xl bg-secondary"
+                className="flex items-center gap-4 p-4 rounded-xl bg-muted"
               >
                 <div className="w-12 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
                   <BookOpen className="w-6 h-6 text-primary" />

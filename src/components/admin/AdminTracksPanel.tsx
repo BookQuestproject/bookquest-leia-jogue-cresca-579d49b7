@@ -108,7 +108,7 @@ export const AdminTracksPanel = () => {
           {tracks.map((track) => (
             <div
               key={track.id}
-              className="p-4 rounded-xl bg-secondary/50 border border-border/50"
+              className="p-4 rounded-xl bg-muted border border-border/50"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">

@@ -109,7 +109,7 @@ export const AdminBookSuggestionsPanel = () => {
 
     return (
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div className="p-4 rounded-xl bg-secondary/50 border border-border/50">
+        <div className="p-4 rounded-xl bg-muted border border-border/50">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
@@ -283,7 +283,7 @@ export const AdminBookSuggestionsPanel = () => {
 
           {selectedSuggestion && (
             <div className="space-y-4 py-4">
-              <div className="p-4 rounded-xl bg-secondary/50">
+              <div className="p-4 rounded-xl bg-muted">
                 <h4 className="font-bold">{selectedSuggestion.title}</h4>
                 <p className="text-sm text-muted-foreground">
                   por {selectedSuggestion.author || "Autor não informado"}

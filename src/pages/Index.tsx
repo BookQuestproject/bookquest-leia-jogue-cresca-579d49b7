@@ -455,7 +455,7 @@ const Index = () => {
                         <div className="flex-1 h-1 bg-muted/60 rounded overflow-hidden">
                           <div 
                             className={`h-full rounded ${
-                              mission.completed ? "bg-accent" : "bg-secondary"
+                              mission.completed ? "bg-accent" : "bg-primary"
                             }`}
                             style={{ width: `${(mission.progress / mission.goal) * 100}%` }}
                           />
