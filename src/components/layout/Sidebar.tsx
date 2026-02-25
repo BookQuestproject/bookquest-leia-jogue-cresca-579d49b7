@@ -13,7 +13,6 @@ import {
   MessageSquare,
   Sparkles,
   Lock,
-  Flame,
   Newspaper,
   LogIn,
   LogOut,
@@ -63,20 +62,9 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
         </Link>
       </div>
 
-      {/* User Stats Quick View */}
-      <div className="px-5 py-2 border-b border-sidebar-border" data-tutorial="user-stats">
-        {user ? (
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-1.5 text-accent">
-              <Flame className="w-4 h-4" />
-              <span className="font-semibold">0</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Trophy className="w-4 h-4" />
-              <span className="font-medium">Bronze</span>
-            </div>
-          </div>
-        ) : (
+      {/* Login CTA for unauthenticated users */}
+      {!user && (
+        <div className="px-5 py-2 border-b border-sidebar-border">
           <Link
             to="/auth"
             className="flex items-center gap-2 text-sm text-secondary hover:text-secondary/80 transition-colors"
@@ -84,8 +72,8 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             <LogIn className="w-4 h-4" />
             <span className="font-medium">Entrar / Cadastrar</span>
           </Link>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Navigation - all items unified */}
       <nav className="flex-1 px-2 py-2 overflow-y-auto" data-tutorial="sidebar-nav">
