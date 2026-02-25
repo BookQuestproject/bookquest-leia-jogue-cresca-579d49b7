@@ -201,6 +201,7 @@ const ChapterReading = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
   const [isTimerError, setIsTimerError] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -350,6 +351,19 @@ const ChapterReading = () => {
   };
 
   const handleBackToTrail = () => {
+    if (readingState === "reflection") {
+      setShowExitConfirm(true);
+      return;
+    }
+    navigate(`/trilhas/${bookId}`);
+  };
+
+  const handleConfirmExit = async () => {
+    // Revert completion — clear progress so chapter is NOT marked as done
+    if (user) {
+      await clearProgress();
+    }
+    setShowExitConfirm(false);
     navigate(`/trilhas/${bookId}`);
   };
 
@@ -391,6 +405,32 @@ const ChapterReading = () => {
           <ArrowLeft className="w-4 h-4" />
           Voltar para {book.title}
         </button>
+
+        {/* Exit Confirmation Dialog */}
+        <AlertDialog open={showExitConfirm} onOpenChange={setShowExitConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-destructive" />
+                </div>
+                <AlertDialogTitle>Sair da reflexão?</AlertDialogTitle>
+              </div>
+              <AlertDialogDescription className="text-sm leading-relaxed">
+                Se você sair agora, <strong>todo o seu progresso neste capítulo será perdido</strong> e ele <strong>não será concluído</strong>. Você precisará ler novamente para desbloqueá-lo.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Continuar respondendo</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmExit}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Sair e perder progresso
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* Intro State - Explain how it works */}
         {readingState === "intro" && (
