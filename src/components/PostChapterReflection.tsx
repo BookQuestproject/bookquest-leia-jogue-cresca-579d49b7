@@ -69,19 +69,49 @@ interface Props {
 
 // ─── Scoring helpers ─────────────────────────────────────────────
 
+function isGibberish(text: string): boolean {
+  const trimmed = text.trim().toLowerCase();
+  // Check for repeated character patterns (e.g. "aaaa", "asdasd")
+  if (/(.)\1{4,}/.test(trimmed)) return true;
+  // Check for very short repeated sequences (e.g. "ababab", "xyzxyz")
+  if (/^(.{1,4})\1{2,}$/.test(trimmed)) return true;
+  // Check ratio of unique chars to length — gibberish tends to have low variety relative to word count
+  const words = trimmed.split(/\s+/).filter(w => w.length > 0);
+  // If long text but very few actual words
+  if (trimmed.length > 30 && words.length < 3) return true;
+  // Check if most "words" are nonsense (no vowels or too short)
+  const realWords = words.filter(w => w.length >= 2 && /[aeiouyáéíóúâêôãõ]/.test(w));
+  if (words.length >= 3 && realWords.length / words.length < 0.4) return true;
+  // Random keyboard smash: too many consonant clusters
+  const consonantClusters = trimmed.match(/[bcdfghjklmnpqrstvwxz]{5,}/g);
+  if (consonantClusters && consonantClusters.length >= 1) return true;
+  return false;
+}
+
 function scoreOpenAnswer(answer: string, keywords: string[]): number {
   if (!answer.trim()) return 0;
-  const len = answer.trim().length;
+  const trimmed = answer.trim();
+
+  // Gibberish / nonsense detection
+  if (isGibberish(trimmed)) return 0;
+
+  const len = trimmed.length;
+  const words = trimmed.split(/\s+/).filter(w => w.length > 0);
+
+  // Require at least 3 real words for any meaningful score
+  if (words.length < 3) return 1;
+
   let score = 0;
-  if (len < 20) score = 1;
-  else if (len < 80) score = 2;
+  if (len < 40) score = 1;
+  else if (len < 100) score = 2;
   else score = 3;
 
-  const lower = answer.toLowerCase();
+  const lower = trimmed.toLowerCase();
   const kwHits = keywords.filter(k => lower.includes(k.toLowerCase())).length;
   if (kwHits >= 2) score += 1;
+  else if (kwHits === 0 && score >= 2) score -= 1; // Penalty: long text but zero relevance
 
-  return Math.min(score, 4); // max 4 XP per open question
+  return Math.min(Math.max(score, 0), 4);
 }
 
 function scoreMultipleChoice(selected: number, correct: number, partial: number[]): number {
@@ -185,7 +215,7 @@ const PostChapterReflection = ({
       case "character": {
         const { choice, justification } = answer || {};
         xp = choice !== undefined ? 2 : 0;
-        if (justification && justification.trim().length > 15) xp += 2;
+        if (justification && justification.trim().length > 15 && !isGibberish(justification)) xp += 2;
         break;
       }
       case "theme":
@@ -519,17 +549,19 @@ const PostChapterReflection = ({
 
         {/* Feedback for open/prediction */}
         {showFeedback && (currentQ?.type === "open" || currentQ?.type === "prediction") && (
-          <div className="p-4 rounded-lg bg-accent/10">
+          <div className={`p-4 rounded-lg ${xpPerQuestion[currentIdx] === 0 ? "bg-destructive/10" : "bg-accent/10"}`}>
             <p className="font-semibold mb-1 flex items-center gap-2">
               <Star className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
               +{xpPerQuestion[currentIdx]} XP
             </p>
             <p className="text-sm text-muted-foreground">
-              {(answers[currentIdx] || "").length > 80
-                ? "Excelente reflexão! Resposta bem desenvolvida."
-                : (answers[currentIdx] || "").length > 20
-                ? "Boa reflexão! Tente desenvolver mais nas próximas."
-                : "Resposta registrada. Tente aprofundar mais suas reflexões!"}
+              {xpPerQuestion[currentIdx] === 0
+                ? "Resposta não reconhecida. Tente escrever uma reflexão real sobre o capítulo."
+                : xpPerQuestion[currentIdx] >= 4
+                ? "Excelente reflexão! Resposta bem desenvolvida e relevante."
+                : xpPerQuestion[currentIdx] >= 2
+                ? "Boa reflexão! Tente incluir mais detalhes do capítulo."
+                : "Resposta breve. Desenvolva mais para ganhar mais XP!"}
             </p>
           </div>
         )}
