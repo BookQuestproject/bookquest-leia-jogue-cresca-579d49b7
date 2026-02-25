@@ -39,8 +39,8 @@ const AchievementBadge = ({ achievement, showProgress = true, size = 'md' }: Ach
           <div
             className={`relative rounded-xl text-center transition-all duration-300 ${sizeClasses[size]} ${
               achievement.earned
-                ? 'bg-secondary hover:bg-secondary/80 hover:scale-105 cursor-pointer'
-                : 'bg-secondary/30 opacity-60'
+                ? 'bg-muted hover:bg-muted/80 hover:scale-105 cursor-pointer'
+                : 'bg-muted/50 opacity-60'
             }`}
           >
             {/* Badge icon */}

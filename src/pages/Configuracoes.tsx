@@ -81,21 +81,21 @@ const Configuracoes = () => {
               </h2>
             </div>
             <div className="divide-y divide-border">
-              <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+              <button className="w-full flex items-center justify-between p-4 hover:bg-muted transition-colors">
                 <div>
                   <p className="font-medium">Nome de exibição</p>
                   <p className="text-sm text-muted-foreground">Você</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </button>
-              <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+              <button className="w-full flex items-center justify-between p-4 hover:bg-muted transition-colors">
                 <div>
                   <p className="font-medium">Email</p>
                   <p className="text-sm text-muted-foreground">usuario@email.com</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </button>
-              <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+              <button className="w-full flex items-center justify-between p-4 hover:bg-muted transition-colors">
                 <div>
                   <p className="font-medium">Alterar senha</p>
                   <p className="text-sm text-muted-foreground">••••••••</p>
@@ -178,14 +178,14 @@ const Configuracoes = () => {
               </h2>
             </div>
             <div className="divide-y divide-border">
-              <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+              <button className="w-full flex items-center justify-between p-4 hover:bg-muted transition-colors">
                 <div>
                   <p className="font-medium">Meta diária de leitura</p>
                   <p className="text-sm text-muted-foreground">{readingPreferences.dailyGoal} minutos por dia</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </button>
-              <button className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors">
+              <button className="w-full flex items-center justify-between p-4 hover:bg-muted transition-colors">
                 <div>
                   <p className="font-medium">Gêneros preferidos</p>
                   <p className="text-sm text-muted-foreground">{readingPreferences.preferredGenres.join(", ")}</p>
@@ -226,7 +226,7 @@ const Configuracoes = () => {
               </h2>
             </div>
             <div className="p-4">
-              <button className="w-full flex items-center justify-between hover:bg-secondary/50 p-2 rounded-lg transition-colors">
+              <button className="w-full flex items-center justify-between hover:bg-muted p-2 rounded-lg transition-colors">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🇧🇷</span>
                   <span className="font-medium">Português (Brasil)</span>

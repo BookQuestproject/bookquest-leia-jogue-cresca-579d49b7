@@ -278,7 +278,7 @@ const Mentoria = () => {
                   {upcomingEnrollments.map((p) => (
                     <div
                       key={p.id}
-                      className="p-3 rounded-xl bg-secondary"
+                      className="p-3 rounded-xl bg-muted"
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-semibold text-sm">

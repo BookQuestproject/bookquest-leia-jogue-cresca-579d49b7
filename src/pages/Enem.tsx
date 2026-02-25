@@ -139,19 +139,19 @@ const Enem = () => {
         <div className="glass-card rounded-2xl p-6">
           <h2 className="text-lg font-bold mb-4">Seu Progresso</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 rounded-xl bg-secondary">
+            <div className="text-center p-4 rounded-xl bg-muted">
               <p className="text-2xl font-bold text-primary">0</p>
               <p className="text-xs text-muted-foreground">Obras lidas</p>
             </div>
-            <div className="text-center p-4 rounded-xl bg-secondary">
+            <div className="text-center p-4 rounded-xl bg-muted">
               <p className="text-2xl font-bold text-accent">0</p>
               <p className="text-xs text-muted-foreground">Resumos vistos</p>
             </div>
-            <div className="text-center p-4 rounded-xl bg-secondary">
+            <div className="text-center p-4 rounded-xl bg-muted">
               <p className="text-2xl font-bold text-success">0</p>
               <p className="text-xs text-muted-foreground">Questões feitas</p>
             </div>
-            <div className="text-center p-4 rounded-xl bg-secondary">
+            <div className="text-center p-4 rounded-xl bg-muted">
               <p className="text-2xl font-bold text-info">0%</p>
               <p className="text-xs text-muted-foreground">Taxa de acerto</p>
             </div>

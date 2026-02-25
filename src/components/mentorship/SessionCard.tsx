@@ -30,7 +30,7 @@ export const SessionCard = ({
           ? "border-primary bg-primary/5"
           : isFull
           ? "border-border/30 bg-muted/30 opacity-60"
-          : "border-border/50 bg-secondary/30 hover:border-primary/30"
+          : "border-border/50 bg-muted hover:border-primary/30"
       }`}
     >
       <div className="flex items-center justify-between gap-4">

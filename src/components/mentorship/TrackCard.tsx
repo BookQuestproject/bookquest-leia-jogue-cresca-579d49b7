@@ -21,7 +21,7 @@ export const TrackCard = ({ track, isSelected, onSelect }: TrackCardProps) => {
       className={`w-full text-left p-5 rounded-2xl border-2 transition-all duration-300 ${
         isSelected
           ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
-          : "border-border/50 bg-secondary/30 hover:border-primary/50 hover:bg-secondary/50"
+          : "border-border/50 bg-muted hover:border-primary/50 hover:bg-muted/80"
       }`}
     >
       <div className="flex items-start gap-4">

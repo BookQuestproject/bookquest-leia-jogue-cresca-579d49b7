@@ -66,7 +66,7 @@ const AchievementsSection = () => {
             {Math.round((earnedCount / totalAchievements) * 100)}%
           </span>
         </div>
-        <div className="w-full bg-secondary rounded-full h-2.5">
+        <div className="w-full bg-muted rounded-full h-2.5">
           <div 
             className="bg-gradient-to-r from-primary to-accent h-2.5 rounded-full transition-all duration-500"
             style={{ width: `${(earnedCount / totalAchievements) * 100}%` }}
