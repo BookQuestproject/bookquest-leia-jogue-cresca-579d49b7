@@ -209,6 +209,23 @@ const ChapterReading = () => {
   const chapter = book?.chapters.find(c => c.id === Number(chapterId));
   const themeColor = book?.themeColor || "350 45% 32%";
 
+  // Block browser back button during reflection
+  useEffect(() => {
+    if (readingState !== "reflection") return;
+
+    // Push a dummy state so pressing back triggers popstate instead of leaving
+    window.history.pushState({ reflectionGuard: true }, "");
+
+    const handlePopState = () => {
+      // Re-push state to keep the user on the page and show confirmation
+      window.history.pushState({ reflectionGuard: true }, "");
+      setShowExitConfirm(true);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [readingState]);
+
   // Restore progress when loaded
   useEffect(() => {
     if (!progressLoading && progress && !hasRestoredProgress && !progress.is_completed) {
