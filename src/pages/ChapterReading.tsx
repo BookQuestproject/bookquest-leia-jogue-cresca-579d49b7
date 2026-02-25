@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Play, Pause, CheckCircle, Clock, BookOpen, Timer, HelpCircle, Sparkles, AlertCircle } from "lucide-react";
+import PostChapterReflection from "@/components/PostChapterReflection";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
@@ -177,7 +178,7 @@ const bookData: Record<string, {
 
 import ReadingCountdown from "@/components/ReadingCountdown";
 
-type ReadingState = "intro" | "countdown" | "reading" | "quiz" | "completed";
+type ReadingState = "intro" | "countdown" | "reading" | "reflection" | "completed";
 
 const ChapterReading = () => {
   const { bookId, chapterId } = useParams();
@@ -188,10 +189,9 @@ const ChapterReading = () => {
   const [readingState, setReadingState] = useState<ReadingState>("intro");
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
   const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
   const [isTimerError, setIsTimerError] = useState(false);
+  const [earnedXp, setEarnedXp] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const book = bookId ? bookData[bookId] : null;
@@ -330,21 +330,12 @@ const ChapterReading = () => {
       await markAsCompleted(elapsedTime);
     }
     
-    if (chapter?.question) {
-      setReadingState("quiz");
-    } else {
-      setReadingState("completed");
-    }
+    // Always go to reflection (AI-generated questions)
+    setReadingState("reflection");
   };
 
-  const handleAnswerSubmit = () => {
-    if (selectedAnswer !== null) {
-      setShowResult(true);
-    }
-  };
-
-  const handleQuizComplete = async () => {
-    // Keep the completed record (already marked in handleChapterComplete)
+  const handleReflectionComplete = (xp: number) => {
+    setEarnedXp(xp);
     setReadingState("completed");
   };
 
@@ -574,91 +565,17 @@ const ChapterReading = () => {
           </div>
         )}
 
-        {/* Quiz State */}
-        {readingState === "quiz" && chapter.question && (
-          <div className="animate-fade-in space-y-6">
-            <div className="text-center mb-4">
-              <div 
-                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ background: `hsl(${themeColor} / 0.15)` }}
-              >
-                <HelpCircle className="w-8 h-8" style={{ color: `hsl(${themeColor})` }} />
-              </div>
-              <p className="text-sm text-muted-foreground mb-1">Você leu por {formatTimeReadable(elapsedTime)}</p>
-              <h2 className="text-xl font-serif font-semibold">Pergunta do Capítulo</h2>
-            </div>
-
-            <div className="bg-card rounded-xl p-6 border border-border">
-              <p className="text-lg mb-6">{chapter.question.text}</p>
-              
-              <div className="space-y-3">
-                {chapter.question.options.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={() => !showResult && setSelectedAnswer(index)}
-                    disabled={showResult}
-                    className={`w-full text-left p-4 rounded-lg border transition-all ${
-                      showResult
-                        ? index === chapter.question!.correctAnswer
-                          ? 'bg-accent/20 border-accent text-accent-foreground'
-                          : index === selectedAnswer
-                          ? 'bg-destructive/20 border-destructive'
-                          : 'bg-muted/50 border-border'
-                        : selectedAnswer === index
-                        ? 'border-2'
-                        : 'bg-muted/50 border-border hover:bg-muted'
-                    }`}
-                    style={{
-                      borderColor: !showResult && selectedAnswer === index ? `hsl(${themeColor})` : undefined,
-                    }}
-                  >
-                    <span className="font-medium mr-2">{String.fromCharCode(65 + index)}.</span>
-                    {option}
-                  </button>
-                ))}
-              </div>
-
-              {showResult && (
-                <div className={`mt-6 p-4 rounded-lg ${
-                  selectedAnswer === chapter.question.correctAnswer
-                    ? 'bg-accent/10'
-                    : 'bg-amber-500/10'
-                }`}>
-                  <p className="font-semibold mb-1">
-                    {selectedAnswer === chapter.question.correctAnswer
-                      ? '🎉 Correto!'
-                      : '💡 Não foi dessa vez...'}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {chapter.question.explanation}
-                  </p>
-                </div>
-              )}
-
-              {!showResult ? (
-                <Button 
-                  className="w-full mt-6"
-                  disabled={selectedAnswer === null}
-                  onClick={handleAnswerSubmit}
-                  style={{ 
-                    background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
-                  }}
-                >
-                  Confirmar Resposta
-                </Button>
-              ) : (
-                <Button 
-                  className="w-full mt-6"
-                  onClick={handleQuizComplete}
-                  style={{ 
-                    background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
-                  }}
-                >
-                  Continuar
-                </Button>
-              )}
-            </div>
-          </div>
+        {/* Reflection State - AI-powered post-chapter questions */}
+        {readingState === "reflection" && (
+          <PostChapterReflection
+            bookTitle={book.title}
+            chapterTitle={chapter.title}
+            chapterId={chapter.id}
+            totalChapters={book.chapters.length}
+            themeColor={themeColor}
+            readingTime={elapsedTime}
+            onComplete={handleReflectionComplete}
+          />
         )}
 
         {/* Completed State */}
@@ -678,15 +595,13 @@ const ChapterReading = () => {
               </p>
             </div>
 
-            <div 
-              className="bg-card rounded-xl p-6 border border-border inline-block"
-            >
+            <div className="bg-card rounded-xl p-6 border border-border inline-block">
               <div className="flex items-center gap-6 justify-center">
                 <div className="text-center">
                   <p className="text-3xl font-bold" style={{ color: `hsl(${themeColor})` }}>
-                    +25
+                    +{earnedXp}
                   </p>
-                  <p className="text-xs text-muted-foreground">pontos</p>
+                  <p className="text-xs text-muted-foreground">XP ganhos</p>
                 </div>
                 <div className="w-px h-10 bg-border" />
                 <div className="text-center">
