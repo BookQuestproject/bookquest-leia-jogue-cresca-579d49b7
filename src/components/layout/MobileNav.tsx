@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Trophy, Users, User, Target, Flame, BookMarked, LogIn } from "lucide-react";
+import { Home, BookOpen, Trophy, Users, User, Target, BookMarked, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 interface MobileNavProps {
   isPremium?: boolean;
@@ -43,11 +43,7 @@ const MobileNav = ({
           <span className="text-base font-serif font-semibold text-foreground">BookQuest</span>
         </Link>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 text-accent">
-            <Flame className="w-4 h-4" />
-            <span className="font-semibold text-sm">0</span>
-          </div>
+        <div className="flex items-center gap-3">
           <Link to="/estante" className="text-muted-foreground hover:text-foreground">
             <BookMarked className="w-5 h-5" />
           </Link>
