@@ -94,9 +94,12 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         .eq('id', user.id);
 
       if (error) throw error;
-      await fetchProfile();
+      
+      // Update local state immediately so QuizGate won't redirect back
+      setProfile(prev => prev ? { ...prev, quiz_completed: true, literary_profile: literaryProfile } : prev);
     } catch (error) {
       console.error('Error updating quiz status:', error);
+      throw error; // Re-throw so callers know it failed
     }
   };
 
