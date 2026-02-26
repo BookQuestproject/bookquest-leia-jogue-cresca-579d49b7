@@ -12,39 +12,39 @@
 
 @layer base {
   :root {
-    /* BookQuest Light Theme — #F8FAFC bg, #2563EB primary */
+    /* BookQuest Light Theme — Navy & Gold */
     --background: 210 40% 98%;
-    --foreground: 215 25% 17%;
+    --foreground: 230 70% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 17%;
+    --card-foreground: 230 70% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 17%;
+    --popover-foreground: 230 70% 15%;
 
-    /* Primary: #2563EB */
-    --primary: 217 91% 53%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Deep Navy #0B1854 */
+    --primary: 230 76% 19%;
+    --primary-foreground: 48 96% 53%;
 
-    /* Secondary: #1D4ED8 */
-    --secondary: 224 76% 48%;
+    /* Secondary: Royal Blue #1E3A8A */
+    --secondary: 224 66% 33%;
     --secondary-foreground: 0 0% 100%;
 
     /* Muted */
     --muted: 210 16% 93%;
     --muted-foreground: 215 16% 47%;
 
-    /* Accent: #FACC15 */
+    /* Accent: Gold #FACC15 */
     --accent: 48 96% 53%;
-    --accent-foreground: 215 25% 17%;
+    --accent-foreground: 230 76% 19%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders: #E2E8F0 */
+    /* Borders */
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 217 91% 53%;
+    --ring: 230 76% 19%;
 
     --radius: 0.5rem;
 
@@ -53,7 +53,7 @@
     /* Ranking Colors */
     --bronze: 30 50% 40%;
     --gold: 48 96% 53%;
-    --sapphire: 217 91% 53%;
+    --sapphire: 230 76% 40%;
     --emerald: 150 40% 35%;
     --amethyst: 275 40% 50%;
     --ruby: 350 55% 40%;
@@ -62,7 +62,7 @@
 
     /* Book Theme Colors */
     --theme-fantasy: 48 96% 53%;
-    --theme-ocean: 217 91% 53%;
+    --theme-ocean: 230 76% 40%;
     --theme-epic: 275 40% 35%;
     --theme-mystery: 200 35% 30%;
     --theme-adventure: 150 40% 28%;
@@ -71,69 +71,69 @@
     --olive: 140 12% 33%;
     --success: 150 50% 40%;
     --warning: 48 96% 53%;
-    --info: 217 91% 53%;
+    --info: 230 76% 40%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 53%), hsl(224 76% 48%));
-    --gradient-secondary: linear-gradient(135deg, hsl(224 76% 48%), hsl(221 73% 40%));
+    --gradient-primary: linear-gradient(135deg, hsl(230 76% 19%), hsl(224 66% 33%));
+    --gradient-secondary: linear-gradient(135deg, hsl(224 66% 33%), hsl(221 73% 40%));
     --gradient-achievement: linear-gradient(135deg, hsl(48 96% 53%), hsl(40 90% 50%));
 
     --sidebar-background: 210 40% 97%;
-    --sidebar-foreground: 215 25% 17%;
-    --sidebar-primary: 217 91% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 91% 96%;
-    --sidebar-accent-foreground: 215 25% 17%;
+    --sidebar-foreground: 230 70% 15%;
+    --sidebar-primary: 230 76% 19%;
+    --sidebar-primary-foreground: 48 96% 53%;
+    --sidebar-accent: 230 76% 96%;
+    --sidebar-accent-foreground: 230 70% 15%;
     --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 217 91% 53%;
+    --sidebar-ring: 230 76% 19%;
   }
 
   .dark {
-    /* Dark Theme — #0F172A bg, #3B82F6 primary */
-    --background: 222 47% 11%;
+    /* Dark Theme — Deep Navy */
+    --background: 230 70% 8%;
     --foreground: 210 40% 96%;
 
-    /* Cards: #1E293B */
-    --card: 217 33% 17%;
+    /* Cards */
+    --card: 230 50% 14%;
     --card-foreground: 210 40% 96%;
 
-    --popover: 217 33% 17%;
+    --popover: 230 50% 14%;
     --popover-foreground: 210 40% 96%;
 
-    /* Primary: #3B82F6 */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Navy */
+    --primary: 230 76% 25%;
+    --primary-foreground: 48 96% 53%;
 
-    /* Secondary / Active: #2563EB */
-    --secondary: 217 91% 53%;
+    /* Secondary */
+    --secondary: 224 66% 40%;
     --secondary-foreground: 0 0% 100%;
 
     /* Muted */
-    --muted: 217 33% 17%;
+    --muted: 230 50% 14%;
     --muted-foreground: 215 20% 65%;
 
-    /* Accent: #FACC15 */
+    /* Accent: Gold */
     --accent: 48 96% 53%;
-    --accent-foreground: 222 47% 11%;
+    --accent-foreground: 230 70% 8%;
 
     --amber: 48 96% 53%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 96%;
 
-    /* Borders: #334155 */
-    --border: 217 19% 27%;
-    --input: 217 19% 27%;
-    --ring: 217 91% 60%;
+    /* Borders */
+    --border: 230 30% 22%;
+    --input: 230 30% 22%;
+    --ring: 48 96% 53%;
 
-    --sidebar-background: 222 47% 9%;
+    --sidebar-background: 230 70% 7%;
     --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
+    --sidebar-primary: 230 76% 25%;
+    --sidebar-primary-foreground: 48 96% 53%;
+    --sidebar-accent: 230 50% 14%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 217 19% 27%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 230 30% 22%;
+    --sidebar-ring: 48 96% 53%;
   }
 }
 
