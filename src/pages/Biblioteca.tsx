@@ -198,8 +198,8 @@ const Biblioteca = () => {
               onClick={() => setSelectedGenre(genre)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                 selectedGenre === genre
-                  ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
-                  : "bg-muted text-primary hover:bg-muted/80"
+                  ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                  : "bg-muted text-foreground hover:bg-muted/80"
               }`}
             >
               {genre}

@@ -3,7 +3,7 @@ import { TrendingUp, Flame, Brain, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
-import logoWordmark from "@/assets/logo-wordmark.jpeg";
+import logoWordmark from "@/assets/logo-wordmark.png";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -32,8 +32,8 @@ const Landing = () => {
           {/* Logo */}
           <div className="mb-10 animate-fade-in">
             <div className="inline-flex flex-col items-center gap-4 mb-2">
-              <img src={logoCrown} alt="BookQuest Crown" className="w-20 h-20 object-contain drop-shadow-lg" />
-              <img src={logoWordmark} alt="BookQuest" className="h-12 object-contain" />
+              <img src={logoCrown} alt="BookQuest Crown" className="w-28 h-28 object-contain drop-shadow-lg" />
+              <img src={logoWordmark} alt="BookQuest" className="h-16 object-contain drop-shadow-md" />
             </div>
           </div>
 

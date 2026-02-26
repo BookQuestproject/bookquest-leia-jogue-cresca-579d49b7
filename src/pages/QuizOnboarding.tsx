@@ -426,8 +426,8 @@ const QuizOnboarding = () => {
                       onClick={() => setProfile({ ...profile, level: level.id as any })}
                       className={`p-3 rounded-xl text-center transition-all ${
                         profile.level === level.id
-                          ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
-                          : "bg-muted text-primary hover:bg-muted/80"
+                          ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                          : "bg-muted text-foreground hover:bg-muted/80"
                       }`}
                     >
                       <p className="font-bold text-sm">{level.label}</p>
@@ -449,8 +449,8 @@ const QuizOnboarding = () => {
                       onClick={() => setProfile({ ...profile, timePerDay: time })}
                       className={`p-3 rounded-xl text-center transition-all ${
                         profile.timePerDay === time
-                          ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
-                          : "bg-muted text-primary hover:bg-muted/80"
+                          ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                          : "bg-muted text-foreground hover:bg-muted/80"
                       }`}
                     >
                       <p className="font-bold">{time}</p>
@@ -591,8 +591,8 @@ const QuizOnboarding = () => {
                 onClick={() => handleOptionSelect(index)}
                 className={`w-full p-4 rounded-xl text-left transition-all ${
                   selectedOption === index
-                    ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
-                    : "bg-muted text-primary hover:bg-muted/80"
+                    ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                    : "bg-muted text-foreground hover:bg-muted/80"
                 }`}
               >
                 {option}

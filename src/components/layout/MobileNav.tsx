@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Home, BookOpen, Trophy, Users, User, Target, BookMarked, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
+import logoWordmark from "@/assets/logo-wordmark.png";
 interface MobileNavProps {
   isPremium?: boolean;
 }
@@ -38,8 +39,8 @@ const MobileNav = ({
       {/* Top Header */}
       <header className="fixed top-0 left-0 right-0 h-14 border-b border-sidebar-border flex items-center justify-between px-4 z-50 bg-muted">
         <Link to="/home" className="flex items-center gap-2">
-          <img src={logoCrown} alt="BookQuest" className="w-8 h-8 rounded object-contain" />
-          <span className="text-base font-serif font-semibold text-foreground">BookQuest</span>
+          <img src={logoCrown} alt="BookQuest" className="w-10 h-10 object-contain" />
+          <img src={logoWordmark} alt="BookQuest" className="h-6 object-contain" />
         </Link>
         
         <div className="flex items-center gap-3">
