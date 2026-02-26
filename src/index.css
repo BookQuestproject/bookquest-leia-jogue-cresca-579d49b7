@@ -13,13 +13,13 @@
 @layer base {
   :root {
     /* BookQuest — Single Dark Theme (Navy & Gold) */
-    --background: 230 76% 25%;
+    --background: 230 70% 8%;
     --foreground: 210 40% 96%;
 
-    --card: 230 70% 20%;
+    --card: 230 50% 14%;
     --card-foreground: 210 40% 96%;
 
-    --popover: 230 70% 20%;
+    --popover: 230 50% 14%;
     --popover-foreground: 210 40% 96%;
 
     /* Primary: Navy */
@@ -31,8 +31,8 @@
     --secondary-foreground: 0 0% 100%;
 
     /* Muted */
-    --muted: 230 70% 20%;
-    --muted-foreground: 215 20% 75%;
+    --muted: 230 50% 14%;
+    --muted-foreground: 215 20% 65%;
 
     /* Accent: Gold */
     --accent: 48 96% 53%;
@@ -42,8 +42,8 @@
     --destructive-foreground: 210 40% 96%;
 
     /* Borders */
-    --border: 230 50% 35%;
-    --input: 230 50% 35%;
+    --border: 230 30% 22%;
+    --input: 230 30% 22%;
     --ring: 48 96% 53%;
 
     --radius: 0.5rem;
@@ -78,13 +78,13 @@
     --gradient-secondary: linear-gradient(135deg, hsl(224 66% 33%), hsl(221 73% 40%));
     --gradient-achievement: linear-gradient(135deg, hsl(48 96% 53%), hsl(40 90% 50%));
 
-    --sidebar-background: 230 76% 20%;
+    --sidebar-background: 230 70% 7%;
     --sidebar-foreground: 210 40% 96%;
     --sidebar-primary: 230 76% 25%;
     --sidebar-primary-foreground: 48 96% 53%;
-    --sidebar-accent: 230 70% 28%;
+    --sidebar-accent: 230 50% 14%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 230 50% 35%;
+    --sidebar-border: 230 30% 22%;
     --sidebar-ring: 48 96% 53%;
   }
 }
@@ -141,9 +141,9 @@
   html body {
     background: radial-gradient(
       ellipse 120% 100% at 50% 40%,
-      hsl(230 76% 28%) 0%,
-      hsl(230 76% 25%) 40%,
-      hsl(230 76% 22%) 100%
+      hsl(220 40% 13%) 0%,
+      hsl(222 47% 11%) 40%,
+      hsl(224 50% 9%) 100%
     ) !important;
     background-attachment: fixed !important;
   }
