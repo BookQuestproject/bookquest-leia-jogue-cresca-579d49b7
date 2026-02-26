@@ -198,7 +198,7 @@ const Perfil = () => {
           </div>
 
           {/* Reading Stats Card */}
-          <div className="glass-card rounded-3xl p-6 lg:p-8 w-full lg:w-80 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <div className="glass-card rounded-3xl p-6 lg:p-8 w-full lg:w-80 animate-fade-in" data-tutorial="perfil-stats" style={{ animationDelay: "0.1s" }}>
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
                 <Clock className="w-8 h-8 text-primary" />
@@ -251,7 +251,7 @@ const Perfil = () => {
         </div>
 
         {/* Achievements Section - Dynamic */}
-        <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <div className="mb-8 animate-fade-in" data-tutorial="perfil-achievements" style={{ animationDelay: "0.2s" }}>
           <AchievementsSection />
         </div>
 

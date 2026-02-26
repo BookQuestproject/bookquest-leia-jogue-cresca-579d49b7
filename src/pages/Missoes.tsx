@@ -157,7 +157,7 @@ const Missoes = () => {
         </section>
 
         {/* Weekly Missions */}
-        <section className="mb-10 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+        <section className="mb-10 animate-fade-in" data-tutorial="missoes-weekly" style={{ animationDelay: "0.3s" }}>
           <div className="flex items-center gap-2 mb-5">
             <Star className="w-5 h-5 text-accent" />
             <h2 className="font-serif text-xl font-semibold">Missões Semanais</h2>
@@ -171,7 +171,7 @@ const Missoes = () => {
         </section>
 
         {/* Monthly Missions */}
-        <section className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
+        <section className="animate-fade-in" data-tutorial="missoes-monthly" style={{ animationDelay: "0.4s" }}>
           <div className="flex items-center gap-2 mb-5">
             <Trophy className="w-5 h-5 text-accent" />
             <h2 className="font-serif text-xl font-semibold">Missões Mensais</h2>
