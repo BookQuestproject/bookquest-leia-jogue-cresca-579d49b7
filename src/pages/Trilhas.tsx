@@ -172,7 +172,7 @@ const Trilhas = () => {
       chapters: book.chapters,
     });
     toast.success(`"${book.title}" definida como sua trilha atual!`);
-    navigate("/");
+    navigate("/home");
   };
 
   // Hook must be called unconditionally at the top level

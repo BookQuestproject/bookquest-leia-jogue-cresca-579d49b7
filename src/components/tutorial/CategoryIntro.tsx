@@ -106,7 +106,7 @@ const CategoryIntro = () => {
   // Detect first visit to a category
   useEffect(() => {
     const path = location.pathname;
-    if (path === "/" || path === "/auth" || path === "/quiz-onboarding" || path === "/quiz") return;
+    if (path === "/" || path === "/home" || path === "/auth" || path === "/quiz-onboarding" || path === "/quiz") return;
 
     const stepsForCategory = categorySteps[path];
     if (!stepsForCategory) return;

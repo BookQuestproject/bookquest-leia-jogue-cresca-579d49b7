@@ -34,60 +34,53 @@ const TUTORIAL_COMPLETED_KEY = "bookquest_spotlight_tutorial_done";
 
 /** Tutorial steps — only for the Home page. Other pages use CategoryIntro. */
 const allSteps: TutorialStep[] = [
-  // --- Welcome ---
   {
     target: '[data-tutorial="welcome-header"]',
     title: "Bem-vindo ao BookQuest! 🎉",
     description: "Esta é sua página inicial. Aqui você acompanha sua jornada de leitura, trilhas, ranking e missões.",
-    route: "/",
+    route: "/home",
     placement: "bottom",
   },
-  // --- Sidebar navigation ---
   {
     target: '[data-tutorial="sidebar-nav"]',
     title: "Navegação Principal",
     description: "Use o menu lateral para acessar todas as seções: trilhas, missões, ranking, comunidades e muito mais.",
-    route: "/",
+    route: "/home",
     placement: "right",
   },
-  // --- Premium CTA ---
   {
     target: '[data-tutorial="premium-cta"]',
     title: "Plano Premium",
     description: "Assine o Premium para desbloquear Mentoria Literária, Book Club e conteúdos ENEM com acompanhamento semanal.",
-    route: "/",
+    route: "/home",
     placement: "right",
   },
-  // --- Trail card (auto-skips if no active trail) ---
   {
     target: '[data-tutorial="current-trail"]',
     title: "Trilha Atual",
     description: "Este card mostra o livro que você está lendo. Clique em 'Continuar Leitura' para retomar de onde parou.",
-    route: "/",
+    route: "/home",
     placement: "bottom",
   },
-  // --- Ranking card on Home sidebar ---
   {
     target: '[data-tutorial="ranking-card"]',
     title: "Ranking Literário",
     description: "Suba de patamar lendo mais livros: de Bronze a Lendário. Veja aqui o que falta para o próximo nível.",
-    route: "/",
+    route: "/home",
     placement: "left",
   },
-  // --- Streak card ---
   {
     target: '[data-tutorial="streak-card"]',
     title: "Sequência de Leitura 🔥",
     description: "Aqui você vê sua sequência de leitura (streak). Leia todos os dias para manter a chama acesa!",
-    route: "/",
+    route: "/home",
     placement: "left",
   },
-  // --- Daily missions on Home ---
   {
     target: '[data-tutorial="missions-card"]',
     title: "Missões Diárias",
     description: "Complete missões todos os dias para ganhar pontos e manter sua sequência ativa!",
-    route: "/",
+    route: "/home",
     placement: "left",
   },
 ];
@@ -117,7 +110,7 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
 
   // Auto-start on first visit to home
   useEffect(() => {
-    if (!isCompleted && location.pathname === "/") {
+    if (!isCompleted && location.pathname === "/home") {
       const timer = setTimeout(() => setIsActive(true), 2000);
       return () => clearTimeout(timer);
     }

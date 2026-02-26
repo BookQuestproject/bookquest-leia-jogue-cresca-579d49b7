@@ -40,7 +40,7 @@ const Admin = () => {
 
   // Redirect if not admin
   if (!isAdmin) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   const pendingSuggestions = suggestions.filter((s) => s.status === "pending").length;

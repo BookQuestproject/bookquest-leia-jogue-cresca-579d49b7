@@ -353,7 +353,7 @@ const QuizOnboarding = () => {
       await updateQuizCompleted(literaryProfile);
       // Reset tutorial so it triggers on home page
       localStorage.removeItem("bookquest_spotlight_tutorial_done");
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error('Error finishing quiz:', error);
       setIsSaving(false);
@@ -366,7 +366,7 @@ const QuizOnboarding = () => {
       await updateQuizCompleted({ skipped: true, completedAt: new Date().toISOString() });
       // Reset tutorial so it triggers on home page
       localStorage.removeItem("bookquest_spotlight_tutorial_done");
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error('Error skipping quiz:', error);
       setIsSaving(false);

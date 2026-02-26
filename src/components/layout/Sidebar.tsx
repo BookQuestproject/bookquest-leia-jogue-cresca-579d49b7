@@ -33,7 +33,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const { profile } = useProfile();
 
   const menuItems = [
-    { icon: Home, label: "Home", path: "/" },
+    { icon: Home, label: "Home", path: "/home" },
     { icon: BookOpen, label: "Trilhas Literárias", path: "/trilhas" },
     { icon: BookMarked, label: "Minha Estante", path: "/estante" },
     { icon: Library, label: "Biblioteca", path: "/biblioteca" },
@@ -54,7 +54,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
     <aside data-tutorial="sidebar-full" className="fixed left-0 top-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
       {/* Logo */}
       <div className="px-5 py-3 border-b border-sidebar-border">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/home" className="flex items-center gap-3">
           <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
             <BookOpen className="w-4 h-4 text-secondary-foreground" />
           </div>
