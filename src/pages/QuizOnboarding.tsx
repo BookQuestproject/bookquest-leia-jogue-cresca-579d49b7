@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles, User, Clock, Layers } from "lucide-react";
+import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
 import { Input } from "@/components/ui/input";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
+import logoCrown from "@/assets/logo-crown-transparent.png";
 
 interface ReaderProfile {
   name: string;
+  ageRange: "10-13" | "14-17" | "18-25" | "26+";
   level: "iniciante" | "intermediario" | "avancado";
   timePerDay: number;
 }
@@ -124,85 +126,70 @@ interface BookRecommendation {
   pages: number;
   readingTime: string;
   level: "iniciante" | "intermediario" | "avancado";
+  minAge: number; // minimum age for this book
 }
 
-// Page limits by experience level for progressive difficulty
 const pageLimitsByLevel = {
-  iniciante: { min: 0, max: 300 },       // Beginners: up to 300 pages
-  intermediario: { min: 200, max: 600 }, // Intermediate: 200-600 pages
-  avancado: { min: 400, max: 2000 },     // Advanced: 400+ pages
+  iniciante: { min: 0, max: 300 },
+  intermediario: { min: 200, max: 600 },
+  avancado: { min: 400, max: 2000 },
 };
 
 const genreBooks: Record<string, BookRecommendation[]> = {
   fantasia: [
-    // Iniciante (shorter books)
-    { title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", pages: 96, readingTime: "2h", level: "iniciante" },
-    { title: "Coraline", author: "Neil Gaiman", pages: 176, readingTime: "3h", level: "iniciante" },
-    { title: "O Hobbit", author: "J.R.R. Tolkien", pages: 288, readingTime: "6h", level: "iniciante" },
-    // Intermediário
-    { title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", pages: 264, readingTime: "6h", level: "intermediario" },
-    { title: "Percy Jackson - O Ladrão de Raios", author: "Rick Riordan", pages: 400, readingTime: "8h", level: "intermediario" },
-    { title: "As Crônicas de Nárnia", author: "C.S. Lewis", pages: 512, readingTime: "12h", level: "intermediario" },
-    // Avançado (longer books)
-    { title: "O Nome do Vento", author: "Patrick Rothfuss", pages: 656, readingTime: "15h", level: "avancado" },
-    { title: "O Senhor dos Anéis - Trilogia", author: "J.R.R. Tolkien", pages: 1200, readingTime: "30h", level: "avancado" },
-    { title: "Duna", author: "Frank Herbert", pages: 896, readingTime: "22h", level: "avancado" },
+    { title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", pages: 96, readingTime: "2h", level: "iniciante", minAge: 10 },
+    { title: "Coraline", author: "Neil Gaiman", pages: 176, readingTime: "3h", level: "iniciante", minAge: 10 },
+    { title: "O Hobbit", author: "J.R.R. Tolkien", pages: 288, readingTime: "6h", level: "iniciante", minAge: 12 },
+    { title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", pages: 264, readingTime: "6h", level: "intermediario", minAge: 10 },
+    { title: "Percy Jackson - O Ladrão de Raios", author: "Rick Riordan", pages: 400, readingTime: "8h", level: "intermediario", minAge: 10 },
+    { title: "As Crônicas de Nárnia", author: "C.S. Lewis", pages: 512, readingTime: "12h", level: "intermediario", minAge: 10 },
+    { title: "O Nome do Vento", author: "Patrick Rothfuss", pages: 656, readingTime: "15h", level: "avancado", minAge: 16 },
+    { title: "O Senhor dos Anéis - Trilogia", author: "J.R.R. Tolkien", pages: 1200, readingTime: "30h", level: "avancado", minAge: 14 },
+    { title: "Duna", author: "Frank Herbert", pages: 896, readingTime: "22h", level: "avancado", minAge: 16 },
   ],
   misterio: [
-    // Iniciante
-    { title: "E Não Sobrou Nenhum", author: "Agatha Christie", pages: 272, readingTime: "5h", level: "iniciante" },
-    { title: "Assassinato no Expresso do Oriente", author: "Agatha Christie", pages: 208, readingTime: "4h", level: "iniciante" },
-    { title: "O Caso dos Dez Negrinhos", author: "Agatha Christie", pages: 192, readingTime: "4h", level: "iniciante" },
-    // Intermediário
-    { title: "A Garota no Trem", author: "Paula Hawkins", pages: 336, readingTime: "7h", level: "intermediario" },
-    { title: "Gone Girl", author: "Gillian Flynn", pages: 432, readingTime: "9h", level: "intermediario" },
-    { title: "O Código Da Vinci", author: "Dan Brown", pages: 480, readingTime: "10h", level: "intermediario" },
-    // Avançado
-    { title: "O Silêncio dos Inocentes", author: "Thomas Harris", pages: 352, readingTime: "8h", level: "avancado" },
-    { title: "Sherlock Holmes - Obra Completa", author: "Arthur Conan Doyle", pages: 1408, readingTime: "35h", level: "avancado" },
-    { title: "Crime e Castigo", author: "Fiódor Dostoiévski", pages: 672, readingTime: "16h", level: "avancado" },
+    { title: "E Não Sobrou Nenhum", author: "Agatha Christie", pages: 272, readingTime: "5h", level: "iniciante", minAge: 14 },
+    { title: "Assassinato no Expresso do Oriente", author: "Agatha Christie", pages: 208, readingTime: "4h", level: "iniciante", minAge: 14 },
+    { title: "O Caso dos Dez Negrinhos", author: "Agatha Christie", pages: 192, readingTime: "4h", level: "iniciante", minAge: 14 },
+    { title: "A Garota no Trem", author: "Paula Hawkins", pages: 336, readingTime: "7h", level: "intermediario", minAge: 18 },
+    { title: "Gone Girl", author: "Gillian Flynn", pages: 432, readingTime: "9h", level: "intermediario", minAge: 18 },
+    { title: "O Código Da Vinci", author: "Dan Brown", pages: 480, readingTime: "10h", level: "intermediario", minAge: 16 },
+    { title: "O Silêncio dos Inocentes", author: "Thomas Harris", pages: 352, readingTime: "8h", level: "avancado", minAge: 18 },
+    { title: "Sherlock Holmes - Obra Completa", author: "Arthur Conan Doyle", pages: 1408, readingTime: "35h", level: "avancado", minAge: 14 },
+    { title: "Crime e Castigo", author: "Fiódor Dostoiévski", pages: 672, readingTime: "16h", level: "avancado", minAge: 16 },
   ],
   romance: [
-    // Iniciante
-    { title: "A Culpa é das Estrelas", author: "John Green", pages: 288, readingTime: "5h", level: "iniciante" },
-    { title: "Querido John", author: "Nicholas Sparks", pages: 276, readingTime: "5h", level: "iniciante" },
-    { title: "Simplesmente Acontece", author: "Cecelia Ahern", pages: 256, readingTime: "5h", level: "iniciante" },
-    // Intermediário
-    { title: "Como Eu Era Antes de Você", author: "Jojo Moyes", pages: 384, readingTime: "7h", level: "intermediario" },
-    { title: "Me Chame Pelo Seu Nome", author: "André Aciman", pages: 248, readingTime: "5h", level: "intermediario" },
-    { title: "Orgulho e Preconceito", author: "Jane Austen", pages: 432, readingTime: "9h", level: "intermediario" },
-    // Avançado
-    { title: "O Morro dos Ventos Uivantes", author: "Emily Brontë", pages: 400, readingTime: "9h", level: "avancado" },
-    { title: "Anna Karenina", author: "Liev Tolstói", pages: 864, readingTime: "20h", level: "avancado" },
-    { title: "Os Miseráveis", author: "Victor Hugo", pages: 1488, readingTime: "35h", level: "avancado" },
+    { title: "A Culpa é das Estrelas", author: "John Green", pages: 288, readingTime: "5h", level: "iniciante", minAge: 14 },
+    { title: "Querido John", author: "Nicholas Sparks", pages: 276, readingTime: "5h", level: "iniciante", minAge: 14 },
+    { title: "Simplesmente Acontece", author: "Cecelia Ahern", pages: 256, readingTime: "5h", level: "iniciante", minAge: 14 },
+    { title: "Como Eu Era Antes de Você", author: "Jojo Moyes", pages: 384, readingTime: "7h", level: "intermediario", minAge: 16 },
+    { title: "Me Chame Pelo Seu Nome", author: "André Aciman", pages: 248, readingTime: "5h", level: "intermediario", minAge: 18 },
+    { title: "Orgulho e Preconceito", author: "Jane Austen", pages: 432, readingTime: "9h", level: "intermediario", minAge: 14 },
+    { title: "O Morro dos Ventos Uivantes", author: "Emily Brontë", pages: 400, readingTime: "9h", level: "avancado", minAge: 16 },
+    { title: "Anna Karenina", author: "Liev Tolstói", pages: 864, readingTime: "20h", level: "avancado", minAge: 18 },
+    { title: "Os Miseráveis", author: "Victor Hugo", pages: 1488, readingTime: "35h", level: "avancado", minAge: 16 },
   ],
   "nao-ficcao": [
-    // Iniciante
-    { title: "O Poder do Hábito", author: "Charles Duhigg", pages: 288, readingTime: "6h", level: "iniciante" },
-    { title: "Pai Rico, Pai Pobre", author: "Robert Kiyosaki", pages: 208, readingTime: "4h", level: "iniciante" },
-    { title: "Mindset", author: "Carol S. Dweck", pages: 280, readingTime: "6h", level: "iniciante" },
-    // Intermediário
-    { title: "Sapiens", author: "Yuval Noah Harari", pages: 464, readingTime: "10h", level: "intermediario" },
-    { title: "Thinking, Fast and Slow", author: "Daniel Kahneman", pages: 512, readingTime: "12h", level: "intermediario" },
-    { title: "O Gene Egoísta", author: "Richard Dawkins", pages: 496, readingTime: "11h", level: "intermediario" },
-    // Avançado
-    { title: "Uma Breve História do Tempo", author: "Stephen Hawking", pages: 256, readingTime: "7h", level: "avancado" },
-    { title: "Cosmos", author: "Carl Sagan", pages: 432, readingTime: "10h", level: "avancado" },
-    { title: "Homo Deus", author: "Yuval Noah Harari", pages: 528, readingTime: "13h", level: "avancado" },
+    { title: "O Poder do Hábito", author: "Charles Duhigg", pages: 288, readingTime: "6h", level: "iniciante", minAge: 14 },
+    { title: "Pai Rico, Pai Pobre", author: "Robert Kiyosaki", pages: 208, readingTime: "4h", level: "iniciante", minAge: 14 },
+    { title: "Mindset", author: "Carol S. Dweck", pages: 280, readingTime: "6h", level: "iniciante", minAge: 14 },
+    { title: "Sapiens", author: "Yuval Noah Harari", pages: 464, readingTime: "10h", level: "intermediario", minAge: 16 },
+    { title: "Thinking, Fast and Slow", author: "Daniel Kahneman", pages: 512, readingTime: "12h", level: "intermediario", minAge: 18 },
+    { title: "O Gene Egoísta", author: "Richard Dawkins", pages: 496, readingTime: "11h", level: "intermediario", minAge: 18 },
+    { title: "Uma Breve História do Tempo", author: "Stephen Hawking", pages: 256, readingTime: "7h", level: "avancado", minAge: 16 },
+    { title: "Cosmos", author: "Carl Sagan", pages: 432, readingTime: "10h", level: "avancado", minAge: 16 },
+    { title: "Homo Deus", author: "Yuval Noah Harari", pages: 528, readingTime: "13h", level: "avancado", minAge: 18 },
   ],
   aventura: [
-    // Iniciante
-    { title: "As Aventuras de Pi", author: "Yann Martel", pages: 288, readingTime: "6h", level: "iniciante" },
-    { title: "A Volta ao Mundo em 80 Dias", author: "Júlio Verne", pages: 224, readingTime: "5h", level: "iniciante" },
-    { title: "Robinson Crusoé", author: "Daniel Defoe", pages: 272, readingTime: "6h", level: "iniciante" },
-    // Intermediário
-    { title: "Jogos Vorazes", author: "Suzanne Collins", pages: 400, readingTime: "8h", level: "intermediario" },
-    { title: "Maze Runner", author: "James Dashner", pages: 400, readingTime: "8h", level: "intermediario" },
-    { title: "Divergente", author: "Veronica Roth", pages: 496, readingTime: "10h", level: "intermediario" },
-    // Avançado
-    { title: "A Ilha do Tesouro", author: "Robert Louis Stevenson", pages: 304, readingTime: "7h", level: "avancado" },
-    { title: "20.000 Léguas Submarinas", author: "Júlio Verne", pages: 448, readingTime: "10h", level: "avancado" },
-    { title: "Moby Dick", author: "Herman Melville", pages: 752, readingTime: "18h", level: "avancado" },
+    { title: "As Aventuras de Pi", author: "Yann Martel", pages: 288, readingTime: "6h", level: "iniciante", minAge: 12 },
+    { title: "A Volta ao Mundo em 80 Dias", author: "Júlio Verne", pages: 224, readingTime: "5h", level: "iniciante", minAge: 10 },
+    { title: "Robinson Crusoé", author: "Daniel Defoe", pages: 272, readingTime: "6h", level: "iniciante", minAge: 12 },
+    { title: "Jogos Vorazes", author: "Suzanne Collins", pages: 400, readingTime: "8h", level: "intermediario", minAge: 14 },
+    { title: "Maze Runner", author: "James Dashner", pages: 400, readingTime: "8h", level: "intermediario", minAge: 14 },
+    { title: "Divergente", author: "Veronica Roth", pages: 496, readingTime: "10h", level: "intermediario", minAge: 14 },
+    { title: "A Ilha do Tesouro", author: "Robert Louis Stevenson", pages: 304, readingTime: "7h", level: "avancado", minAge: 12 },
+    { title: "20.000 Léguas Submarinas", author: "Júlio Verne", pages: 448, readingTime: "10h", level: "avancado", minAge: 14 },
+    { title: "Moby Dick", author: "Herman Melville", pages: 752, readingTime: "18h", level: "avancado", minAge: 16 },
   ],
 };
 
@@ -229,16 +216,40 @@ const genreInfo: Record<string, { title: string; description: string }> = {
   },
 };
 
-type QuizStep = "profile" | "questions" | "curiosity" | "result";
+// Profile steps are now part of the quiz flow
+type QuizStep = "name" | "age" | "level" | "time" | "questions" | "curiosity" | "result";
+
+const TOTAL_STEPS = 4 + questions.length; // 4 profile steps + genre questions
+
+const ageRangeToMinAge = (range: string): number => {
+  switch (range) {
+    case "10-13": return 10;
+    case "14-17": return 14;
+    case "18-25": return 18;
+    case "26+": return 26;
+    default: return 10;
+  }
+};
+
+const ageRangeToMaxAge = (range: string): number => {
+  switch (range) {
+    case "10-13": return 13;
+    case "14-17": return 17;
+    case "18-25": return 25;
+    case "26+": return 99;
+    default: return 99;
+  }
+};
 
 const QuizOnboarding = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { updateQuizCompleted } = useProfile();
   
-  const [step, setStep] = useState<QuizStep>("profile");
+  const [step, setStep] = useState<QuizStep>("name");
   const [profile, setProfile] = useState<ReaderProfile>({
     name: "",
+    ageRange: "14-17",
     level: "iniciante",
     timePerDay: 20,
   });
@@ -249,11 +260,20 @@ const QuizOnboarding = () => {
   const [resultGenre, setResultGenre] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleProfileSubmit = () => {
-    if (profile.name.trim()) {
-      setStep("questions");
+  const getCurrentStepNumber = (): number => {
+    switch (step) {
+      case "name": return 1;
+      case "age": return 2;
+      case "level": return 3;
+      case "time": return 4;
+      case "questions": return 5 + currentQuestion;
+      case "curiosity": return 5 + currentQuestion;
+      case "result": return TOTAL_STEPS;
+      default: return 1;
     }
   };
+
+  const progress = (getCurrentStepNumber() / TOTAL_STEPS) * 100;
 
   const handleOptionSelect = (optionIndex: number) => {
     setSelectedOption(optionIndex);
@@ -307,28 +327,28 @@ const QuizOnboarding = () => {
   const getRecommendedBooks = () => {
     const allBooks = genreBooks[resultGenre] || [];
     const pageLimit = pageLimitsByLevel[profile.level];
+    const userMaxAge = ageRangeToMaxAge(profile.ageRange);
     
     return allBooks.filter(book => {
-      // Filter by experience level
+      // Age filter: only show books appropriate for user's age
+      if (book.minAge > userMaxAge) return false;
+
+      // Level filter
       if (book.level !== profile.level) {
-        // Allow one level up/down for variety
         if (profile.level === "iniciante" && book.level === "avancado") return false;
         if (profile.level === "avancado" && book.level === "iniciante") return false;
       }
       
-      // Apply page limits based on user level
+      // Page limit by level
       if (book.pages > pageLimit.max) return false;
       
-      // Time filter - estimate based on daily reading time
+      // Time filter
       const readingHours = parseInt(book.readingTime);
       const estimatedDays = readingHours / (profile.timePerDay / 60);
-      
-      // For beginners with little time, prefer shorter books
       if (profile.level === "iniciante" && profile.timePerDay <= 15 && estimatedDays > 14) return false;
       
       return true;
     })
-    // Sort by pages ascending for beginners, descending for advanced
     .sort((a, b) => {
       if (profile.level === "iniciante") return a.pages - b.pages;
       if (profile.level === "avancado") return b.pages - a.pages;
@@ -342,6 +362,7 @@ const QuizOnboarding = () => {
     
     const literaryProfile = {
       name: profile.name,
+      ageRange: profile.ageRange,
       level: profile.level,
       timePerDay: profile.timePerDay,
       genre: resultGenre,
@@ -351,7 +372,6 @@ const QuizOnboarding = () => {
 
     try {
       await updateQuizCompleted(literaryProfile);
-      // Reset tutorial so it triggers on home page
       localStorage.removeItem("bookquest_spotlight_tutorial_done");
       navigate('/home');
     } catch (error) {
@@ -364,7 +384,6 @@ const QuizOnboarding = () => {
     setIsSaving(true);
     try {
       await updateQuizCompleted({ skipped: true, completedAt: new Date().toISOString() });
-      // Reset tutorial so it triggers on home page
       localStorage.removeItem("bookquest_spotlight_tutorial_done");
       navigate('/home');
     } catch (error) {
@@ -373,107 +392,248 @@ const QuizOnboarding = () => {
     }
   };
 
-  // Profile Step
-  if (step === "profile") {
+  // Shared dark wrapper matching Landing page
+  const DarkWrapper = ({ children }: { children: React.ReactNode }) => (
+    <div className="min-h-screen bg-primary text-white overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.06] via-transparent to-accent/[0.03]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-accent/[0.04] blur-[120px]" />
+      </div>
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        {children}
+      </div>
+    </div>
+  );
+
+  // Step: Name
+  if (step === "name") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <DarkWrapper>
         <div className="max-w-md w-full animate-fade-in">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="w-10 h-10 text-primary" />
-            </div>
-            <h1 className="text-3xl font-bold mb-2">Bem-vindo ao BookQuest!</h1>
-            <p className="text-muted-foreground mb-4">
-              Antes de começar, vamos descobrir seu perfil literário para personalizar sua experiência.
-            </p>
-            <button
-              onClick={handleSkipQuiz}
-              disabled={isSaving}
-              className="text-sm text-muted-foreground underline hover:text-foreground transition-colors"
-            >
-              Pular quiz e entrar direto
-            </button>
+            <img src={logoCrown} alt="BookQuest" className="w-20 h-20 object-contain mx-auto mb-6 drop-shadow-lg" />
+            <h1 className="text-3xl font-serif font-bold mb-2">Vamos começar!</h1>
+            <p className="text-white/60">Primeiro, como você quer ser chamado?</p>
           </div>
 
-          <div className="glass-card rounded-3xl p-8">
-            <div className="space-y-6">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  <User className="w-4 h-4 inline mr-2" />
-                  Como deseja ser chamado?
-                </label>
-                <Input
-                  placeholder="Seu nome de exibição"
-                  value={profile.name}
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                  className="text-lg"
-                />
-              </div>
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8">
+            <Input
+              placeholder="Digite seu nome..."
+              value={profile.name}
+              onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+              className="text-lg bg-white/[0.06] border-white/[0.1] text-white placeholder:text-white/40 focus-visible:ring-accent mb-6"
+            />
 
-              <div>
-                <label className="text-sm font-medium mb-3 block">
-                  <Layers className="w-4 h-4 inline mr-2" />
-                  Qual é o seu nível de leitura?
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: "iniciante", label: "Iniciante", desc: "Começando" },
-                    { id: "intermediario", label: "Intermediário", desc: "Leio às vezes" },
-                    { id: "avancado", label: "Avançado", desc: "Leio muito" },
-                  ].map((level) => (
-                    <button
-                      key={level.id}
-                      onClick={() => setProfile({ ...profile, level: level.id as any })}
-                      className={`p-3 rounded-xl text-center transition-all ${
-                        profile.level === level.id
-                          ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                          : "bg-muted text-foreground hover:bg-muted/80"
-                      }`}
-                    >
-                      <p className="font-bold text-sm">{level.label}</p>
-                      <p className="text-xs opacity-70">{level.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-3 block">
-                  <Clock className="w-4 h-4 inline mr-2" />
-                  Quanto tempo disponível por dia para leitura?
-                </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[10, 20, 30, 60].map((time) => (
-                    <button
-                      key={time}
-                      onClick={() => setProfile({ ...profile, timePerDay: time })}
-                      className={`p-3 rounded-xl text-center transition-all ${
-                        profile.timePerDay === time
-                          ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                          : "bg-muted text-foreground hover:bg-muted/80"
-                      }`}
-                    >
-                      <p className="font-bold">{time}</p>
-                      <p className="text-xs opacity-70">min</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <Button 
-                variant="hero" 
-                size="lg" 
-                className="w-full gap-2"
-                onClick={handleProfileSubmit}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={handleSkipQuiz}
+                disabled={isSaving}
+                className="text-sm text-white/40 underline hover:text-white/60 transition-colors"
+              >
+                Pular quiz
+              </button>
+              <Button
+                className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+                onClick={() => profile.name.trim() && setStep("age")}
                 disabled={!profile.name.trim()}
               >
-                Continuar
-                <ArrowRight className="w-5 h-5" />
+                Próxima
+                <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
+
+          <div className="mt-6">
+            <ProgressBar value={progress} max={100} />
+            <p className="text-xs text-white/40 text-center mt-2">Pergunta 1 de {TOTAL_STEPS}</p>
+          </div>
         </div>
-      </div>
+      </DarkWrapper>
+    );
+  }
+
+  // Step: Age
+  if (step === "age") {
+    const ageOptions = [
+      { id: "10-13", label: "10 a 13 anos", desc: "Pré-adolescente" },
+      { id: "14-17", label: "14 a 17 anos", desc: "Adolescente" },
+      { id: "18-25", label: "18 a 25 anos", desc: "Jovem adulto" },
+      { id: "26+", label: "26 anos ou mais", desc: "Adulto" },
+    ];
+
+    return (
+      <DarkWrapper>
+        <div className="max-w-md w-full animate-fade-in">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-serif font-bold mb-2">Qual a sua faixa etária, {profile.name}?</h1>
+            <p className="text-white/60">Isso nos ajuda a recomendar livros adequados para você.</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+            <div className="space-y-3 mb-6">
+              {ageOptions.map((age) => (
+                <button
+                  key={age.id}
+                  onClick={() => setProfile({ ...profile, ageRange: age.id as any })}
+                  className={`w-full p-4 rounded-xl text-left transition-all ${
+                    profile.ageRange === age.id
+                      ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                      : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                  }`}
+                >
+                  <p className="font-bold">{age.label}</p>
+                  <p className={`text-xs ${profile.ageRange === age.id ? "text-accent-foreground/70" : "text-white/50"}`}>{age.desc}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
+                onClick={() => setStep("name")}
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+                onClick={() => setStep("level")}
+              >
+                Próxima
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <ProgressBar value={progress} max={100} />
+            <p className="text-xs text-white/40 text-center mt-2">Pergunta 2 de {TOTAL_STEPS}</p>
+          </div>
+        </div>
+      </DarkWrapper>
+    );
+  }
+
+  // Step: Level
+  if (step === "level") {
+    const levels = [
+      { id: "iniciante", label: "Iniciante", desc: "Estou começando a ler ou leio pouco" },
+      { id: "intermediario", label: "Intermediário", desc: "Leio de vez em quando" },
+      { id: "avancado", label: "Avançado", desc: "Leio bastante e com frequência" },
+    ];
+
+    return (
+      <DarkWrapper>
+        <div className="max-w-md w-full animate-fade-in">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-serif font-bold mb-2">Qual é o seu nível de leitura?</h1>
+            <p className="text-white/60">Vamos recomendar livros do tamanho ideal para você.</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+            <div className="space-y-3 mb-6">
+              {levels.map((level) => (
+                <button
+                  key={level.id}
+                  onClick={() => setProfile({ ...profile, level: level.id as any })}
+                  className={`w-full p-4 rounded-xl text-left transition-all ${
+                    profile.level === level.id
+                      ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                      : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                  }`}
+                >
+                  <p className="font-bold">{level.label}</p>
+                  <p className={`text-xs ${profile.level === level.id ? "text-accent-foreground/70" : "text-white/50"}`}>{level.desc}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
+                onClick={() => setStep("age")}
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+                onClick={() => setStep("time")}
+              >
+                Próxima
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <ProgressBar value={progress} max={100} />
+            <p className="text-xs text-white/40 text-center mt-2">Pergunta 3 de {TOTAL_STEPS}</p>
+          </div>
+        </div>
+      </DarkWrapper>
+    );
+  }
+
+  // Step: Time per day
+  if (step === "time") {
+    const timeOptions = [
+      { value: 10, label: "10 min", desc: "Um pouquinho por dia" },
+      { value: 20, label: "20 min", desc: "Leitura leve" },
+      { value: 30, label: "30 min", desc: "Bom ritmo" },
+      { value: 60, label: "1 hora+", desc: "Leitor dedicado" },
+    ];
+
+    return (
+      <DarkWrapper>
+        <div className="max-w-md w-full animate-fade-in">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-serif font-bold mb-2">Quanto tempo por dia para leitura?</h1>
+            <p className="text-white/60">Não se preocupe, qualquer tempo é válido!</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {timeOptions.map((time) => (
+                <button
+                  key={time.value}
+                  onClick={() => setProfile({ ...profile, timePerDay: time.value })}
+                  className={`p-4 rounded-xl text-center transition-all ${
+                    profile.timePerDay === time.value
+                      ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                      : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                  }`}
+                >
+                  <p className="font-bold text-lg">{time.label}</p>
+                  <p className={`text-xs ${profile.timePerDay === time.value ? "text-accent-foreground/70" : "text-white/50"}`}>{time.desc}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="ghost"
+                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
+                onClick={() => setStep("level")}
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+                onClick={() => setStep("questions")}
+              >
+                Começar Quiz
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <ProgressBar value={progress} max={100} />
+            <p className="text-xs text-white/40 text-center mt-2">Pergunta 4 de {TOTAL_STEPS}</p>
+          </div>
+        </div>
+      </DarkWrapper>
     );
   }
 
@@ -482,21 +642,25 @@ const QuizOnboarding = () => {
     const curiosity = curiosities[curiosityIndex];
     
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <DarkWrapper>
         <div className="max-w-2xl w-full animate-fade-in">
-          <div className="glass-card rounded-3xl p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center mx-auto mb-6">
-              <Lightbulb className="w-8 h-8 text-warning" />
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
+              <Lightbulb className="w-8 h-8 text-accent" />
             </div>
-            <h2 className="text-2xl font-bold mb-4">{curiosity.title}</h2>
-            <p className="text-lg text-muted-foreground mb-8">{curiosity.text}</p>
-            <Button variant="hero" size="lg" onClick={handleContinueCuriosity}>
+            <h2 className="text-2xl font-serif font-bold mb-4">{curiosity.title}</h2>
+            <p className="text-lg text-white/60 mb-8">{curiosity.text}</p>
+            <Button
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+              size="lg"
+              onClick={handleContinueCuriosity}
+            >
               Continuar
               <ArrowRight className="w-5 h-5" />
             </Button>
           </div>
         </div>
-      </div>
+      </DarkWrapper>
     );
   }
 
@@ -506,53 +670,59 @@ const QuizOnboarding = () => {
     const recommendedBooks = getRecommendedBooks();
     
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <DarkWrapper>
         <div className="max-w-2xl w-full animate-fade-in">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6 pulse-glow">
-              <Sparkles className="w-10 h-10 text-primary" />
+            <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6 pulse-glow">
+              <Sparkles className="w-10 h-10 text-accent" />
             </div>
-            <h1 className="text-3xl font-bold mb-2">Parabéns, {profile.name}!</h1>
-            <p className="text-muted-foreground">Descobrimos seu perfil literário!</p>
+            <h1 className="text-3xl font-serif font-bold mb-2">Parabéns, {profile.name}!</h1>
+            <p className="text-white/60">Descobrimos seu perfil literário!</p>
           </div>
 
-          <div className="glass-card rounded-3xl p-8 mb-8">
-            <h2 className="text-2xl font-bold text-primary mb-4">{genre?.title}</h2>
-            <p className="text-lg text-muted-foreground mb-6">{genre?.description}</p>
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 mb-8">
+            <h2 className="text-2xl font-bold text-accent mb-4">{genre?.title}</h2>
+            <p className="text-lg text-white/60 mb-6">{genre?.description}</p>
             
-            <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted rounded-xl">
+            <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-white/[0.06] rounded-xl">
               <div className="text-center">
-                <p className="text-sm text-muted-foreground">Nível</p>
+                <p className="text-sm text-white/50">Idade</p>
+                <p className="font-bold">{profile.ageRange}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-white/50">Nível</p>
                 <p className="font-bold capitalize">{profile.level}</p>
               </div>
               <div className="text-center">
-                <p className="text-sm text-muted-foreground">Tempo/dia</p>
+                <p className="text-sm text-white/50">Tempo/dia</p>
                 <p className="font-bold">{profile.timePerDay} min</p>
               </div>
             </div>
             
-            <div className="border-t border-border pt-6">
+            <div className="border-t border-white/[0.08] pt-6">
               <h3 className="font-bold mb-4">Livros recomendados para você:</h3>
               <div className="space-y-3">
                 {recommendedBooks.map((book, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 bg-muted rounded-xl">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-primary" />
+                  <div key={index} className="flex items-center gap-3 p-3 bg-white/[0.06] rounded-xl">
+                    <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-accent" />
                     </div>
                     <div className="flex-1">
                       <p className="font-semibold text-sm">{book.title}</p>
-                      <p className="text-xs text-muted-foreground">{book.author} • {book.readingTime}</p>
+                      <p className="text-xs text-white/50">{book.author} • {book.readingTime}</p>
                     </div>
                   </div>
                 ))}
+                {recommendedBooks.length === 0 && (
+                  <p className="text-white/50 text-sm text-center py-4">Nenhum livro encontrado com os filtros atuais. Explore a biblioteca!</p>
+                )}
               </div>
             </div>
           </div>
 
           <Button 
-            variant="hero" 
-            size="lg" 
-            className="w-full gap-2"
+            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+            size="lg"
             onClick={handleFinishQuiz}
             disabled={isSaving}
           >
@@ -560,29 +730,28 @@ const QuizOnboarding = () => {
             <ArrowRight className="w-5 h-5" />
           </Button>
         </div>
-      </div>
+      </DarkWrapper>
     );
   }
 
   // Questions Step
   const question = questions[currentQuestion];
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <DarkWrapper>
       <div className="max-w-2xl w-full animate-fade-in">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">
-              Pergunta {currentQuestion + 1} de {questions.length}
+            <span className="text-sm text-white/50">
+              Pergunta {getCurrentStepNumber()} de {TOTAL_STEPS}
             </span>
-            <span className="text-sm font-medium">{Math.round(progress)}%</span>
+            <span className="text-sm font-medium text-accent">{Math.round(progress)}%</span>
           </div>
           <ProgressBar value={progress} max={100} />
         </div>
 
-        <div className="glass-card rounded-3xl p-8">
-          <h2 className="text-xl lg:text-2xl font-bold mb-6">{question.question}</h2>
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8">
+          <h2 className="text-xl lg:text-2xl font-serif font-bold mb-6">{question.question}</h2>
 
           <div className="space-y-3 mb-8">
             {question.options.map((option, index) => (
@@ -592,7 +761,7 @@ const QuizOnboarding = () => {
                 className={`w-full p-4 rounded-xl text-left transition-all ${
                   selectedOption === index
                     ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                    : "bg-muted text-foreground hover:bg-muted/80"
+                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
                 }`}
               >
                 {option}
@@ -603,7 +772,8 @@ const QuizOnboarding = () => {
           <div className="flex gap-3">
             {currentQuestion > 0 && (
               <Button
-                variant="outline"
+                variant="ghost"
+                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
                 onClick={() => {
                   setCurrentQuestion(currentQuestion - 1);
                   setAnswers(answers.slice(0, -1));
@@ -613,9 +783,17 @@ const QuizOnboarding = () => {
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             )}
+            {currentQuestion === 0 && (
+              <Button
+                variant="ghost"
+                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
+                onClick={() => setStep("time")}
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            )}
             <Button
-              variant="hero"
-              className="flex-1 gap-2"
+              className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
               onClick={handleNext}
               disabled={selectedOption === null}
             >
@@ -625,7 +803,7 @@ const QuizOnboarding = () => {
           </div>
         </div>
       </div>
-    </div>
+    </DarkWrapper>
   );
 };
 
