@@ -392,68 +392,51 @@ const QuizOnboarding = () => {
     }
   };
 
-  // Shared dark wrapper matching Landing page
-  const DarkWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen bg-primary text-white overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.06] via-transparent to-accent/[0.03]" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-accent/[0.04] blur-[120px]" />
+  // Step: Name
+  const renderNameStep = () => (
+    <div className="max-w-md w-full">
+      <div className="text-center mb-8">
+        <img src={logoCrown} alt="BookQuest" className="w-20 h-20 object-contain mx-auto mb-6 drop-shadow-lg" />
+        <h1 className="text-3xl font-serif font-bold mb-2">Vamos começar!</h1>
+        <p className="text-white/60">Primeiro, como você quer ser chamado?</p>
       </div>
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        {children}
+
+      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8">
+        <Input
+          placeholder="Digite seu nome..."
+          value={profile.name}
+          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+          className="text-lg bg-white/[0.06] border-white/[0.1] text-white placeholder:text-white/40 focus-visible:ring-accent mb-6"
+        />
+
+        <div className="flex items-center justify-between">
+          <button
+            onClick={handleSkipQuiz}
+            disabled={isSaving}
+            className="text-sm text-white/40 underline hover:text-white/60 transition-colors"
+          >
+            Pular quiz
+          </button>
+          <Button
+            className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+            onClick={() => profile.name.trim() && setStep("age")}
+            disabled={!profile.name.trim()}
+          >
+            Próxima
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <ProgressBar value={progress} max={100} />
+        <p className="text-xs text-white/40 text-center mt-2">Pergunta 1 de {TOTAL_STEPS}</p>
       </div>
     </div>
   );
 
-  // Step: Name
-  if (step === "name") {
-    return (
-      <DarkWrapper>
-        <div className="max-w-md w-full animate-fade-in">
-          <div className="text-center mb-8">
-            <img src={logoCrown} alt="BookQuest" className="w-20 h-20 object-contain mx-auto mb-6 drop-shadow-lg" />
-            <h1 className="text-3xl font-serif font-bold mb-2">Vamos começar!</h1>
-            <p className="text-white/60">Primeiro, como você quer ser chamado?</p>
-          </div>
-
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8">
-            <Input
-              placeholder="Digite seu nome..."
-              value={profile.name}
-              onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-              className="text-lg bg-white/[0.06] border-white/[0.1] text-white placeholder:text-white/40 focus-visible:ring-accent mb-6"
-            />
-
-            <div className="flex items-center justify-between">
-              <button
-                onClick={handleSkipQuiz}
-                disabled={isSaving}
-                className="text-sm text-white/40 underline hover:text-white/60 transition-colors"
-              >
-                Pular quiz
-              </button>
-              <Button
-                className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
-                onClick={() => profile.name.trim() && setStep("age")}
-                disabled={!profile.name.trim()}
-              >
-                Próxima
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <ProgressBar value={progress} max={100} />
-            <p className="text-xs text-white/40 text-center mt-2">Pergunta 1 de {TOTAL_STEPS}</p>
-          </div>
-        </div>
-      </DarkWrapper>
-    );
-  }
-
   // Step: Age
-  if (step === "age") {
+  const renderAgeStep = () => {
     const ageOptions = [
       { id: "10-13", label: "10 a 13 anos", desc: "Pré-adolescente" },
       { id: "14-17", label: "14 a 17 anos", desc: "Adolescente" },
@@ -462,60 +445,50 @@ const QuizOnboarding = () => {
     ];
 
     return (
-      <DarkWrapper>
-        <div className="max-w-md w-full animate-fade-in">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-serif font-bold mb-2">Qual a sua faixa etária, {profile.name}?</h1>
-            <p className="text-white/60">Isso nos ajuda a recomendar livros adequados para você.</p>
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-serif font-bold mb-2">Qual a sua faixa etária, {profile.name}?</h1>
+          <p className="text-white/60">Isso nos ajuda a recomendar livros adequados para você.</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+          <div className="space-y-3 mb-6">
+            {ageOptions.map((age) => (
+              <button
+                key={age.id}
+                onClick={() => setProfile({ ...profile, ageRange: age.id as any })}
+                className={`w-full p-4 rounded-xl text-left transition-all ${
+                  profile.ageRange === age.id
+                    ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                }`}
+              >
+                <p className="font-bold">{age.label}</p>
+                <p className={`text-xs ${profile.ageRange === age.id ? "text-accent-foreground/70" : "text-white/50"}`}>{age.desc}</p>
+              </button>
+            ))}
           </div>
 
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
-            <div className="space-y-3 mb-6">
-              {ageOptions.map((age) => (
-                <button
-                  key={age.id}
-                  onClick={() => setProfile({ ...profile, ageRange: age.id as any })}
-                  className={`w-full p-4 rounded-xl text-left transition-all ${
-                    profile.ageRange === age.id
-                      ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                      : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
-                  }`}
-                >
-                  <p className="font-bold">{age.label}</p>
-                  <p className={`text-xs ${profile.ageRange === age.id ? "text-accent-foreground/70" : "text-white/50"}`}>{age.desc}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                variant="ghost"
-                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
-                onClick={() => setStep("name")}
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
-                onClick={() => setStep("level")}
-              >
-                Próxima
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <ProgressBar value={progress} max={100} />
-            <p className="text-xs text-white/40 text-center mt-2">Pergunta 2 de {TOTAL_STEPS}</p>
+          <div className="flex gap-3">
+            <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/[0.08]" onClick={() => setStep("name")}>
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" onClick={() => setStep("level")}>
+              Próxima <ArrowRight className="w-4 h-4" />
+            </Button>
           </div>
         </div>
-      </DarkWrapper>
+
+        <div className="mt-6">
+          <ProgressBar value={progress} max={100} />
+          <p className="text-xs text-white/40 text-center mt-2">Pergunta 2 de {TOTAL_STEPS}</p>
+        </div>
+      </div>
     );
-  }
+  };
 
   // Step: Level
-  if (step === "level") {
+  const renderLevelStep = () => {
     const levels = [
       { id: "iniciante", label: "Iniciante", desc: "Estou começando a ler ou leio pouco" },
       { id: "intermediario", label: "Intermediário", desc: "Leio de vez em quando" },
@@ -523,60 +496,50 @@ const QuizOnboarding = () => {
     ];
 
     return (
-      <DarkWrapper>
-        <div className="max-w-md w-full animate-fade-in">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-serif font-bold mb-2">Qual é o seu nível de leitura?</h1>
-            <p className="text-white/60">Vamos recomendar livros do tamanho ideal para você.</p>
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-serif font-bold mb-2">Qual é o seu nível de leitura?</h1>
+          <p className="text-white/60">Vamos recomendar livros do tamanho ideal para você.</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+          <div className="space-y-3 mb-6">
+            {levels.map((level) => (
+              <button
+                key={level.id}
+                onClick={() => setProfile({ ...profile, level: level.id as any })}
+                className={`w-full p-4 rounded-xl text-left transition-all ${
+                  profile.level === level.id
+                    ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                }`}
+              >
+                <p className="font-bold">{level.label}</p>
+                <p className={`text-xs ${profile.level === level.id ? "text-accent-foreground/70" : "text-white/50"}`}>{level.desc}</p>
+              </button>
+            ))}
           </div>
 
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
-            <div className="space-y-3 mb-6">
-              {levels.map((level) => (
-                <button
-                  key={level.id}
-                  onClick={() => setProfile({ ...profile, level: level.id as any })}
-                  className={`w-full p-4 rounded-xl text-left transition-all ${
-                    profile.level === level.id
-                      ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                      : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
-                  }`}
-                >
-                  <p className="font-bold">{level.label}</p>
-                  <p className={`text-xs ${profile.level === level.id ? "text-accent-foreground/70" : "text-white/50"}`}>{level.desc}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                variant="ghost"
-                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
-                onClick={() => setStep("age")}
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
-                onClick={() => setStep("time")}
-              >
-                Próxima
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <ProgressBar value={progress} max={100} />
-            <p className="text-xs text-white/40 text-center mt-2">Pergunta 3 de {TOTAL_STEPS}</p>
+          <div className="flex gap-3">
+            <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/[0.08]" onClick={() => setStep("age")}>
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" onClick={() => setStep("time")}>
+              Próxima <ArrowRight className="w-4 h-4" />
+            </Button>
           </div>
         </div>
-      </DarkWrapper>
-    );
-  }
 
-  // Step: Time per day
-  if (step === "time") {
+        <div className="mt-6">
+          <ProgressBar value={progress} max={100} />
+          <p className="text-xs text-white/40 text-center mt-2">Pergunta 3 de {TOTAL_STEPS}</p>
+        </div>
+      </div>
+    );
+  };
+
+  // Step: Time
+  const renderTimeStep = () => {
     const timeOptions = [
       { value: 10, label: "10 min", desc: "Um pouquinho por dia" },
       { value: 20, label: "20 min", desc: "Leitura leve" },
@@ -585,161 +548,139 @@ const QuizOnboarding = () => {
     ];
 
     return (
-      <DarkWrapper>
-        <div className="max-w-md w-full animate-fade-in">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-serif font-bold mb-2">Quanto tempo por dia para leitura?</h1>
-            <p className="text-white/60">Não se preocupe, qualquer tempo é válido!</p>
-          </div>
-
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              {timeOptions.map((time) => (
-                <button
-                  key={time.value}
-                  onClick={() => setProfile({ ...profile, timePerDay: time.value })}
-                  className={`p-4 rounded-xl text-center transition-all ${
-                    profile.timePerDay === time.value
-                      ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                      : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
-                  }`}
-                >
-                  <p className="font-bold text-lg">{time.label}</p>
-                  <p className={`text-xs ${profile.timePerDay === time.value ? "text-accent-foreground/70" : "text-white/50"}`}>{time.desc}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                variant="ghost"
-                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
-                onClick={() => setStep("level")}
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
-                onClick={() => setStep("questions")}
-              >
-                Começar Quiz
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <ProgressBar value={progress} max={100} />
-            <p className="text-xs text-white/40 text-center mt-2">Pergunta 4 de {TOTAL_STEPS}</p>
-          </div>
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-serif font-bold mb-2">Quanto tempo por dia para leitura?</h1>
+          <p className="text-white/60">Não se preocupe, qualquer tempo é válido!</p>
         </div>
-      </DarkWrapper>
-    );
-  }
 
-  // Curiosity Step
-  if (step === "curiosity") {
-    const curiosity = curiosities[curiosityIndex];
-    
-    return (
-      <DarkWrapper>
-        <div className="max-w-2xl w-full animate-fade-in">
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
-              <Lightbulb className="w-8 h-8 text-accent" />
-            </div>
-            <h2 className="text-2xl font-serif font-bold mb-4">{curiosity.title}</h2>
-            <p className="text-lg text-white/60 mb-8">{curiosity.text}</p>
-            <Button
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
-              size="lg"
-              onClick={handleContinueCuriosity}
-            >
-              Continuar
-              <ArrowRight className="w-5 h-5" />
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            {timeOptions.map((time) => (
+              <button
+                key={time.value}
+                onClick={() => setProfile({ ...profile, timePerDay: time.value })}
+                className={`p-4 rounded-xl text-center transition-all ${
+                  profile.timePerDay === time.value
+                    ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                }`}
+              >
+                <p className="font-bold text-lg">{time.label}</p>
+                <p className={`text-xs ${profile.timePerDay === time.value ? "text-accent-foreground/70" : "text-white/50"}`}>{time.desc}</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-3">
+            <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/[0.08]" onClick={() => setStep("level")}>
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" onClick={() => setStep("questions")}>
+              Começar Quiz <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
-      </DarkWrapper>
+
+        <div className="mt-6">
+          <ProgressBar value={progress} max={100} />
+          <p className="text-xs text-white/40 text-center mt-2">Pergunta 4 de {TOTAL_STEPS}</p>
+        </div>
+      </div>
     );
-  }
+  };
 
-  // Result Step
-  if (step === "result") {
-    const genre = genreInfo[resultGenre];
-    const recommendedBooks = getRecommendedBooks();
-    
+  // Curiosity Step
+  const renderCuriosityStep = () => {
+    const curiosity = curiosities[curiosityIndex];
     return (
-      <DarkWrapper>
-        <div className="max-w-2xl w-full animate-fade-in">
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6 pulse-glow">
-              <Sparkles className="w-10 h-10 text-accent" />
-            </div>
-            <h1 className="text-3xl font-serif font-bold mb-2">Parabéns, {profile.name}!</h1>
-            <p className="text-white/60">Descobrimos seu perfil literário!</p>
+      <div className="max-w-2xl w-full">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 text-center">
+          <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
+            <Lightbulb className="w-8 h-8 text-accent" />
           </div>
-
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 mb-8">
-            <h2 className="text-2xl font-bold text-accent mb-4">{genre?.title}</h2>
-            <p className="text-lg text-white/60 mb-6">{genre?.description}</p>
-            
-            <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-white/[0.06] rounded-xl">
-              <div className="text-center">
-                <p className="text-sm text-white/50">Idade</p>
-                <p className="font-bold">{profile.ageRange}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-sm text-white/50">Nível</p>
-                <p className="font-bold capitalize">{profile.level}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-sm text-white/50">Tempo/dia</p>
-                <p className="font-bold">{profile.timePerDay} min</p>
-              </div>
-            </div>
-            
-            <div className="border-t border-white/[0.08] pt-6">
-              <h3 className="font-bold mb-4">Livros recomendados para você:</h3>
-              <div className="space-y-3">
-                {recommendedBooks.map((book, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 bg-white/[0.06] rounded-xl">
-                    <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-accent" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm">{book.title}</p>
-                      <p className="text-xs text-white/50">{book.author} • {book.readingTime}</p>
-                    </div>
-                  </div>
-                ))}
-                {recommendedBooks.length === 0 && (
-                  <p className="text-white/50 text-sm text-center py-4">Nenhum livro encontrado com os filtros atuais. Explore a biblioteca!</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <Button 
-            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
-            size="lg"
-            onClick={handleFinishQuiz}
-            disabled={isSaving}
-          >
-            {isSaving ? "Salvando..." : "Começar minha jornada"}
-            <ArrowRight className="w-5 h-5" />
+          <h2 className="text-2xl font-serif font-bold mb-4">{curiosity.title}</h2>
+          <p className="text-lg text-white/60 mb-8">{curiosity.text}</p>
+          <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" size="lg" onClick={handleContinueCuriosity}>
+            Continuar <ArrowRight className="w-5 h-5" />
           </Button>
         </div>
-      </DarkWrapper>
+      </div>
     );
-  }
+  };
+
+  // Result Step
+  const renderResultStep = () => {
+    const genre = genreInfo[resultGenre];
+    const recommendedBooks = getRecommendedBooks();
+    return (
+      <div className="max-w-2xl w-full">
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6 pulse-glow">
+            <Sparkles className="w-10 h-10 text-accent" />
+          </div>
+          <h1 className="text-3xl font-serif font-bold mb-2">Parabéns, {profile.name}!</h1>
+          <p className="text-white/60">Descobrimos seu perfil literário!</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 mb-8">
+          <h2 className="text-2xl font-bold text-accent mb-4">{genre?.title}</h2>
+          <p className="text-lg text-white/60 mb-6">{genre?.description}</p>
+          
+          <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-white/[0.06] rounded-xl">
+            <div className="text-center">
+              <p className="text-sm text-white/50">Idade</p>
+              <p className="font-bold">{profile.ageRange}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-white/50">Nível</p>
+              <p className="font-bold capitalize">{profile.level}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-white/50">Tempo/dia</p>
+              <p className="font-bold">{profile.timePerDay} min</p>
+            </div>
+          </div>
+          
+          <div className="border-t border-white/[0.08] pt-6">
+            <h3 className="font-bold mb-4">Livros recomendados para você:</h3>
+            <div className="space-y-3">
+              {recommendedBooks.map((book, index) => (
+                <div key={index} className="flex items-center gap-3 p-3 bg-white/[0.06] rounded-xl">
+                  <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-accent" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm">{book.title}</p>
+                    <p className="text-xs text-white/50">{book.author} • {book.readingTime}</p>
+                  </div>
+                </div>
+              ))}
+              {recommendedBooks.length === 0 && (
+                <p className="text-white/50 text-sm text-center py-4">Nenhum livro encontrado com os filtros atuais. Explore a biblioteca!</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <Button 
+          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
+          size="lg"
+          onClick={handleFinishQuiz}
+          disabled={isSaving}
+        >
+          {isSaving ? "Salvando..." : "Começar minha jornada"}
+          <ArrowRight className="w-5 h-5" />
+        </Button>
+      </div>
+    );
+  };
 
   // Questions Step
-  const question = questions[currentQuestion];
-
-  return (
-    <DarkWrapper>
-      <div className="max-w-2xl w-full animate-fade-in">
+  const renderQuestionsStep = () => {
+    const question = questions[currentQuestion];
+    return (
+      <div className="max-w-2xl w-full">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-white/50">
@@ -803,7 +744,31 @@ const QuizOnboarding = () => {
           </div>
         </div>
       </div>
-    </DarkWrapper>
+    );
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case "name": return renderNameStep();
+      case "age": return renderAgeStep();
+      case "level": return renderLevelStep();
+      case "time": return renderTimeStep();
+      case "curiosity": return renderCuriosityStep();
+      case "result": return renderResultStep();
+      case "questions": return renderQuestionsStep();
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-primary text-white overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.06] via-transparent to-accent/[0.03]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-accent/[0.04] blur-[120px]" />
+      </div>
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        {renderStep()}
+      </div>
+    </div>
   );
 };
 
