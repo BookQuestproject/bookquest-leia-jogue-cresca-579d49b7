@@ -14,7 +14,7 @@ const MobileNav = ({
   const menuItems = [{
     icon: Home,
     label: "Home",
-    path: "/"
+    path: "/home"
   }, {
     icon: BookOpen,
     label: "Trilhas",
@@ -36,7 +36,7 @@ const MobileNav = ({
   return <>
       {/* Top Header */}
       <header className="fixed top-0 left-0 right-0 h-14 border-b border-sidebar-border flex items-center justify-between px-4 z-50 bg-muted">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/home" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
             <BookOpen className="w-4 h-4 text-secondary-foreground" />
           </div>

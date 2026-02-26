@@ -10,6 +10,7 @@ import { TutorialProvider } from "@/contexts/TutorialContext";
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
+import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
 import QuizOnboarding from "./pages/QuizOnboarding";
@@ -47,7 +48,8 @@ const App = () => (
                 <CategoryIntro />
                 <QuizGate>
                   <Routes>
-                  <Route path="/" element={<Index />} />
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/home" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/quiz" element={<Quiz />} />
                   <Route path="/quiz-onboarding" element={<QuizOnboarding />} />

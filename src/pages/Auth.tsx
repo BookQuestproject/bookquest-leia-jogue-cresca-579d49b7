@@ -54,7 +54,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate('/');
+      navigate('/home');
     }
   }, [user, loading, navigate]);
 
@@ -101,7 +101,7 @@ const Auth = () => {
             title: 'Bem-vindo de volta!',
             description: 'Login realizado com sucesso',
           });
-          navigate('/');
+          navigate('/home');
         }
       } else {
         const { error } = await signUp(email, password);
@@ -120,7 +120,7 @@ const Auth = () => {
             title: 'Conta criada!',
             description: 'Sua jornada literária começa agora',
           });
-          navigate('/');
+          navigate('/home');
         }
       }
     } catch (error) {
