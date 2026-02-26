@@ -32,13 +32,37 @@ const TutorialContext = createContext<TutorialContextType | null>(null);
 
 const TUTORIAL_COMPLETED_KEY = "bookquest_spotlight_tutorial_done";
 
-/** All tutorial steps across the site */
+/** Tutorial steps — only for the Home page. Other pages use CategoryIntro. */
 const allSteps: TutorialStep[] = [
-  // --- Welcome / Empty Home ---
+  // --- Welcome ---
   {
     target: '[data-tutorial="welcome-header"]',
     title: "Bem-vindo ao BookQuest! 🎉",
     description: "Esta é sua página inicial. Aqui você acompanha sua jornada de leitura, trilhas, ranking e missões.",
+    route: "/",
+    placement: "bottom",
+  },
+  // --- Sidebar navigation ---
+  {
+    target: '[data-tutorial="sidebar-nav"]',
+    title: "Navegação Principal",
+    description: "Use o menu lateral para acessar todas as seções: trilhas, missões, ranking, comunidades e muito mais.",
+    route: "/",
+    placement: "right",
+  },
+  // --- Premium CTA ---
+  {
+    target: '[data-tutorial="premium-cta"]',
+    title: "Plano Premium",
+    description: "Assine o Premium para desbloquear Mentoria Literária, Book Club e conteúdos ENEM com acompanhamento semanal.",
+    route: "/",
+    placement: "right",
+  },
+  // --- Trail or explore CTA (auto-skips whichever doesn't exist) ---
+  {
+    target: '[data-tutorial="current-trail"]',
+    title: "Trilha Atual",
+    description: "Este card mostra o livro que você está lendo. Clique em 'Continuar Leitura' para retomar de onde parou.",
     route: "/",
     placement: "bottom",
   },
@@ -49,43 +73,7 @@ const allSteps: TutorialStep[] = [
     route: "/",
     placement: "bottom",
   },
-  // --- Navigation ---
-  {
-    target: '[data-tutorial="sidebar-full"]',
-    title: "Navegação Principal",
-    description: "Use o menu lateral para acessar todas as seções do BookQuest: trilhas, missões, ranking e muito mais.",
-    route: "/",
-    placement: "right",
-  },
-  {
-    target: '[data-tutorial="premium-cta"]',
-    title: "Plano Premium",
-    description: "Assine o Premium para desbloquear Mentoria Literária, Book Club e conteúdos ENEM com acompanhamento semanal.",
-    route: "/",
-    placement: "right",
-  },
-  {
-    target: '[data-tutorial="user-stats"]',
-    title: "Seu Perfil Rápido",
-    description: "Aqui você vê sua sequência de leitura (streak) e seu ranking atual de forma rápida.",
-    route: "/",
-    placement: "right",
-  },
-  // --- Home with active trail ---
-  {
-    target: '[data-tutorial="current-trail"]',
-    title: "Trilha Atual",
-    description: "Este card mostra o livro que você está lendo. Clique em 'Continuar Leitura' para retomar de onde parou.",
-    route: "/",
-    placement: "bottom",
-  },
-  {
-    target: '[data-tutorial="chapter-list"]',
-    title: "Capítulos da Trilha",
-    description: "Cada capítulo é uma etapa da sua jornada. Complete-os em ordem para desbloquear os próximos e responder quizzes.",
-    route: "/",
-    placement: "bottom",
-  },
+  // --- Ranking card on Home sidebar ---
   {
     target: '[data-tutorial="ranking-card"]',
     title: "Ranking Literário",
@@ -93,93 +81,21 @@ const allSteps: TutorialStep[] = [
     route: "/",
     placement: "left",
   },
+  // --- Streak card ---
+  {
+    target: '[data-tutorial="streak-card"]',
+    title: "Sequência de Leitura 🔥",
+    description: "Aqui você vê sua sequência de leitura (streak). Leia todos os dias para manter a chama acesa!",
+    route: "/",
+    placement: "left",
+  },
+  // --- Daily missions on Home ---
   {
     target: '[data-tutorial="missions-card"]',
     title: "Missões Diárias",
     description: "Complete missões todos os dias para ganhar pontos e manter sua sequência ativa!",
     route: "/",
     placement: "left",
-  },
-  // --- Biblioteca ---
-  {
-    target: '[data-tutorial="biblioteca-header"]',
-    title: "Biblioteca",
-    description: "Explore todos os livros disponíveis. Use os filtros para encontrar por gênero, formato ou tema.",
-    route: "/biblioteca",
-    placement: "bottom",
-  },
-  // --- Trilhas ---
-  {
-    target: '[data-tutorial="trilhas-header"]',
-    title: "Trilhas Literárias",
-    description: "Cada livro vira uma trilha com capítulos, cronômetro e quizzes. Leia no seu ritmo e acompanhe seu progresso.",
-    route: "/trilhas",
-    placement: "bottom",
-  },
-  // --- Estante ---
-  {
-    target: '[data-tutorial="estante-header"]',
-    title: "Minha Estante",
-    description: "Organize seus livros: lendo, quero ler, lido, abandonado ou favoritos. Adicione avaliações e resenhas.",
-    route: "/estante",
-    placement: "bottom",
-  },
-  // --- Missões ---
-  {
-    target: '[data-tutorial="missoes-daily"]',
-    title: "Missões Diárias",
-    description: "Complete missões diárias para ganhar pontos e manter sua sequência ativa. Novas missões toda meia-noite!",
-    route: "/missoes",
-    placement: "bottom",
-  },
-  // --- Ranking ---
-  {
-    target: '[data-tutorial="ranking-header"]',
-    title: "Ranking",
-    description: "Compare seu progresso com outros leitores. Veja quem são os maiores leitores do BookQuest!",
-    route: "/ranking",
-    placement: "bottom",
-  },
-  // --- Mentoria ---
-  {
-    target: '[data-tutorial="mentoria-header"]',
-    title: "Mentoria Literária",
-    description: "Sessões em grupo com mentores para ajudar você a criar e manter o hábito de leitura. Recurso Premium.",
-    route: "/mentoria",
-    placement: "bottom",
-  },
-  // --- Comunidade ---
-  {
-    target: '[data-tutorial="comunidade-header"]',
-    title: "Comunidade",
-    description: "Participe de comunidades temáticas, discuta livros e faça amizades com outros leitores.",
-    route: "/comunidade",
-    placement: "bottom",
-  },
-  // --- Admin steps ---
-  {
-    target: '[data-tutorial="admin-panel"]',
-    title: "Painel Administrativo",
-    description: "Como admin, você gerencia trilhas, livros, sessões de mentoria, materiais ENEM e configurações premium.",
-    route: "/admin",
-    placement: "bottom",
-    adminOnly: true,
-  },
-  {
-    target: '[data-tutorial="admin-suggestions"]',
-    title: "Sugestões de Livros",
-    description: "Aprove ou rejeite sugestões de livros dos usuários. Preencha capítulos e resumo para criar trilhas.",
-    route: "/admin",
-    placement: "bottom",
-    adminOnly: true,
-  },
-  {
-    target: '[data-tutorial="admin-tracks"]',
-    title: "Gestão de Trilhas",
-    description: "Crie, edite e organize trilhas literárias. Defina objetivos, roteiros semanais e mentores responsáveis.",
-    route: "/admin",
-    placement: "bottom",
-    adminOnly: true,
   },
 ];
 

@@ -421,7 +421,7 @@ const Index = () => {
             </div>
 
             {/* Streak Card */}
-            <div className="editorial-card p-5 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            <div className="editorial-card p-5 animate-fade-in" data-tutorial="streak-card" style={{ animationDelay: "0.3s" }}>
               <StreakFlame days={userStats.streak} showInfo={true} isAdmin={isAdmin} />
             </div>
 
