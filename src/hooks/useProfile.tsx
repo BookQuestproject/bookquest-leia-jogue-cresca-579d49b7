@@ -41,15 +41,15 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
-      // Fetch profile
+      // Fetch profile (can be null for users without row yet)
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) throw profileError;
-      setProfile(profileData);
+      setProfile(profileData ?? null);
 
       // Check admin role
       const { data: roleData } = await supabase
@@ -85,18 +85,24 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
+      const payload = {
+        id: user.id,
+        email: user.email ?? null,
+        full_name: user.user_metadata?.full_name ?? null,
+        quiz_completed: true,
+        literary_profile: literaryProfile,
+      };
+
+      const { data, error } = await supabase
         .from('profiles')
-        .update({ 
-          quiz_completed: true, 
-          literary_profile: literaryProfile 
-        })
-        .eq('id', user.id);
+        .upsert(payload, { onConflict: 'id' })
+        .select('*')
+        .single();
 
       if (error) throw error;
-      
+
       // Update local state immediately so QuizGate won't redirect back
-      setProfile(prev => prev ? { ...prev, quiz_completed: true, literary_profile: literaryProfile } : prev);
+      setProfile(data);
     } catch (error) {
       console.error('Error updating quiz status:', error);
       throw error; // Re-throw so callers know it failed
