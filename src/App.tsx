@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ThemeProvider } from "next-themes";
+
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileProvider } from "@/hooks/useProfile";
 import { TutorialProvider } from "@/contexts/TutorialContext";
@@ -35,50 +35,48 @@ import Admin from "./pages/Admin";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ProfileProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <TutorialProvider>
-                <SpotlightOverlay />
-                <CategoryIntro />
-                <QuizGate>
-                  <Routes>
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/home" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/quiz" element={<Quiz />} />
-                  <Route path="/quiz-onboarding" element={<QuizOnboarding />} />
-                  <Route path="/ranking" element={<Ranking />} />
-                  <Route path="/comunidade" element={<Comunidade />} />
-                  <Route path="/premium" element={<Premium />} />
-                  <Route path="/perfil" element={<Perfil />} />
-                  <Route path="/trilhas" element={<Trilhas />} />
-                  <Route path="/trilhas/:bookId" element={<Trilhas />} />
-                  <Route path="/estante" element={<Estante />} />
-                  <Route path="/biblioteca" element={<Biblioteca />} />
-                  <Route path="/missoes" element={<Missoes />} />
-                  <Route path="/bookclub" element={<BookClub />} />
-                  <Route path="/mentoria" element={<Mentoria />} />
-                  <Route path="/enem" element={<Enem />} />
-                  <Route path="/configuracoes" element={<Configuracoes />} />
-                  <Route path="/noticias" element={<Noticias />} />
-                  <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </QuizGate>
-              </TutorialProvider>
-            </BrowserRouter>
-          </TooltipProvider>
-        </ProfileProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <ProfileProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <TutorialProvider>
+              <SpotlightOverlay />
+              <CategoryIntro />
+              <QuizGate>
+                <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/home" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/quiz" element={<Quiz />} />
+                <Route path="/quiz-onboarding" element={<QuizOnboarding />} />
+                <Route path="/ranking" element={<Ranking />} />
+                <Route path="/comunidade" element={<Comunidade />} />
+                <Route path="/premium" element={<Premium />} />
+                <Route path="/perfil" element={<Perfil />} />
+                <Route path="/trilhas" element={<Trilhas />} />
+                <Route path="/trilhas/:bookId" element={<Trilhas />} />
+                <Route path="/estante" element={<Estante />} />
+                <Route path="/biblioteca" element={<Biblioteca />} />
+                <Route path="/missoes" element={<Missoes />} />
+                <Route path="/bookclub" element={<BookClub />} />
+                <Route path="/mentoria" element={<Mentoria />} />
+                <Route path="/enem" element={<Enem />} />
+                <Route path="/configuracoes" element={<Configuracoes />} />
+                <Route path="/noticias" element={<Noticias />} />
+                <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<NotFound />} />
+                </Routes>
+              </QuizGate>
+            </TutorialProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ProfileProvider>
+    </AuthProvider>
+  </QueryClientProvider>
 );
 
 export default App;

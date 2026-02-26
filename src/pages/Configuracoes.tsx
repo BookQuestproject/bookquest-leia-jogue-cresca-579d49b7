@@ -1,16 +1,14 @@
 import { useState } from "react";
-import { Settings, User, Bell, Moon, Sun, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle } from "lucide-react";
+import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
-import { useTheme } from "next-themes";
 
 const Configuracoes = () => {
   const { toast } = useToast();
   const { startTutorial, isCompleted: tutorialCompleted } = useTutorial();
-  const { theme, setTheme: setNextTheme } = useTheme();
   
   // Estados das configurações
   const [notifications, setNotifications] = useState({
@@ -26,17 +24,6 @@ const Configuracoes = () => {
     dailyGoal: 30, // minutos
     preferredGenres: ["Fantasia", "Romance"],
   });
-
-  // Alternar tema
-  const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setNextTheme(newTheme);
-    
-    toast({
-      title: `Tema ${newTheme === "dark" ? "escuro" : "claro"} ativado`,
-      description: "Suas preferências foram salvas.",
-    });
-  };
 
   // Atualizar notificações
   const updateNotification = (key: keyof typeof notifications, value: boolean) => {
@@ -142,28 +129,6 @@ const Configuracoes = () => {
                 <Switch 
                   checked={notifications.community}
                   onCheckedChange={(checked) => updateNotification("community", checked)}
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Appearance */}
-          <section className="glass-card rounded-2xl overflow-hidden" data-tutorial="config-theme">
-            <div className="p-4 border-b border-border">
-              <h2 className="font-bold flex items-center gap-2">
-                {theme === "dark" ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
-                Aparência
-              </h2>
-            </div>
-            <div className="divide-y divide-border">
-              <div className="flex items-center justify-between p-4">
-                <div>
-                  <p className="font-medium">Tema {theme === "dark" ? "escuro" : "claro"}</p>
-                  <p className="text-sm text-muted-foreground">Altere entre tema claro e escuro</p>
-                </div>
-                <Switch 
-                  checked={theme === "dark"}
-                  onCheckedChange={toggleTheme}
                 />
               </div>
             </div>

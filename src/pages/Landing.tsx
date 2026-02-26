@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { TrendingUp, Flame, Brain, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import logoCrown from "@/assets/logo-crown-png.jpeg";
+import logoCrown from "@/assets/logo-crown-transparent.png";
 import logoWordmark from "@/assets/logo-wordmark.jpeg";
 
 const Landing = () => {
