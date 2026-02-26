@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, BookOpen, Trophy, Users, User, Target, BookMarked, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import logoCrown from "@/assets/logo-crown-png.jpeg";
+import logoCrown from "@/assets/logo-crown-transparent.png";
 interface MobileNavProps {
   isPremium?: boolean;
 }

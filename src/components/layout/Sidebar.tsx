@@ -17,7 +17,7 @@ import {
   LogIn,
   LogOut,
 } from "lucide-react";
-import logoCrown from "@/assets/logo-crown-png.jpeg";
+import logoCrown from "@/assets/logo-crown-transparent.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useProfile } from "@/hooks/useProfile";
