@@ -217,7 +217,7 @@ const Ranking = () => {
                 Evolua através de engajamento, consistência e dedicação.
               </p>
             </div>
-            <div className="ranking-countdown-card flex items-center gap-3 shrink-0">
+            <div className="ranking-countdown-card flex items-center gap-3 shrink-0" data-tutorial="ranking-countdown">
               <Clock className="w-5 h-5 text-accent" />
               <div>
                 <p className="text-xs text-muted-foreground">Semana encerra em</p>
@@ -279,7 +279,7 @@ const Ranking = () => {
 
             {/* Top 3 Podium */}
             {top3.length >= 3 && (
-              <div className="grid grid-cols-3 gap-3 mb-4 animate-fade-in">
+              <div className="grid grid-cols-3 gap-3 mb-4 animate-fade-in" data-tutorial="ranking-podium">
                 {/* 2nd Place */}
                 <div className={`ranking-podium-card mt-4 ${isInPromotionZone(2) ? 'ranking-promotion-zone' : ''}`}>
                   <span className="ranking-podium-position">2º</span>

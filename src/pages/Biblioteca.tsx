@@ -215,7 +215,7 @@ const Biblioteca = () => {
         </p>
 
         {/* Books Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-tutorial="biblioteca-grid">
           {filteredBooks.map((book, index) => (
             <div 
               key={book.id} 

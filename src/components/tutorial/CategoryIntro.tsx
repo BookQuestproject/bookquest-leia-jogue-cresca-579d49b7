@@ -28,16 +28,22 @@ const categorySteps: Record<string, CategoryStep[]> = {
       placement: "bottom",
     },
     {
+      target: '[data-tutorial="biblioteca-genres"]',
+      title: "🏷️ Gêneros",
+      description: "Filtre rapidamente por gênero clicando nas categorias disponíveis.",
+      placement: "bottom",
+    },
+    {
       target: '[data-tutorial="biblioteca-suggest"]',
       title: "💡 Sugerir Livro",
       description: "Não encontrou um livro? Sugira e nossa equipe avaliará para adicionar à plataforma.",
       placement: "bottom",
     },
     {
-      target: '[data-tutorial="biblioteca-genres"]',
-      title: "🏷️ Gêneros",
-      description: "Filtre rapidamente por gênero clicando nas categorias disponíveis.",
-      placement: "bottom",
+      target: '[data-tutorial="biblioteca-grid"]',
+      title: "📖 Catálogo de Livros",
+      description: "Clique em um livro para ver detalhes, sinopse e adicioná-lo à sua estante.",
+      placement: "top",
     },
   ],
   "/trilhas": [
@@ -62,15 +68,15 @@ const categorySteps: Record<string, CategoryStep[]> = {
       placement: "bottom",
     },
     {
-      target: '[data-tutorial="estante-add"]',
-      title: "➕ Adicionar Livro",
-      description: "Adicione novos livros à sua estante para acompanhar seu progresso de leitura.",
+      target: '[data-tutorial="estante-tabs"]',
+      title: "📂 Categorias",
+      description: "Organize seus livros entre: Lendo, Reelendo, Quero Ler, Lido, Abandonado e Favoritos.",
       placement: "bottom",
     },
     {
-      target: '[data-tutorial="estante-tabs"]',
-      title: "📂 Categorias",
-      description: "Organize seus livros entre: Lendo, Quero Ler, Lido, Abandonado e Favoritos.",
+      target: '[data-tutorial="estante-add"]',
+      title: "➕ Adicionar Livro",
+      description: "Clique aqui para ir à Biblioteca e adicionar novos livros à sua estante.",
       placement: "bottom",
     },
   ],
@@ -78,7 +84,7 @@ const categorySteps: Record<string, CategoryStep[]> = {
     {
       target: '[data-tutorial="missoes-header"]',
       title: "🎯 Missões",
-      description: "Complete missões para ganhar pontos e subir no ranking. Veja seu progresso aqui!",
+      description: "Complete missões para ganhar XP e subir no ranking. Veja seu progresso, sequência e nível aqui!",
       placement: "bottom",
     },
     {
@@ -87,24 +93,42 @@ const categorySteps: Record<string, CategoryStep[]> = {
       description: "Essas missões reiniciam toda meia-noite. Complete-as todos os dias para manter sua sequência!",
       placement: "bottom",
     },
+    {
+      target: '[data-tutorial="missoes-weekly"]',
+      title: "⭐ Missões Semanais",
+      description: "Missões que reiniciam toda segunda-feira. Valem mais XP e exigem mais dedicação.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="missoes-monthly"]',
+      title: "🏆 Missões Mensais",
+      description: "Grandes desafios que reiniciam no dia 1 de cada mês. Conquistar essas missões garante recompensas enormes!",
+      placement: "bottom",
+    },
   ],
   "/ranking": [
     {
       target: '[data-tutorial="ranking-header"]',
       title: "🏆 Ranking Literário",
-      description: "Você compete com leitores do seu nível. Suba de Bronze a Lendário lendo mais livros!",
+      description: "Competição semanal baseada em XP. Suba de Bronze a Lendário lendo e completando desafios!",
       placement: "bottom",
     },
     {
-      target: '[data-tutorial="ranking-addbook"]',
-      title: "📗 Adicionar Livro Lido",
-      description: "Registre livros lidos fora da plataforma. Há um sistema anti-fraude com perguntas de verificação.",
+      target: '[data-tutorial="ranking-countdown"]',
+      title: "⏳ Contador Regressivo",
+      description: "Mostra quantos dias faltam para o fechamento da semana. Ao final, os melhores sobem de patamar!",
       placement: "bottom",
     },
     {
       target: '[data-tutorial="ranking-tiers"]',
       title: "🎖️ Patamares",
-      description: "Explore os diferentes patamares e veja quem são os maiores leitores de cada nível.",
+      description: "Explore os diferentes patamares clicando nas abas. Cada patamar tem vagas limitadas para avançar.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="ranking-podium"]',
+      title: "🥇 Pódio",
+      description: "Os 3 primeiros colocados aparecem no pódio com destaque especial.",
       placement: "bottom",
     },
   ],
@@ -157,12 +181,36 @@ const categorySteps: Record<string, CategoryStep[]> = {
       description: "Veja suas estatísticas, conquistas, ranking e todo seu histórico de leitura num só lugar.",
       placement: "bottom",
     },
+    {
+      target: '[data-tutorial="perfil-stats"]',
+      title: "📊 Suas Estatísticas",
+      description: "Acompanhe capítulos lidos, tempo de leitura, livros concluídos e seu patamar no ranking.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="perfil-achievements"]',
+      title: "🏅 Conquistas",
+      description: "Desbloqueie conquistas conforme avança na sua jornada. Colecione todas!",
+      placement: "top",
+    },
   ],
   "/configuracoes": [
     {
       target: '[data-tutorial="config-header"]',
       title: "⚙️ Configurações",
-      description: "Ajuste tema, notificações e preferências da sua conta. Você também pode reiniciar tutoriais aqui.",
+      description: "Ajuste tema, notificações e preferências da sua conta.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="config-theme"]',
+      title: "🌓 Tema",
+      description: "Alterne entre tema claro e escuro conforme sua preferência.",
+      placement: "bottom",
+    },
+    {
+      target: '[data-tutorial="config-tutorial-reset"]',
+      title: "🔄 Reiniciar Tutoriais",
+      description: "Quer rever os tutoriais guiados? Clique aqui para resetar e vê-los novamente.",
       placement: "bottom",
     },
   ],
@@ -255,7 +303,7 @@ const CategoryIntro = () => {
     retryCountRef.current = 0;
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       const rect = el.getBoundingClientRect();
 
       const newRect: Rect = {
@@ -308,7 +356,7 @@ const CategoryIntro = () => {
       style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
 
       setTooltipStyle(style);
-    });
+    }, 500);
   }, [steps, currentStep, active, dismiss]);
 
   // Recalculate on step change
@@ -326,20 +374,7 @@ const CategoryIntro = () => {
     return () => window.removeEventListener("resize", handler);
   }, [active, findAndHighlight]);
 
-  // Block scroll
-  useEffect(() => {
-    if (active) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [active]);
+  // Don't block scroll — let scrollIntoView work naturally
 
   // Animate in
   useEffect(() => {

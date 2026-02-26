@@ -148,7 +148,7 @@ const Configuracoes = () => {
           </section>
 
           {/* Appearance */}
-          <section className="glass-card rounded-2xl overflow-hidden">
+          <section className="glass-card rounded-2xl overflow-hidden" data-tutorial="config-theme">
             <div className="p-4 border-b border-border">
               <h2 className="font-bold flex items-center gap-2">
                 {theme === "dark" ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
@@ -269,7 +269,7 @@ const Configuracoes = () => {
           </section>
 
           {/* Tutorial */}
-          <section className="glass-card rounded-2xl overflow-hidden">
+          <section className="glass-card rounded-2xl overflow-hidden" data-tutorial="config-tutorial-reset">
             <div className="p-4 border-b border-border">
               <h2 className="font-bold flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-primary" />

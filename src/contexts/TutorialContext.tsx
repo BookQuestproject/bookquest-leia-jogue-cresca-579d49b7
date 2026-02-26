@@ -58,18 +58,11 @@ const allSteps: TutorialStep[] = [
     route: "/",
     placement: "right",
   },
-  // --- Trail or explore CTA (auto-skips whichever doesn't exist) ---
+  // --- Trail card (auto-skips if no active trail) ---
   {
     target: '[data-tutorial="current-trail"]',
     title: "Trilha Atual",
     description: "Este card mostra o livro que você está lendo. Clique em 'Continuar Leitura' para retomar de onde parou.",
-    route: "/",
-    placement: "bottom",
-  },
-  {
-    target: '[data-tutorial="explore-trails-cta"]',
-    title: "Escolha sua Trilha",
-    description: "Clique aqui para explorar nossas trilhas literárias e escolher o livro que vai iniciar sua jornada!",
     route: "/",
     placement: "bottom",
   },
