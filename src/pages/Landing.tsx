@@ -32,8 +32,7 @@ const Landing = () => {
           {/* Logo */}
           <div className="mb-10 animate-fade-in">
             <div className="inline-flex flex-col items-center gap-4 mb-2">
-              <img src={logoCrown} alt="BookQuest Crown" className="w-28 h-28 object-contain drop-shadow-lg" />
-              <img src={logoWordmark} alt="BookQuest" className="h-16 object-contain drop-shadow-md" />
+              <img src={logoCrown} alt="BookQuest Crown" className="w-40 h-40 object-contain drop-shadow-lg" />
             </div>
           </div>
 
