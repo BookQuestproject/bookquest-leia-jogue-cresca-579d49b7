@@ -144,10 +144,18 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const defaultProfileContext: ProfileContextType = {
+  profile: null,
+  loading: true,
+  isPremium: false,
+  isAdmin: false,
+  quizCompleted: false,
+  refreshProfile: async () => {},
+  checkSubscription: async () => {},
+  updateQuizCompleted: async () => {},
+};
+
 export const useProfile = () => {
   const context = useContext(ProfileContext);
-  if (context === undefined) {
-    throw new Error('useProfile must be used within a ProfileProvider');
-  }
-  return context;
+  return context ?? defaultProfileContext;
 };
