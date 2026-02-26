@@ -56,7 +56,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       {/* Logo */}
       <div className="px-5 py-3 border-b border-sidebar-border">
         <Link to="/home" className="flex items-center gap-2">
-          <img src={logoCrown} alt="BookQuest" className="w-10 h-10 object-contain" />
+          <img src={logoCrown} alt="BookQuest" className="w-14 h-14 object-contain" />
           <img src={logoWordmark} alt="BookQuest" className="h-7 object-contain" />
         </Link>
       </div>
