@@ -61,8 +61,8 @@ const SpotlightOverlay = () => {
     retryCountRef.current = 0;
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Small delay after scroll to get correct position
-    requestAnimationFrame(() => {
+    // Delay after scroll to get correct position
+    setTimeout(() => {
       const rect = el.getBoundingClientRect();
 
       const newRect: Rect = {
@@ -100,7 +100,6 @@ const SpotlightOverlay = () => {
         top = centerY - tooltipH / 2;
         left = rect.left - 12 - tooltipW;
       } else {
-        // Fallback: place below or above, or center
         if (rect.bottom + 12 + tooltipH < vh) {
           top = rect.bottom + 12;
           left = centerX - tooltipW / 2;
@@ -117,7 +116,7 @@ const SpotlightOverlay = () => {
       style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
 
       setTooltipStyle(style);
-    });
+    }, 500);
   }, [currentStepData, location.pathname, navigate, nextStep]);
 
   // Navigate to step's route if needed
@@ -134,28 +133,32 @@ const SpotlightOverlay = () => {
     }
   }, [isActive, currentStep, currentStepData, location.pathname, navigate, findAndHighlight]);
 
-  // Recalculate on resize
+  // Recalculate on resize or scroll
   useEffect(() => {
     if (!isActive) return;
     const handler = () => findAndHighlight();
     window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, [isActive, findAndHighlight]);
-
-  // Block scrolling while tutorial is active
-  useEffect(() => {
-    if (isActive) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
+    // Recalculate when any scrollable container scrolls
+    const scrollHandler = () => {
+      if (!currentStepData) return;
+      const el = document.querySelector(currentStepData.target);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setTargetRect({
+        top: rect.top - PADDING,
+        left: rect.left - PADDING,
+        width: rect.width + PADDING * 2,
+        height: rect.height + PADDING * 2,
+      });
     };
-  }, [isActive]);
+    window.addEventListener("scroll", scrollHandler, true);
+    return () => {
+      window.removeEventListener("resize", handler);
+      window.removeEventListener("scroll", scrollHandler, true);
+    };
+  }, [isActive, findAndHighlight, currentStepData]);
+
+  // Don't block scrolling — let scrollIntoView work naturally
 
   // Animate in
   useEffect(() => {
