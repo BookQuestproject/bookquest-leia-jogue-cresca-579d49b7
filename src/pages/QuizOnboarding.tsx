@@ -349,14 +349,28 @@ const QuizOnboarding = () => {
       completedAt: new Date().toISOString(),
     };
 
-    await updateQuizCompleted(literaryProfile);
-    navigate('/');
+    try {
+      await updateQuizCompleted(literaryProfile);
+      // Reset tutorial so it triggers on home page
+      localStorage.removeItem("bookquest_spotlight_tutorial_done");
+      navigate('/');
+    } catch (error) {
+      console.error('Error finishing quiz:', error);
+      setIsSaving(false);
+    }
   };
 
   const handleSkipQuiz = async () => {
     setIsSaving(true);
-    await updateQuizCompleted({ skipped: true, completedAt: new Date().toISOString() });
-    navigate('/');
+    try {
+      await updateQuizCompleted({ skipped: true, completedAt: new Date().toISOString() });
+      // Reset tutorial so it triggers on home page
+      localStorage.removeItem("bookquest_spotlight_tutorial_done");
+      navigate('/');
+    } catch (error) {
+      console.error('Error skipping quiz:', error);
+      setIsSaving(false);
+    }
   };
 
   // Profile Step

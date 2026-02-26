@@ -192,13 +192,21 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
     return localStorage.getItem(TUTORIAL_COMPLETED_KEY) === "true";
   });
 
+  // Re-check localStorage when navigating (handles reset after quiz)
+  useEffect(() => {
+    const stored = localStorage.getItem(TUTORIAL_COMPLETED_KEY) === "true";
+    if (isCompleted !== stored) {
+      setIsCompleted(stored);
+    }
+  }, [location.pathname]);
+
   // Filter steps: remove admin-only if not admin
   const availableSteps = allSteps.filter(s => !s.adminOnly || isAdmin);
 
   // Filter to steps relevant to current route (or steps without route restriction)
   const currentRouteSteps = isActive ? availableSteps : [];
 
-  // Auto-start on first visit
+  // Auto-start on first visit to home
   useEffect(() => {
     if (!isCompleted && location.pathname === "/") {
       const timer = setTimeout(() => setIsActive(true), 2000);
