@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { BookOpen, TrendingUp, Flame, Brain, ArrowRight, Sparkles } from "lucide-react";
+import { TrendingUp, Flame, Brain, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import logoCrown from "@/assets/logo-crown-png.jpeg";
+import logoWordmark from "@/assets/logo-wordmark.jpeg";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -16,11 +18,11 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(222,47%,8%)] text-white overflow-hidden">
+    <div className="min-h-screen bg-primary text-white overflow-hidden">
       {/* Subtle gradient background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(217,91%,53%,0.06)] via-transparent to-[hsl(217,91%,53%,0.03)]" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-[hsl(217,91%,53%,0.04)] blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.06] via-transparent to-accent/[0.03]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-accent/[0.04] blur-[120px]" />
       </div>
 
       {/* Content */}
@@ -29,13 +31,9 @@ const Landing = () => {
         <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
           {/* Logo */}
           <div className="mb-10 animate-fade-in">
-            <div className="inline-flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-xl bg-[hsl(217,91%,53%)] flex items-center justify-center shadow-lg shadow-[hsl(217,91%,53%,0.25)]">
-                <BookOpen className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-serif font-bold tracking-tight">
-                Book<span className="text-[hsl(217,91%,53%)]">Quest</span>
-              </span>
+            <div className="inline-flex flex-col items-center gap-4 mb-2">
+              <img src={logoCrown} alt="BookQuest Crown" className="w-20 h-20 object-contain drop-shadow-lg" />
+              <img src={logoWordmark} alt="BookQuest" className="h-12 object-contain" />
             </div>
           </div>
 
@@ -43,11 +41,11 @@ const Landing = () => {
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold leading-tight max-w-3xl mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             Transforme sua leitura
             <br />
-            <span className="text-[hsl(217,91%,53%)]">em uma jornada.</span>
+            <span className="text-accent">em uma jornada.</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-[hsl(215,16%,57%)] max-w-xl mb-10 leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <p className="text-lg sm:text-xl text-white/60 max-w-xl mb-10 leading-relaxed animate-fade-in" style={{ animationDelay: "0.2s" }}>
             Descubra seu perfil literário e evolua através de desafios, rankings e constância.
           </p>
 
@@ -56,20 +54,20 @@ const Landing = () => {
             <Button
               onClick={handleStart}
               size="lg"
-              className="bg-[hsl(217,91%,53%)] hover:bg-[hsl(224,76%,48%)] text-white text-lg px-10 py-6 rounded-xl shadow-lg shadow-[hsl(217,91%,53%,0.3)] transition-all duration-300 hover:shadow-xl hover:shadow-[hsl(217,91%,53%,0.4)] hover:-translate-y-0.5 gap-2"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-10 py-6 rounded-xl shadow-lg shadow-accent/30 transition-all duration-300 hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-0.5 gap-2 font-bold"
             >
               Começar Jornada
               <ArrowRight className="w-5 h-5" />
             </Button>
-            <p className="text-sm text-[hsl(215,16%,47%)]">
+            <p className="text-sm text-white/40">
               Leva menos de 1 minuto.
             </p>
           </div>
 
           {/* Scroll indicator */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-40">
-            <div className="w-6 h-10 rounded-full border-2 border-[hsl(215,16%,47%)] flex items-start justify-center p-1.5">
-              <div className="w-1.5 h-2.5 rounded-full bg-[hsl(215,16%,47%)]" />
+            <div className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center p-1.5">
+              <div className="w-1.5 h-2.5 rounded-full bg-white/30" />
             </div>
           </div>
         </section>
@@ -78,7 +76,7 @@ const Landing = () => {
         <section className="py-24 px-6">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
-              <p className="text-sm uppercase tracking-widest text-[hsl(217,91%,53%)] mb-3 font-medium">
+              <p className="text-sm uppercase tracking-widest text-accent mb-3 font-medium">
                 Por que o BookQuest?
               </p>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold">
@@ -87,12 +85,12 @@ const Landing = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {[
+               {[
                 {
                   icon: TrendingUp,
                   title: "Evolua no Ranking Literário",
                   description: "Ganhe XP ao concluir leituras e desafios. Suba de Bronze a Lendário.",
-                  color: "hsl(217,91%,53%)",
+                  color: "hsl(48,96%,53%)",
                 },
                 {
                   icon: Flame,
@@ -104,7 +102,7 @@ const Landing = () => {
                   icon: Brain,
                   title: "Torne a leitura ativa",
                   description: "Responda perguntas inteligentes ao final de cada capítulo.",
-                  color: "hsl(150,40%,50%)",
+                  color: "hsl(48,96%,53%)",
                 },
               ].map((benefit, i) => (
                 <div
@@ -121,7 +119,7 @@ const Landing = () => {
                     />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{benefit.title}</h3>
-                  <p className="text-[hsl(215,16%,57%)] text-sm leading-relaxed">
+                  <p className="text-white/50 text-sm leading-relaxed">
                     {benefit.description}
                   </p>
                 </div>
@@ -133,8 +131,8 @@ const Landing = () => {
         {/* How it works */}
         <section className="py-24 px-6 border-t border-white/[0.05]">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-sm uppercase tracking-widest text-[hsl(217,91%,53%)] mb-3 font-medium">
-              Como funciona
+              <p className="text-sm uppercase tracking-widest text-accent mb-3 font-medium">
+                Como funciona
             </p>
             <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-12">
               Simples e direto
@@ -146,12 +144,12 @@ const Landing = () => {
                 { step: "02", title: "Escolha Trilhas", desc: "Selecione livros e leia capítulo por capítulo no seu ritmo." },
                 { step: "03", title: "Evolua", desc: "Ganhe XP, suba no ranking e complete missões diárias." },
               ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <div className="text-3xl font-bold text-[hsl(217,91%,53%,0.2)] mb-3 font-serif">
+                 <div key={i} className="flex flex-col items-center">
+                  <div className="text-3xl font-bold text-accent/30 mb-3 font-serif">
                     {item.step}
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                  <p className="text-sm text-[hsl(215,16%,57%)] leading-relaxed">
+                  <p className="text-sm text-white/50 leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -167,13 +165,13 @@ const Landing = () => {
             <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">
               Pronto para começar sua jornada?
             </h2>
-            <p className="text-[hsl(215,16%,57%)] mb-8 text-lg">
+            <p className="text-white/50 mb-8 text-lg">
               Faça o quiz e descubra qual é o seu perfil literário.
             </p>
             <Button
               onClick={handleStart}
               size="lg"
-              className="bg-[hsl(217,91%,53%)] hover:bg-[hsl(224,76%,48%)] text-white text-lg px-10 py-6 rounded-xl shadow-lg shadow-[hsl(217,91%,53%,0.3)] transition-all duration-300 hover:shadow-xl hover:shadow-[hsl(217,91%,53%,0.4)] hover:-translate-y-0.5 gap-2"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-10 py-6 rounded-xl shadow-lg shadow-accent/30 transition-all duration-300 hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-0.5 gap-2 font-bold"
             >
               Fazer Quiz Agora
               <ArrowRight className="w-5 h-5" />
@@ -183,9 +181,9 @@ const Landing = () => {
 
         {/* Footer */}
         <footer className="py-8 px-6 border-t border-white/[0.05]">
-          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[hsl(215,16%,47%)]">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/40">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
+              <img src={logoCrown} alt="BookQuest" className="w-5 h-5 object-contain" />
               <span className="font-serif font-semibold">BookQuest</span>
             </div>
             <p>© 2026 BookQuest. Todos os direitos reservados.</p>

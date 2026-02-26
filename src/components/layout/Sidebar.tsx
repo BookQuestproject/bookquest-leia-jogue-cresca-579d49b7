@@ -16,8 +16,8 @@ import {
   Newspaper,
   LogIn,
   LogOut,
-  User,
 } from "lucide-react";
+import logoCrown from "@/assets/logo-crown-png.jpeg";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useProfile } from "@/hooks/useProfile";
@@ -55,9 +55,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       {/* Logo */}
       <div className="px-5 py-3 border-b border-sidebar-border">
         <Link to="/home" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-secondary-foreground" />
-          </div>
+          <img src={logoCrown} alt="BookQuest" className="w-8 h-8 rounded object-contain" />
           <span className="text-lg font-serif font-semibold text-foreground">BookQuest</span>
         </Link>
       </div>
