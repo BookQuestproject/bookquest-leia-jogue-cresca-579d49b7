@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -201,6 +201,7 @@ const CategoryIntro = () => {
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
   const [isVisible, setIsVisible] = useState(false);
+  const retryCountRef = useRef(0);
 
   // Detect first visit to a category
   useEffect(() => {
@@ -222,6 +223,12 @@ const CategoryIntro = () => {
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+  const dismiss = useCallback(() => {
+    setActive(false);
+    setIsVisible(false);
+    markVisited(location.pathname);
+  }, [location.pathname]);
+
   const findAndHighlight = useCallback(() => {
     if (!steps.length || !active) return;
 
@@ -230,74 +237,84 @@ const CategoryIntro = () => {
 
     const el = document.querySelector(step.target);
     if (!el) {
-      setTargetRect(null);
+      retryCountRef.current += 1;
+      if (retryCountRef.current < 3) {
+        setTimeout(findAndHighlight, 400);
+        return;
+      }
+      // Auto-skip this step if element doesn't exist
+      retryCountRef.current = 0;
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(prev => prev + 1);
+      } else {
+        dismiss();
+      }
       return;
     }
 
-    const rect = el.getBoundingClientRect();
-    const scrollTop = window.scrollY;
-    const scrollLeft = window.scrollX;
-
-    const newRect: Rect = {
-      top: rect.top + scrollTop - PADDING,
-      left: rect.left + scrollLeft - PADDING,
-      width: rect.width + PADDING * 2,
-      height: rect.height + PADDING * 2,
-    };
-    setTargetRect(newRect);
-
+    retryCountRef.current = 0;
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Calculate tooltip position
-    const placement = step.placement || "bottom";
-    const tooltipW = 320;
-    const tooltipH = 180;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    requestAnimationFrame(() => {
+      const rect = el.getBoundingClientRect();
 
-    const style: React.CSSProperties = { position: "fixed", width: tooltipW, zIndex: 10002 };
+      const newRect: Rect = {
+        top: rect.top - PADDING,
+        left: rect.left - PADDING,
+        width: rect.width + PADDING * 2,
+        height: rect.height + PADDING * 2,
+      };
+      setTargetRect(newRect);
 
-    const elRect = el.getBoundingClientRect();
-    const centerX = elRect.left + elRect.width / 2;
+      const placement = step.placement || "bottom";
+      const tooltipW = 320;
+      const tooltipH = 200;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
 
-    let top = 0;
-    let left = 0;
+      const style: React.CSSProperties = { position: "fixed", width: tooltipW, zIndex: 10002 };
 
-    if (placement === "bottom" && elRect.bottom + 12 + tooltipH < vh) {
-      top = elRect.bottom + 12;
-      left = centerX - tooltipW / 2;
-    } else if (placement === "top" && elRect.top - 12 - tooltipH > 0) {
-      top = elRect.top - 12 - tooltipH;
-      left = centerX - tooltipW / 2;
-    } else if (placement === "right" && elRect.right + 12 + tooltipW < vw) {
-      top = elRect.top + elRect.height / 2 - tooltipH / 2;
-      left = elRect.right + 12;
-    } else if (placement === "left" && elRect.left - 12 - tooltipW > 0) {
-      top = elRect.top + elRect.height / 2 - tooltipH / 2;
-      left = elRect.left - 12 - tooltipW;
-    } else {
-      if (elRect.bottom + 12 + tooltipH < vh) {
-        top = elRect.bottom + 12;
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      let top = 0;
+      let left = 0;
+
+      if (placement === "bottom" && rect.bottom + 12 + tooltipH < vh) {
+        top = rect.bottom + 12;
         left = centerX - tooltipW / 2;
-      } else if (elRect.top - 12 - tooltipH > 0) {
-        top = elRect.top - 12 - tooltipH;
+      } else if (placement === "top" && rect.top - 12 - tooltipH > 0) {
+        top = rect.top - 12 - tooltipH;
         left = centerX - tooltipW / 2;
+      } else if (placement === "right" && rect.right + 12 + tooltipW < vw) {
+        top = centerY - tooltipH / 2;
+        left = rect.right + 12;
+      } else if (placement === "left" && rect.left - 12 - tooltipW > 0) {
+        top = centerY - tooltipH / 2;
+        left = rect.left - 12 - tooltipW;
       } else {
-        top = Math.max(16, vh / 2 - tooltipH / 2);
-        left = Math.max(16, vw / 2 - tooltipW / 2);
+        if (rect.bottom + 12 + tooltipH < vh) {
+          top = rect.bottom + 12;
+          left = centerX - tooltipW / 2;
+        } else if (rect.top - 12 - tooltipH > 0) {
+          top = rect.top - 12 - tooltipH;
+          left = centerX - tooltipW / 2;
+        } else {
+          top = vh / 2 - tooltipH / 2;
+          left = vw / 2 - tooltipW / 2;
+        }
       }
-    }
 
-    style.top = Math.max(8, Math.min(top, vh - tooltipH - 8));
-    style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
+      style.top = Math.max(8, Math.min(top, vh - tooltipH - 8));
+      style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
 
-    setTooltipStyle(style);
-  }, [steps, currentStep, active]);
+      setTooltipStyle(style);
+    });
+  }, [steps, currentStep, active, dismiss]);
 
   // Recalculate on step change
   useEffect(() => {
     if (!active) return;
-    const timer = setTimeout(findAndHighlight, 200);
+    const timer = setTimeout(findAndHighlight, 300);
     return () => clearTimeout(timer);
   }, [active, currentStep, findAndHighlight]);
 
@@ -334,13 +351,7 @@ const CategoryIntro = () => {
     }
   }, [active]);
 
-  const dismiss = useCallback(() => {
-    setActive(false);
-    setIsVisible(false);
-    markVisited(location.pathname);
-  }, [location.pathname]);
-
-  const nextStep = useCallback(() => {
+  const goNext = useCallback(() => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
@@ -348,7 +359,7 @@ const CategoryIntro = () => {
     }
   }, [currentStep, steps.length, dismiss]);
 
-  const prevStep = useCallback(() => {
+  const goPrev = useCallback(() => {
     setCurrentStep((prev) => Math.max(0, prev - 1));
   }, []);
 
@@ -357,14 +368,12 @@ const CategoryIntro = () => {
   const stepData = steps[currentStep];
 
   return (
-    <div className="fixed inset-0 z-[10000]" style={{ pointerEvents: "auto" }}>
-      {/* Dark overlay with cutout */}
+    <div className="fixed inset-0 z-[10000]" style={{ pointerEvents: "none" }}>
+      {/* Dark overlay with cutout — fixed coords */}
       <svg
-        className="absolute inset-0 w-full h-full transition-opacity duration-300"
-        style={{
-          opacity: isVisible ? 1 : 0,
-          height: Math.max(document.documentElement.scrollHeight, window.innerHeight),
-        }}
+        className="fixed inset-0 w-full h-full transition-opacity duration-300"
+        style={{ opacity: isVisible ? 1 : 0, pointerEvents: "auto" }}
+        onClick={(e) => e.stopPropagation()}
       >
         <defs>
           <mask id="category-spotlight-mask">
@@ -394,7 +403,7 @@ const CategoryIntro = () => {
       {/* Spotlight border glow */}
       {targetRect && (
         <div
-          className="absolute rounded-xl border-2 border-primary shadow-[0_0_24px_hsl(var(--primary)/0.4)] transition-all duration-500 pointer-events-none"
+          className="fixed rounded-xl border-2 border-primary shadow-[0_0_24px_hsl(var(--primary)/0.4)] transition-all duration-500 pointer-events-none"
           style={{
             top: targetRect.top,
             left: targetRect.left,
@@ -404,11 +413,12 @@ const CategoryIntro = () => {
         />
       )}
 
-      {/* Tooltip card */}
+      {/* Tooltip card — always interactive */}
       <div
         className="bg-card border border-border rounded-xl shadow-2xl p-5 transition-all duration-500"
         style={{
           ...tooltipStyle,
+          pointerEvents: "auto",
           opacity: isVisible && targetRect ? 1 : 0,
           transform: isVisible && targetRect ? "translateY(0)" : "translateY(8px)",
         }}
@@ -449,14 +459,14 @@ const CategoryIntro = () => {
           </span>
           <div className="flex gap-2">
             {currentStep > 0 && (
-              <Button variant="ghost" size="sm" onClick={prevStep} className="gap-1">
+              <Button variant="ghost" size="sm" onClick={goPrev} className="gap-1">
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Voltar
               </Button>
             )}
             <Button
               size="sm"
-              onClick={nextStep}
+              onClick={goNext}
               className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {currentStep < steps.length - 1 ? (
@@ -471,12 +481,6 @@ const CategoryIntro = () => {
           </div>
         </div>
       </div>
-
-      {/* Click catcher */}
-      <div
-        className="absolute inset-0 -z-10"
-        onClick={(e) => e.stopPropagation()}
-      />
     </div>
   );
 };
