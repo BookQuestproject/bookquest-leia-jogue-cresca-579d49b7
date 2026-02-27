@@ -17,8 +17,6 @@ import {
   LogIn,
   LogOut,
 } from "lucide-react";
-import logoCrown from "@/assets/logo-crown-transparent.png";
-import logoWordmark from "@/assets/logo-bookquest-wordmark.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useProfile } from "@/hooks/useProfile";
@@ -52,14 +50,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const userName = profile?.full_name || "Você";
 
   return (
-    <aside data-tutorial="sidebar-full" className="fixed left-0 top-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
-      {/* Logo */}
-      <div className="px-5 py-3 border-b border-sidebar-border">
-        <Link to="/home" className="flex items-center gap-2">
-          <img src={logoCrown} alt="BookQuest" className="w-14 h-14 object-contain" />
-          <img src={logoWordmark} alt="BookQuest" className="h-7 object-contain" />
-        </Link>
-      </div>
+    <aside data-tutorial="sidebar-full" className="fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
 
       {/* Login CTA for unauthenticated users */}
       {!user && (
