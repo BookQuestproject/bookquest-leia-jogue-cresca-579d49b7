@@ -39,7 +39,7 @@ const MobileNav = ({
       {/* Top Header */}
       <header className="fixed top-0 left-0 right-0 h-14 border-b border-sidebar-border flex items-center justify-between px-4 z-50 bg-muted">
         <Link to="/home" className="flex items-center gap-2">
-          <img src={logoCrown} alt="BookQuest" className="w-10 h-10 object-contain" />
+          <img src={logoCrown} alt="BookQuest" className="object-contain" style={{ width: '2.625rem', height: '2.625rem' }} />
           
         </Link>
         
