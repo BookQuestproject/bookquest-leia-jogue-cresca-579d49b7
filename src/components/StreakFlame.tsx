@@ -1,18 +1,11 @@
 import { useState } from "react";
-import { Flame, Info, ChevronRight, Eye } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Flame, ChevronRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 interface StreakFlameProps {
   days: number;
@@ -37,30 +30,23 @@ export const streakLevels = [
 
 export const getStreakColor = (days: number) => {
   for (const level of streakLevels) {
-    if (days >= level.min) {
-      return level;
-    }
+    if (days >= level.min) return level;
   }
   return streakLevels[streakLevels.length - 1];
 };
 
 const getNextLevel = (days: number) => {
-  // Find the next level above current
   const sorted = [...streakLevels].sort((a, b) => a.min - b.min);
   for (const level of sorted) {
-    if (level.min > days) {
-      return level;
-    }
+    if (level.min > days) return level;
   }
-  return null; // Already at max
+  return null;
 };
 
-const StreakFlame = ({ days, showLabel = true, size = "md", showInfo = true, isAdmin = false }: StreakFlameProps) => {
+const StreakFlame = ({ days }: StreakFlameProps) => {
   const streak = getStreakColor(days);
   const nextLevel = getNextLevel(days);
-  const [showEvolution, setShowEvolution] = useState(false);
-  const [simulatedLevel, setSimulatedLevel] = useState<number | null>(null);
-  const [animating, setAnimating] = useState(false);
+  const [showLevels, setShowLevels] = useState(false);
 
   const daysToNext = nextLevel ? nextLevel.min - days : 0;
   const currentLevelStart = streak.min;
@@ -69,108 +55,48 @@ const StreakFlame = ({ days, showLabel = true, size = "md", showInfo = true, isA
     ? ((days - currentLevelStart) / (currentLevelEnd - currentLevelStart)) * 100
     : 100;
 
-  const simulateTransition = (targetIndex: number) => {
-    setAnimating(true);
-    const sortedLevels = [...streakLevels].sort((a, b) => a.min - b.min);
-    let step = 0;
-    const interval = setInterval(() => {
-      if (step <= targetIndex) {
-        setSimulatedLevel(step);
-        step++;
-      } else {
-        clearInterval(interval);
-        setAnimating(false);
-      }
-    }, 800);
-  };
-
-  const sizeClasses = {
-    sm: { icon: "w-6 h-6", text: "text-sm", container: "w-12 h-12" },
-    md: { icon: "w-8 h-8", text: "text-lg", container: "w-14 h-14" },
-    lg: { icon: "w-10 h-10", text: "text-2xl", container: "w-16 h-16" },
-  };
-
   const sortedLevelsAsc = [...streakLevels].sort((a, b) => a.min - b.min);
-  const currentSimLevel = simulatedLevel !== null ? sortedLevelsAsc[simulatedLevel] : null;
 
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Sequência</h3>
-        {showInfo && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="text-muted-foreground hover:text-foreground transition-colors">
-                  <Info className="w-4 h-4" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="left" className="max-w-xs p-4">
-                <p className="font-semibold mb-2">Ordem da Chama</p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Mantenha sua sequência realizando atividades diárias. Se ficar um dia sem atividade, a sequência zera.
-                </p>
-                <div className="space-y-1.5 text-xs">
-                  {sortedLevelsAsc.map((level) => (
-                    <div key={level.min} className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <Flame className="w-3 h-3" style={{ color: level.color, filter: level.glow ? `drop-shadow(0 0 4px ${level.color})` : undefined }} />
-                        <span style={{ color: level.color }}>{level.label}</span>
-                      </div>
-                      <span className="text-muted-foreground">{level.description}</span>
-                    </div>
-                  ))}
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
+    <div className="flex flex-col gap-3">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Sequência</h3>
       </div>
 
-      {/* Central torch icon */}
-      <div className="flex flex-col items-center gap-3 mb-4">
+      {/* Current level — compact */}
+      <div className="flex items-center gap-3">
         <div
-          className={`${sizeClasses[size].container} rounded-full flex items-center justify-center transition-all duration-500`}
+          className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
           style={{
-            background: `${streak.color}15`,
-            boxShadow: streak.glow
-              ? `0 0 20px ${streak.color}40, 0 0 40px ${streak.color}20`
-              : `0 0 12px ${streak.color}20`,
+            background: `${streak.color}12`,
+            boxShadow: streak.glow ? `0 0 12px ${streak.color}30` : undefined,
           }}
         >
           <Flame
-            className={`${sizeClasses[size].icon} transition-colors duration-500 ${days > 0 ? "animate-pulse" : ""}`}
+            className={`w-5 h-5 ${days > 0 ? "animate-pulse" : ""}`}
             style={{
               color: streak.color,
               filter: streak.glow
-                ? `drop-shadow(0 0 8px ${streak.color}) drop-shadow(0 0 16px ${streak.color}80)`
-                : `drop-shadow(0 0 4px ${streak.color}80)`,
+                ? `drop-shadow(0 0 6px ${streak.color})`
+                : `drop-shadow(0 0 3px ${streak.color}60)`,
             }}
           />
         </div>
-
-        {/* Level name */}
-        <p
-          className="text-sm font-bold tracking-wide transition-colors duration-500"
-          style={{ color: streak.color, filter: streak.glow ? `drop-shadow(0 0 6px ${streak.color}80)` : undefined }}
-        >
-          {streak.label}
-        </p>
-
-        {/* Days count */}
-        {showLabel && (
-          <p className="text-xs text-muted-foreground">
-            {days === 0
-              ? "Complete uma atividade para iniciar"
-              : `${days} ${days === 1 ? "dia" : "dias"} consecutivo${days === 1 ? "" : "s"}`}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold leading-tight" style={{ color: streak.color }}>
+            {streak.label}
           </p>
-        )}
+          <p className="text-xs text-muted-foreground">
+            {days === 0 ? "Inicie sua sequência" : `${days} ${days === 1 ? "dia" : "dias"}`}
+          </p>
+        </div>
       </div>
 
-      {/* Progress bar to next level */}
-      {nextLevel && days > 0 && (
-        <div className="space-y-2">
-          <div className="h-2 rounded-full overflow-hidden bg-muted">
+      {/* Progress bar */}
+      {days > 0 && nextLevel && (
+        <div className="space-y-1.5">
+          <div className="h-1.5 rounded-full overflow-hidden bg-muted/60">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{
@@ -179,187 +105,79 @@ const StreakFlame = ({ days, showLabel = true, size = "md", showInfo = true, isA
               }}
             />
           </div>
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
             <span>
-              Faltam <span className="font-semibold text-foreground">{daysToNext}</span> dias para evoluir
+              <span className="font-medium text-foreground">{daysToNext}</span> dias para evoluir
             </span>
-            <div className="flex items-center gap-1">
-              <Flame className="w-3 h-3" style={{ color: nextLevel.color }} />
-              <span style={{ color: nextLevel.color }} className="font-medium">{nextLevel.label}</span>
-            </div>
+            <span className="font-medium" style={{ color: nextLevel.color }}>{nextLevel.label}</span>
           </div>
         </div>
       )}
 
       {days >= 365 && (
-        <p className="text-xs text-center mt-2 font-medium" style={{ color: streak.color, filter: `drop-shadow(0 0 6px ${streak.color}80)` }}>
+        <p className="text-[11px] text-center font-medium" style={{ color: streak.color }}>
           🏆 Marco máximo alcançado!
         </p>
       )}
 
       {days === 0 && (
-        <div className="h-2 rounded-full overflow-hidden bg-muted mt-1">
+        <div className="h-1.5 rounded-full overflow-hidden bg-muted/60">
           <div className="h-full rounded-full w-0" />
         </div>
       )}
 
-      {/* All levels list */}
-      <div className="mt-4 pt-4 border-t border-border/60 space-y-1">
-        {sortedLevelsAsc.map((level) => {
-          const isCurrent = streak.label === level.label && days > 0;
-          return (
-            <div
-              key={level.min}
-              className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition-colors ${isCurrent ? "bg-muted" : ""}`}
-            >
-              <div className="flex items-center gap-2">
-                <Flame
-                  className="w-3.5 h-3.5"
-                  style={{
-                    color: level.color,
-                    filter: level.glow ? `drop-shadow(0 0 4px ${level.color})` : undefined,
-                    opacity: isCurrent || days === 0 ? 1 : 0.5,
-                  }}
-                />
-                <span
-                  className="font-medium"
-                  style={{
-                    color: level.color,
-                    opacity: isCurrent || days === 0 ? 1 : 0.6,
-                  }}
-                >
-                  {level.label}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">{level.description}</span>
-                {isCurrent && (
-                  <ChevronRight className="w-3 h-3 text-foreground" />
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* View levels button */}
+      <button
+        onClick={() => setShowLevels(true)}
+        className="flex items-center justify-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors py-1"
+      >
+        Ver todos os níveis
+        <ChevronRight className="w-3 h-3" />
+      </button>
 
-      {/* Admin evolution viewer */}
-      {isAdmin && (
-        <>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-4 gap-2 text-xs"
-            onClick={() => {
-              setSimulatedLevel(null);
-              setShowEvolution(true);
-            }}
-          >
-            <Eye className="w-3.5 h-3.5" />
-            Visualizar Evoluções da Chama
-          </Button>
-
-          <Dialog open={showEvolution} onOpenChange={setShowEvolution}>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 font-serif">
-                  <Flame className="w-5 h-5 text-accent" />
-                  Simulador de Evolução
-                </DialogTitle>
-              </DialogHeader>
-
-              <div className="flex flex-col items-center gap-4 py-4">
-                {/* Animated torch display */}
+      {/* Levels modal */}
+      <Dialog open={showLevels} onOpenChange={setShowLevels}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-base flex items-center gap-2">
+              <Flame className="w-4 h-4 text-accent" />
+              Ordem da Chama
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-xs text-muted-foreground -mt-2">
+            Complete atividades diárias para evoluir. Um dia sem atividade zera a sequência.
+          </p>
+          <div className="space-y-0.5 mt-2">
+            {sortedLevelsAsc.map((level) => {
+              const isCurrent = streak.label === level.label && days > 0;
+              return (
                 <div
-                  className="w-20 h-20 rounded-full flex items-center justify-center transition-all duration-700"
-                  style={{
-                    background: currentSimLevel ? `${currentSimLevel.color}15` : `${sortedLevelsAsc[0].color}15`,
-                    boxShadow: currentSimLevel?.glow
-                      ? `0 0 30px ${currentSimLevel.color}50, 0 0 60px ${currentSimLevel.color}25`
-                      : currentSimLevel
-                      ? `0 0 16px ${currentSimLevel.color}30`
-                      : "none",
-                  }}
+                  key={level.min}
+                  className={`flex items-center justify-between px-2.5 py-2 rounded-md text-xs transition-colors ${isCurrent ? "bg-muted" : ""}`}
                 >
-                  <Flame
-                    className="w-12 h-12 transition-all duration-700"
-                    style={{
-                      color: currentSimLevel?.color || sortedLevelsAsc[0].color,
-                      filter: currentSimLevel?.glow
-                        ? `drop-shadow(0 0 12px ${currentSimLevel.color}) drop-shadow(0 0 24px ${currentSimLevel.color}80)`
-                        : currentSimLevel
-                        ? `drop-shadow(0 0 6px ${currentSimLevel.color}80)`
-                        : "none",
-                    }}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Flame
+                      className="w-3 h-3 flex-shrink-0"
+                      style={{
+                        color: level.color,
+                        opacity: isCurrent ? 1 : 0.5,
+                        filter: level.glow ? `drop-shadow(0 0 3px ${level.color})` : undefined,
+                      }}
+                    />
+                    <span className="font-medium" style={{ color: level.color, opacity: isCurrent ? 1 : 0.65 }}>
+                      {level.label}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-muted-foreground">{level.description}</span>
+                    {isCurrent && <ChevronRight className="w-3 h-3 text-foreground" />}
+                  </div>
                 </div>
-
-                <p
-                  className="text-lg font-bold transition-colors duration-700"
-                  style={{ color: currentSimLevel?.color || "var(--muted-foreground)" }}
-                >
-                  {currentSimLevel?.label || "Selecione uma simulação"}
-                </p>
-                {currentSimLevel && (
-                  <p className="text-xs text-muted-foreground">{currentSimLevel.description}</p>
-                )}
-              </div>
-
-              {/* Simulation controls */}
-              <div className="space-y-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full gap-2"
-                  disabled={animating}
-                  onClick={() => simulateTransition(sortedLevelsAsc.length - 1)}
-                >
-                  ▶ Simular promoção completa
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full gap-2"
-                  disabled={animating}
-                  onClick={() => {
-                    setAnimating(true);
-                    const total = sortedLevelsAsc.length - 1;
-                    let step = total;
-                    setSimulatedLevel(total);
-                    const interval = setInterval(() => {
-                      if (step >= 0) {
-                        setSimulatedLevel(step);
-                        step--;
-                      } else {
-                        clearInterval(interval);
-                        setAnimating(false);
-                      }
-                    }, 800);
-                  }}
-                >
-                  ◀ Simular rebaixamento completo
-                </Button>
-              </div>
-
-              {/* Quick jump buttons */}
-              <div className="grid grid-cols-2 gap-1.5 mt-2">
-                {sortedLevelsAsc.map((level, index) => (
-                  <button
-                    key={level.min}
-                    disabled={animating}
-                    onClick={() => setSimulatedLevel(index)}
-                    className={`flex items-center gap-2 px-2.5 py-2 rounded-md text-xs transition-colors hover:bg-muted ${
-                      simulatedLevel === index ? "bg-muted ring-1 ring-border" : ""
-                    }`}
-                  >
-                    <Flame className="w-3.5 h-3.5 flex-shrink-0" style={{ color: level.color, filter: level.glow ? `drop-shadow(0 0 4px ${level.color})` : undefined }} />
-                    <span className="font-medium truncate" style={{ color: level.color }}>{level.label}</span>
-                  </button>
-                ))}
-              </div>
-            </DialogContent>
-          </Dialog>
-        </>
-      )}
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
