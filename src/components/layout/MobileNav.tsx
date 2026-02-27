@@ -40,7 +40,7 @@ const MobileNav = ({
       <header className="fixed top-0 left-0 right-0 h-14 border-b border-sidebar-border flex items-center justify-between px-4 z-50 bg-muted">
         <Link to="/home" className="flex items-center gap-2">
           <img src={logoCrown} alt="BookQuest" className="w-10 h-10 object-contain" />
-          <img src={logoWordmark} alt="BookQuest" className="h-6 object-contain" />
+          <img alt="BookQuest" className="h-6 object-contain" src="/lovable-uploads/ae6171ae-e94c-4ed8-93b6-30663ed338d9.png" />
         </Link>
         
         <div className="flex items-center gap-3">
@@ -55,7 +55,7 @@ const MobileNav = ({
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 h-16 bg-sidebar border-t border-sidebar-border flex items-center justify-around px-2 z-50">
-        {menuItems.map(item => <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 p-2 rounded transition-all duration-200 ${isActive(item.path) ? "text-secondary" : "text-muted-foreground hover:text-foreground"}`}>
+        {menuItems.map((item) => <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 p-2 rounded transition-all duration-200 ${isActive(item.path) ? "text-secondary" : "text-muted-foreground hover:text-foreground"}`}>
             <item.icon className={`w-5 h-5 ${isActive(item.path) ? "scale-110" : ""}`} />
             <span className="text-xs font-medium">{item.label}</span>
           </Link>)}
