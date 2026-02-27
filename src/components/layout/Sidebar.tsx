@@ -50,7 +50,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const userName = profile?.full_name || "Você";
 
   return (
-    <aside data-tutorial="sidebar-full" className="fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-50">
+    <aside data-tutorial="sidebar-full" className="fixed left-0 top-12 h-[calc(100vh-3rem)] w-56 bg-sidebar border-r border-white/[0.06] flex flex-col z-50">
 
       {/* Login CTA for unauthenticated users */}
       {!user && (
@@ -66,7 +66,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       )}
 
       {/* Navigation - all items unified */}
-      <nav className="flex-1 px-2 py-2 overflow-y-auto" data-tutorial="sidebar-nav">
+      <nav className="flex-1 px-2 py-1.5 overflow-y-auto space-y-0.5" data-tutorial="sidebar-nav">
         {menuItems.map((item) => {
           const isPremiumItem = (item as any).premium;
           return (
@@ -75,24 +75,24 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
               to={item.path}
               className={`sidebar-item ${isActive(item.path) ? "active" : ""} ${isPremiumItem && !isPremium ? "premium-locked" : ""}`}
             >
-              <item.icon className="w-5 h-5" />
-              <span className="text-[15px]">{item.label}</span>
-              {isPremiumItem && !isPremium && <Lock className="w-3.5 h-3.5 text-muted-foreground ml-auto" />}
+              <item.icon className="w-4 h-4" />
+              <span>{item.label}</span>
+              {isPremiumItem && !isPremium && <Lock className="w-3 h-3 text-muted-foreground/40 ml-auto" />}
             </Link>
           );
         })}
       </nav>
 
       {/* Bottom section */}
-      <div className="px-2 py-2 border-t border-sidebar-border space-y-0">
+      <div className="px-2 py-2 border-t border-white/[0.06] space-y-0.5">
         {!isPremium && (
           <Link
             to="/premium"
-            className="sidebar-item text-accent hover:bg-accent/10"
+            className="sidebar-item text-accent/80 hover:text-accent"
             data-tutorial="premium-cta"
           >
-            <Crown className="w-5 h-5" />
-            <span className="text-[15px] font-semibold">Assine o Premium</span>
+            <Crown className="w-4 h-4" />
+            <span className="font-medium">Assine o Premium</span>
           </Link>
         )}
 
@@ -105,23 +105,23 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
               <img
                 src={profile.avatar_url}
                 alt="Avatar"
-                className="w-6 h-6 rounded-full object-cover"
+                className="w-5 h-5 rounded-full object-cover"
               />
             ) : (
-              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[11px] font-bold text-primary-foreground">
+              <div className="w-5 h-5 rounded-full bg-primary/80 flex items-center justify-center text-[10px] font-bold text-primary-foreground">
                 {userName.substring(0, 1).toUpperCase()}
               </div>
             )}
-            <span className="text-[15px]">Meu Perfil</span>
+            <span>Meu Perfil</span>
           </Link>
         )}
         {user && (
           <button
             onClick={() => signOut()}
-            className="sidebar-item w-full text-left hover:text-destructive"
+            className="sidebar-item w-full text-left"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="text-[15px]">Sair</span>
+            <LogOut className="w-4 h-4" />
+            <span>Sair</span>
           </button>
         )}
       </div>
