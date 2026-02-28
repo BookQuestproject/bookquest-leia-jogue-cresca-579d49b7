@@ -17,10 +17,19 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseClient = createClient(
+  const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     { auth: { persistSession: false } }
+  );
+
+  const supabaseAuth = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    {
+      auth: { persistSession: false },
+      global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+    }
   );
 
   try {
@@ -32,8 +41,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    const { data: userData, error: userError } = await supabaseAuth.auth.getUser();
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
@@ -46,7 +54,7 @@ serve(async (req) => {
       logStep("No customer found");
       
       // Update profile to not premium
-      await supabaseClient
+      await supabaseAdmin
         .from('profiles')
         .update({ is_premium: false, premium_expires_at: null })
         .eq('id', user.id);
@@ -75,7 +83,7 @@ serve(async (req) => {
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
 
       // Update profile to premium
-      await supabaseClient
+      await supabaseAdmin
         .from('profiles')
         .update({ is_premium: true, premium_expires_at: subscriptionEnd })
         .eq('id', user.id);
@@ -83,7 +91,7 @@ serve(async (req) => {
       logStep("No active subscription");
       
       // Update profile to not premium
-      await supabaseClient
+      await supabaseAdmin
         .from('profiles')
         .update({ is_premium: false, premium_expires_at: null })
         .eq('id', user.id);
