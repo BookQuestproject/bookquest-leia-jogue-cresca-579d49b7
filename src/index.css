@@ -507,11 +507,12 @@
     @apply backdrop-blur-md bg-card/90 border border-border/50 shadow-sm rounded-md;
   }
 
-  /* Sidebar */
+  /* Sidebar — legacy classes kept for compat */
   .sidebar-item {
-    @apply flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200;
-    color: hsl(var(--muted-foreground) / 0.65);
-    font-size: 14px;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200;
+    color: hsl(var(--muted-foreground) / 0.7);
+    font-size: 13.5px;
+    font-weight: 500;
   }
 
   .sidebar-item:hover {
@@ -520,12 +521,12 @@
   }
 
   .sidebar-item.active {
-    background: hsl(var(--sidebar-accent) / 0.8);
-    @apply text-foreground font-medium;
+    background: hsl(var(--sidebar-accent));
+    @apply text-foreground font-semibold;
   }
 
   .sidebar-item.premium-locked {
-    @apply opacity-50;
+    @apply opacity-40;
   }
 
   /* Quiz options */

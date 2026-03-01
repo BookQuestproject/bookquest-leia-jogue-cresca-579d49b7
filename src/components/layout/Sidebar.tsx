@@ -16,10 +16,12 @@ import {
   Newspaper,
   LogIn,
   LogOut,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useProfile } from "@/hooks/useProfile";
+import logoCrown from "@/assets/logo-crown-transparent.png";
 
 interface SidebarProps {
   isPremium?: boolean;
@@ -31,94 +33,148 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const { isAdmin } = useAdmin();
   const { profile } = useProfile();
 
-  const menuItems = [
+  const primaryItems = [
     { icon: Home, label: "Home", path: "/home" },
     { icon: BookOpen, label: "Trilhas Literárias", path: "/trilhas" },
     { icon: BookMarked, label: "Minha Estante", path: "/estante" },
     { icon: Library, label: "Biblioteca", path: "/biblioteca" },
     { icon: Target, label: "Missões", path: "/missoes" },
-    { icon: Trophy, label: "Ranking Literário", path: "/ranking" },
+    { icon: Trophy, label: "Ranking", path: "/ranking" },
     ...(!isAdmin ? [{ icon: HelpCircle, label: "Quiz Literário", path: "/quiz" }] : []),
+  ];
+
+  const secondaryItems = [
     { icon: Users, label: "Comunidades", path: "/comunidade" },
     { icon: Newspaper, label: "Notícias", path: "/noticias" },
-    { icon: MessageSquare, label: "Book Club", path: "/bookclub", premium: true },
-    { icon: Sparkles, label: "Mentoria", path: "/mentoria", premium: true },
-    { icon: GraduationCap, label: "ENEM e Vestibulares", path: "/enem", premium: true },
+  ];
+
+  const premiumItems = [
+    { icon: MessageSquare, label: "Book Club", path: "/bookclub" },
+    { icon: Sparkles, label: "Mentoria", path: "/mentoria" },
+    { icon: GraduationCap, label: "ENEM e Vestibulares", path: "/enem" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
   const userName = profile?.full_name || "Você";
 
-  return (
-    <aside data-tutorial="sidebar-full" className="fixed left-0 top-12 h-[calc(100vh-3rem)] w-56 bg-sidebar border-r border-white/[0.06] flex flex-col z-50">
+  const renderItem = (item: { icon: any; label: string; path: string }, isPremiumItem = false) => {
+    const active = isActive(item.path);
+    const locked = isPremiumItem && !isPremium;
 
-      {/* Login CTA for unauthenticated users */}
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        className={`
+          group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-200
+          ${active
+            ? "text-foreground bg-sidebar-accent"
+            : locked
+            ? "text-muted-foreground/40 cursor-not-allowed"
+            : "text-muted-foreground/70 hover:text-foreground hover:bg-sidebar-accent/50"
+          }
+        `}
+      >
+        {/* Active indicator — gold bar */}
+        {active && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-accent" />
+        )}
+        <item.icon
+          className={`w-[18px] h-[18px] flex-shrink-0 transition-colors ${active ? "text-accent" : ""}`}
+        />
+        <span className="truncate">{item.label}</span>
+        {locked && <Lock className="w-3 h-3 text-muted-foreground/30 ml-auto" />}
+      </Link>
+    );
+  };
+
+  return (
+    <aside className="fixed left-0 top-0 h-screen w-56 bg-sidebar flex flex-col z-50 border-r border-border/40">
+      {/* Logo */}
+      <div className="px-5 py-5 flex items-center gap-2">
+        <Link to="/home" className="flex items-center gap-2">
+          <img src={logoCrown} alt="BookQuest" className="w-10 h-10 object-contain" />
+        </Link>
+      </div>
+
+      {/* Login CTA */}
       {!user && (
-        <div className="px-5 py-2 border-b border-sidebar-border">
+        <div className="px-4 pb-3">
           <Link
             to="/auth"
-            className="flex items-center gap-2 text-sm text-secondary hover:text-secondary/80 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-accent hover:bg-accent/10 transition-colors font-medium"
           >
             <LogIn className="w-4 h-4" />
-            <span className="font-medium">Entrar / Cadastrar</span>
+            <span>Entrar / Cadastrar</span>
           </Link>
         </div>
       )}
 
-      {/* Navigation - all items unified */}
-      <nav className="flex-1 px-2 py-1.5 overflow-y-auto space-y-0.5" data-tutorial="sidebar-nav">
-        {menuItems.map((item) => {
-          const isPremiumItem = (item as any).premium;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`sidebar-item ${isActive(item.path) ? "active" : ""} ${isPremiumItem && !isPremium ? "premium-locked" : ""}`}
-            >
-              <item.icon className="w-4 h-4" />
-              <span>{item.label}</span>
-              {isPremiumItem && !isPremium && <Lock className="w-3 h-3 text-muted-foreground/40 ml-auto" />}
-            </Link>
-          );
-        })}
+      {/* Primary Navigation */}
+      <nav className="flex-1 px-3 overflow-y-auto space-y-0.5" data-tutorial="sidebar-nav">
+        <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
+          Navegação
+        </p>
+        {primaryItems.map((item) => renderItem(item))}
+
+        {/* Divider */}
+        <div className="my-3 mx-3 border-t border-border/30" />
+
+        <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
+          Social
+        </p>
+        {secondaryItems.map((item) => renderItem(item))}
+
+        {/* Premium section */}
+        <div className="my-3 mx-3 border-t border-border/30" />
+
+        <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-accent/40">
+          Premium
+        </p>
+        {premiumItems.map((item) => renderItem(item, true))}
       </nav>
 
       {/* Bottom section */}
-      <div className="px-2 py-2 border-t border-white/[0.06] space-y-0.5">
+      <div className="px-3 py-3 border-t border-border/30 space-y-1">
         {!isPremium && (
           <Link
             to="/premium"
-            className="sidebar-item text-accent/80 hover:text-accent"
+            className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-accent-foreground bg-accent hover:bg-accent/90 transition-all"
             data-tutorial="premium-cta"
           >
             <Crown className="w-4 h-4" />
-            <span className="font-medium">Assine o Premium</span>
+            <span>Assine o Premium</span>
           </Link>
         )}
 
         {user && (
           <Link
             to="/perfil"
-            className={`sidebar-item ${isActive("/perfil") ? "active" : ""}`}
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
+              isActive("/perfil")
+                ? "bg-sidebar-accent text-foreground"
+                : "text-muted-foreground/70 hover:text-foreground hover:bg-sidebar-accent/50"
+            }`}
           >
             {profile?.avatar_url ? (
               <img
                 src={profile.avatar_url}
                 alt="Avatar"
-                className="w-5 h-5 rounded-full object-cover"
+                className="w-6 h-6 rounded-full object-cover ring-1 ring-border/40"
               />
             ) : (
-              <div className="w-5 h-5 rounded-full bg-primary/80 flex items-center justify-center text-[10px] font-bold text-primary-foreground">
+              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[11px] font-bold text-primary-foreground">
                 {userName.substring(0, 1).toUpperCase()}
               </div>
             )}
-            <span>Meu Perfil</span>
+            <span className="truncate">{userName}</span>
           </Link>
         )}
+
         {user && (
           <button
             onClick={() => signOut()}
-            className="sidebar-item w-full text-left"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium text-muted-foreground/60 hover:text-foreground hover:bg-sidebar-accent/50 transition-all w-full text-left"
           >
             <LogOut className="w-4 h-4" />
             <span>Sair</span>
