@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
-import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Castle, Sparkles, Repeat } from "lucide-react";
+import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Sparkles, Repeat, Zap, Clock, Flame, Settings } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
@@ -52,9 +52,9 @@ const Index = () => {
   };
 
   const dailyMissions = [
-    { title: "Responder pergunta de capítulo", progress: 0, goal: 1, reward: "+10 pts", icon: BookOpen },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 pts", icon: Target },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 pts", icon: CheckCircle, completed: true },
+    { title: "Complete 1 capítulo hoje", progress: 0, goal: 1, reward: "+10 XP", icon: BookOpen },
+    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 XP", icon: Target },
+    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 XP", icon: CheckCircle, completed: true },
   ];
 
   const handleContinueReading = (chapterId?: number) => {
@@ -71,240 +71,247 @@ const Index = () => {
 
   const themeColor = currentBookTheme?.color || "220 60% 50%";
 
+  // Dynamic motivational message
+  const getMotivationalMessage = () => {
+    if (!hasActiveTrail) return null;
+    if (userStats.streak === 0) return { icon: Flame, text: "Leia hoje para iniciar sua sequência!", color: "text-accent" };
+    if (nextTier) {
+      const xpToNext = nextTier.pointsNeeded - userStats.points;
+      if (xpToNext <= 30) return { icon: Zap, text: `Você está a ${xpToNext} XP de subir para ${nextTier.label}!`, color: "text-accent" };
+    }
+    return { icon: Zap, text: `Continue lendo para manter sua sequência de ${userStats.streak} dias!`, color: "text-accent" };
+  };
+
+  const motivational = getMotivationalMessage();
+  const progressPercent = userStats.totalChapters > 0 ? Math.round((completedChapters / userStats.totalChapters) * 100) : 0;
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
 
-        {/* Header */}
-        <header className="mb-8 animate-fade-in" data-tutorial="welcome-header">
-          {hasActiveTrail ? (
-            <>
-              <p className="text-xs text-accent font-semibold uppercase tracking-[0.15em] mb-2 flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5" />
-                Sua Jornada Atual
-              </p>
-              <h1 className="text-3xl lg:text-4xl font-serif font-bold text-foreground mb-1">
-                {userStats.currentBook}
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                Capítulo {userStats.currentChapter} de {userStats.totalChapters} • {currentBookTheme?.genre}
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-xs text-accent font-semibold uppercase tracking-[0.15em] mb-2 flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5" />
-                Bem-vindo ao BookQuest
-              </p>
-              <h1 className="text-3xl lg:text-4xl font-serif font-bold text-foreground mb-1">
-                Comece sua jornada literária
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                Escolha uma trilha para iniciar sua aventura
-              </p>
-            </>
-          )}
-        </header>
+        {/* Top Bar: Settings */}
+        <div className="flex items-center justify-end mb-4 animate-fade-in">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-accent hover:bg-accent/10 transition-colors"
+            onClick={() => navigate('/configuracoes')}
+            title="Configurações"
+          >
+            <Settings className="w-5 h-5" />
+          </Button>
+        </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main Content — col-span-2 */}
-          <div className="lg:col-span-2 order-2 lg:order-1 space-y-6">
-            {hasActiveTrail ? (
-              <>
-                {/* Current Trail Card — premium feel */}
-                <div
-                  data-tutorial="current-trail"
-                  className="rounded-xl overflow-hidden animate-fade-in"
-                  style={{ animationDelay: "0.1s" }}
-                >
-                  {/* Card body */}
+        {/* ═══════════ HERO SECTION — Call to Action ═══════════ */}
+        {hasActiveTrail ? (
+          <div className="mb-8 animate-fade-in">
+            {/* Motivational banner */}
+            {motivational && (
+              <div className="flex items-center gap-2 mb-4 px-4 py-2.5 rounded-lg bg-accent/8 border border-accent/15">
+                <motivational.icon className={`w-4 h-4 ${motivational.color} flex-shrink-0`} />
+                <p className={`text-sm font-semibold ${motivational.color}`}>{motivational.text}</p>
+              </div>
+            )}
+
+            {/* Main hero card */}
+            <div className="rounded-2xl p-6 lg:p-8 relative overflow-hidden bg-card border border-border">
+              {/* Glow */}
+              <div
+                className="absolute -top-20 -right-20 w-72 h-72 rounded-full blur-3xl pointer-events-none opacity-20"
+                style={{ background: `hsl(var(--accent))` }}
+              />
+
+              <div className="relative z-10">
+                <p className="text-xs text-accent font-bold uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5" />
+                  Sua Jornada Atual
+                </p>
+
+                <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+                  {/* Book icon */}
                   <div
-                    className="p-6 relative rounded-xl bg-card border border-border"
+                    className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 border border-accent/20"
+                    style={{
+                      background: `linear-gradient(135deg, hsl(var(--accent) / 0.15), hsl(var(--accent) / 0.05))`,
+                      boxShadow: `0 0 30px hsl(var(--accent) / 0.1)`,
+                    }}
                   >
-                    {/* Accent glow */}
-                    <div
-                      className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl pointer-events-none"
-                      style={{ background: `hsl(${themeColor} / 0.08)` }}
-                    />
+                    <span className="text-4xl">{activeTrail?.cover || '📖'}</span>
+                  </div>
 
-                    <div className="flex items-start justify-between relative z-10 gap-4">
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div
-                          className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0"
-                          style={{
-                            background: `linear-gradient(135deg, hsl(${themeColor} / 0.25), hsl(${themeColor} / 0.1))`,
-                            border: `1px solid hsl(${themeColor} / 0.3)`,
-                          }}
-                        >
-                          <span className="text-3xl">{activeTrail?.cover || '📖'}</span>
-                        </div>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1.5">
-                            <BookOpen className="w-3 h-3" />
-                            Trilha atual
-                          </div>
-                          <h3 className="text-lg font-serif font-bold text-foreground mb-0.5 truncate">
-                            {userStats.currentBook}
-                          </h3>
-                          <p className="text-muted-foreground text-sm">
-                            Capítulo {userStats.currentChapter} de {userStats.totalChapters}
-                          </p>
-                        </div>
-                      </div>
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-2xl lg:text-3xl font-serif font-bold text-foreground mb-1">
+                      {userStats.currentBook}
+                    </h1>
+                    <p className="text-muted-foreground text-sm mb-4">
+                      Capítulo {userStats.currentChapter} de {userStats.totalChapters} • {currentBookTheme?.genre}
+                    </p>
 
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                          onClick={(e) => { e.stopPropagation(); navigate('/trilhas'); }}
-                          title="Trocar de trilha"
-                        >
-                          <Repeat className="w-5 h-5" />
-                        </Button>
-                        <Button
-                          size="lg"
-                          className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 font-bold shadow-lg shadow-accent/20"
-                          onClick={() => handleContinueReading()}
-                        >
-                          <Play className="w-5 h-5" />
-                          Continuar Leitura
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Progress */}
-                    <div className="mt-5 pt-4 border-t border-border/40 relative z-10">
-                      <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                    {/* Thick progress bar */}
+                    <div className="mb-2">
+                      <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
                         <span>Progresso da jornada</span>
-                        <span className="font-bold text-accent">
-                          {Math.round((userStats.currentChapter / userStats.totalChapters) * 100)}%
-                        </span>
+                        <span className="font-bold text-accent">{progressPercent}%</span>
                       </div>
-                      <div className="h-2 bg-muted/40 rounded-full overflow-hidden">
+                      <div className="h-3 bg-muted/40 rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all duration-700"
+                          className="h-full rounded-full transition-all duration-1000 ease-out"
                           style={{
-                            width: `${(userStats.currentChapter / userStats.totalChapters) * 100}%`,
+                            width: `${progressPercent}%`,
                             background: `linear-gradient(90deg, hsl(var(--accent)), hsl(40 80% 55%))`,
+                            boxShadow: `0 0 12px hsl(var(--accent) / 0.4)`,
                           }}
                         />
                       </div>
                     </div>
                   </div>
+
+                  {/* CTA buttons */}
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                      onClick={(e) => { e.stopPropagation(); navigate('/trilhas'); }}
+                      title="Trocar de trilha"
+                    >
+                      <Repeat className="w-5 h-5" />
+                    </Button>
+                    <Button
+                      size="xl"
+                      className="gap-2.5 bg-accent text-accent-foreground hover:bg-accent/90 font-bold shadow-lg shadow-accent/25 text-base"
+                      onClick={() => handleContinueReading()}
+                    >
+                      <Play className="w-5 h-5" />
+                      Continuar Leitura
+                    </Button>
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Welcome header — no active trail */
+          <header className="mb-8 animate-fade-in">
+            <p className="text-xs text-accent font-semibold uppercase tracking-[0.15em] mb-2 flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              Bem-vindo ao BookQuest
+            </p>
+            <h1 className="text-3xl lg:text-4xl font-serif font-bold text-foreground mb-1">
+              Comece sua jornada literária
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Escolha uma trilha para iniciar sua aventura
+            </p>
+          </header>
+        )}
 
-                {/* Chapter list */}
-                <div className="animate-fade-in space-y-2.5" data-tutorial="chapter-list" style={{ animationDelay: "0.2s" }}>
-                  {chapters.map((chapter) => {
-                    const isLocked = chapter.status === "locked";
-                    const isCurrent = chapter.status === "current";
-                    const isCompleted = chapter.status === "completed";
-                    const isOpenBook = !isLocked;
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* ═══════════ MAIN CONTENT — col-span-2 ═══════════ */}
+          <div className="lg:col-span-2 order-2 lg:order-1 space-y-6">
+            {hasActiveTrail ? (
+              <>
+                {/* Chapter list — Trilha Literária */}
+                <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+                  <h2 className="text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground/60 mb-4 flex items-center gap-2">
+                    <BookOpen className="w-3.5 h-3.5" />
+                    Trilha Literária
+                  </h2>
+                  <div className="space-y-2.5" data-tutorial="chapter-list">
+                    {chapters.map((chapter) => {
+                      const isLocked = chapter.status === "locked";
+                      const isCurrent = chapter.status === "current";
+                      const isCompleted = chapter.status === "completed";
 
-                    const handlePageUpdate = (page: number) => {
-                      console.log(`Saving page ${page} for chapter ${chapter.id}`);
-                    };
+                      const handlePageUpdate = (page: number) => {
+                        console.log(`Saving page ${page} for chapter ${chapter.id}`);
+                      };
 
-                    return (
-                      <div
-                        key={chapter.id}
-                        onClick={() => !isLocked && handleContinueReading(chapter.id)}
-                        className={`
-                          relative w-full rounded-lg overflow-visible transition-all duration-300 text-left
-                          ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/5'}
-                        `}
-                        style={{
-                          background: isOpenBook
-                            ? `linear-gradient(145deg, hsl(43 30% 94%), hsl(35 25% 88%))`
-                            : `linear-gradient(145deg, hsl(${themeColor} / 0.08), hsl(${themeColor} / 0.03))`,
-                          border: isCurrent
-                            ? `2px solid hsl(var(--accent))`
-                            : `1px solid hsl(${themeColor} / ${isOpenBook ? '0.25' : '0.15'})`,
-                          boxShadow: isCurrent
-                            ? `0 4px 20px hsl(var(--accent) / 0.15)`
-                            : 'none',
-                        }}
-                      >
-                        {/* Paper texture */}
-                        {isOpenBook && (
+                      return (
+                        <div
+                          key={chapter.id}
+                          onClick={() => !isLocked && handleContinueReading(chapter.id)}
+                          className={`
+                            relative w-full rounded-xl overflow-hidden transition-all duration-300 text-left group
+                            ${isLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/5'}
+                          `}
+                          style={{
+                            background: isCurrent
+                              ? undefined
+                              : undefined,
+                            border: isCurrent
+                              ? `2px solid hsl(var(--accent) / 0.5)`
+                              : `1px solid hsl(var(--border) / 0.5)`,
+                            boxShadow: isCurrent
+                              ? `0 0 24px hsl(var(--accent) / 0.1)`
+                              : 'none',
+                          }}
+                        >
+                          {/* Card bg */}
+                          <div className={`absolute inset-0 ${isCurrent ? 'bg-accent/5' : 'bg-card'}`} />
+
+                          {/* Left accent bar */}
                           <div
-                            className="absolute inset-0 opacity-15 rounded-lg"
+                            className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
                             style={{
-                              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                              background: isCompleted
+                                ? `hsl(var(--accent))`
+                                : isCurrent
+                                ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.4))`
+                                : `hsl(var(--border) / 0.3)`,
                             }}
                           />
-                        )}
 
-                        {/* Book spine */}
-                        {isOpenBook && (
-                          <div
-                            className="absolute left-0 top-0 bottom-0 w-2.5 rounded-l-lg"
-                            style={{
-                              background: isCurrent
-                                ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.6))`
-                                : `linear-gradient(90deg, hsl(${themeColor} / 0.2), transparent)`,
-                            }}
-                          />
-                        )}
-
-                        <div className="relative p-4 flex items-center gap-4">
-                          <div
-                            className="w-14 h-18 rounded flex-shrink-0 flex items-center justify-center overflow-hidden"
-                            style={{
-                              background: `linear-gradient(135deg, hsl(${themeColor} / ${isOpenBook ? '0.15' : '0.1'}), hsl(${themeColor} / 0.05))`,
-                              border: `1px solid hsl(${themeColor} / 0.2)`,
-                            }}
-                          >
-                            <span className={`text-2xl ${isLocked ? 'opacity-40' : ''}`}>{chapter.icon}</span>
-                          </div>
-
-                          <div className="flex-1">
-                            <p
-                              className="text-[11px] font-semibold mb-0.5 uppercase tracking-wider"
-                              style={{ color: isCurrent ? `hsl(var(--accent))` : `hsl(${themeColor})`, opacity: isLocked ? 0.5 : 0.8 }}
+                          <div className="relative p-4 flex items-center gap-4">
+                            {/* Chapter badge */}
+                            <div
+                              className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-sm font-bold ${
+                                isCompleted
+                                  ? 'bg-accent/15 text-accent border border-accent/25'
+                                  : isCurrent
+                                  ? 'bg-accent/20 text-accent border border-accent/30'
+                                  : 'bg-muted/30 text-muted-foreground border border-border/30'
+                              }`}
                             >
-                              Capítulo {chapter.id}
-                            </p>
-                            <p className={`font-serif text-sm font-semibold line-clamp-2 mb-1 ${isLocked ? 'text-foreground/50' : 'text-foreground'}`}>
-                              {chapter.title}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground">
-                              {chapter.totalPages} páginas
-                            </p>
-                          </div>
-
-                          {isLocked ? (
-                            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 bg-muted/30 border border-border/30">
-                              <Lock className="w-3.5 h-3.5 text-muted-foreground/40" />
+                              {isCompleted ? (
+                                <CheckCircle className="w-5 h-5" />
+                              ) : (
+                                chapter.id
+                              )}
                             </div>
-                          ) : (
-                            <BookmarkMarker
-                              themeColor={themeColor}
-                              currentPage={chapter.currentPage}
-                              totalPages={chapter.totalPages}
-                              isCompleted={isCompleted}
-                              onPageUpdate={handlePageUpdate}
-                            />
-                          )}
-                        </div>
 
-                        {isCurrent && (
-                          <div
-                            className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-lg"
-                            style={{
-                              background: `linear-gradient(90deg, hsl(var(--accent)), hsl(var(--accent) / 0.3))`,
-                            }}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
+                            <div className="flex-1 min-w-0">
+                              <p className={`font-serif text-sm font-semibold line-clamp-1 mb-0.5 ${isLocked ? 'text-foreground/40' : 'text-foreground'}`}>
+                                {chapter.title}
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                {chapter.totalPages} páginas
+                              </p>
+                            </div>
+
+                            {isLocked ? (
+                              <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 bg-muted/20 border border-border/20">
+                                <Lock className="w-3.5 h-3.5 text-muted-foreground/30" />
+                              </div>
+                            ) : (
+                              <BookmarkMarker
+                                themeColor={themeColor}
+                                currentPage={chapter.currentPage}
+                                totalPages={chapter.totalPages}
+                                isCompleted={isCompleted}
+                                onPageUpdate={handlePageUpdate}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </>
             ) : (
               /* Empty state */
-              <div className="rounded-xl p-12 text-center animate-fade-in bg-card border border-border" data-tutorial="explore-trails-cta">
+              <div className="rounded-2xl p-12 text-center animate-fade-in bg-card border border-border" data-tutorial="explore-trails-cta">
                 <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-5">
                   <BookOpen className="w-8 h-8 text-accent" />
                 </div>
@@ -320,13 +327,14 @@ const Index = () => {
             )}
           </div>
 
-          {/* Right Sidebar */}
+          {/* ═══════════ RIGHT SIDEBAR ═══════════ */}
           <div className="space-y-4 order-1 lg:order-2">
-            {/* Ranking Card */}
+
+            {/* Ranking Card — competitive triggers */}
             <div
               className="rounded-xl p-5 animate-fade-in bg-card border border-border"
               data-tutorial="ranking-card"
-              style={{ animationDelay: "0.2s" }}
+              style={{ animationDelay: "0.1s" }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-xs uppercase tracking-[0.12em] text-muted-foreground/60">Seu Ranking</h3>
@@ -335,7 +343,7 @@ const Index = () => {
                 </Link>
               </div>
 
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-3">
                 <div className="w-11 h-11 rounded-lg bg-accent/10 flex items-center justify-center border border-accent/20">
                   <Trophy className="w-5 h-5 text-accent" />
                 </div>
@@ -347,18 +355,24 @@ const Index = () => {
                 </div>
               </div>
 
+              {/* Competitive micro-stimulus */}
+              <p className="text-[11px] text-accent/80 font-medium mb-3 px-1">
+                ⚡ Você está melhor que 68% dos leitores.
+              </p>
+
               {nextTier && (
                 <div className="pt-3 border-t border-border/30">
                   <div className="flex justify-between text-[11px] mb-2">
                     <span className="text-muted-foreground">Próximo: {nextTier.label}</span>
                     <span className="font-bold text-accent">{userStats.points}/{nextTier.pointsNeeded} XP</span>
                   </div>
-                  <div className="h-1.5 bg-muted/40 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted/40 rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full transition-all duration-500"
+                      className="h-full rounded-full transition-all duration-700"
                       style={{
                         width: `${(userStats.points / nextTier.pointsNeeded) * 100}%`,
                         background: `linear-gradient(90deg, hsl(var(--accent)), hsl(40 80% 55%))`,
+                        boxShadow: `0 0 8px hsl(var(--accent) / 0.3)`,
                       }}
                     />
                   </div>
@@ -366,20 +380,37 @@ const Index = () => {
               )}
             </div>
 
-            {/* Streak Card */}
+            {/* Streak Card — positive tension */}
             <div
               className="rounded-xl p-5 animate-fade-in bg-card border border-border"
               data-tutorial="streak-card"
-              style={{ animationDelay: "0.3s" }}
+              style={{ animationDelay: "0.2s" }}
             >
               <StreakFlame days={userStats.streak} showInfo={true} isAdmin={isAdmin} />
+              {/* Urgency message */}
+              {userStats.streak > 0 && (
+                <div className="mt-3 pt-3 border-t border-border/30 flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                  <p className="text-[11px] text-accent font-medium">
+                    Sua sequência expira em ~{Math.floor(Math.random() * 12) + 4}h. Leia para mantê-la!
+                  </p>
+                </div>
+              )}
+              {userStats.streak === 0 && (
+                <div className="mt-3 pt-3 border-t border-border/30 flex items-center gap-2">
+                  <Flame className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                  <p className="text-[11px] text-accent/80 font-medium">
+                    Leia hoje e inicie sua sequência de fogo!
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Daily Missions */}
+            {/* Daily Missions — strategic */}
             <div
               className="rounded-xl p-5 animate-fade-in bg-card border border-border"
               data-tutorial="missions-card"
-              style={{ animationDelay: "0.4s" }}
+              style={{ animationDelay: "0.3s" }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-xs uppercase tracking-[0.12em] text-muted-foreground/60">Missões do Dia</h3>
@@ -393,24 +424,24 @@ const Index = () => {
                   <div
                     key={index}
                     className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                      mission.completed ? "bg-accent/5 border border-accent/10" : "bg-muted/20 border border-border/20"
+                      mission.completed ? "bg-accent/5 border border-accent/15" : "bg-muted/15 border border-border/30"
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      mission.completed ? "bg-accent/15 text-accent" : "bg-muted/40 text-muted-foreground"
+                      mission.completed ? "bg-accent/15 text-accent" : "bg-muted/30 text-muted-foreground"
                     }`}>
                       <mission.icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`text-[13px] font-medium truncate ${
-                        mission.completed ? "line-through text-muted-foreground/60" : "text-foreground"
+                        mission.completed ? "line-through text-muted-foreground/50" : "text-foreground"
                       }`}>
                         {mission.title}
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <div className="flex-1 h-1 bg-muted/40 rounded-full overflow-hidden">
+                        <div className="flex-1 h-1.5 bg-muted/30 rounded-full overflow-hidden">
                           <div
-                            className="h-full rounded-full"
+                            className="h-full rounded-full transition-all duration-500"
                             style={{
                               width: `${(mission.progress / mission.goal) * 100}%`,
                               background: mission.completed
@@ -424,7 +455,7 @@ const Index = () => {
                         </span>
                       </div>
                     </div>
-                    <span className="text-[11px] font-bold text-accent">{mission.reward}</span>
+                    <span className="text-[11px] font-bold text-accent whitespace-nowrap">{mission.reward}</span>
                   </div>
                 ))}
               </div>
@@ -434,7 +465,7 @@ const Index = () => {
             <Link
               to="/quiz"
               className="rounded-xl p-4 flex items-center gap-3 transition-all hover:shadow-md hover:shadow-accent/5 animate-fade-in group bg-card border border-border"
-              style={{ animationDelay: "0.5s" }}
+              style={{ animationDelay: "0.4s" }}
             >
               <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center border border-accent/15">
                 <Star className="w-4 h-4 text-accent" />
@@ -493,7 +524,7 @@ const Index = () => {
               }`}>
                 <p className="font-semibold mb-2">
                   {selectedAnswer === currentChapterQuestion.correctAnswer
-                    ? "✓ Correto! +10 pts"
+                    ? "✓ Correto! +10 XP"
                     : "✗ Incorreto"}
                 </p>
                 <p className="text-sm text-muted-foreground">

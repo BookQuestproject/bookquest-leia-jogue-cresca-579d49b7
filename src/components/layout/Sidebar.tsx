@@ -171,6 +171,18 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
           </Link>
         )}
 
+        <Link
+          to="/configuracoes"
+          className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
+            isActive("/configuracoes")
+              ? "bg-sidebar-accent text-foreground"
+              : "text-muted-foreground/60 hover:text-foreground hover:bg-sidebar-accent/50"
+          }`}
+        >
+          <Settings className="w-4 h-4" />
+          <span>Configurações</span>
+        </Link>
+
         {user && (
           <button
             onClick={() => signOut()}
