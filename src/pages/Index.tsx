@@ -119,12 +119,7 @@ const Index = () => {
                 >
                   {/* Card body */}
                   <div
-                    className="p-6 relative"
-                    style={{
-                      background: `linear-gradient(145deg, hsl(222 47% 11%), hsl(230 50% 14%))`,
-                      border: `1px solid hsl(230 30% 22%)`,
-                      borderRadius: '0.75rem',
-                    }}
+                    className="p-6 relative rounded-xl bg-card border border-border"
                   >
                     {/* Accent glow */}
                     <div
@@ -309,7 +304,7 @@ const Index = () => {
               </>
             ) : (
               /* Empty state */
-              <div className="rounded-xl p-12 text-center animate-fade-in" style={{ background: `linear-gradient(145deg, hsl(222 47% 11%), hsl(230 50% 14%))`, border: '1px solid hsl(230 30% 22%)' }} data-tutorial="explore-trails-cta">
+              <div className="rounded-xl p-12 text-center animate-fade-in bg-card border border-border" data-tutorial="explore-trails-cta">
                 <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-5">
                   <BookOpen className="w-8 h-8 text-accent" />
                 </div>
@@ -329,13 +324,9 @@ const Index = () => {
           <div className="space-y-4 order-1 lg:order-2">
             {/* Ranking Card */}
             <div
-              className="rounded-xl p-5 animate-fade-in"
+              className="rounded-xl p-5 animate-fade-in bg-card border border-border"
               data-tutorial="ranking-card"
-              style={{
-                animationDelay: "0.2s",
-                background: `linear-gradient(145deg, hsl(222 47% 11%), hsl(230 50% 14%))`,
-                border: `1px solid hsl(230 30% 22%)`,
-              }}
+              style={{ animationDelay: "0.2s" }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-xs uppercase tracking-[0.12em] text-muted-foreground/60">Seu Ranking</h3>
@@ -377,26 +368,18 @@ const Index = () => {
 
             {/* Streak Card */}
             <div
-              className="rounded-xl p-5 animate-fade-in"
+              className="rounded-xl p-5 animate-fade-in bg-card border border-border"
               data-tutorial="streak-card"
-              style={{
-                animationDelay: "0.3s",
-                background: `linear-gradient(145deg, hsl(222 47% 11%), hsl(230 50% 14%))`,
-                border: `1px solid hsl(230 30% 22%)`,
-              }}
+              style={{ animationDelay: "0.3s" }}
             >
               <StreakFlame days={userStats.streak} showInfo={true} isAdmin={isAdmin} />
             </div>
 
             {/* Daily Missions */}
             <div
-              className="rounded-xl p-5 animate-fade-in"
+              className="rounded-xl p-5 animate-fade-in bg-card border border-border"
               data-tutorial="missions-card"
-              style={{
-                animationDelay: "0.4s",
-                background: `linear-gradient(145deg, hsl(222 47% 11%), hsl(230 50% 14%))`,
-                border: `1px solid hsl(230 30% 22%)`,
-              }}
+              style={{ animationDelay: "0.4s" }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-xs uppercase tracking-[0.12em] text-muted-foreground/60">Missões do Dia</h3>
@@ -450,12 +433,8 @@ const Index = () => {
             {/* Quiz Link */}
             <Link
               to="/quiz"
-              className="rounded-xl p-4 flex items-center gap-3 transition-all hover:shadow-md hover:shadow-accent/5 animate-fade-in group"
-              style={{
-                animationDelay: "0.5s",
-                background: `linear-gradient(145deg, hsl(222 47% 11%), hsl(230 50% 14%))`,
-                border: `1px solid hsl(230 30% 22%)`,
-              }}
+              className="rounded-xl p-4 flex items-center gap-3 transition-all hover:shadow-md hover:shadow-accent/5 animate-fade-in group bg-card border border-border"
+              style={{ animationDelay: "0.5s" }}
             >
               <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center border border-accent/15">
                 <Star className="w-4 h-4 text-accent" />

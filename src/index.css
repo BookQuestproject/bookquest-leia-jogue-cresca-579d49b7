@@ -12,17 +12,18 @@
 
 @layer base {
   :root {
-    /* BookQuest — Single Dark Theme (Navy & Gold) */
-    --background: 230 70% 8%;
+    /* BookQuest — Single Dark Theme (Navy Royal & Gold) */
+    /* Base background matches landing page primary blue */
+    --background: 230 76% 15%;
     --foreground: 210 40% 96%;
 
-    --card: 230 50% 14%;
+    --card: 230 65% 12%;
     --card-foreground: 210 40% 96%;
 
-    --popover: 230 50% 14%;
+    --popover: 230 65% 12%;
     --popover-foreground: 210 40% 96%;
 
-    /* Primary: Navy */
+    /* Primary: Navy Royal — same as landing */
     --primary: 230 76% 25%;
     --primary-foreground: 48 96% 53%;
 
@@ -30,8 +31,8 @@
     --secondary: 224 66% 40%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Muted */
-    --muted: 230 50% 14%;
+    /* Muted — darker layer for contrast */
+    --muted: 230 65% 10%;
     --muted-foreground: 215 20% 65%;
 
     /* Accent: Gold */
@@ -42,8 +43,8 @@
     --destructive-foreground: 210 40% 96%;
 
     /* Borders */
-    --border: 230 30% 22%;
-    --input: 230 30% 22%;
+    --border: 230 40% 24%;
+    --input: 230 40% 24%;
     --ring: 48 96% 53%;
 
     --radius: 0.5rem;
@@ -78,13 +79,13 @@
     --gradient-secondary: linear-gradient(135deg, hsl(224 66% 33%), hsl(221 73% 40%));
     --gradient-achievement: linear-gradient(135deg, hsl(48 96% 53%), hsl(40 90% 50%));
 
-    --sidebar-background: 230 70% 7%;
+    --sidebar-background: 230 76% 12%;
     --sidebar-foreground: 210 40% 96%;
     --sidebar-primary: 230 76% 25%;
     --sidebar-primary-foreground: 48 96% 53%;
-    --sidebar-accent: 230 50% 14%;
+    --sidebar-accent: 230 65% 18%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 230 30% 22%;
+    --sidebar-border: 230 40% 24%;
     --sidebar-ring: 48 96% 53%;
   }
 }
@@ -136,14 +137,14 @@
     75% { transform: translate(-2px, -3px); }
   }
 
-  /* Dark background for the entire site */
+  /* Dark background — matches landing page primary blue */
   html,
   html body {
     background: radial-gradient(
       ellipse 120% 100% at 50% 40%,
-      hsl(220 40% 13%) 0%,
-      hsl(222 47% 11%) 40%,
-      hsl(224 50% 9%) 100%
+      hsl(230 76% 18%) 0%,
+      hsl(230 76% 15%) 40%,
+      hsl(230 76% 12%) 100%
     ) !important;
     background-attachment: fixed !important;
   }
