@@ -55,7 +55,7 @@ const MobileNav = ({
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 h-16 bg-sidebar border-t border-sidebar-border flex items-center justify-around px-2 z-50">
-        {menuItems.map((item) => <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 p-2 rounded transition-all duration-200 ${isActive(item.path) ? "text-secondary" : "text-muted-foreground hover:text-foreground"}`}>
+        {menuItems.map((item) => <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 p-2 rounded transition-all duration-200 ${isActive(item.path) ? "text-accent" : "text-muted-foreground hover:text-foreground"}`}>
             <item.icon className={`w-5 h-5 ${isActive(item.path) ? "scale-110" : ""}`} />
             <span className="text-xs font-medium">{item.label}</span>
           </Link>)}

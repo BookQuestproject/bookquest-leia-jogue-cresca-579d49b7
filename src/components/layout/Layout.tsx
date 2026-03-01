@@ -1,14 +1,8 @@
 import { ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { Settings, Flame } from "lucide-react";
 import Sidebar from "./Sidebar";
 import MobileNav from "./MobileNav";
 import FloatingAdminWidget from "../FloatingAdminWidget";
 import { useAdmin } from "@/hooks/useAdmin";
-import { useAuth } from "@/hooks/useAuth";
-import { useProfile } from "@/hooks/useProfile";
-import logoCrown from "@/assets/logo-crown-transparent.png";
-import logoWordmark from "@/assets/logo-bookquest-wordmark.png";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,9 +11,6 @@ interface LayoutProps {
 
 const Layout = ({ children, isPremium = false }: LayoutProps) => {
   const { isAdmin } = useAdmin();
-  const { user } = useAuth();
-  const { profile } = useProfile();
-  const userName = profile?.full_name || "Você";
 
   return (
     <div className="min-h-screen">
