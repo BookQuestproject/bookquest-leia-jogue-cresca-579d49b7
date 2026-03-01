@@ -38,7 +38,7 @@ const Layout = ({ children, isPremium = false }: LayoutProps) => {
 
       {/* Main Content */}
       <main className="lg:ml-56 min-h-screen pb-20 lg:pb-0">
-        <div className="p-4 lg:p-8 max-w-6xl mx-auto">
+        <div className="p-4 lg:px-8 lg:py-6 max-w-6xl mx-auto">
           {children}
         </div>
       </main>
