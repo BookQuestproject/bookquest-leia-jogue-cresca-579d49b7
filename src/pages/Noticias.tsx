@@ -163,8 +163,8 @@ const Noticias = () => {
               onClick={() => setSelectedType(filter.id as any)}
               className={`px-5 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 selectedType === filter.id
-                  ? "bg-secondary text-secondary-foreground ring-2 ring-secondary"
-                  : "bg-muted text-primary hover:bg-muted/80"
+                  ? "bg-accent text-accent-foreground ring-2 ring-accent"
+                  : "bg-muted text-foreground hover:bg-muted/80"
               }`}
             >
               {filter.label}
@@ -189,7 +189,7 @@ const Noticias = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground font-bold">
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-accent text-accent-foreground font-bold">
                           DESTAQUE
                         </span>
                         {item.isNew && (

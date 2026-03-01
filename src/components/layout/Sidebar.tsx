@@ -90,10 +90,16 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-56 bg-sidebar flex flex-col z-50 border-r border-border/40">
-      {/* Logo */}
+      {/* Logo — static, no re-render flicker */}
       <div className="px-5 py-5 flex items-center gap-2">
-        <Link to="/home" className="flex items-center gap-2">
-          <img src={logoCrown} alt="BookQuest" className="w-14 h-14 object-contain" />
+        <Link to="/home" className="flex items-center gap-2" reloadDocument={false}>
+          <img
+            src={logoCrown}
+            alt="BookQuest"
+            className="w-14 h-14 object-contain"
+            loading="eager"
+            decoding="sync"
+          />
         </Link>
       </div>
 
