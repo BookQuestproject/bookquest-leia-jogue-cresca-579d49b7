@@ -115,55 +115,74 @@ const Index = () => {
 
             {/* Main hero card */}
             <div
-              className="rounded-2xl p-6 lg:p-8 relative overflow-hidden bg-card border border-border group/hero journey-hero-card"
+              className="rounded-2xl p-6 lg:p-8 relative overflow-hidden border border-border group/hero journey-hero-card"
               style={{
                 '--book-color': `hsl(${themeColor})`,
-                '--book-color-light': `hsl(${themeColor} / 0.15)`,
-                '--book-color-glow': `hsl(${themeColor} / 0.25)`,
+                '--book-color-20': `hsl(${themeColor} / 0.20)`,
+                '--book-color-10': `hsl(${themeColor} / 0.10)`,
+                '--book-color-05': `hsl(${themeColor} / 0.05)`,
+                background: `linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--card)) 40%, hsl(${themeColor} / 0.06) 100%)`,
+                borderColor: `hsl(${themeColor} / 0.15)`,
               } as React.CSSProperties}
             >
-              {/* Animated gradient background */}
+              {/* === FULL BACKGROUND animated gradient === */}
               <div
-                className="absolute inset-0 opacity-[0.07] group-hover/hero:opacity-[0.14] transition-opacity duration-700 pointer-events-none"
+                className="absolute inset-0 pointer-events-none opacity-100 transition-opacity duration-700"
                 style={{
-                  background: `linear-gradient(135deg, transparent 30%, var(--book-color-light) 50%, transparent 70%)`,
-                  backgroundSize: '300% 300%',
-                  animation: 'journeyGradientShift 8s ease-in-out infinite',
+                  background: `
+                    radial-gradient(ellipse 80% 60% at 80% 20%, hsl(${themeColor} / 0.12), transparent 60%),
+                    radial-gradient(ellipse 60% 80% at 20% 80%, hsl(${themeColor} / 0.08), transparent 60%),
+                    radial-gradient(ellipse 50% 50% at 50% 50%, hsl(${themeColor} / 0.04), transparent 70%)
+                  `,
+                  animation: 'journeyBgBreath 8s ease-in-out infinite',
                 }}
               />
 
-              {/* Radial glow pulse */}
+              {/* Sweeping color wash across full card */}
               <div
-                className="absolute -top-20 -right-20 w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-15 group-hover/hero:opacity-25 transition-opacity duration-700"
+                className="absolute inset-0 pointer-events-none opacity-[0.06] group-hover/hero:opacity-[0.12] transition-opacity duration-700"
                 style={{
-                  background: `radial-gradient(circle, var(--book-color-glow), transparent 70%)`,
-                  animation: 'journeyGlowPulse 6s ease-in-out infinite',
-                }}
-              />
-
-              {/* Accent glow (gold) */}
-              <div
-                className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full blur-3xl pointer-events-none opacity-10"
-                style={{ background: `hsl(var(--accent) / 0.2)` }}
-              />
-
-              {/* Subtle sweeping light */}
-              <div
-                className="absolute inset-0 pointer-events-none opacity-[0.04] group-hover/hero:opacity-[0.08] transition-opacity duration-700"
-                style={{
-                  background: `linear-gradient(90deg, transparent 0%, var(--book-color-light) 45%, transparent 55%, transparent 100%)`,
-                  backgroundSize: '200% 100%',
+                  background: `linear-gradient(105deg, transparent 20%, hsl(${themeColor} / 0.3) 50%, transparent 80%)`,
+                  backgroundSize: '250% 100%',
                   animation: 'journeySweep 10s ease-in-out infinite',
                 }}
               />
 
-              {/* Top border glow line */}
+              {/* Large radial glow — book color */}
               <div
-                className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none opacity-30 group-hover/hero:opacity-50 transition-opacity duration-500"
+                className="absolute -top-32 -right-32 w-[28rem] h-[28rem] rounded-full blur-3xl pointer-events-none group-hover/hero:opacity-30 transition-opacity duration-700"
                 style={{
-                  background: `linear-gradient(90deg, transparent, var(--book-color), hsl(var(--accent)), transparent)`,
+                  background: `radial-gradient(circle, hsl(${themeColor} / 0.35), transparent 65%)`,
+                  opacity: 0.18,
+                  animation: 'journeyGlowPulse 7s ease-in-out infinite',
+                }}
+              />
+
+              {/* Bottom-left glow — book color */}
+              <div
+                className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full blur-3xl pointer-events-none group-hover/hero:opacity-20 transition-opacity duration-700"
+                style={{
+                  background: `radial-gradient(circle, hsl(${themeColor} / 0.25), transparent 65%)`,
+                  opacity: 0.12,
+                  animation: 'journeyGlowPulse 9s ease-in-out infinite reverse',
+                }}
+              />
+
+              {/* Top border glow line — book color */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none opacity-40 group-hover/hero:opacity-60 transition-opacity duration-500"
+                style={{
+                  background: `linear-gradient(90deg, transparent 5%, hsl(${themeColor} / 0.6) 30%, hsl(${themeColor} / 0.8) 50%, hsl(${themeColor} / 0.6) 70%, transparent 95%)`,
                   backgroundSize: '200% 100%',
                   animation: 'journeySweep 8s ease-in-out infinite',
+                }}
+              />
+
+              {/* Bottom border glow — subtle */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-[1px] pointer-events-none opacity-20"
+                style={{
+                  background: `linear-gradient(90deg, transparent, hsl(${themeColor} / 0.5), transparent)`,
                 }}
               />
 
@@ -176,10 +195,11 @@ const Index = () => {
                 <div className="flex flex-col lg:flex-row lg:items-center gap-6">
                   {/* Book icon */}
                   <div
-                    className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 border border-accent/20"
+                    className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
                     style={{
-                      background: `linear-gradient(135deg, var(--book-color-light), hsl(var(--accent) / 0.08))`,
-                      boxShadow: `0 0 30px var(--book-color-glow), 0 0 60px hsl(var(--accent) / 0.05)`,
+                      background: `linear-gradient(135deg, hsl(${themeColor} / 0.2), hsl(${themeColor} / 0.05))`,
+                      boxShadow: `0 0 30px hsl(${themeColor} / 0.2), 0 0 60px hsl(${themeColor} / 0.08)`,
+                      border: `1px solid hsl(${themeColor} / 0.25)`,
                     }}
                   >
                     <span className="text-4xl">{activeTrail?.cover || '📖'}</span>
@@ -204,8 +224,8 @@ const Index = () => {
                           className="h-full rounded-full transition-all duration-1000 ease-out"
                           style={{
                             width: `${progressPercent}%`,
-                            background: `linear-gradient(90deg, var(--book-color), hsl(var(--accent)))`,
-                            boxShadow: `0 0 12px var(--book-color-glow), 0 0 6px hsl(var(--accent) / 0.3)`,
+                            background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor} / 0.7))`,
+                            boxShadow: `0 0 12px hsl(${themeColor} / 0.4), 0 0 4px hsl(${themeColor} / 0.2)`,
                           }}
                         />
                       </div>
