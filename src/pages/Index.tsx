@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Sparkles, Repeat, Zap, Clock, Flame, Settings } from "lucide-react";
@@ -114,11 +114,57 @@ const Index = () => {
             )}
 
             {/* Main hero card */}
-            <div className="rounded-2xl p-6 lg:p-8 relative overflow-hidden bg-card border border-border">
-              {/* Glow */}
+            <div
+              className="rounded-2xl p-6 lg:p-8 relative overflow-hidden bg-card border border-border group/hero journey-hero-card"
+              style={{
+                '--book-color': `hsl(${themeColor})`,
+                '--book-color-light': `hsl(${themeColor} / 0.15)`,
+                '--book-color-glow': `hsl(${themeColor} / 0.25)`,
+              } as React.CSSProperties}
+            >
+              {/* Animated gradient background */}
               <div
-                className="absolute -top-20 -right-20 w-72 h-72 rounded-full blur-3xl pointer-events-none opacity-20"
-                style={{ background: `hsl(var(--accent))` }}
+                className="absolute inset-0 opacity-[0.07] group-hover/hero:opacity-[0.14] transition-opacity duration-700 pointer-events-none"
+                style={{
+                  background: `linear-gradient(135deg, transparent 30%, var(--book-color-light) 50%, transparent 70%)`,
+                  backgroundSize: '300% 300%',
+                  animation: 'journeyGradientShift 8s ease-in-out infinite',
+                }}
+              />
+
+              {/* Radial glow pulse */}
+              <div
+                className="absolute -top-20 -right-20 w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-15 group-hover/hero:opacity-25 transition-opacity duration-700"
+                style={{
+                  background: `radial-gradient(circle, var(--book-color-glow), transparent 70%)`,
+                  animation: 'journeyGlowPulse 6s ease-in-out infinite',
+                }}
+              />
+
+              {/* Accent glow (gold) */}
+              <div
+                className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full blur-3xl pointer-events-none opacity-10"
+                style={{ background: `hsl(var(--accent) / 0.2)` }}
+              />
+
+              {/* Subtle sweeping light */}
+              <div
+                className="absolute inset-0 pointer-events-none opacity-[0.04] group-hover/hero:opacity-[0.08] transition-opacity duration-700"
+                style={{
+                  background: `linear-gradient(90deg, transparent 0%, var(--book-color-light) 45%, transparent 55%, transparent 100%)`,
+                  backgroundSize: '200% 100%',
+                  animation: 'journeySweep 10s ease-in-out infinite',
+                }}
+              />
+
+              {/* Top border glow line */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none opacity-30 group-hover/hero:opacity-50 transition-opacity duration-500"
+                style={{
+                  background: `linear-gradient(90deg, transparent, var(--book-color), hsl(var(--accent)), transparent)`,
+                  backgroundSize: '200% 100%',
+                  animation: 'journeySweep 8s ease-in-out infinite',
+                }}
               />
 
               <div className="relative z-10">
@@ -132,8 +178,8 @@ const Index = () => {
                   <div
                     className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 border border-accent/20"
                     style={{
-                      background: `linear-gradient(135deg, hsl(var(--accent) / 0.15), hsl(var(--accent) / 0.05))`,
-                      boxShadow: `0 0 30px hsl(var(--accent) / 0.1)`,
+                      background: `linear-gradient(135deg, var(--book-color-light), hsl(var(--accent) / 0.08))`,
+                      boxShadow: `0 0 30px var(--book-color-glow), 0 0 60px hsl(var(--accent) / 0.05)`,
                     }}
                   >
                     <span className="text-4xl">{activeTrail?.cover || '📖'}</span>
@@ -147,7 +193,7 @@ const Index = () => {
                       Capítulo {userStats.currentChapter} de {userStats.totalChapters} • {currentBookTheme?.genre}
                     </p>
 
-                    {/* Thick progress bar */}
+                    {/* Thick progress bar with book color */}
                     <div className="mb-2">
                       <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
                         <span>Progresso da jornada</span>
@@ -158,8 +204,8 @@ const Index = () => {
                           className="h-full rounded-full transition-all duration-1000 ease-out"
                           style={{
                             width: `${progressPercent}%`,
-                            background: `linear-gradient(90deg, hsl(var(--accent)), hsl(40 80% 55%))`,
-                            boxShadow: `0 0 12px hsl(var(--accent) / 0.4)`,
+                            background: `linear-gradient(90deg, var(--book-color), hsl(var(--accent)))`,
+                            boxShadow: `0 0 12px var(--book-color-glow), 0 0 6px hsl(var(--accent) / 0.3)`,
                           }}
                         />
                       </div>
@@ -179,7 +225,7 @@ const Index = () => {
                     </Button>
                     <Button
                       size="xl"
-                      className="gap-2.5 bg-accent text-accent-foreground hover:bg-accent/90 font-bold shadow-lg shadow-accent/25 text-base"
+                      className="gap-2.5 bg-accent text-accent-foreground hover:bg-accent/90 font-bold shadow-lg shadow-accent/25 text-base journey-cta-btn"
                       onClick={() => handleContinueReading()}
                     >
                       <Play className="w-5 h-5" />
