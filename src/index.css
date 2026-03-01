@@ -1094,19 +1094,23 @@
 }
 
 /* ═══ Journey Hero Card Animations ═══ */
-@keyframes journeyGradientShift {
-  0%, 100% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
+@keyframes journeyBgBreath {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
 }
 
 @keyframes journeyGlowPulse {
-  0%, 100% { transform: scale(1); opacity: 0.15; }
-  50% { transform: scale(1.15); opacity: 0.25; }
+  0%, 100% { transform: scale(1); opacity: 0.18; }
+  50% { transform: scale(1.1); opacity: 0.30; }
 }
 
 @keyframes journeySweep {
   0% { background-position: -100% 0; }
   100% { background-position: 200% 0; }
+}
+
+.journey-hero-card:hover {
+  border-color: var(--book-color-20) !important;
 }
 
 .journey-cta-btn:active {
