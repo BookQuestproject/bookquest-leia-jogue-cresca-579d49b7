@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
@@ -203,4 +204,4 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);
