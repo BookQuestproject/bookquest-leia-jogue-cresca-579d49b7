@@ -9,6 +9,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileMissoes from "@/components/mobile/MobileMissoes";
 
 interface Mission {
   id: number;
@@ -60,6 +62,7 @@ const getLevel = (xp: number) => {
 };
 
 const Missoes = () => {
+  const isMobile = useIsMobile();
   const [missions, setMissions] = useState(initialMissions);
   const [totalXp, setTotalXp] = useState(35);
   const [modalOpen, setModalOpen] = useState(false);
@@ -93,6 +96,14 @@ const Missoes = () => {
   };
 
   const level = getLevel(totalXp);
+
+  if (isMobile) {
+    return (
+      <Layout>
+        <MobileMissoes />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

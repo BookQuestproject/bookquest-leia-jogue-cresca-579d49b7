@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import TierTransitionModal from "@/components/TierTransitionModal";
 import { useAdmin } from "@/hooks/useAdmin";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileRanking from "@/components/mobile/MobileRanking";
 
 interface RankingUser {
   id: number;
@@ -110,6 +112,7 @@ const getDaysUntilWeekEnd = () => {
 const ROW_HEIGHT = 52; // px per row
 
 const Ranking = () => {
+  const isMobile = useIsMobile();
   const [selectedTier, setSelectedTier] = useState<RankingTier>("bronze");
   const [userXpBoost, setUserXpBoost] = useState(0);
   const [climbingFrom, setClimbingFrom] = useState<number | null>(null);
@@ -204,6 +207,14 @@ const Ranking = () => {
   const isInPromotionZone = (position: number) => {
     return position <= selectedTierInfo.slots;
   };
+
+  if (isMobile) {
+    return (
+      <Layout>
+        <MobileRanking />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
