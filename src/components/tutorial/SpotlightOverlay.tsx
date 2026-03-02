@@ -48,8 +48,8 @@ const SpotlightOverlay = () => {
       }
       // Retry a few times, then auto-skip
       retryCountRef.current += 1;
-      if (retryCountRef.current < 5) {
-        setTimeout(findAndHighlight, 150);
+      if (retryCountRef.current < 10) {
+        setTimeout(findAndHighlight, 250);
         return;
       }
       // Element truly doesn't exist — auto-skip this step

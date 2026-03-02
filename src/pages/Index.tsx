@@ -280,7 +280,7 @@ const Index = () => {
             {hasActiveTrail ? (
               <>
                 {/* Chapter list — Trilha Literária */}
-                <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+                <div className="animate-fade-in" data-tutorial="current-trail" style={{ animationDelay: "0.15s" }}>
                   <h2 className="text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground/60 mb-4 flex items-center gap-2">
                     <BookOpen className="w-3.5 h-3.5" />
                     Trilha Literária
