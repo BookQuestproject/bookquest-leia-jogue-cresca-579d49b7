@@ -1,16 +1,24 @@
 import { useState, useRef, useEffect } from "react";
-import { Bookmark, Plus, Check, X } from "lucide-react";
+import { Bookmark, Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 interface BookmarkMarkerProps {
   themeColor: string;
-  currentPage?: number;
+  currentPage?: number | null;
   totalPages?: number;
   isCompleted?: boolean;
   onPageUpdate?: (page: number) => void;
   disabled?: boolean;
 }
+
+const GOLD = "45 80% 52%"; // #D4AF37 equivalent in HSL
 
 const BookmarkMarker = ({
   themeColor,
@@ -20,34 +28,44 @@ const BookmarkMarker = ({
   onPageUpdate,
   disabled = false,
 }: BookmarkMarkerProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [pageValue, setPageValue] = useState(currentPage?.toString() || "");
+  const [animateChange, setAnimateChange] = useState(false);
+  const prevPageRef = useRef(currentPage);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle click outside to close editing
+  // Animate on page change
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+    if (currentPage && prevPageRef.current !== currentPage) {
+      setAnimateChange(true);
+      const t = setTimeout(() => setAnimateChange(false), 400);
+      prevPageRef.current = currentPage;
+      return () => clearTimeout(t);
+    }
+  }, [currentPage]);
+
+  // Close on click outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsEditing(false);
         setPageValue(currentPage?.toString() || "");
       }
     };
-
-    if (isEditing) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    if (isEditing) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, [isEditing, currentPage]);
 
-  // Focus input when editing starts
+  // Focus input
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
       inputRef.current.select();
     }
   }, [isEditing]);
+
+  const progressPercent = currentPage && totalPages ? (currentPage / totalPages) * 100 : 0;
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,12 +84,6 @@ const BookmarkMarker = ({
     }
   };
 
-  const handleCancel = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsEditing(false);
-    setPageValue(currentPage?.toString() || "");
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     e.stopPropagation();
     if (e.key === "Enter") {
@@ -86,78 +98,115 @@ const BookmarkMarker = ({
     }
   };
 
+  const tooltipText = currentPage
+    ? `Você está na página ${currentPage} de ${totalPages || "?"}`
+    : "Clique para marcar sua página";
+
   return (
-    <div 
-      ref={containerRef}
-      className="relative flex-shrink-0"
-      onMouseEnter={() => !isEditing && setIsHovered(true)}
-      onMouseLeave={() => !isEditing && setIsHovered(false)}
-    >
-      {/* Bookmark ribbon */}
-      <div
-        onClick={handleBookmarkClick}
-        className={`
-          w-7 h-[4.5rem] flex items-start justify-center cursor-pointer
-          transition-all duration-300 ease-out
-          ${isHovered && !isEditing ? "translate-x-2 scale-105" : ""}
-          ${isEditing ? "translate-x-3" : ""}
-        `}
-        style={{
-          clipPath: "polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%)",
-          background: isCompleted
-            ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.85))`
-            : `linear-gradient(180deg, hsl(${themeColor}), hsl(${themeColor} / 0.85))`,
-          boxShadow: isHovered || isEditing 
-            ? `4px 6px 12px hsl(${themeColor} / 0.4)` 
-            : `2px 4px 8px hsl(${themeColor} / 0.3)`,
-        }}
-      >
-        {isCompleted ? (
-          <Check className="w-3.5 h-3.5 text-white mt-2.5" />
-        ) : currentPage ? (
-          <span className="text-white text-[10px] font-bold mt-2.5">{currentPage}</span>
-        ) : (
-          <Plus className={`w-3.5 h-3.5 text-white mt-2.5 transition-transform duration-200 ${isHovered ? "rotate-90" : ""}`} />
-        )}
-      </div>
-
-      {/* Tooltip on hover (when not editing) */}
-      {isHovered && !isEditing && !disabled && (
-        <div 
-          className="absolute right-full top-1/2 -translate-y-1/2 mr-3 
-            bg-card border border-border rounded-lg p-2.5 shadow-xl z-20
-            animate-fade-in whitespace-nowrap"
-        >
-          <div className="flex items-center gap-2 text-xs">
-            <Bookmark className="w-3.5 h-3.5" style={{ color: `hsl(${themeColor})` }} />
-            {currentPage ? (
-              <span>
-                Página <span className="font-bold">{currentPage}</span>
-                {totalPages && <span className="text-muted-foreground">/{totalPages}</span>}
+    <div ref={containerRef} className="relative flex-shrink-0">
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              onClick={handleBookmarkClick}
+              className="flex flex-col items-center gap-1 cursor-pointer group/bm"
+            >
+              {/* Label */}
+              <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 group-hover/bm:text-muted-foreground transition-colors">
+                {isCompleted ? "Concluído" : currentPage ? "Sua posição" : "Marcar"}
               </span>
-            ) : (
-              <span className="text-muted-foreground">Marcar página</span>
-            )}
-          </div>
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full">
-            <div 
-              className="w-0 h-0 border-t-[6px] border-b-[6px] border-l-[6px] border-transparent border-l-border"
-            />
-          </div>
-        </div>
-      )}
 
-      {/* Page input popup when editing */}
+              {/* Bookmark body with progress bar background */}
+              <div className="relative w-9 h-[4.5rem]">
+                {/* Progress background track */}
+                {!isCompleted && totalPages && (
+                  <div
+                    className="absolute inset-0 rounded-sm overflow-hidden"
+                    style={{
+                      clipPath: "polygon(0 0, 100% 0, 100% 88%, 50% 100%, 0 88%)",
+                      background: `hsl(${themeColor} / 0.12)`,
+                    }}
+                  >
+                    {/* Filled progress */}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 transition-all duration-700 ease-out"
+                      style={{
+                        height: `${progressPercent}%`,
+                        background: `linear-gradient(180deg, hsl(${GOLD} / 0.25), hsl(${GOLD} / 0.45))`,
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Main bookmark shape */}
+                <div
+                  className={`
+                    absolute inset-0 flex flex-col items-center justify-start pt-2
+                    transition-all duration-300 ease-out
+                    group-hover/bm:scale-105 group-hover/bm:translate-x-1
+                    ${isEditing ? "translate-x-2 scale-110" : ""}
+                  `}
+                  style={{
+                    clipPath: "polygon(0 0, 100% 0, 100% 88%, 50% 100%, 0 88%)",
+                    background: isCompleted
+                      ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.85))`
+                      : currentPage
+                      ? `linear-gradient(180deg, hsl(${GOLD}), hsl(${GOLD} / 0.8))`
+                      : `linear-gradient(180deg, hsl(${themeColor}), hsl(${themeColor} / 0.85))`,
+                    boxShadow: currentPage
+                      ? `0 4px 14px hsl(${GOLD} / 0.4), 0 0 20px hsl(${GOLD} / 0.15)`
+                      : `2px 4px 8px hsl(${themeColor} / 0.3)`,
+                  }}
+                >
+                  {isCompleted ? (
+                    <Check className="w-3.5 h-3.5 text-white mt-1" />
+                  ) : currentPage ? (
+                    <span
+                      className={`
+                        text-white text-xs font-black mt-0.5
+                        transition-transform duration-300
+                        ${animateChange ? "scale-125" : "scale-100"}
+                      `}
+                      style={{
+                        textShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                      }}
+                    >
+                      {currentPage}
+                    </span>
+                  ) : (
+                    <Bookmark className="w-3.5 h-3.5 text-white/80 mt-1 group-hover/bm:text-white transition-colors" />
+                  )}
+                </div>
+              </div>
+
+              {/* Page counter below */}
+              {currentPage && totalPages && !isCompleted && (
+                <span className="text-[10px] font-semibold text-muted-foreground tabular-nums">
+                  <span style={{ color: `hsl(${GOLD})` }}>{currentPage}</span>
+                  <span className="text-muted-foreground/50">/{totalPages}</span>
+                </span>
+              )}
+            </div>
+          </TooltipTrigger>
+          {!isEditing && (
+            <TooltipContent side="left" className="text-xs font-medium">
+              {tooltipText}
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+
+      {/* Inline page editor popup */}
       {isEditing && (
-        <div 
+        <div
           className="absolute right-full top-1/2 -translate-y-1/2 mr-4
             bg-card border border-border rounded-xl p-3 shadow-2xl z-30
             animate-scale-in"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <Bookmark className="w-3.5 h-3.5" style={{ color: `hsl(${themeColor})` }} />
+            <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+              <Bookmark className="w-3.5 h-3.5" style={{ color: `hsl(${GOLD})` }} />
               Página atual
             </label>
             <div className="flex items-center gap-2">
@@ -173,7 +222,7 @@ const BookmarkMarker = ({
                 placeholder="1"
               />
               {totalPages && (
-                <span className="text-sm text-muted-foreground">/ {totalPages}</span>
+                <span className="text-sm text-muted-foreground whitespace-nowrap">/ {totalPages}</span>
               )}
             </div>
             <div className="flex gap-1.5 mt-1">
@@ -181,27 +230,28 @@ const BookmarkMarker = ({
                 size="sm"
                 variant="ghost"
                 className="flex-1 h-8"
-                onClick={handleCancel}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditing(false);
+                  setPageValue(currentPage?.toString() || "");
+                }}
               >
                 <X className="w-3.5 h-3.5 mr-1" />
                 Cancelar
               </Button>
               <Button
                 size="sm"
-                className="flex-1 h-8"
+                className="flex-1 h-8 text-white"
                 onClick={handleSave}
-                style={{
-                  background: `hsl(${themeColor})`,
-                }}
+                style={{ background: `hsl(${GOLD})` }}
               >
                 <Check className="w-3.5 h-3.5 mr-1" />
                 Salvar
               </Button>
             </div>
           </div>
-          {/* Arrow pointing to bookmark */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full">
-            <div 
+            <div
               className="w-0 h-0 border-t-[8px] border-b-[8px] border-l-[8px] border-transparent border-l-card"
               style={{ filter: "drop-shadow(1px 0 0 hsl(var(--border)))" }}
             />

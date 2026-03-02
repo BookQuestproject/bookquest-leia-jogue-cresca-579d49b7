@@ -5,6 +5,7 @@ import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, He
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
+import { usePageBookmark } from "@/hooks/usePageBookmark";
 
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
@@ -24,6 +25,7 @@ const Index = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
 
+  const { getPageBookmark, setPageBookmark } = usePageBookmark(activeTrail?.bookId);
   const hasActiveTrailData = !!activeTrail;
   const currentChapter = activeTrail?.chapters.find(c => c.status === "current");
   const completedChapters = activeTrail?.chapters.filter(c => c.status === "completed").length || 0;
@@ -290,8 +292,9 @@ const Index = () => {
                       const isCompleted = chapter.status === "completed";
 
                       const handlePageUpdate = (page: number) => {
-                        console.log(`Saving page ${page} for chapter ${chapter.id}`);
+                        setPageBookmark(chapter.id, page);
                       };
+                      const savedPage = getPageBookmark(chapter.id);
 
                       return (
                         <div
@@ -362,7 +365,7 @@ const Index = () => {
                             ) : (
                               <BookmarkMarker
                                 themeColor={themeColor}
-                                currentPage={chapter.currentPage}
+                                currentPage={savedPage ?? chapter.currentPage}
                                 totalPages={chapter.totalPages}
                                 isCompleted={isCompleted}
                                 onPageUpdate={handlePageUpdate}

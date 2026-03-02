@@ -345,6 +345,7 @@ export type Database = {
           book_id: string
           chapter_id: string
           created_at: string
+          current_page: number | null
           elapsed_time: number
           id: string
           is_completed: boolean
@@ -357,6 +358,7 @@ export type Database = {
           book_id: string
           chapter_id: string
           created_at?: string
+          current_page?: number | null
           elapsed_time?: number
           id?: string
           is_completed?: boolean
@@ -369,6 +371,7 @@ export type Database = {
           book_id?: string
           chapter_id?: string
           created_at?: string
+          current_page?: number | null
           elapsed_time?: number
           id?: string
           is_completed?: boolean
