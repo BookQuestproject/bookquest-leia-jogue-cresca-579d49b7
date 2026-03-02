@@ -17,12 +17,6 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
-  );
-
   try {
     logStep("Function started");
 
@@ -32,12 +26,25 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    // Use anon key with user's auth header for proper JWT validation
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
+
+    // Service role client for profile updates (bypasses RLS)
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } }
+    );
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
@@ -46,7 +53,7 @@ serve(async (req) => {
       logStep("No customer found");
       
       // Update profile to not premium
-      await supabaseClient
+      await adminClient
         .from('profiles')
         .update({ is_premium: false, premium_expires_at: null })
         .eq('id', user.id);
@@ -75,7 +82,7 @@ serve(async (req) => {
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
 
       // Update profile to premium
-      await supabaseClient
+      await adminClient
         .from('profiles')
         .update({ is_premium: true, premium_expires_at: subscriptionEnd })
         .eq('id', user.id);
@@ -83,7 +90,7 @@ serve(async (req) => {
       logStep("No active subscription");
       
       // Update profile to not premium
-      await supabaseClient
+      await adminClient
         .from('profiles')
         .update({ is_premium: false, premium_expires_at: null })
         .eq('id', user.id);
