@@ -43,13 +43,13 @@ const SpotlightOverlay = () => {
       if (currentStepData.route && location.pathname !== currentStepData.route) {
         navigate(currentStepData.route);
         retryCountRef.current = 0;
-        setTimeout(findAndHighlight, 600);
+        setTimeout(findAndHighlight, 200);
         return;
       }
       // Retry a few times, then auto-skip
       retryCountRef.current += 1;
-      if (retryCountRef.current < 3) {
-        setTimeout(findAndHighlight, 400);
+      if (retryCountRef.current < 5) {
+        setTimeout(findAndHighlight, 150);
         return;
       }
       // Element truly doesn't exist — auto-skip this step
@@ -61,8 +61,8 @@ const SpotlightOverlay = () => {
     retryCountRef.current = 0;
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Delay after scroll to get correct position
-    setTimeout(() => {
+    // Update immediately, then refine after scroll settles
+    const updatePosition = () => {
       const rect = el.getBoundingClientRect();
 
       const newRect: Rect = {
@@ -116,7 +116,11 @@ const SpotlightOverlay = () => {
       style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
 
       setTooltipStyle(style);
-    }, 500);
+    };
+
+    // Instant update + refine after scroll
+    updatePosition();
+    setTimeout(updatePosition, 150);
   }, [currentStepData, location.pathname, navigate, nextStep]);
 
   // Navigate to step's route if needed
@@ -125,11 +129,10 @@ const SpotlightOverlay = () => {
 
     if (currentStepData.route && location.pathname !== currentStepData.route) {
       navigate(currentStepData.route);
-      const timer = setTimeout(findAndHighlight, 600);
+      const timer = setTimeout(findAndHighlight, 200);
       return () => clearTimeout(timer);
     } else {
-      const timer = setTimeout(findAndHighlight, 300);
-      return () => clearTimeout(timer);
+      findAndHighlight();
     }
   }, [isActive, currentStep, currentStepData, location.pathname, navigate, findAndHighlight]);
 
