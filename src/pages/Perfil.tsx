@@ -11,6 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AchievementsSection from "@/components/AchievementsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobilePerfil from "@/components/mobile/MobilePerfil";
 
 const readingHistory = [
   { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", completedAt: "Dez 2023", pages: 208 },
@@ -18,6 +20,7 @@ const readingHistory = [
 ];
 
 const Perfil = () => {
+  const isMobile = useIsMobile();
   const { profile, isPremium, loading: profileLoading, refreshProfile } = useProfile();
   const { stats, loading: statsLoading, formatTime } = useReadingStats();
   const { user } = useAuth();
@@ -84,6 +87,14 @@ const Perfil = () => {
       setUploading(false);
     }
   };
+
+  if (isMobile) {
+    return (
+      <Layout>
+        <MobilePerfil />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

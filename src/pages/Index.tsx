@@ -6,6 +6,8 @@ import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { usePageBookmark } from "@/hooks/usePageBookmark";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileHome from "@/components/mobile/MobileHome";
 
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
@@ -18,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 const Index = () => {
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { activeTrail } = useActiveTrail();
   const { isAdmin } = useAdmin();
@@ -86,6 +89,14 @@ const Index = () => {
 
   const motivational = getMotivationalMessage();
   const progressPercent = userStats.totalChapters > 0 ? Math.round((completedChapters / userStats.totalChapters) * 100) : 0;
+
+  if (isMobile) {
+    return (
+      <Layout>
+        <MobileHome />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
