@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const VISITED_KEY = "bookquest_visited_categories";
+const VISITED_KEY = "bookquest_visited_categories_v2";
 
 interface CategoryStep {
   target: string;
@@ -65,6 +65,11 @@ const categorySteps: Record<string, CategoryStep[]> = {
   ],
 };
 
+function normalizeCategoryPath(pathname: string): string {
+  if (pathname.startsWith("/trilhas/")) return "/trilhas";
+  return pathname;
+}
+
 function getVisited(): string[] {
   try {
     return JSON.parse(localStorage.getItem(VISITED_KEY) || "[]");
@@ -105,21 +110,30 @@ const CategoryIntro = () => {
 
   // Detect first visit to a category
   useEffect(() => {
-    const path = location.pathname;
-    if (path === "/" || path === "/home" || path === "/auth" || path === "/quiz-onboarding" || path === "/quiz") return;
+    const categoryPath = normalizeCategoryPath(location.pathname);
 
-    const stepsForCategory = categorySteps[path];
+    if (
+      categoryPath === "/" ||
+      categoryPath === "/home" ||
+      categoryPath === "/auth" ||
+      categoryPath === "/quiz-onboarding" ||
+      categoryPath === "/quiz"
+    ) {
+      return;
+    }
+
+    const stepsForCategory = categorySteps[categoryPath];
     if (!stepsForCategory) return;
 
     const visited = getVisited();
-    if (visited.includes(path)) return;
+    if (visited.includes(categoryPath)) return;
 
-    // Wait for page to render fully (CSS animations, lazy content)
+    // Wait briefly for category UI mount
     const timer = setTimeout(() => {
       setSteps(stepsForCategory);
       setCurrentStep(0);
       setActive(true);
-    }, 1200);
+    }, 650);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
@@ -137,7 +151,7 @@ const CategoryIntro = () => {
     setActive(false);
     setIsVisible(false);
     setTargetRect(null);
-    markVisited(location.pathname);
+    markVisited(normalizeCategoryPath(location.pathname));
   }, [location.pathname]);
 
   const updateRect = useCallback((el: Element) => {

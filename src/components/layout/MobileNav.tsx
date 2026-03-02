@@ -1,8 +1,8 @@
+import { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Trophy, Users, User, Target, BookMarked, LogIn } from "lucide-react";
+import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
-import logoWordmark from "@/assets/logo-wordmark.png";
 interface MobileNavProps {
   isPremium?: boolean;
 }
@@ -39,7 +39,7 @@ const MobileNav = ({
       {/* Top Header */}
       <header className="fixed top-0 left-0 right-0 h-14 border-b border-sidebar-border flex items-center justify-between px-4 z-50 bg-muted">
         <Link to="/home" className="flex items-center gap-2">
-          <img src={logoCrown} alt="BookQuest" className="object-contain" style={{ width: '2.625rem', height: '2.625rem' }} />
+          <img src={logoCrown} alt="BookQuest" className="object-contain" style={{ width: '2.625rem', height: '2.625rem' }} loading="eager" decoding="sync" />
           
         </Link>
         
@@ -62,4 +62,4 @@ const MobileNav = ({
       </nav>
     </>;
 };
-export default MobileNav;
+export default memo(MobileNav);
