@@ -18,6 +18,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useChapterProgress } from "@/hooks/useChapterProgress";
+import { usePageBookmark } from "@/hooks/usePageBookmark";
+import BookmarkMarker from "@/components/BookmarkMarker";
 import CompletedChapterModal from "@/components/CompletedChapterModal";
 
 interface Chapter {
@@ -177,6 +179,7 @@ const Trilhas = () => {
 
   // Hook must be called unconditionally at the top level
   const { isChapterCompleted, getReadingTime, refetch } = useChapterProgress(bookId || "");
+  const { getPageBookmark, setPageBookmark } = usePageBookmark(bookId || "");
 
   // Book detail view
   if (bookId) {
@@ -418,23 +421,13 @@ const Trilhas = () => {
                               <Lock className="w-4 h-4 text-muted-foreground/50" />
                             </div>
                           ) : (
-                            <div className="flex-shrink-0 relative group">
-                              {/* Bookmark marker */}
-                              <div 
-                                className="w-6 h-16 flex items-start justify-center relative transition-transform group-hover:scale-110"
-                                style={{
-                                  clipPath: 'polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%)',
-                                  background: isCompleted 
-                                    ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.85))`
-                                    : `linear-gradient(180deg, hsl(${themeColor}), hsl(${themeColor} / 0.85))`,
-                                  boxShadow: `2px 4px 8px hsl(${themeColor} / 0.3)`,
-                                }}
-                              >
-                                {isCompleted && (
-                                  <CheckCircle className="w-3 h-3 text-white mt-2" />
-                                )}
-                              </div>
-                            </div>
+                            <BookmarkMarker
+                              themeColor={themeColor}
+                              currentPage={getPageBookmark(chapter.id) ?? chapter.currentPage}
+                              totalPages={chapter.totalPages}
+                              isCompleted={isCompleted}
+                              onPageUpdate={(page) => setPageBookmark(chapter.id, page)}
+                            />
                           )}
                         </div>
 
@@ -449,24 +442,7 @@ const Trilhas = () => {
                         )}
                       </button>
                     </TooltipTrigger>
-                    {!isLocked && (
-                      <TooltipContent side="right" className="p-3">
-                        {chapter.currentPage ? (
-                          <div className="text-center">
-                            <p className="text-xs text-muted-foreground mb-1">Sua página atual</p>
-                            <p className="font-bold text-lg">{chapter.currentPage}/{chapter.totalPages}</p>
-                            <button className="text-xs text-primary hover:underline mt-1">
-                              Atualizar página
-                            </button>
-                          </div>
-                        ) : (
-                          <button className="flex items-center gap-2 text-sm hover:text-primary transition-colors">
-                            <Plus className="w-4 h-4" />
-                            Marcar página atual
-                          </button>
-                        )}
-                      </TooltipContent>
-                    )}
+                    {/* Tooltip handled by BookmarkMarker */}
                   </Tooltip>
                 </TooltipProvider>
               );
