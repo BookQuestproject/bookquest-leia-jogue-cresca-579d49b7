@@ -168,24 +168,42 @@ const PostChapterReflection = ({
     toast.error("Colar texto não é permitido durante a reflexão.");
   }, []);
 
-  // ─── Anti-cheat: detect tab/window switch ───
-  useEffect(() => {
-    if (finished || loading || tabViolationRef.current) return;
+  // ─── Anti-cheat: detect tab/window switch, Alt+Tab, minimize ───
+  const violationCountRef = useRef(0);
 
+  useEffect(() => {
+    if (finished || loading) return;
+
+    const triggerViolation = (reason: string) => {
+      if (tabViolationRef.current || finished) return;
+      tabViolationRef.current = true;
+      violationCountRef.current += 1;
+      setTabViolation(true);
+      setXpPerQuestion(prev => {
+        const next = [...prev];
+        next[currentIdx] = 0;
+        return next;
+      });
+      console.warn(`[Anti-cheat] Violation #${violationCountRef.current}: ${reason}`);
+    };
+
+    // Catches tab switch, minimize, Alt+Tab (when page becomes hidden)
     const handleVisibilityChange = () => {
-      if (document.hidden && !tabViolationRef.current && !finished) {
-        tabViolationRef.current = true;
-        setTabViolation(true);
-        setXpPerQuestion(prev => {
-          const next = [...prev];
-          next[currentIdx] = 0;
-          return next;
-        });
-      }
+      if (document.hidden) triggerViolation("visibilitychange: tab hidden");
+    };
+
+    // Catches Alt+Tab, clicking outside browser — fires even if page stays "visible"
+    const handleWindowBlur = () => {
+      triggerViolation("window blur: focus lost (Alt+Tab / click outside)");
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleWindowBlur);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleWindowBlur);
+    };
   }, [finished, loading, currentIdx]);
 
   // Fetch questions from AI
