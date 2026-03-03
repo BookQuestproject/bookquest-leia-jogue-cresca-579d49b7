@@ -1,8 +1,19 @@
-import { useState } from "react";
-import { Target, CheckCircle, Clock, Flame, Trophy, Star, Gift, Info } from "lucide-react";
+import { useState, useCallback } from "react";
+import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle, Zap } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import ProgressBar from "@/components/ProgressBar";
-import MissionCompletedModal from "@/components/MissionCompletedModal";
+import HabitToast from "@/components/missions/HabitToast";
+import ChallengeModal from "@/components/missions/ChallengeModal";
+import MilestoneOverlay from "@/components/missions/MilestoneOverlay";
+import {
+  type Mission,
+  type MissionCategory,
+  HABIT_MISSIONS,
+  CHALLENGE_MISSIONS,
+  MILESTONE_MISSIONS,
+  ALL_MISSIONS,
+  getLevel,
+} from "@/components/missions/MissionTypes";
 import {
   Tooltip,
   TooltipContent,
@@ -12,88 +23,50 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
 
-interface Mission {
-  id: number;
-  title: string;
-  description: string;
-  icon: typeof Target;
-  progress: number;
-  goal: number;
-  reward: string;
-  xpValue: number;
-  type: "daily" | "weekly" | "monthly";
-  completed: boolean;
-  howToComplete: string;
-}
-
-const initialMissions: Mission[] = [
-  // Daily
-  { id: 1, title: "Responder pergunta de capítulo", description: "Responda uma pergunta de qualquer capítulo", icon: Target, progress: 0, goal: 1, reward: "+10 pts", xpValue: 10, type: "daily", completed: false, howToComplete: "Clique em 'Continuar Leitura' e responda a pergunta do capítulo atual." },
-  { id: 2, title: "Fazer login hoje", description: "Acesse o BookQuest", icon: CheckCircle, progress: 1, goal: 1, reward: "+5 pts", xpValue: 5, type: "daily", completed: true, howToComplete: "Detectado automaticamente ao acessar o site." },
-  { id: 3, title: "Completar quiz literário", description: "Responda o quiz de perfil literário", icon: Star, progress: 0, goal: 1, reward: "+25 pts", xpValue: 25, type: "daily", completed: false, howToComplete: "Acesse o Quiz Literário no menu lateral e complete todas as perguntas." },
-  // Weekly
-  { id: 5, title: "Completar 5 unidades de trilha", description: "Responda 5 perguntas de capítulos", icon: Target, progress: 0, goal: 5, reward: "+50 pts", xpValue: 50, type: "weekly", completed: false, howToComplete: "Responda corretamente 5 perguntas de capítulos em qualquer trilha." },
-  { id: 6, title: "Sequência de 7 dias", description: "Faça login por 7 dias seguidos", icon: Flame, progress: 0, goal: 7, reward: "+100 pts", xpValue: 100, type: "weekly", completed: false, howToComplete: "Acesse o BookQuest todos os dias por uma semana." },
-  // Monthly
-  { id: 8, title: "Marcar livro como concluído", description: "Complete todas as unidades de uma trilha", icon: Trophy, progress: 0, goal: 1, reward: "+200 pts", xpValue: 200, type: "monthly", completed: false, howToComplete: "Complete todas as perguntas de uma trilha e clique em 'Marcar como Concluído'." },
-  { id: 9, title: "Responder 20 perguntas", description: "Complete 20 unidades de trilha", icon: Target, progress: 0, goal: 20, reward: "+150 pts", xpValue: 150, type: "monthly", completed: false, howToComplete: "Responda corretamente 20 perguntas em qualquer trilha." },
-];
-
-const LEVELS = [
-  { name: "Iniciante", xp: 0 },
-  { name: "Explorador", xp: 100 },
-  { name: "Aventureiro", xp: 300 },
-  { name: "Mestre Leitor", xp: 600 },
-  { name: "Lenda Literária", xp: 1000 },
-];
-
-const getLevel = (xp: number) => {
-  for (let i = LEVELS.length - 1; i >= 0; i--) {
-    if (xp >= LEVELS[i].xp) {
-      const nextLevel = LEVELS[i + 1];
-      return {
-        current: LEVELS[i].name,
-        nextXp: nextLevel ? nextLevel.xp : LEVELS[i].xp,
-        next: nextLevel ? nextLevel.name : null,
-      };
-    }
-  }
-  return { current: LEVELS[0].name, nextXp: LEVELS[1].xp, next: LEVELS[1].name };
+const MILESTONE_TITLES: Record<string, string> = {
+  "milestone-30-streak": "Leitor Persistente",
+  "milestone-100-chapters": "Centenário Literário",
+  "milestone-10-books": "Guardião da Estante",
 };
 
 const Missoes = () => {
   const isMobile = useIsMobile();
-  const [missions, setMissions] = useState(initialMissions);
+  const [missions, setMissions] = useState<Mission[]>(ALL_MISSIONS);
   const [totalXp, setTotalXp] = useState(35);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [completedMission, setCompletedMission] = useState<{ title: string; xp: number } | null>(null);
-  const [leveledUp, setLeveledUp] = useState(false);
-  const [newLevelName, setNewLevelName] = useState("");
-  const [previousLevelName, setPreviousLevelName] = useState("");
 
-  const dailyMissions = missions.filter(m => m.type === "daily");
-  const weeklyMissions = missions.filter(m => m.type === "weekly");
-  const monthlyMissions = missions.filter(m => m.type === "monthly");
-  const completedToday = dailyMissions.filter(m => m.completed).length;
-  const totalDaily = dailyMissions.length;
+  // Notification states
+  const [habitToast, setHabitToast] = useState<{ title: string; xp: number } | null>(null);
+  const [challengeModal, setChallengeModal] = useState<{ title: string; xp: number } | null>(null);
+  const [milestoneOverlay, setMilestoneOverlay] = useState<{ title: string; xp: number; unlockedTitle?: string } | null>(null);
 
-  const handleCompleteMission = (missionId: number) => {
+  const habits = missions.filter(m => m.category === "habit");
+  const challenges = missions.filter(m => m.category === "challenge");
+  const milestones = missions.filter(m => m.category === "milestone");
+  const habitsCompleted = habits.filter(m => m.completed).length;
+
+  const handleComplete = useCallback((missionId: string) => {
     const mission = missions.find(m => m.id === missionId);
     if (!mission || mission.completed) return;
 
-    const prevLevel = getLevel(totalXp);
-    const newXp = totalXp + mission.xpValue;
-    const newLevel = getLevel(newXp);
-    const didLevelUp = newLevel.current !== prevLevel.current;
-
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, completed: true, progress: m.goal } : m));
-    setTotalXp(newXp);
-    setCompletedMission({ title: mission.title, xp: mission.xpValue });
-    setLeveledUp(didLevelUp);
-    setNewLevelName(didLevelUp ? newLevel.current : "");
-    setPreviousLevelName(didLevelUp ? prevLevel.current : "");
-    setModalOpen(true);
-  };
+    setTotalXp(prev => prev + mission.xpValue);
+
+    switch (mission.category) {
+      case "habit":
+        setHabitToast({ title: mission.title, xp: mission.xpValue });
+        break;
+      case "challenge":
+        setChallengeModal({ title: mission.title, xp: mission.xpValue });
+        break;
+      case "milestone":
+        setMilestoneOverlay({
+          title: mission.title,
+          xp: mission.xpValue,
+          unlockedTitle: MILESTONE_TITLES[mission.id],
+        });
+        break;
+    }
+  }, [missions]);
 
   const level = getLevel(totalXp);
 
@@ -109,25 +82,25 @@ const Missoes = () => {
     <Layout>
       <div className="max-w-4xl mx-auto py-8 section-bg-missions">
         {/* Header */}
-        <header className="mb-10 animate-fade-in" data-tutorial="missoes-header">
+        <header className="mb-10 animate-fade-in">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
-              <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Suas Tarefas</p>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Jornada de Evolução</p>
               <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Missões</h1>
               <p className="text-muted-foreground">
-                Complete missões para ganhar pontos e subir no ranking
+                Construa hábitos, supere desafios e alcance marcos permanentes
               </p>
             </div>
             <div className="editorial-card p-4 flex items-center gap-6">
               <div className="text-center">
-                <p className="text-2xl font-semibold text-secondary">{completedToday}/{totalDaily}</p>
-                <p className="text-xs text-muted-foreground">Diárias</p>
+                <p className="text-2xl font-semibold text-accent">{habitsCompleted}/{habits.length}</p>
+                <p className="text-xs text-muted-foreground">Hábitos hoje</p>
               </div>
               <div className="w-px h-10 bg-border/60" />
               <div className="flex items-center gap-2">
                 <Flame className="w-5 h-5 text-accent" />
                 <div>
-                  <p className="font-semibold">0 dias</p>
+                  <p className="font-semibold">3 dias</p>
                   <p className="text-xs text-muted-foreground">sequência</p>
                 </div>
               </div>
@@ -145,82 +118,142 @@ const Missoes = () => {
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" />
             <div>
-              <p className="font-medium text-sm mb-1">Como funcionam as missões?</p>
+              <p className="font-medium text-sm mb-1">Jornada de Evolução do Leitor</p>
               <p className="text-sm text-muted-foreground">
-                Todas as missões são verificadas automaticamente. Clique em uma missão incompleta para simulá-la como concluída e ver a animação.
+                Hábitos criam consistência. Desafios impulsionam crescimento. Marcos eternizam suas conquistas. Todas as missões são verificadas automaticamente.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Daily Missions */}
-        <section className="mb-10 animate-fade-in" data-tutorial="missoes-daily" style={{ animationDelay: "0.2s" }}>
-          <div className="flex items-center gap-2 mb-5">
-            <Clock className="w-5 h-5 text-secondary" />
-            <h2 className="font-serif text-xl font-semibold">Missões Diárias</h2>
-            <span className="text-sm text-muted-foreground ml-2">Reiniciam à meia-noite</span>
-          </div>
-          <div className="space-y-3">
-            {dailyMissions.map((mission, index) => (
-              <MissionCardInline key={mission.id} mission={mission} index={index} onComplete={handleCompleteMission} />
-            ))}
-          </div>
-        </section>
+        {/* ── Hábitos ── */}
+        <MissionSection
+          title="Hábitos de Leitura"
+          subtitle="Base diária · Reiniciam à meia-noite"
+          icon={<BookOpen className="w-5 h-5 text-accent" />}
+          missions={habits}
+          onComplete={handleComplete}
+          accentClass="accent"
+          delay="0.2s"
+          badge={`${habitsCompleted}/${habits.length} hoje`}
+        />
 
-        {/* Weekly Missions */}
-        <section className="mb-10 animate-fade-in" data-tutorial="missoes-weekly" style={{ animationDelay: "0.3s" }}>
-          <div className="flex items-center gap-2 mb-5">
-            <Star className="w-5 h-5 text-accent" />
-            <h2 className="font-serif text-xl font-semibold">Missões Semanais</h2>
-            <span className="text-sm text-muted-foreground ml-2">Reiniciam toda segunda</span>
-          </div>
-          <div className="space-y-3">
-            {weeklyMissions.map((mission, index) => (
-              <MissionCardInline key={mission.id} mission={mission} index={index} onComplete={handleCompleteMission} />
-            ))}
-          </div>
-        </section>
+        {/* ── Desafios ── */}
+        <MissionSection
+          title="Desafios de Crescimento"
+          subtitle="Superação semanal · Reiniciam toda segunda"
+          icon={<Star className="w-5 h-5 text-secondary" />}
+          missions={challenges}
+          onComplete={handleComplete}
+          accentClass="secondary"
+          delay="0.3s"
+        />
 
-        {/* Monthly Missions */}
-        <section className="animate-fade-in" data-tutorial="missoes-monthly" style={{ animationDelay: "0.4s" }}>
-          <div className="flex items-center gap-2 mb-5">
-            <Trophy className="w-5 h-5 text-accent" />
-            <h2 className="font-serif text-xl font-semibold">Missões Mensais</h2>
-            <span className="text-sm text-muted-foreground ml-2">Reiniciam dia 1</span>
-          </div>
-          <div className="space-y-3">
-            {monthlyMissions.map((mission, index) => (
-              <MissionCardInline key={mission.id} mission={mission} index={index} onComplete={handleCompleteMission} />
-            ))}
-          </div>
-        </section>
+        {/* ── Marcos ── */}
+        <MissionSection
+          title="Marcos de Evolução"
+          subtitle="Conquistas permanentes · Nunca reiniciam"
+          icon={<Crown className="w-5 h-5 text-accent" />}
+          missions={milestones}
+          onComplete={handleComplete}
+          accentClass="accent"
+          delay="0.4s"
+          permanent
+        />
       </div>
 
-      {/* Modal */}
-      {completedMission && (
-        <MissionCompletedModal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          missionTitle={completedMission.title}
-          xpGained={completedMission.xp}
-          currentXp={totalXp}
-          nextLevelXp={level.nextXp}
-          leveledUp={leveledUp}
-          newLevel={newLevelName}
-          previousLevel={previousLevelName}
+      {/* Notifications */}
+      {habitToast && (
+        <HabitToast
+          isVisible={!!habitToast}
+          missionTitle={habitToast.title}
+          xp={habitToast.xp}
+          onDone={() => setHabitToast(null)}
+        />
+      )}
+      {challengeModal && (
+        <ChallengeModal
+          isOpen={!!challengeModal}
+          onClose={() => setChallengeModal(null)}
+          missionTitle={challengeModal.title}
+          xpGained={challengeModal.xp}
+        />
+      )}
+      {milestoneOverlay && (
+        <MilestoneOverlay
+          isOpen={!!milestoneOverlay}
+          onClose={() => setMilestoneOverlay(null)}
+          missionTitle={milestoneOverlay.title}
+          xpGained={milestoneOverlay.xp}
+          unlockedTitle={milestoneOverlay.unlockedTitle}
         />
       )}
     </Layout>
   );
 };
 
-const MissionCardInline = ({ mission, index, onComplete }: { mission: Mission; index: number; onComplete: (id: number) => void }) => {
+/* ── Section component ── */
+const MissionSection = ({
+  title,
+  subtitle,
+  icon,
+  missions,
+  onComplete,
+  accentClass,
+  delay,
+  badge,
+  permanent,
+}: {
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  missions: Mission[];
+  onComplete: (id: string) => void;
+  accentClass: string;
+  delay: string;
+  badge?: string;
+  permanent?: boolean;
+}) => (
+  <section className="mb-10 animate-fade-in" style={{ animationDelay: delay }}>
+    <div className="flex items-center gap-2 mb-5">
+      {icon}
+      <h2 className="font-serif text-xl font-semibold">{title}</h2>
+      <span className="text-sm text-muted-foreground ml-2">{subtitle}</span>
+      {badge && (
+        <span className="ml-auto text-xs font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-full">{badge}</span>
+      )}
+      {permanent && (
+        <span className="ml-auto text-[10px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full uppercase tracking-wider">Permanente</span>
+      )}
+    </div>
+    <div className="space-y-3">
+      {missions.map((mission, index) => (
+        <MissionCard key={mission.id} mission={mission} onComplete={onComplete} />
+      ))}
+    </div>
+  </section>
+);
+
+/* ── Card component ── */
+const MissionCard = ({ mission, onComplete }: { mission: Mission; onComplete: (id: string) => void }) => {
   const Icon = mission.icon;
+  const categoryColors = {
+    habit: "border-accent/40",
+    challenge: "border-secondary/40",
+    milestone: "border-accent/40",
+  };
+  const categoryLabels = {
+    habit: "Hábito",
+    challenge: "Desafio",
+    milestone: "Marco",
+  };
 
   return (
     <div
       className={`editorial-card p-4 transition-all duration-200 ${
-        mission.completed ? "border-l-4 border-accent bg-accent/5" : "cursor-pointer hover:shadow-md hover:border-secondary/40"
+        mission.completed
+          ? `border-l-4 ${categoryColors[mission.category]} bg-accent/5`
+          : "cursor-pointer hover:shadow-md hover:border-secondary/40"
       }`}
       onClick={() => !mission.completed && onComplete(mission.id)}
     >
@@ -237,22 +270,20 @@ const MissionCardInline = ({ mission, index, onComplete }: { mission: Mission; i
               <h3 className={`font-medium ${mission.completed ? "line-through text-muted-foreground" : ""}`}>
                 {mission.title}
               </h3>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className="p-0.5 rounded hover:bg-muted transition-colors" onClick={(e) => e.stopPropagation()}>
-                      <Info className="w-3.5 h-3.5 text-muted-foreground" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-xs">
-                    <p className="text-xs">{mission.howToComplete}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider ${
+                mission.category === "habit" ? "bg-accent/10 text-accent" :
+                mission.category === "challenge" ? "bg-secondary/10 text-secondary" :
+                "bg-accent/10 text-accent"
+              }`}>
+                {categoryLabels[mission.category]}
+              </span>
+              {mission.permanent && (
+                <span className="text-[10px] text-secondary">★ Permanente</span>
+              )}
             </div>
             <span className="text-sm font-semibold text-accent flex items-center gap-1">
-              <Gift className="w-3 h-3" />
-              {mission.reward}
+              <Zap className="w-3 h-3" />
+              +{mission.xpValue} XP
             </span>
           </div>
           <p className="text-sm text-muted-foreground mb-2">{mission.description}</p>
@@ -271,7 +302,7 @@ const MissionCardInline = ({ mission, index, onComplete }: { mission: Mission; i
           {mission.completed && (
             <div className="flex items-center gap-2 text-sm text-accent font-medium">
               <CheckCircle className="w-4 h-4" />
-              Completada
+              {mission.category === "milestone" ? "Conquistado" : "Completado"}
             </div>
           )}
         </div>
