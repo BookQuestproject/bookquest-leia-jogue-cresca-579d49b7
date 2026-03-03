@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { Sparkles, ChevronRight, CheckCircle, Star, Zap, MessageSquare, BarChart3, Brain, Users, Tag, Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Sparkles, ChevronRight, CheckCircle, Star, Zap, MessageSquare, BarChart3, Brain, Users, Tag, Loader2, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
@@ -159,6 +159,34 @@ const PostChapterReflection = ({
   const [xpPerQuestion, setXpPerQuestion] = useState<number[]>([]);
   const [finished, setFinished] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tabViolation, setTabViolation] = useState(false);
+  const tabViolationRef = useRef(false);
+
+  // ─── Anti-cheat: block paste on text inputs ───
+  const blockPaste = useCallback((e: React.ClipboardEvent) => {
+    e.preventDefault();
+    toast.error("Colar texto não é permitido durante a reflexão.");
+  }, []);
+
+  // ─── Anti-cheat: detect tab/window switch ───
+  useEffect(() => {
+    if (finished || loading || tabViolationRef.current) return;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && !tabViolationRef.current && !finished) {
+        tabViolationRef.current = true;
+        setTabViolation(true);
+        setXpPerQuestion(prev => {
+          const next = [...prev];
+          next[currentIdx] = 0;
+          return next;
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [finished, loading, currentIdx]);
 
   // Fetch questions from AI
   useEffect(() => {
@@ -235,6 +263,8 @@ const PostChapterReflection = ({
 
   const handleNext = () => {
     setShowFeedback(false);
+    setTabViolation(false);
+    tabViolationRef.current = false;
     if (currentIdx < questions.length - 1) {
       setCurrentIdx(prev => prev + 1);
     } else {
@@ -384,16 +414,17 @@ const PostChapterReflection = ({
 
       {/* Question card */}
       <div className="bg-card rounded-xl p-6 border border-border space-y-5">
-        <p className="text-lg font-medium leading-relaxed">{currentQ?.question}</p>
+        <p className="text-lg font-medium leading-relaxed select-none" style={{ WebkitUserSelect: "none", userSelect: "none" }}>{currentQ?.question}</p>
 
         {/* ─── Renderers per type ─── */}
         {currentQ?.type === "open" && (
           <Textarea
             value={answers[currentIdx] || ""}
             onChange={e => handleAnswer(e.target.value)}
+            onPaste={blockPaste}
             placeholder="Escreva sua reflexão..."
             className="min-h-[100px] resize-none"
-            disabled={showFeedback}
+            disabled={showFeedback || tabViolation}
           />
         )}
 
@@ -453,9 +484,10 @@ const PostChapterReflection = ({
           <Textarea
             value={answers[currentIdx] || ""}
             onChange={e => handleAnswer(e.target.value)}
+            onPaste={blockPaste}
             placeholder="O que você acha que vai acontecer..."
             className="min-h-[80px] resize-none"
-            disabled={showFeedback}
+            disabled={showFeedback || tabViolation}
           />
         )}
 
@@ -490,9 +522,10 @@ const PostChapterReflection = ({
                 const prev = answers[currentIdx] || {};
                 handleAnswer({ ...prev, justification: e.target.value });
               }}
+              onPaste={blockPaste}
               placeholder={currentQ.justifyLabel || "Justifique (opcional)..."}
               className="min-h-[60px] resize-none"
-              disabled={showFeedback}
+              disabled={showFeedback || tabViolation}
             />
           </div>
         )}
@@ -529,7 +562,8 @@ const PostChapterReflection = ({
                 onChange={e => handleAnswer(e.target.value ? `other:${e.target.value}` : undefined)}
                 placeholder="Outro tema..."
                 className="w-full p-3 rounded-lg border border-border bg-muted/50 text-sm"
-                disabled={showFeedback}
+                onPaste={blockPaste as any}
+                disabled={showFeedback || tabViolation}
               />
             )}
           </div>
@@ -576,6 +610,25 @@ const PostChapterReflection = ({
           </div>
         )}
       </div>
+
+      {/* Tab violation warning */}
+      {tabViolation && (
+        <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-5 space-y-3 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+              <ShieldAlert className="w-5 h-5 text-destructive" />
+            </div>
+            <div>
+              <p className="font-semibold text-destructive text-sm">Questão anulada — Saída da guia detectada</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Para garantir a autenticidade das suas respostas e a integridade da sua evolução como leitor, 
+                o BookQuest monitora a atividade durante a reflexão. Consultar fontes externas invalida a questão 
+                e você não receberá XP por ela.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Action button */}
       {!showFeedback ? (
