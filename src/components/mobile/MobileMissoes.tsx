@@ -132,11 +132,9 @@ const MobileMissoes = () => {
         {tabMissions.map(mission => {
           const Icon = mission.icon;
           return (
-            <button
+            <div
               key={mission.id}
-              onClick={() => !mission.completed && handleComplete(mission.id)}
-              disabled={mission.completed}
-              className={`w-full text-left rounded-xl p-4 transition-all active:scale-[0.98] ${
+              className={`w-full text-left rounded-xl p-4 transition-all ${
                 mission.completed
                   ? "bg-accent/5 border border-accent/20"
                   : "bg-card border border-border/60"
@@ -182,7 +180,7 @@ const MobileMissoes = () => {
                   )}
                 </div>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>

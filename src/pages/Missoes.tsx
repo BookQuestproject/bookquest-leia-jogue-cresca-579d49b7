@@ -253,9 +253,8 @@ const MissionCard = ({ mission, onComplete }: { mission: Mission; onComplete: (i
       className={`editorial-card p-4 transition-all duration-200 ${
         mission.completed
           ? `border-l-4 ${categoryColors[mission.category]} bg-accent/5`
-          : "cursor-pointer hover:shadow-md hover:border-secondary/40"
+          : ""
       }`}
-      onClick={() => !mission.completed && onComplete(mission.id)}
     >
       <div className="flex items-start gap-4">
         <div className={`w-10 h-10 rounded flex items-center justify-center flex-shrink-0 ${

@@ -57,38 +57,43 @@ const StreakFlame = ({ days }: StreakFlameProps) => {
 
   const sortedLevelsAsc = [...streakLevels].sort((a, b) => a.min - b.min);
 
+  const isInactive = days === 0;
+
   return (
     <div className="flex flex-col gap-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Sequência</h3>
+        <span className="text-xs font-bold text-muted-foreground">{days} {days === 1 ? "dia" : "dias"}</span>
       </div>
 
       {/* Current level — compact */}
       <div className="flex items-center gap-3">
         <div
-          className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+          className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 streak-flame-container ${isInactive ? "" : "streak-flame-active"}`}
           style={{
-            background: `${streak.color}12`,
+            background: isInactive ? "hsl(var(--muted) / 0.4)" : `${streak.color}12`,
             boxShadow: streak.glow ? `0 0 12px ${streak.color}30` : undefined,
           }}
         >
           <Flame
-            className={`w-5 h-5 ${days > 0 ? "animate-pulse" : ""}`}
+            className={`w-5 h-5 ${isInactive ? "" : "streak-flame-pulse"}`}
             style={{
-              color: streak.color,
-              filter: streak.glow
+              color: isInactive ? "hsl(var(--muted-foreground) / 0.35)" : streak.color,
+              filter: isInactive
+                ? "grayscale(1) opacity(0.5)"
+                : streak.glow
                 ? `drop-shadow(0 0 6px ${streak.color})`
                 : `drop-shadow(0 0 3px ${streak.color}60)`,
             }}
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold leading-tight" style={{ color: streak.color }}>
-            {streak.label}
+          <p className="text-sm font-semibold leading-tight" style={{ color: isInactive ? "hsl(var(--muted-foreground))" : streak.color }}>
+            {isInactive ? "Sem sequência" : streak.label}
           </p>
           <p className="text-xs text-muted-foreground">
-            {days === 0 ? "Inicie sua sequência" : `${days} ${days === 1 ? "dia" : "dias"}`}
+            {isInactive ? "Leia hoje para começar!" : `${days} ${days === 1 ? "dia" : "dias"} consecutivo${days === 1 ? "" : "s"}`}
           </p>
         </div>
       </div>
