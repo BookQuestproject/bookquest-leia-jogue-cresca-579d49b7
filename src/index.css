@@ -1132,6 +1132,23 @@
   100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0); }
 }
 
+/* ═══ Streak Flame Animations ═══ */
+.streak-flame-pulse {
+  animation: streak-breathe 2s ease-in-out infinite;
+}
+@keyframes streak-breathe {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.1); filter: brightness(1.2); }
+}
+
+.streak-flame-active {
+  animation: streak-container-glow 3s ease-in-out infinite;
+}
+@keyframes streak-container-glow {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 8px 2px currentColor; }
+}
+
 /* ═══ Habit Toast Animations ═══ */
 .habit-check-draw {
   animation: habit-check-stroke 0.5s ease-out forwards;

@@ -49,10 +49,16 @@ const MobileHome = () => {
         </div>
         <button
           onClick={() => navigate("/perfil")}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border/60 active:scale-95 transition-transform"
+          className={`flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border/60 active:scale-95 transition-transform ${userStats.streak === 0 ? "opacity-60" : ""}`}
         >
-          <Flame className="w-4 h-4" style={{ color: streakInfo.color }} />
-          <span className="text-sm font-bold" style={{ color: streakInfo.color }}>
+          <Flame
+            className="w-4 h-4"
+            style={{
+              color: userStats.streak === 0 ? "hsl(var(--muted-foreground))" : streakInfo.color,
+              filter: userStats.streak === 0 ? "grayscale(1)" : undefined,
+            }}
+          />
+          <span className="text-sm font-bold" style={{ color: userStats.streak === 0 ? "hsl(var(--muted-foreground))" : streakInfo.color }}>
             {userStats.streak}
           </span>
         </button>
