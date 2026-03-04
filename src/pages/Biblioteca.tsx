@@ -108,9 +108,26 @@ const Biblioteca = () => {
     setInspectedBook(book);
   };
 
+  // Check if a book already exists in the library catalog
+  const findDuplicateInLibrary = (title: string, author: string) => {
+    const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const t = normalise(title);
+    const a = normalise(author);
+    return allBooks.find(
+      (b) => normalise(b.title) === t || (t.length > 4 && normalise(b.title).includes(t) && normalise(b.author).includes(a))
+    );
+  };
+
+  const duplicateBook = newBook.title.trim().length > 2 ? findDuplicateInLibrary(newBook.title, newBook.author) : null;
+
   const handleSuggestBook = async () => {
     if (!newBook.title.trim() || !newBook.author.trim()) {
       toast.error("Preencha título e autor do livro");
+      return;
+    }
+
+    if (duplicateBook) {
+      toast.error(`"${duplicateBook.title}" já está disponível na biblioteca!`);
       return;
     }
 
@@ -299,6 +316,7 @@ const Biblioteca = () => {
                 </div>
               </div>
 
+
               <div>
                 <label className="text-sm font-medium mb-2 block">Título do livro</label>
                 <Input
@@ -316,6 +334,18 @@ const Biblioteca = () => {
                   onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
                 />
               </div>
+
+              {duplicateBook && (
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-destructive">Este livro já existe na biblioteca!</p>
+                    <p className="text-xs text-muted-foreground">
+                      <strong>"{duplicateBook.title}"</strong> de {duplicateBook.author} já está disponível. Você pode encontrá-lo na biblioteca e adicioná-lo diretamente à sua estante.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="text-sm font-medium mb-2 block">Por que recomendar? (opcional)</label>
@@ -335,7 +365,7 @@ const Biblioteca = () => {
                   variant="hero" 
                   className="flex-1 gap-2" 
                   onClick={handleSuggestBook}
-                  disabled={isSubmitting || !user}
+                  disabled={isSubmitting || !user || !!duplicateBook}
                 >
                   <Check className="w-4 h-4" />
                   {isSubmitting ? "Enviando..." : "Enviar Sugestão"}
