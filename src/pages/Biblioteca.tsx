@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle } from "lucide-react";
+import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -120,6 +121,8 @@ const Biblioteca = () => {
 
   const duplicateBook = newBook.title.trim().length > 2 ? findDuplicateInLibrary(newBook.title, newBook.author) : null;
 
+  const [verificationResult, setVerificationResult] = useState<{ exists: boolean; book?: any } | null>(null);
+
   const handleSuggestBook = async () => {
     if (!newBook.title.trim() || !newBook.author.trim()) {
       toast.error("Preencha título e autor do livro");
@@ -132,13 +135,51 @@ const Biblioteca = () => {
     }
 
     setIsSubmitting(true);
-    const success = await createSuggestion(newBook.title, newBook.author, newBook.reason);
-    setIsSubmitting(false);
+    setVerificationResult(null);
+    const suggestionId = await createSuggestion(newBook.title, newBook.author, newBook.reason);
     
-    if (success) {
+    if (suggestionId) {
+      // Show initial success
+      toast.success("Sugestão registrada! Verificando o livro...", {
+        icon: <Sparkles className="w-4 h-4 text-accent" />,
+      });
+
+      // Call AI verification
+      try {
+        const { data, error } = await supabase.functions.invoke('verify-book', {
+          body: { title: newBook.title, author: newBook.author, suggestion_id: suggestionId },
+        });
+
+        if (!error && data?.success && data.book?.exists) {
+          setVerificationResult({ exists: true, book: data.book });
+          toast.success("Livro verificado e aprovado automaticamente!", {
+            description: `"${data.book.correct_title}" foi adicionado à biblioteca.`,
+            icon: <Check className="w-4 h-4 text-green-500" />,
+            duration: 5000,
+          });
+          // XP reward
+          toast(`+15 XP 🎉`, {
+            description: "Recompensa por sugerir um livro válido!",
+            icon: <Zap className="w-4 h-4 text-accent" />,
+            duration: 4000,
+          });
+        } else if (!error && data?.success && !data.book?.exists) {
+          toast.error("Não conseguimos verificar este livro", {
+            description: data.book?.reason || "Verifique o título e autor e tente novamente.",
+            duration: 5000,
+          });
+        } else {
+          toast.info("Sugestão enviada! A verificação será feita manualmente.");
+        }
+      } catch (err) {
+        console.error("Verification error:", err);
+        toast.info("Sugestão enviada! A verificação será feita manualmente.");
+      }
+
       setNewBook({ title: "", author: "", reason: "" });
       setShowAddModal(false);
     }
+    setIsSubmitting(false);
   };
   
   const getStatusLabel = (status: string) => {
@@ -368,7 +409,7 @@ const Biblioteca = () => {
                   disabled={isSubmitting || !user || !!duplicateBook}
                 >
                   <Check className="w-4 h-4" />
-                  {isSubmitting ? "Enviando..." : "Enviar Sugestão"}
+                  {isSubmitting ? "Verificando..." : "Enviar e Verificar"}
                 </Button>
               </div>
               

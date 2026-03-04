@@ -53,29 +53,25 @@ export interface BookSuggestion {
      fetchSuggestions();
    }, [user]);
  
-   const createSuggestion = async (title: string, author: string, reason?: string) => {
-     if (!user) {
-       toast.error("Você precisa estar logado para sugerir um livro");
-       return false;
-     }
- 
-     try {
-       const { error } = await supabase.from("book_suggestions").insert({
-         user_id: user.id,
-         title: title.trim(),
-         author: author.trim() || null,
-         reason: reason?.trim() || null,
-         status: "pending",
-       });
- 
-       if (error) throw error;
- 
-       toast.success("Sugestão enviada com sucesso!", {
-         description: "Vamos analisar sua sugestão em breve.",
-       });
- 
-       await fetchSuggestions();
-       return true;
+    const createSuggestion = async (title: string, author: string, reason?: string): Promise<string | false> => {
+      if (!user) {
+        toast.error("Você precisa estar logado para sugerir um livro");
+        return false;
+      }
+  
+      try {
+        const { data, error } = await supabase.from("book_suggestions").insert({
+          user_id: user.id,
+          title: title.trim(),
+          author: author.trim() || null,
+          reason: reason?.trim() || null,
+          status: "pending",
+        }).select("id").single();
+  
+        if (error) throw error;
+  
+        await fetchSuggestions();
+        return data.id;
      } catch (err) {
        console.error("Error creating suggestion:", err);
        toast.error("Erro ao enviar sugestão");
