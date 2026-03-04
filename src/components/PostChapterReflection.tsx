@@ -417,7 +417,15 @@ const PostChapterReflection = ({
   }
 
   // ─── Question view ─────────────────────────────────────────────
-  const hasAnswer = answers[currentIdx] !== undefined && answers[currentIdx] !== "" && answers[currentIdx] !== null;
+  const hasAnswer = (() => {
+    const ans = answers[currentIdx];
+    if (ans === undefined || ans === "" || ans === null) return false;
+    // Character questions require justification
+    if (currentQ?.type === "character") {
+      return typeof ans === "object" && ans?.selected && (ans?.justification || "").trim().length > 0;
+    }
+    return true;
+  })();
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -554,7 +562,7 @@ const PostChapterReflection = ({
                 handleAnswer({ ...prev, justification: e.target.value });
               }}
               onPaste={blockPaste}
-              placeholder={currentQ.justifyLabel || "Justifique (opcional)..."}
+              placeholder={currentQ.justifyLabel || "Justifique sua escolha..."}
               className="min-h-[60px] resize-none"
               disabled={showFeedback || tabViolation}
             />
@@ -658,18 +666,15 @@ const PostChapterReflection = ({
 
         {/* Feedback for perception */}
         {showFeedback && currentQ?.type === "perception" && (
-          <div className="p-4 rounded-lg bg-accent/10 border border-accent/20 space-y-2">
+          <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
             <div className="flex items-center justify-between">
               <p className="font-semibold flex items-center gap-2">
                 ✅ Percepção registrada!
               </p>
-              <span className="text-sm font-bold px-2 py-0.5 rounded bg-accent/20" style={{ color: `hsl(${themeColor})` }}>
+              <span className="text-sm font-bold px-2 py-0.5 rounded" style={{ background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
                 +{xpPerQuestion[currentIdx]} XP
               </span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Sua interpretação foi registrada. Não existe certo ou errado aqui — o importante é refletir sobre o que você sentiu durante a leitura.
-            </p>
           </div>
         )}
 
@@ -680,7 +685,7 @@ const PostChapterReflection = ({
               <p className="font-semibold flex items-center gap-2">
                 ✅ Tema identificado!
               </p>
-              <span className="text-sm font-bold px-2 py-0.5 rounded bg-accent/20" style={{ color: `hsl(${themeColor})` }}>
+              <span className="text-sm font-bold px-2 py-0.5 rounded" style={{ background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
                 +{xpPerQuestion[currentIdx]} XP
               </span>
             </div>
@@ -703,8 +708,8 @@ const PostChapterReflection = ({
                   {hasJustification ? "🎉 Análise completa!" : "✅ Personagem escolhido!"}
                 </p>
                 <span className={`text-sm font-bold px-2 py-0.5 rounded ${
-                  hasJustification ? "bg-green-500/20 text-green-600" : "bg-accent/20"
-                }`} style={{ color: hasJustification ? undefined : `hsl(${themeColor})` }}>
+                  hasJustification ? "bg-green-500/20 text-green-400" : ""
+                }`} style={hasJustification ? undefined : { background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
                   +{xp} XP
                 </span>
               </div>
