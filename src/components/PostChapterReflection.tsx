@@ -242,6 +242,17 @@ const PostChapterReflection = ({
   const handleSubmitAnswer = () => {
     if (!currentQ) return;
 
+    // If question was annulled, force 0 XP and skip to feedback
+    if (tabViolation) {
+      setXpPerQuestion(prev => {
+        const next = [...prev];
+        next[currentIdx] = 0;
+        return next;
+      });
+      setShowFeedback(true);
+      return;
+    }
+
     let xp = 0;
     const answer = answers[currentIdx];
 
@@ -451,8 +462,8 @@ const PostChapterReflection = ({
             {currentQ.options.map((opt, i) => (
               <button
                 key={i}
-                onClick={() => !showFeedback && handleAnswer(i)}
-                disabled={showFeedback}
+                onClick={() => !showFeedback && !tabViolation && handleAnswer(i)}
+                disabled={showFeedback || tabViolation}
                 className={`w-full text-left p-4 rounded-lg border transition-all ${
                   showFeedback
                     ? i === currentQ.correctAnswer
@@ -460,12 +471,14 @@ const PostChapterReflection = ({
                       : i === answers[currentIdx] && i !== currentQ.correctAnswer
                       ? "bg-destructive/20 border-destructive"
                       : "bg-muted/50 border-border"
+                    : tabViolation
+                    ? "bg-muted/30 border-border opacity-50 cursor-not-allowed"
                     : answers[currentIdx] === i
                     ? "border-2"
                     : "bg-muted/50 border-border hover:bg-muted"
                 }`}
                 style={{
-                  borderColor: !showFeedback && answers[currentIdx] === i ? `hsl(${themeColor})` : undefined,
+                  borderColor: !showFeedback && !tabViolation && answers[currentIdx] === i ? `hsl(${themeColor})` : undefined,
                 }}
               >
                 <span className="font-medium mr-2">{String.fromCharCode(65 + i)}.</span>
@@ -480,8 +493,8 @@ const PostChapterReflection = ({
             {currentQ.options.map((opt, i) => (
               <button
                 key={i}
-                onClick={() => !showFeedback && handleAnswer(i)}
-                disabled={showFeedback}
+                onClick={() => !showFeedback && !tabViolation && handleAnswer(i)}
+                disabled={showFeedback || tabViolation}
                 className={`p-4 rounded-lg border text-center transition-all ${
                   answers[currentIdx] === i
                     ? "border-2 font-semibold"
@@ -516,11 +529,11 @@ const PostChapterReflection = ({
                 <button
                   key={i}
                   onClick={() => {
-                    if (showFeedback) return;
+                    if (showFeedback || tabViolation) return;
                     const prev = answers[currentIdx] || {};
                     handleAnswer({ ...prev, choice: i });
                   }}
-                  disabled={showFeedback}
+                  disabled={showFeedback || tabViolation}
                   className={`flex-1 p-3 rounded-lg border text-center text-sm transition-all ${
                     answers[currentIdx]?.choice === i
                       ? "border-2 font-semibold"
@@ -554,8 +567,8 @@ const PostChapterReflection = ({
               {currentQ.options.map((opt, i) => (
                 <button
                   key={i}
-                  onClick={() => !showFeedback && handleAnswer(opt)}
-                  disabled={showFeedback}
+                  onClick={() => !showFeedback && !tabViolation && handleAnswer(opt)}
+                  disabled={showFeedback || tabViolation}
                   className={`p-3 rounded-lg border text-center text-sm transition-all ${
                     answers[currentIdx] === opt
                       ? "border-2 font-semibold"
@@ -649,7 +662,20 @@ const PostChapterReflection = ({
       )}
 
       {/* Action button */}
-      {!showFeedback ? (
+      {tabViolation && !showFeedback ? (
+        <Button
+          className="w-full gap-2"
+          size="lg"
+          variant="outline"
+          onClick={handleNext}
+        >
+          {currentIdx < questions.length - 1 ? (
+            <>Pular para próxima questão <ChevronRight className="w-4 h-4" /></>
+          ) : (
+            <>Ver Resultado <Sparkles className="w-4 h-4" /></>
+          )}
+        </Button>
+      ) : !showFeedback ? (
         <Button
           className="w-full gap-2"
           size="lg"
