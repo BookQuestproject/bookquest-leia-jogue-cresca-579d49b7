@@ -601,16 +601,41 @@ const PostChapterReflection = ({
         )}
 
         {/* Feedback for multiple choice */}
-        {showFeedback && currentQ?.type === "multiple_choice" && (
-          <div className={`p-4 rounded-lg ${
-            answers[currentIdx] === currentQ.correctAnswer ? "bg-accent/10" : "bg-amber-500/10"
-          }`}>
-            <p className="font-semibold mb-1">
-              {answers[currentIdx] === currentQ.correctAnswer ? "🎉 Correto!" : "💡 Não foi dessa vez..."}
-            </p>
-            <p className="text-sm text-muted-foreground">{currentQ.explanation}</p>
-          </div>
-        )}
+        {showFeedback && currentQ?.type === "multiple_choice" && (() => {
+          const selected = answers[currentIdx];
+          const isCorrect = selected === currentQ.correctAnswer;
+          const isPartial = !isCorrect && (currentQ.partialAnswers || []).includes(selected);
+          const xp = xpPerQuestion[currentIdx];
+          const correctLetter = String.fromCharCode(65 + currentQ.correctAnswer);
+          const correctText = currentQ.options[currentQ.correctAnswer];
+
+          return (
+            <div className={`p-4 rounded-lg space-y-2 ${
+              isCorrect ? "bg-green-500/10 border border-green-500/20" 
+              : isPartial ? "bg-amber-500/10 border border-amber-500/20" 
+              : "bg-destructive/10 border border-destructive/20"
+            }`}>
+              <div className="flex items-center justify-between">
+                <p className="font-semibold flex items-center gap-2">
+                  {isCorrect ? "🎉 Correto!" : isPartial ? "🔶 Parcialmente certo" : "❌ Resposta incorreta"}
+                </p>
+                <span className={`text-sm font-bold px-2 py-0.5 rounded ${
+                  isCorrect ? "bg-green-500/20 text-green-600" 
+                  : isPartial ? "bg-amber-500/20 text-amber-600" 
+                  : "bg-destructive/20 text-destructive"
+                }`}>
+                  +{xp} XP
+                </span>
+              </div>
+              {!isCorrect && (
+                <p className="text-sm font-medium">
+                  Resposta correta: <span className="font-bold">{correctLetter}. {correctText}</span>
+                </p>
+              )}
+              <p className="text-sm text-muted-foreground">{currentQ.explanation}</p>
+            </div>
+          );
+        })()}
 
         {/* Feedback for open/prediction */}
         {showFeedback && (currentQ?.type === "open" || currentQ?.type === "prediction") && (
