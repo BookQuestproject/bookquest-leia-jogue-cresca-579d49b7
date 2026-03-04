@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,7 +72,56 @@ const Biblioteca = () => {
   const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
 
-  const filteredBooks = allBooks
+  // Fetch approved suggestions from the database (visible to all authenticated users)
+  const [approvedBooks, setApprovedBooks] = useState<Book[]>([]);
+  
+  useEffect(() => {
+    const fetchApproved = async () => {
+      const { data, error } = await supabase
+        .from('book_suggestions')
+        .select('*')
+        .eq('status', 'approved');
+      
+      if (!error && data) {
+        const mapped: Book[] = data.map((s, idx) => {
+          // Parse chapters_list JSON for extra metadata
+          let meta: any = {};
+          if (s.chapters_list && typeof s.chapters_list === 'string') {
+            try { meta = JSON.parse(s.chapters_list); } catch {}
+          } else if (s.chapters_list && typeof s.chapters_list === 'object') {
+            meta = s.chapters_list;
+          }
+          
+          return {
+            id: 1000 + idx, // offset to avoid collision with static IDs
+            title: meta.correct_title || s.title,
+            author: meta.correct_author || s.author || "Autor desconhecido",
+            cover: meta.cover_url || `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(s.title.slice(0, 20))}`,
+            genre: meta.genre || "Outros",
+            pages: meta.pages || 200,
+            rating: meta.rating || 4.0,
+            popularity: 70,
+            description: meta.description || s.book_summary || "",
+            detailedDescription: meta.detailed_description || s.narrative_context || s.book_summary || "",
+          };
+        });
+        
+        // Deduplicate against static catalog
+        const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const filtered = mapped.filter(m => 
+          !allBooks.some(b => normalise(b.title) === normalise(m.title))
+        );
+        
+        setApprovedBooks(filtered);
+      }
+    };
+    
+    fetchApproved();
+  }, [suggestions]); // refetch when user creates a new suggestion
+
+  const combinedBooks = useMemo(() => [...allBooks, ...approvedBooks], [approvedBooks]);
+
+  const filteredBooks = combinedBooks
     .filter(book => {
       const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            book.author.toLowerCase().includes(searchQuery.toLowerCase());
@@ -114,7 +163,7 @@ const Biblioteca = () => {
     const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const t = normalise(title);
     const a = normalise(author);
-    return allBooks.find(
+    return combinedBooks.find(
       (b) => normalise(b.title) === t || (t.length > 4 && normalise(b.title).includes(t) && normalise(b.author).includes(a))
     );
   };
