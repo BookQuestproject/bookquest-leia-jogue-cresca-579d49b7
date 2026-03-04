@@ -656,15 +656,66 @@ const PostChapterReflection = ({
           </div>
         )}
 
-        {/* Feedback generic */}
-        {showFeedback && !["multiple_choice", "open", "prediction"].includes(currentQ?.type || "") && (
-          <div className="p-4 rounded-lg bg-accent/10">
-            <p className="font-semibold flex items-center gap-2">
-              <Star className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
-              +{xpPerQuestion[currentIdx]} XP
+        {/* Feedback for perception */}
+        {showFeedback && currentQ?.type === "perception" && (
+          <div className="p-4 rounded-lg bg-accent/10 border border-accent/20 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="font-semibold flex items-center gap-2">
+                ✅ Percepção registrada!
+              </p>
+              <span className="text-sm font-bold px-2 py-0.5 rounded bg-accent/20" style={{ color: `hsl(${themeColor})` }}>
+                +{xpPerQuestion[currentIdx]} XP
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Sua interpretação foi registrada. Não existe certo ou errado aqui — o importante é refletir sobre o que você sentiu durante a leitura.
             </p>
           </div>
         )}
+
+        {/* Feedback for theme */}
+        {showFeedback && currentQ?.type === "theme" && (
+          <div className="p-4 rounded-lg bg-accent/10 border border-accent/20 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="font-semibold flex items-center gap-2">
+                ✅ Tema identificado!
+              </p>
+              <span className="text-sm font-bold px-2 py-0.5 rounded bg-accent/20" style={{ color: `hsl(${themeColor})` }}>
+                +{xpPerQuestion[currentIdx]} XP
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Boa análise temática! Identificar os temas centrais ajuda a construir uma compreensão mais profunda da obra.
+            </p>
+          </div>
+        )}
+
+        {/* Feedback for character */}
+        {showFeedback && currentQ?.type === "character" && (() => {
+          const xp = xpPerQuestion[currentIdx];
+          const hasJustification = answers[currentIdx]?.justification?.length > 15;
+          return (
+            <div className={`p-4 rounded-lg space-y-2 ${
+              hasJustification ? "bg-green-500/10 border border-green-500/20" : "bg-accent/10 border border-accent/20"
+            }`}>
+              <div className="flex items-center justify-between">
+                <p className="font-semibold flex items-center gap-2">
+                  {hasJustification ? "🎉 Análise completa!" : "✅ Personagem escolhido!"}
+                </p>
+                <span className={`text-sm font-bold px-2 py-0.5 rounded ${
+                  hasJustification ? "bg-green-500/20 text-green-600" : "bg-accent/20"
+                }`} style={{ color: hasJustification ? undefined : `hsl(${themeColor})` }}>
+                  +{xp} XP
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {hasJustification
+                  ? "Excelente! Sua justificativa enriqueceu a análise do personagem. Continue assim!"
+                  : "Escolha registrada. Na próxima vez, elabore sua justificativa para ganhar mais XP!"}
+              </p>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Tab violation warning */}
