@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Trophy, BookOpen, Target, Zap, Users, GraduationCap, Quote, ChevronDown } from "lucide-react";
+import { ArrowRight, Trophy, BookOpen, Target, Zap, Users, Quote, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
