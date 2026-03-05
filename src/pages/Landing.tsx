@@ -106,7 +106,7 @@ const Landing = () => {
 
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
             <ChevronDown className="w-6 h-6" />
           </div>
         </section>
