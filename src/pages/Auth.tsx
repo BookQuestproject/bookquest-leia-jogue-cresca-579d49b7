@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { lovable } from '@/integrations/lovable/index';
@@ -23,6 +23,7 @@ const Auth = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const { signIn, signUp, user, loading } = useAuth();
   const navigate = useNavigate();
@@ -144,10 +145,10 @@ const Auth = () => {
               className="w-full h-full object-contain drop-shadow-[0_0_20px_hsl(var(--accent)/0.3)]"
             />
           </div>
-          <h1 className="text-3xl font-serif font-bold text-foreground tracking-tight">
+          <h1 className={`text-3xl font-serif font-bold text-foreground tracking-tight transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
             {isLogin ? 'Bem-vindo ao BookQuest' : 'Comece sua Jornada'}
           </h1>
-          <p className="text-muted-foreground mt-2 text-sm">
+          <p className={`text-muted-foreground mt-2 text-sm transition-all duration-300 delay-75 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
             {isLogin
               ? 'Entre para continuar sua aventura literária'
               : 'Crie sua conta e embarque nessa aventura'}
@@ -155,7 +156,7 @@ const Auth = () => {
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-7 shadow-[0_8px_40px_-12px_hsl(var(--accent)/0.15)]">
+        <div className={`rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-7 shadow-[0_8px_40px_-12px_hsl(var(--accent)/0.15)] transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-2">
@@ -232,7 +233,7 @@ const Auth = () => {
             <Button
               type="submit"
               className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold h-11 shadow-md shadow-accent/20 hover:shadow-lg hover:shadow-accent/25 hover:-translate-y-px active:translate-y-0 transition-all duration-200"
-              disabled={isLoading || isGoogleLoading}
+              disabled={isLoading || isGoogleLoading || isTransitioning}
             >
               {isLoading ? (
                 <>
@@ -280,7 +281,16 @@ const Auth = () => {
           <div className="mt-7 text-center">
             <button
               type="button"
-              onClick={() => { setIsLogin(!isLogin); setErrors({}); }}
+              onClick={() => {
+                setIsTransitioning(true);
+                setTimeout(() => {
+                  setIsLogin(!isLogin);
+                  setErrors({});
+                  setPassword('');
+                  setShowPassword(false);
+                  setIsTransitioning(false);
+                }, 200);
+              }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
               disabled={isLoading}
             >
