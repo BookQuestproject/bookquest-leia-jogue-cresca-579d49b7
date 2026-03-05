@@ -65,7 +65,7 @@ const Biblioteca = () => {
   const [selectedGenre, setSelectedGenre] = useState("Todos");
   const [sortBy, setSortBy] = useState("Popularidade");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newBook, setNewBook] = useState({ title: "", author: "", reason: "" });
+  const [newBook, setNewBook] = useState({ title: "", author: "", reason: "", externalLink: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { user } = useAuth();
@@ -173,8 +173,8 @@ const Biblioteca = () => {
   const [verificationResult, setVerificationResult] = useState<{ exists: boolean; book?: any } | null>(null);
 
   const handleSuggestBook = async () => {
-    if (!newBook.title.trim() || !newBook.author.trim()) {
-      toast.error("Preencha título e autor do livro");
+    if (!newBook.title.trim()) {
+      toast.error("Preencha o título do livro");
       return;
     }
 
@@ -185,36 +185,48 @@ const Biblioteca = () => {
 
     setIsSubmitting(true);
     setVerificationResult(null);
-    const suggestionId = await createSuggestion(newBook.title, newBook.author, newBook.reason);
+    const suggestionId = await createSuggestion(
+      newBook.title,
+      newBook.author,
+      newBook.reason,
+      newBook.externalLink
+    );
     
     if (suggestionId) {
-      // Show initial success
-      toast.success("Sugestão registrada! Verificando o livro...", {
+      toast.success("Sugestão registrada! Analisando o livro com IA...", {
         icon: <Sparkles className="w-4 h-4 text-accent" />,
       });
 
-      // Call AI verification
       try {
         const { data, error } = await supabase.functions.invoke('verify-book', {
-          body: { title: newBook.title, author: newBook.author, suggestion_id: suggestionId },
+          body: {
+            title: newBook.title,
+            author: newBook.author || undefined,
+            external_link: newBook.externalLink || undefined,
+            suggestion_id: suggestionId,
+          },
         });
 
         if (!error && data?.success && data.book?.exists) {
           setVerificationResult({ exists: true, book: data.book });
-          toast.success("Livro verificado e aprovado automaticamente!", {
-            description: `"${data.book.correct_title}" foi adicionado à biblioteca.`,
+          toast.success("Livro verificado com sucesso!", {
+            description: `"${data.book.correct_title}" foi analisado e está aguardando aprovação.`,
             icon: <Check className="w-4 h-4 text-green-500" />,
             duration: 5000,
           });
-          // XP reward
           toast(`+15 XP 🎉`, {
             description: "Recompensa por sugerir um livro válido!",
             icon: <Zap className="w-4 h-4 text-accent" />,
             duration: 4000,
           });
+        } else if (!error && data?.success && data.book?.is_spam) {
+          toast.error("Conteúdo detectado como spam ou impróprio", {
+            description: data.book?.reason || "A sugestão foi rejeitada automaticamente.",
+            duration: 5000,
+          });
         } else if (!error && data?.success && !data.book?.exists) {
           toast.error("Não conseguimos verificar este livro", {
-            description: data.book?.reason || "Verifique o título e autor e tente novamente.",
+            description: data.book?.reason || "Verifique o título e tente novamente.",
             duration: 5000,
           });
         } else {
@@ -225,7 +237,7 @@ const Biblioteca = () => {
         toast.info("Sugestão enviada! A verificação será feita manualmente.");
       }
 
-      setNewBook({ title: "", author: "", reason: "" });
+      setNewBook({ title: "", author: "", reason: "", externalLink: "" });
       setShowAddModal(false);
     }
     setIsSubmitting(false);
@@ -392,23 +404,24 @@ const Biblioteca = () => {
               </DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-6 py-4">
-              <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20">
+            <div className="space-y-5 py-4">
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                  <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium text-sm">Como funciona a validação</p>
+                    <p className="font-medium text-sm">Análise inteligente com IA</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Seu livro será verificado automaticamente. Conferimos se o título e autor existem 
-                      e se os dados estão corretos antes de adicionar ao sistema.
+                      Nossa IA irá verificar automaticamente o livro, corrigir erros de digitação,
+                      extrair sinopse, capa, gênero e mais. Após análise, o livro será enviado para aprovação.
                     </p>
                   </div>
                 </div>
               </div>
 
-
               <div>
-                <label className="text-sm font-medium mb-2 block">Título do livro</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Título do livro <span className="text-destructive">*</span>
+                </label>
                 <Input
                   placeholder="Ex: O Nome do Vento"
                   value={newBook.title}
@@ -417,12 +430,26 @@ const Biblioteca = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Autor</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Autor <span className="text-muted-foreground text-xs">(opcional — a IA pode identificar)</span>
+                </label>
                 <Input
                   placeholder="Ex: Patrick Rothfuss"
                   value={newBook.author}
                   onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
                 />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">
+                  Link de referência <span className="text-muted-foreground text-xs">(opcional)</span>
+                </label>
+                <Input
+                  placeholder="https://amazon.com.br/... ou link da editora"
+                  value={newBook.externalLink}
+                  onChange={(e) => setNewBook({ ...newBook, externalLink: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Amazon, Skoob, editora, etc.</p>
               </div>
 
               {duplicateBook && (
@@ -431,14 +458,16 @@ const Biblioteca = () => {
                   <div className="space-y-1">
                     <p className="text-sm font-semibold text-destructive">Este livro já existe na biblioteca!</p>
                     <p className="text-xs text-muted-foreground">
-                      <strong>"{duplicateBook.title}"</strong> de {duplicateBook.author} já está disponível. Você pode encontrá-lo na biblioteca e adicioná-lo diretamente à sua estante.
+                      <strong>"{duplicateBook.title}"</strong> de {duplicateBook.author} já está disponível.
                     </p>
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Por que recomendar? (opcional)</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Por que recomendar? <span className="text-muted-foreground text-xs">(opcional)</span>
+                </label>
                 <Textarea
                   placeholder="Conte-nos por que você gosta deste livro..."
                   value={newBook.reason}
@@ -457,8 +486,8 @@ const Biblioteca = () => {
                   onClick={handleSuggestBook}
                   disabled={isSubmitting || !user || !!duplicateBook}
                 >
-                  <Check className="w-4 h-4" />
-                  {isSubmitting ? "Verificando..." : "Enviar e Verificar"}
+                  <Sparkles className="w-4 h-4" />
+                  {isSubmitting ? "Analisando com IA..." : "Enviar e Analisar"}
                 </Button>
               </div>
               
