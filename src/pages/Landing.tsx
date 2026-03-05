@@ -59,15 +59,6 @@ const Landing = () => {
       <div className="relative z-10">
         {/* ═══════════ HERO ═══════════ */}
         <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center relative">
-          {/* Badge de autoridade */}
-          <div className="mb-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent/20 bg-accent/[0.06] backdrop-blur-sm">
-              <Trophy className="w-4 h-4 text-accent" />
-              <span className="text-xs sm:text-sm text-accent font-medium tracking-wide">
-                Vencedor da Batalha de Pitch 2025
-              </span>
-            </div>
-          </div>
 
           {/* Logo */}
           <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.05s" }}>
@@ -113,18 +104,6 @@ const Landing = () => {
             </p>
           </div>
 
-          {/* Selo expandido */}
-          <div
-            className="mt-12 flex flex-col items-center gap-1 animate-fade-in"
-            style={{ animationDelay: "0.4s" }}
-          >
-            <div className="flex items-center gap-1.5 text-accent/60">
-              <Trophy className="w-3.5 h-3.5" />
-              <span className="text-xs font-medium tracking-wide uppercase">
-                Entre mais de 150 projetos participantes
-              </span>
-            </div>
-          </div>
 
           {/* Scroll indicator */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
