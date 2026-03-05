@@ -135,6 +135,27 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
       );
     }
 
+    // Fallback: fetch cover from Google Books API if AI didn't find one
+    if (bookInfo.exists && !bookInfo.cover_url) {
+      const searchTitle = bookInfo.correct_title || title;
+      const searchAuthor = bookInfo.correct_author || author || '';
+      const query = encodeURIComponent(`${searchTitle} ${searchAuthor}`.trim());
+      try {
+        const gbRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1&fields=items(volumeInfo/imageLinks)`);
+        if (gbRes.ok) {
+          const gbData = await gbRes.json();
+          const imageLinks = gbData.items?.[0]?.volumeInfo?.imageLinks;
+          if (imageLinks) {
+            // Prefer largest available thumbnail
+            bookInfo.cover_url = (imageLinks.thumbnail || imageLinks.smallThumbnail || '').replace('http://', 'https://');
+            console.log('Cover found via Google Books fallback:', bookInfo.cover_url);
+          }
+        }
+      } catch (e) {
+        console.warn('Google Books fallback failed:', e);
+      }
+    }
+
     // If spam detected, reject immediately
     if (bookInfo.is_spam) {
       if (suggestion_id) {
