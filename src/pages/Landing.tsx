@@ -3,6 +3,7 @@ import { ArrowRight, Trophy, BookOpen, Target, Zap, Users, GraduationCap, Quote,
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
+import premiacaoImg from "@/assets/batalha-pitch-premiacao.jpeg";
 import { useEffect, useRef, useState } from "react";
 
 const Landing = () => {
