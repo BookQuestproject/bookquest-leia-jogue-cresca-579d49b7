@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { NotificationBell } from "@/components/NotificationBell";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 interface MobileNavProps {
   isPremium?: boolean;
@@ -43,7 +44,8 @@ const MobileNav = ({
           
         </Link>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {user && <NotificationBell />}
           <Link to="/estante" className="text-muted-foreground hover:text-foreground">
             <BookMarked className="w-5 h-5" />
           </Link>
