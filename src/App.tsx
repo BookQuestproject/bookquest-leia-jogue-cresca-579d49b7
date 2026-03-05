@@ -28,6 +28,7 @@ import Enem from "./pages/Enem";
 import Configuracoes from "./pages/Configuracoes";
 import Noticias from "./pages/Noticias";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
@@ -50,6 +51,7 @@ const App = () => (
                 <Route path="/" element={<Landing />} />
                 <Route path="/home" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/quiz-onboarding" element={<QuizOnboarding />} />
                 <Route path="/ranking" element={<Ranking />} />

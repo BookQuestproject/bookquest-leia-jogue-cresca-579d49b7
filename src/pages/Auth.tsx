@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { lovable } from '@/integrations/lovable/index';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import crownIcon from '@/assets/crown-icon.png';
 
@@ -17,6 +18,7 @@ const authSchema = z.object({
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +26,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   const { signIn, signUp, user, loading } = useAuth();
   const navigate = useNavigate();
@@ -103,6 +106,35 @@ const Auth = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      setErrors({ email: 'Digite seu email para redefinir a senha' });
+      return;
+    }
+    const emailCheck = z.string().email().safeParse(email);
+    if (!emailCheck.success) {
+      setErrors({ email: 'Email inválido' });
+      return;
+    }
+    setIsLoading(true);
+    setErrors({});
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) {
+        toast({ title: 'Erro', description: 'Não foi possível enviar o email de redefinição', variant: 'destructive' });
+      } else {
+        setResetSent(true);
+        toast({ title: 'Email enviado!', description: 'Verifique sua caixa de entrada para redefinir a senha' });
+      }
+    } catch {
+      toast({ title: 'Erro', description: 'Ocorreu um erro inesperado', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getPasswordStrength = (pwd: string) => {
     if (pwd.length === 0) return { level: 0, label: '', color: '' };
     if (pwd.length < 6) return { level: 1, label: 'Fraca', color: 'bg-destructive' };
@@ -146,10 +178,12 @@ const Auth = () => {
             />
           </div>
           <h1 className={`text-3xl font-serif font-bold text-foreground tracking-tight transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
-            {isLogin ? 'Bem-vindo ao BookQuest' : 'Comece sua Jornada'}
+            {isForgotPassword ? 'Redefinir Senha' : isLogin ? 'Bem-vindo ao BookQuest' : 'Comece sua Jornada'}
           </h1>
           <p className={`text-muted-foreground mt-2 text-sm transition-all duration-300 delay-75 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
-            {isLogin
+            {isForgotPassword
+              ? 'Enviaremos um link para redefinir sua senha'
+              : isLogin
               ? 'Entre para continuar sua aventura literária'
               : 'Crie sua conta e embarque nessa aventura'}
           </p>
@@ -157,6 +191,64 @@ const Auth = () => {
 
         {/* Card */}
         <div className={`rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-7 shadow-[0_8px_40px_-12px_hsl(var(--accent)/0.15)] transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
+          {isForgotPassword ? (
+            /* Forgot Password Form */
+            <div className="space-y-5">
+              {resetSent ? (
+                <div className="text-center py-4 animate-fade-in">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-success/10 flex items-center justify-center mb-4">
+                    <Mail className="w-6 h-6 text-success" />
+                  </div>
+                  <h3 className="font-semibold text-foreground mb-2">Email enviado!</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Verifique sua caixa de entrada em <strong>{email}</strong> e clique no link para redefinir sua senha.
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => { setIsForgotPassword(false); setResetSent(false); }}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Voltar ao login
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email" className="text-foreground/80 text-sm font-medium">Email</Label>
+                    <div className="relative group">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-accent" />
+                      <Input
+                        id="reset-email"
+                        type="email"
+                        placeholder="seu@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 focus:border-accent/60 focus:ring-accent/20 focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.08)] transition-all duration-200"
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+                  </div>
+                  <Button
+                    type="button"
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold h-11 shadow-md shadow-accent/20 transition-all duration-200"
+                    disabled={isLoading}
+                    onClick={handleForgotPassword}
+                  >
+                    {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Enviando...</> : 'Enviar link de redefinição'}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => { setIsForgotPassword(false); setErrors({}); }}
+                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1"
+                  >
+                    <ArrowLeft className="w-3 h-3" /> Voltar ao login
+                  </button>
+                </>
+              )}
+            </div>
+          ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-2">
@@ -180,9 +272,20 @@ const Auth = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground/80 text-sm font-medium">
-                Senha
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-foreground/80 text-sm font-medium">
+                  Senha
+                </Label>
+                {isLogin && (
+                  <button
+                    type="button"
+                    onClick={() => { setIsTransitioning(true); setTimeout(() => { setIsForgotPassword(true); setErrors({}); setIsTransitioning(false); }, 200); }}
+                    className="text-xs text-accent hover:text-accent/80 font-medium transition-colors"
+                  >
+                    Esqueci minha senha
+                  </button>
+                )}
+              </div>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-accent" />
                 <Input
@@ -276,8 +379,10 @@ const Auth = () => {
               Continuar com Google
             </Button>
           </form>
+          )}
 
-          {/* Toggle */}
+          {/* Toggle - only show when not in forgot password mode */}
+          {!isForgotPassword && (
           <div className="mt-7 text-center">
             <button
               type="button"
@@ -301,6 +406,7 @@ const Auth = () => {
               )}
             </button>
           </div>
+          )}
         </div>
 
         {/* Footer */}
