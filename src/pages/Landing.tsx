@@ -262,15 +262,19 @@ const Landing = () => {
                 </p>
               </div>
 
-              {/* Research card */}
-              <div className="p-8 rounded-2xl border border-border/40 bg-background/50 flex flex-col items-center text-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center">
-                  <GraduationCap className="w-7 h-7 text-accent" />
+              {/* Premiação photo */}
+              <div className="rounded-2xl border border-border/40 bg-background/50 overflow-hidden flex flex-col">
+                <img
+                  src={premiacaoImg}
+                  alt="Equipe BookQuest recebendo premiação de 1º lugar na Batalha de Pitch 2025"
+                  className="w-full h-48 sm:h-56 object-cover"
+                />
+                <div className="p-6 text-center">
+                  <h3 className="text-xl font-serif font-bold">Momento da premiação</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+                    A equipe BookQuest no palco recebendo o prêmio de <span className="text-foreground font-semibold">1º lugar</span> na Batalha de Pitch 2025.
+                  </p>
                 </div>
-                <h3 className="text-xl font-serif font-bold">Pesquisa com estudantes</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Em pesquisa com <span className="text-foreground font-semibold">80 estudantes</span>, mais de 80% demonstraram maior engajamento quando a leitura foi apresentada de forma gamificada.
-                </p>
               </div>
             </div>
 
