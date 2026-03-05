@@ -38,14 +38,20 @@ export type Database = {
       book_suggestions: {
         Row: {
           admin_notes: string | null
+          ai_verification_data: Json | null
+          ai_verified: boolean | null
           approved_at: string | null
           approved_by: string | null
           author: string | null
           book_summary: string | null
           chapters_list: Json | null
+          cover_url: string | null
           created_at: string
+          external_link: string | null
+          genre: string | null
           id: string
           narrative_context: string | null
+          publication_year: number | null
           reason: string | null
           status: string
           title: string
@@ -54,14 +60,20 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          ai_verification_data?: Json | null
+          ai_verified?: boolean | null
           approved_at?: string | null
           approved_by?: string | null
           author?: string | null
           book_summary?: string | null
           chapters_list?: Json | null
+          cover_url?: string | null
           created_at?: string
+          external_link?: string | null
+          genre?: string | null
           id?: string
           narrative_context?: string | null
+          publication_year?: number | null
           reason?: string | null
           status?: string
           title: string
@@ -70,14 +82,20 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          ai_verification_data?: Json | null
+          ai_verified?: boolean | null
           approved_at?: string | null
           approved_by?: string | null
           author?: string | null
           book_summary?: string | null
           chapters_list?: Json | null
+          cover_url?: string | null
           created_at?: string
+          external_link?: string | null
+          genre?: string | null
           id?: string
           narrative_context?: string | null
+          publication_year?: number | null
           reason?: string | null
           status?: string
           title?: string

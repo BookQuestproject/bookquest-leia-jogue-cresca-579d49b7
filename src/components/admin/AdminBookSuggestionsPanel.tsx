@@ -10,10 +10,15 @@ import {
   FileText,
   List,
   MessageSquare,
+  Image,
+  Calendar,
+  Tag,
+  ExternalLink,
+  Shield,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -29,6 +34,202 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useAdminBookSuggestions, BookSuggestion } from "@/hooks/useBookSuggestions";
+
+const getStatusBadge = (status: string) => {
+  switch (status) {
+    case "pending":
+      return <span className="px-2 py-0.5 rounded-full text-xs bg-warning/20 text-warning">Pendente</span>;
+    case "approved":
+      return <span className="px-2 py-0.5 rounded-full text-xs bg-success/20 text-success">Aprovado</span>;
+    case "rejected":
+      return <span className="px-2 py-0.5 rounded-full text-xs bg-destructive/20 text-destructive">Rejeitado</span>;
+    default:
+      return null;
+  }
+};
+
+const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+
+const parseAiData = (suggestion: BookSuggestion) => {
+  if (!suggestion.ai_verification_data) return null;
+  try {
+    if (typeof suggestion.ai_verification_data === "string") {
+      return JSON.parse(suggestion.ai_verification_data);
+    }
+    return suggestion.ai_verification_data;
+  } catch {
+    return null;
+  }
+};
+
+const SuggestionCard = ({
+  suggestion,
+  onApprove,
+  onReject,
+  onDelete,
+}: {
+  suggestion: BookSuggestion;
+  onApprove: (s: BookSuggestion) => void;
+  onReject: (s: BookSuggestion) => void;
+  onDelete: (id: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const aiData = parseAiData(suggestion);
+  const coverUrl = suggestion.cover_url || aiData?.cover_url;
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="p-4 rounded-xl bg-muted border border-border/50">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex gap-3 flex-1">
+            {coverUrl && (
+              <div className="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
+                <img src={coverUrl} alt={suggestion.title} className="w-full h-full object-cover" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h4 className="font-bold">{suggestion.title}</h4>
+                {getStatusBadge(suggestion.status)}
+                {suggestion.ai_verified && (
+                  <span className="px-2 py-0.5 rounded-full text-xs bg-primary/10 text-primary flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> IA
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                por {suggestion.author || "Autor não informado"}
+                {suggestion.genre && <> • <Tag className="w-3 h-3 inline" /> {suggestion.genre}</>}
+                {suggestion.publication_year && <> • {suggestion.publication_year}</>}
+              </p>
+              {suggestion.reason && (
+                <p className="text-sm mt-1 text-foreground/80 line-clamp-2">{suggestion.reason}</p>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">
+                Enviado em {formatDate(suggestion.created_at)}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {suggestion.status === "pending" && (
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-success hover:text-success hover:bg-success/10"
+                  onClick={() => onApprove(suggestion)}
+                >
+                  <Check className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={() => onReject(suggestion)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </>
+            )}
+            {suggestion.status !== "pending" && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-destructive hover:text-destructive"
+                onClick={() => onDelete(suggestion.id)}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
+            <CollapsibleTrigger asChild>
+              <Button size="sm" variant="ghost">
+                {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </div>
+
+        <CollapsibleContent>
+          <div className="mt-4 pt-4 border-t border-border/50 space-y-3">
+            {/* AI Verification Summary */}
+            {aiData && (
+              <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                <p className="text-xs font-medium mb-2 flex items-center gap-1 text-primary">
+                  <Sparkles className="w-3 h-3" /> Dados verificados por IA
+                </p>
+                <div className="flex gap-4">
+                  {coverUrl && (
+                    <div className="w-20 h-28 rounded-lg overflow-hidden flex-shrink-0 shadow-md">
+                      <img src={coverUrl} alt={suggestion.title} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 space-y-1 text-sm">
+                    {aiData.correct_title && (
+                      <p><strong>Título:</strong> {aiData.correct_title}</p>
+                    )}
+                    {aiData.correct_author && (
+                      <p><strong>Autor:</strong> {aiData.correct_author}</p>
+                    )}
+                    {aiData.genre && <p><strong>Gênero:</strong> {aiData.genre}</p>}
+                    {aiData.pages && <p><strong>Páginas:</strong> {aiData.pages}</p>}
+                    {aiData.publication_year && <p><strong>Ano:</strong> {aiData.publication_year}</p>}
+                    {aiData.rating && <p><strong>Avaliação:</strong> ⭐ {aiData.rating}</p>}
+                    {aiData.content_warnings?.length > 0 && (
+                      <p className="text-warning"><strong>Avisos:</strong> {aiData.content_warnings.join(", ")}</p>
+                    )}
+                  </div>
+                </div>
+                {aiData.description && (
+                  <p className="text-sm mt-2 text-muted-foreground">{aiData.description}</p>
+                )}
+              </div>
+            )}
+
+            {suggestion.external_link && (
+              <div className="p-3 rounded-lg bg-muted">
+                <p className="text-xs font-medium mb-1 flex items-center gap-1">
+                  <ExternalLink className="w-3 h-3" /> Link de referência:
+                </p>
+                <a
+                  href={suggestion.external_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline break-all"
+                >
+                  {suggestion.external_link}
+                </a>
+              </div>
+            )}
+
+            {suggestion.admin_notes && (
+              <div className="p-3 rounded-lg bg-muted">
+                <p className="text-xs font-medium mb-1">Notas do Admin:</p>
+                <p className="text-sm">{suggestion.admin_notes}</p>
+              </div>
+            )}
+            {suggestion.book_summary && (
+              <div className="p-3 rounded-lg bg-muted">
+                <p className="text-xs font-medium mb-1 flex items-center gap-1">
+                  <FileText className="w-3 h-3" /> Resumo:
+                </p>
+                <p className="text-sm">{suggestion.book_summary}</p>
+              </div>
+            )}
+            {suggestion.narrative_context && (
+              <div className="p-3 rounded-lg bg-muted">
+                <p className="text-xs font-medium mb-1 flex items-center gap-1">
+                  <MessageSquare className="w-3 h-3" /> Contexto:
+                </p>
+                <p className="text-sm">{suggestion.narrative_context}</p>
+              </div>
+            )}
+          </div>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+};
 
 export const AdminBookSuggestionsPanel = () => {
   const {
@@ -59,6 +260,16 @@ export const AdminBookSuggestionsPanel = () => {
     setNarrativeContext("");
   };
 
+  const openAction = (suggestion: BookSuggestion, type: "approve" | "reject") => {
+    setSelectedSuggestion(suggestion);
+    setActionType(type);
+    // Pre-fill with AI data if available
+    if (type === "approve") {
+      setBookSummary(suggestion.book_summary || "");
+      setNarrativeContext(suggestion.narrative_context || "");
+    }
+  };
+
   const handleAction = async () => {
     if (!selectedSuggestion || !actionType) return;
 
@@ -81,137 +292,6 @@ export const AdminBookSuggestionsPanel = () => {
         : undefined
     );
     resetModal();
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <span className="px-2 py-0.5 rounded-full text-xs bg-warning/20 text-warning">Pendente</span>;
-      case "approved":
-        return <span className="px-2 py-0.5 rounded-full text-xs bg-success/20 text-success">Aprovado</span>;
-      case "rejected":
-        return <span className="px-2 py-0.5 rounded-full text-xs bg-destructive/20 text-destructive">Rejeitado</span>;
-      default:
-        return null;
-    }
-  };
-
-  const SuggestionCard = ({ suggestion }: { suggestion: BookSuggestion }) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div className="p-4 rounded-xl bg-muted border border-border/50">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h4 className="font-bold">{suggestion.title}</h4>
-                {getStatusBadge(suggestion.status)}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                por {suggestion.author || "Autor não informado"}
-              </p>
-              {suggestion.reason && (
-                <p className="text-sm mt-2 text-foreground/80">{suggestion.reason}</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-2">
-                Enviado em {formatDate(suggestion.created_at)}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              {suggestion.status === "pending" && (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-success hover:text-success hover:bg-success/10"
-                    onClick={() => {
-                      setSelectedSuggestion(suggestion);
-                      setActionType("approve");
-                    }}
-                  >
-                    <Check className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => {
-                      setSelectedSuggestion(suggestion);
-                      setActionType("reject");
-                    }}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </>
-              )}
-              {suggestion.status !== "pending" && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-destructive hover:text-destructive"
-                  onClick={() => deleteSuggestion(suggestion.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-              <CollapsibleTrigger asChild>
-                <Button size="sm" variant="ghost">
-                  {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-          </div>
-
-          <CollapsibleContent>
-            <div className="mt-4 pt-4 border-t border-border/50 space-y-3">
-              {suggestion.admin_notes && (
-                <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-xs font-medium mb-1">Notas do Admin:</p>
-                  <p className="text-sm">{suggestion.admin_notes}</p>
-                </div>
-              )}
-              {suggestion.book_summary && (
-                <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-xs font-medium mb-1 flex items-center gap-1">
-                    <FileText className="w-3 h-3" /> Resumo:
-                  </p>
-                  <p className="text-sm">{suggestion.book_summary}</p>
-                </div>
-              )}
-              {suggestion.narrative_context && (
-                <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-xs font-medium mb-1 flex items-center gap-1">
-                    <MessageSquare className="w-3 h-3" /> Contexto:
-                  </p>
-                  <p className="text-sm">{suggestion.narrative_context}</p>
-                </div>
-              )}
-              {suggestion.chapters_list && (
-                <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-xs font-medium mb-1 flex items-center gap-1">
-                    <List className="w-3 h-3" /> Capítulos:
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    {(suggestion.chapters_list as string[]).map((ch, i) => (
-                      <li key={i} className="text-muted-foreground">• {ch}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </CollapsibleContent>
-        </div>
-      </Collapsible>
-    );
   };
 
   return (
@@ -250,7 +330,15 @@ export const AdminBookSuggestionsPanel = () => {
             {pendingSuggestions.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">Nenhuma sugestão pendente</p>
             ) : (
-              pendingSuggestions.map((s) => <SuggestionCard key={s.id} suggestion={s} />)
+              pendingSuggestions.map((s) => (
+                <SuggestionCard
+                  key={s.id}
+                  suggestion={s}
+                  onApprove={(s) => openAction(s, "approve")}
+                  onReject={(s) => openAction(s, "reject")}
+                  onDelete={deleteSuggestion}
+                />
+              ))
             )}
           </TabsContent>
 
@@ -258,7 +346,15 @@ export const AdminBookSuggestionsPanel = () => {
             {approvedSuggestions.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">Nenhuma sugestão aprovada</p>
             ) : (
-              approvedSuggestions.map((s) => <SuggestionCard key={s.id} suggestion={s} />)
+              approvedSuggestions.map((s) => (
+                <SuggestionCard
+                  key={s.id}
+                  suggestion={s}
+                  onApprove={(s) => openAction(s, "approve")}
+                  onReject={(s) => openAction(s, "reject")}
+                  onDelete={deleteSuggestion}
+                />
+              ))
             )}
           </TabsContent>
 
@@ -266,13 +362,21 @@ export const AdminBookSuggestionsPanel = () => {
             {rejectedSuggestions.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">Nenhuma sugestão rejeitada</p>
             ) : (
-              rejectedSuggestions.map((s) => <SuggestionCard key={s.id} suggestion={s} />)
+              rejectedSuggestions.map((s) => (
+                <SuggestionCard
+                  key={s.id}
+                  suggestion={s}
+                  onApprove={(s) => openAction(s, "approve")}
+                  onReject={(s) => openAction(s, "reject")}
+                  onDelete={deleteSuggestion}
+                />
+              ))
             )}
           </TabsContent>
         </Tabs>
       )}
 
-      {/* Approval Modal with detailed fields */}
+      {/* Approval/Rejection Modal */}
       <Dialog open={!!selectedSuggestion} onOpenChange={(open) => !open && resetModal()}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -283,18 +387,42 @@ export const AdminBookSuggestionsPanel = () => {
 
           {selectedSuggestion && (
             <div className="space-y-4 py-4">
-              <div className="p-4 rounded-xl bg-muted">
-                <h4 className="font-bold">{selectedSuggestion.title}</h4>
-                <p className="text-sm text-muted-foreground">
-                  por {selectedSuggestion.author || "Autor não informado"}
-                </p>
+              <div className="p-4 rounded-xl bg-muted flex gap-4">
+                {(selectedSuggestion.cover_url || parseAiData(selectedSuggestion)?.cover_url) && (
+                  <div className="w-16 h-22 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
+                    <img
+                      src={selectedSuggestion.cover_url || parseAiData(selectedSuggestion)?.cover_url}
+                      alt={selectedSuggestion.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div>
+                  <h4 className="font-bold">{selectedSuggestion.title}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    por {selectedSuggestion.author || "Autor não informado"}
+                  </p>
+                  {selectedSuggestion.genre && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedSuggestion.genre}
+                      {selectedSuggestion.publication_year && ` • ${selectedSuggestion.publication_year}`}
+                    </p>
+                  )}
+                  {selectedSuggestion.ai_verified && (
+                    <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-xs bg-primary/10 text-primary">
+                      <Sparkles className="w-3 h-3" /> Verificado por IA
+                    </span>
+                  )}
+                </div>
               </div>
 
               {actionType === "approve" && (
                 <>
                   <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      <strong>Importante:</strong> Para aprovar uma sugestão, você deve preencher as informações abaixo para possibilitar a criação de trilhas literárias.
+                    <p className="text-sm text-muted-foreground">
+                      {selectedSuggestion.ai_verified
+                        ? "Este livro já foi analisado pela IA. Revise os dados e aprove."
+                        : "Para aprovar, preencha as informações abaixo para a criação de trilhas literárias."}
                     </p>
                   </div>
 
@@ -329,7 +457,7 @@ export const AdminBookSuggestionsPanel = () => {
                     <Textarea
                       value={narrativeContext}
                       onChange={(e) => setNarrativeContext(e.target.value)}
-                      placeholder="Explique o contexto histórico, temas principais, gênero literário..."
+                      placeholder="Explique o contexto histórico, temas principais..."
                       rows={4}
                     />
                   </div>
@@ -337,9 +465,7 @@ export const AdminBookSuggestionsPanel = () => {
               )}
 
               <div>
-                <label className="text-sm font-medium mb-1 block">
-                  Notas do Admin (opcional)
-                </label>
+                <label className="text-sm font-medium mb-1 block">Notas do Admin (opcional)</label>
                 <Textarea
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
