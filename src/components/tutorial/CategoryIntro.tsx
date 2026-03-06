@@ -349,7 +349,7 @@ const CategoryIntro = () => {
       {/* Glow border */}
       {targetRect && (
         <div
-          className="fixed rounded-xl border-2 border-primary shadow-[0_0_24px_hsl(var(--primary)/0.4)] transition-all duration-300 pointer-events-none"
+          className="fixed rounded-xl border-2 border-accent shadow-[0_0_24px_hsl(var(--accent)/0.4)] transition-all duration-300 pointer-events-none"
           style={{
             top: targetRect.top,
             left: targetRect.left,
@@ -377,9 +377,9 @@ const CategoryIntro = () => {
                 key={i}
                 className={`h-1.5 rounded-full transition-all duration-300 flex-shrink-0 ${
                   i === currentStep
-                    ? "w-4 bg-primary"
+                    ? "w-4 bg-accent"
                     : i < currentStep
-                    ? "w-2 bg-primary/50"
+                    ? "w-2 bg-accent/50"
                     : "w-2 bg-muted"
                 }`}
               />
@@ -412,7 +412,7 @@ const CategoryIntro = () => {
             <Button
               size="sm"
               onClick={goNext}
-              className="gap-1 bg-primary text-primary-foreground hover:bg-primary/90"
+              className="gap-1 bg-accent text-accent-foreground hover:bg-accent/90"
             >
               {currentStep < steps.length - 1 ? (
                 <>
