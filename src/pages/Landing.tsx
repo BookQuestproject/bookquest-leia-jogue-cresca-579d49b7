@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import premiacaoImg from "@/assets/batalha-pitch-premiacao.jpeg";
+import equipeApresentacaoImg from "@/assets/equipe-apresentacao.jpeg";
 import { useEffect, useRef, useState } from "react";
 
 const Landing = () => {
@@ -253,15 +254,15 @@ const Landing = () => {
             </div>
 
             <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
-              {/* Card 1 – Conquista */}
+              {/* Card 1 – Apresentação */}
               <div className="rounded-2xl border border-accent/20 bg-primary/60 shadow-lg shadow-primary/20 overflow-hidden flex flex-col">
-                {/* Top visual area */}
-                <div className="flex flex-col items-center justify-center py-10 px-8 bg-accent/[0.06] border-b border-accent/10">
-                  <div className="w-16 h-16 rounded-full bg-accent/15 flex items-center justify-center mb-4 ring-4 ring-accent/10">
-                    <Trophy className="w-8 h-8 text-accent" />
-                  </div>
-                  <p className="text-3xl font-bold text-accent">+150</p>
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">projetos superados</p>
+                {/* Image */}
+                <div className="overflow-hidden">
+                  <img
+                    src={equipeApresentacaoImg}
+                    alt="Equipe BookQuest apresentando o projeto na Batalha de Pitch 2025"
+                    className="w-full h-52 sm:h-56 object-cover"
+                  />
                 </div>
                 {/* Content */}
                 <div className="p-7 flex flex-col flex-1 text-center">
