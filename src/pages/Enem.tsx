@@ -1,13 +1,19 @@
 import { useState, useMemo } from "react";
-import { Crown, Lock, GraduationCap, BookOpen, Search, Sparkles, Trophy, Star, ChevronRight, Award, Lightbulb, Zap, BookMarked, Filter } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  GraduationCap, BookOpen, Search, Sparkles, Trophy, Star, ChevronRight,
+  Award, Lightbulb, Zap, BookMarked, Filter, Target, Clock, CheckCircle,
+  ArrowRight, RotateCcw,
+} from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/hooks/useAuth";
+import { useAcademicDiagnosis } from "@/hooks/useAcademicDiagnosis";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-/* ═══════════════════════════════════════════════════
-   DATA: Repertórios Socioculturais
-   ═══════════════════════════════════════════════════ */
+/* ═══════════ DATA ═══════════ */
 
 interface Repertorio {
   id: string;
@@ -19,539 +25,681 @@ interface Repertorio {
   resumoRapido: string;
 }
 
+interface ObraVestibular {
+  id: string;
+  titulo: string;
+  autor: string;
+  vestibulares: string[];
+  genero: string;
+  capitulos: { titulo: string; resumo: string }[];
+  contextoHistorico: string;
+  temasRedacao: string[];
+  frasesImportantes: string[];
+}
+
 const repertorios: Repertorio[] = [
   {
-    id: "1984",
-    titulo: "1984",
-    autor: "George Orwell",
+    id: "1984", titulo: "1984", autor: "George Orwell",
     temas: ["controle social", "tecnologia", "vigilância", "liberdade de expressão", "totalitarismo"],
     resumo: "Romance distópico que retrata uma sociedade totalitária onde o governo controla todos os aspectos da vida dos cidadãos através da vigilância constante e da manipulação da verdade.",
-    exemploUso: "Na obra '1984', de George Orwell, a figura do Grande Irmão representa o controle estatal absoluto sobre a população. De forma análoga, na sociedade contemporânea, o uso indiscriminado de dados pessoais por grandes corporações tecnológicas configura uma forma moderna de vigilância que ameaça a privacidade individual.",
+    exemploUso: "Na obra '1984', de George Orwell, a figura do Grande Irmão representa o controle estatal absoluto sobre a população. De forma análoga, na sociedade contemporânea, o uso indiscriminado de dados pessoais por grandes corporações tecnológicas configura uma forma moderna de vigilância.",
     resumoRapido: "Sociedade totalitária com vigilância constante. Use para temas sobre controle, tecnologia e liberdade.",
   },
   {
-    id: "admiravel-mundo-novo",
-    titulo: "Admirável Mundo Novo",
-    autor: "Aldous Huxley",
+    id: "admiravel-mundo-novo", titulo: "Admirável Mundo Novo", autor: "Aldous Huxley",
     temas: ["tecnologia", "consumismo", "alienação", "controle social", "biotecnologia"],
-    resumo: "Distopia onde a sociedade é controlada pelo prazer, consumo e engenharia genética. As pessoas são condicionadas desde o nascimento para aceitar seu papel social.",
-    exemploUso: "Em 'Admirável Mundo Novo', Huxley antecipou a alienação causada pelo consumismo desenfreado. No Brasil atual, a dependência excessiva de redes sociais e conteúdos superficiais reflete essa mesma lógica de controle pelo entretenimento e pela satisfação imediata.",
-    resumoRapido: "Controle pelo prazer e consumo. Use para temas sobre alienação, consumismo e manipulação social.",
+    resumo: "Distopia onde a sociedade é controlada pelo prazer, consumo e engenharia genética.",
+    exemploUso: "Em 'Admirável Mundo Novo', Huxley antecipou a alienação causada pelo consumismo desenfreado. No Brasil atual, a dependência de redes sociais reflete essa lógica de controle pelo entretenimento.",
+    resumoRapido: "Controle pelo prazer e consumo. Use para alienação, consumismo e manipulação social.",
   },
   {
-    id: "a-hora-da-estrela",
-    titulo: "A Hora da Estrela",
-    autor: "Clarice Lispector",
+    id: "a-hora-da-estrela", titulo: "A Hora da Estrela", autor: "Clarice Lispector",
     temas: ["desigualdade social", "migração", "invisibilidade social", "identidade", "gênero"],
-    resumo: "Narra a história de Macabéa, uma jovem nordestina que vive em São Paulo enfrentando miséria, solidão e invisibilidade social, revelando as profundas desigualdades do Brasil.",
-    exemploUso: "A personagem Macabéa, de Clarice Lispector em 'A Hora da Estrela', encarna a invisibilidade social dos migrantes nordestinos nas grandes cidades. Sua trajetória evidencia como a desigualdade estrutural no Brasil marginaliza populações inteiras, negando-lhes acesso a direitos básicos.",
+    resumo: "Narra a história de Macabéa, uma jovem nordestina que vive em São Paulo enfrentando miséria e invisibilidade social.",
+    exemploUso: "A personagem Macabéa encarna a invisibilidade social dos migrantes nordestinos nas grandes cidades, evidenciando a desigualdade estrutural no Brasil.",
     resumoRapido: "Nordestina invisível em SP. Use para desigualdade social, migração e invisibilidade.",
   },
   {
-    id: "vidas-secas",
-    titulo: "Vidas Secas",
-    autor: "Graciliano Ramos",
-    temas: ["seca", "desigualdade social", "migração", "pobreza", "educação"],
-    resumo: "Retrata a vida miserável de uma família de retirantes no sertão nordestino, evidenciando a desumanização causada pela pobreza extrema e pela falta de oportunidades.",
-    exemploUso: "Em 'Vidas Secas', Graciliano Ramos ilustra como a miséria e a falta de acesso à educação desumanizam os indivíduos. A dificuldade da família de Fabiano em se comunicar reflete a exclusão linguística e social que persiste nas regiões mais pobres do Brasil contemporâneo.",
-    resumoRapido: "Família de retirantes no sertão. Use para pobreza, seca, educação e exclusão social.",
+    id: "vidas-secas", titulo: "Vidas Secas", autor: "Graciliano Ramos",
+    temas: ["desigualdade social", "seca", "migração", "desumanização", "pobreza"],
+    resumo: "Retrata a saga de Fabiano e sua família pelo sertão nordestino, enfrentando a seca, a fome e a exploração social.",
+    exemploUso: "Em 'Vidas Secas', a desumanização de Fabiano evidencia como a miséria extrema priva os indivíduos de sua própria humanidade.",
+    resumoRapido: "Família retirante no sertão. Use para pobreza, seca e desumanização.",
   },
   {
-    id: "o-cortico",
-    titulo: "O Cortiço",
-    autor: "Aluísio Azevedo",
-    temas: ["desigualdade social", "moradia", "exploração", "racismo", "urbanização"],
-    resumo: "Retrata a vida em um cortiço no Rio de Janeiro do século XIX, expondo as desigualdades sociais, a exploração dos trabalhadores e as condições precárias de moradia.",
-    exemploUso: "A obra 'O Cortiço', de Aluísio Azevedo, revela como as condições precárias de moradia perpetuam ciclos de pobreza e exclusão. Essa realidade permanece atual nas favelas e periferias brasileiras, onde milhões de pessoas vivem sem acesso a saneamento básico e infraestrutura adequada.",
-    resumoRapido: "Vida precária em cortiço carioca. Use para moradia, desigualdade e urbanização.",
+    id: "quarto-de-despejo", titulo: "Quarto de Despejo", autor: "Carolina Maria de Jesus",
+    temas: ["desigualdade social", "fome", "racismo", "gênero", "periferia"],
+    resumo: "Diário de uma catadora de papel que vive na favela do Canindé, em São Paulo, relatando a fome e a miséria com brutal honestidade.",
+    exemploUso: "Carolina Maria de Jesus, em 'Quarto de Despejo', denuncia a fome como instrumento de opressão social. Seu relato permanece atual diante da insegurança alimentar que afeta milhões de brasileiros.",
+    resumoRapido: "Diário real da favela. Use para fome, racismo e desigualdade urbana.",
   },
   {
-    id: "memorias-postumas",
-    titulo: "Memórias Póstumas de Brás Cubas",
-    autor: "Machado de Assis",
-    temas: ["desigualdade social", "elite brasileira", "escravidão", "hipocrisia social", "ética"],
-    resumo: "Narrado por um defunto autor, o romance expõe com ironia a hipocrisia da elite brasileira do século XIX, suas relações de poder e a naturalização da escravidão.",
-    exemploUso: "Machado de Assis, em 'Memórias Póstumas de Brás Cubas', expõe a hipocrisia da elite brasileira que, enquanto pregava valores morais, se beneficiava da exploração de escravizados. Essa contradição persiste na sociedade atual, onde discursos de meritocracia frequentemente ignoram as desigualdades estruturais.",
-    resumoRapido: "Ironia sobre a elite brasileira. Use para hipocrisia social, ética e desigualdade.",
-  },
-  {
-    id: "quarto-de-despejo",
-    titulo: "Quarto de Despejo",
-    autor: "Carolina Maria de Jesus",
-    temas: ["pobreza", "fome", "racismo", "gênero", "periferia", "invisibilidade social"],
-    resumo: "Diário de uma catadora de papel na favela do Canindé, em São Paulo. Carolina relata a fome, a miséria e a discriminação racial enfrentadas diariamente.",
-    exemploUso: "Carolina Maria de Jesus, em 'Quarto de Despejo', oferece um testemunho visceral da fome e da exclusão social nas periferias brasileiras. Seu relato denuncia a intersecção entre pobreza, racismo e gênero que permanece como um dos maiores desafios sociais do país.",
-    resumoRapido: "Diário de catadora na favela. Use para fome, racismo, gênero e periferia.",
-  },
-  {
-    id: "fahrenheit-451",
-    titulo: "Fahrenheit 451",
-    autor: "Ray Bradbury",
-    temas: ["censura", "cultura", "educação", "tecnologia", "liberdade de expressão"],
-    resumo: "Sociedade futurista onde livros são proibidos e queimados. A população é mantida alienada por entretenimento superficial e telas onipresentes.",
-    exemploUso: "Em 'Fahrenheit 451', Bradbury alerta sobre os perigos da censura e da substituição do pensamento crítico pelo entretenimento superficial. Na era das fake news e da desinformação digital, essa reflexão se torna ainda mais urgente para a preservação da democracia.",
-    resumoRapido: "Livros proibidos e queimados. Use para censura, cultura e pensamento crítico.",
-  },
-  {
-    id: "capitaes-da-areia",
-    titulo: "Capitães da Areia",
-    autor: "Jorge Amado",
-    temas: ["infância", "criminalidade", "desigualdade social", "abandono", "educação"],
-    resumo: "Conta a história de um grupo de meninos de rua em Salvador que sobrevivem através de furtos e golpes, revelando o abandono social da infância pobre no Brasil.",
-    exemploUso: "Jorge Amado, em 'Capitães da Areia', retrata crianças abandonadas pela sociedade e empurradas para a criminalidade. Essa realidade permanece atual no Brasil, onde milhares de crianças e adolescentes vivem em situação de rua, sem acesso a educação, saúde e proteção adequadas.",
-    resumoRapido: "Meninos de rua em Salvador. Use para infância, criminalidade e abandono social.",
-  },
-  {
-    id: "dom-casmurro",
-    titulo: "Dom Casmurro",
-    autor: "Machado de Assis",
-    temas: ["ciúme", "machismo", "patriarcado", "narrativa", "relações de poder"],
-    resumo: "Bentinho narra sua relação com Capitu sob a sombra do ciúme obsessivo. O romance questiona a confiabilidade do narrador masculino que julga e condena a mulher.",
-    exemploUso: "Em 'Dom Casmurro', Machado de Assis constrói um narrador que, consumido pelo ciúme patriarcal, condena Capitu sem provas concretas. Essa dinâmica reflete como, historicamente, a voz masculina predomina nos julgamentos sobre o comportamento feminino, perpetuando desigualdades de gênero.",
-    resumoRapido: "Ciúme e julgamento patriarcal. Use para machismo, gênero e relações de poder.",
+    id: "o-cortico", titulo: "O Cortiço", autor: "Aluísio Azevedo",
+    temas: ["desigualdade social", "urbanização", "determinismo", "exploração", "racismo"],
+    resumo: "Retrata a vida em um cortiço carioca no final do século XIX, mostrando as relações de exploração e as condições degradantes.",
+    exemploUso: "Em 'O Cortiço', Aluísio Azevedo denuncia a exploração habitacional e as condições desumanas da classe trabalhadora, tema atualíssimo nas periferias brasileiras.",
+    resumoRapido: "Vida em cortiço no Rio. Use para urbanização, exploração e determinismo social.",
   },
 ];
 
-const todosOsTemas = Array.from(
-  new Set(repertorios.flatMap((r) => r.temas))
-).sort();
-
-/* Exemplos de redações nota 1000 */
-const redacoesModelo = [
+const obrasVestibular: ObraVestibular[] = [
   {
-    tema: "Manipulação do comportamento do usuário pelo controle de dados na internet",
-    ano: "ENEM 2018",
-    repertorio: "1984 – George Orwell",
-    trecho: "Assim como o Grande Irmão de Orwell controlava a informação para manipular a população, as grandes corporações tecnológicas utilizam algoritmos e coleta massiva de dados para influenciar comportamentos de consumo e opiniões políticas.",
+    id: "dom-casmurro", titulo: "Dom Casmurro", autor: "Machado de Assis",
+    vestibulares: ["fuvest", "unicamp", "unesp"],
+    genero: "Romance Realista",
+    contextoHistorico: "Publicado em 1899, no auge do Realismo brasileiro. Machado critica a sociedade patriarcal do Segundo Reinado.",
+    temasRedacao: ["ciúme", "patriarcalismo", "narrativa não-confiável", "casamento", "sociedade de aparências"],
+    frasesImportantes: [
+      "Não consultes dicionários. Casmurro não está aqui no sentido que eles lhe dão.",
+      "A confusão era geral, porque a justiça humana não é a divina.",
+    ],
+    capitulos: [
+      { titulo: "Do título", resumo: "Bento Santiago explica por que recebeu o apelido de Dom Casmurro e seu projeto de reconstruir a casa da infância." },
+      { titulo: "Do livro", resumo: "O narrador justifica a escrita de suas memórias para 'atar as duas pontas da vida'." },
+      { titulo: "A denúncia", resumo: "José Dias sugere à mãe de Bentinho que Capitu tem 'olhos de cigana oblíqua e dissimulada'." },
+      { titulo: "O seminário", resumo: "Bentinho é enviado ao seminário por promessa de sua mãe, iniciando a separação de Capitu." },
+      { titulo: "Olhos de ressaca", resumo: "Descrição famosa dos olhos de Capitu e o início da obsessão de Bentinho." },
+    ],
   },
   {
-    tema: "Democratização do acesso ao cinema no Brasil",
-    ano: "ENEM 2019",
-    repertorio: "Quarto de Despejo – Carolina Maria de Jesus",
-    trecho: "Carolina Maria de Jesus, ao relatar a exclusão cultural vivida na favela, evidencia como o acesso à arte e ao entretenimento permanece um privilégio de poucos no Brasil, reforçando a necessidade de políticas de democratização cultural.",
+    id: "memorias-postumas", titulo: "Memórias Póstumas de Brás Cubas", autor: "Machado de Assis",
+    vestibulares: ["fuvest", "unicamp"],
+    genero: "Romance Realista",
+    contextoHistorico: "Publicado em 1881, marca a transição do Romantismo para o Realismo no Brasil. Narrado por um defunto autor.",
+    temasRedacao: ["hipocrisia social", "vaidade", "escravidão", "classe social", "morte"],
+    frasesImportantes: [
+      "Ao verme que primeiro roeu as frias carnes do meu cadáver dedico como saudosa lembrança estas Memórias Póstumas.",
+      "Não tive filhos, não transmiti a nenhuma criatura o legado da nossa miséria.",
+    ],
+    capitulos: [
+      { titulo: "Óbito do autor", resumo: "Brás Cubas narra sua própria morte por pneumonia e decide escrever suas memórias." },
+      { titulo: "O emplasto", resumo: "Apresenta a ideia fixa do emplasto anti-hipocondríaco que o levou à morte." },
+      { titulo: "Genealogia", resumo: "Brás Cubas descreve sua linhagem familiar com ironia mordaz." },
+    ],
   },
   {
-    tema: "Invisibilidade e registro civil",
-    ano: "ENEM 2021",
-    repertorio: "Vidas Secas – Graciliano Ramos",
-    trecho: "A família de Fabiano, em 'Vidas Secas', representa os milhões de brasileiros que existem à margem do Estado, sem documentos e sem direitos, evidenciando como a invisibilidade civil perpetua ciclos de exclusão social.",
+    id: "capitaes-da-areia", titulo: "Capitães da Areia", autor: "Jorge Amado",
+    vestibulares: ["unesp", "ufmg"],
+    genero: "Romance Social",
+    contextoHistorico: "Publicado em 1937, no contexto da Era Vargas e das tensões sociais no Brasil. Retrata crianças abandonadas em Salvador.",
+    temasRedacao: ["menor abandonado", "desigualdade", "infância", "violência urbana", "exclusão social"],
+    frasesImportantes: [
+      "A cidade é deles. De dia, recuam para o trapiche. De noite, a cidade é dos Capitães da Areia.",
+    ],
+    capitulos: [
+      { titulo: "Cartas à redação", resumo: "Jornais publicam denúncias sobre um grupo de meninos de rua em Salvador." },
+      { titulo: "Sob a lua num velho trapiche abandonado", resumo: "Apresentação do bando e de Pedro Bala, seu líder carismático." },
+      { titulo: "Noite dos Capitães da Areia", resumo: "A rotina do grupo entre roubos, aventuras e a solidão da vida nas ruas." },
+    ],
+  },
+  {
+    id: "grande-sertao", titulo: "Grande Sertão: Veredas", autor: "Guimarães Rosa",
+    vestibulares: ["fuvest", "unicamp", "ufmg"],
+    genero: "Romance Regionalista",
+    contextoHistorico: "Publicado em 1956, é considerado a obra-prima do modernismo brasileiro. Linguagem inovadora e reflexão existencial.",
+    temasRedacao: ["bem vs mal", "identidade", "sertão", "linguagem", "amor proibido"],
+    frasesImportantes: [
+      "O diabo não existe... e eu digo! O que existe é homem humano.",
+      "Viver é muito perigoso.",
+    ],
+    capitulos: [
+      { titulo: "O início da travessia", resumo: "Riobaldo narra sua vida como jagunço e reflete sobre a existência do diabo." },
+      { titulo: "Diadorim", resumo: "Surgimento de Diadorim, a figura ambígua que transforma a vida de Riobaldo." },
+      { titulo: "A guerra", resumo: "Conflitos entre bandos jagunços no sertão de Minas Gerais." },
+    ],
+  },
+  {
+    id: "macunaima", titulo: "Macunaíma", autor: "Mário de Andrade",
+    vestibulares: ["fuvest", "unesp"],
+    genero: "Rapsódia Modernista",
+    contextoHistorico: "Publicado em 1928, no auge do Modernismo brasileiro. Construção do 'herói sem nenhum caráter' como símbolo da brasilidade.",
+    temasRedacao: ["identidade nacional", "cultura popular", "miscigenação", "modernismo"],
+    frasesImportantes: [
+      "Ai, que preguiça!",
+      "Pouca saúde e muita saúva, os males do Brasil são.",
+    ],
+    capitulos: [
+      { titulo: "Macunaíma", resumo: "Nascimento do herói na tribo tapanhumas, demonstrando preguiça e esperteza desde criança." },
+      { titulo: "Maioridade", resumo: "Macunaíma cresce e parte em aventuras pelo Brasil." },
+    ],
+  },
+  {
+    id: "iracema", titulo: "Iracema", autor: "José de Alencar",
+    vestibulares: ["unesp", "ufmg"],
+    genero: "Romance Indianista",
+    contextoHistorico: "Publicado em 1865, representa o Romantismo e o indianismo brasileiro. Alegoria da formação do povo brasileiro.",
+    temasRedacao: ["colonização", "identidade nacional", "miscigenação", "natureza"],
+    frasesImportantes: [
+      "Iracema, a virgem dos lábios de mel, que tinha os cabelos mais negros que a asa da graúna.",
+    ],
+    capitulos: [
+      { titulo: "O encontro", resumo: "Iracema encontra Martim, o guerreiro branco, nas terras dos tabajaras." },
+      { titulo: "O exílio", resumo: "Iracema abandona sua tribo por amor a Martim." },
+    ],
   },
 ];
 
-/* Conquistas de repertório */
-const badges = [
-  { nome: "Explorador Iniciante", descricao: "Estudar 3 repertórios", icon: BookOpen, meta: 3 },
-  { nome: "Repertório Diverso", descricao: "Estudar 5 repertórios", icon: Star, meta: 5 },
-  { nome: "Mestre Argumentador", descricao: "Estudar 8 repertórios", icon: Trophy, meta: 8 },
-  { nome: "Enciclopédia Viva", descricao: "Estudar todos os repertórios", icon: Award, meta: repertorios.length },
+const VESTIBULARES = [
+  { id: "fuvest", label: "Fuvest (USP)", color: "hsl(var(--accent))" },
+  { id: "unicamp", label: "Unicamp", color: "hsl(220, 90%, 56%)" },
+  { id: "unesp", label: "Unesp", color: "hsl(150, 60%, 45%)" },
+  { id: "ufmg", label: "UFMG", color: "hsl(0, 70%, 55%)" },
 ];
 
-/* ═══════════════════════════════════════════════════
-   COMPONENT
-   ═══════════════════════════════════════════════════ */
+const TEMAS_ENEM = [
+  "desigualdade social", "tecnologia", "controle social", "educação",
+  "racismo", "gênero", "migração", "consumismo", "liberdade de expressão",
+  "urbanização", "fome", "pobreza", "identidade", "alienação",
+];
 
-type Tab = "biblioteca" | "busca" | "rapido" | "redacoes" | "conquistas";
+/* ═══════════ DIAGNOSIS COMPONENT ═══════════ */
 
-const Enem = () => {
-  const { isPremium } = useProfile();
-  const [activeTab, setActiveTab] = useState<Tab>("biblioteca");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTema, setSelectedTema] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [estudados, setEstudados] = useState<Set<string>>(() => {
-    const saved = localStorage.getItem("bookquest_repertorios_estudados");
-    return saved ? new Set(JSON.parse(saved)) : new Set();
-  });
+const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
+  const { saveDiagnosis } = useAcademicDiagnosis();
+  const [step, setStep] = useState(0);
+  const [focus, setFocus] = useState("");
+  const [exams, setExams] = useState<string[]>([]);
+  const [hours, setHours] = useState(5);
+  const [saving, setSaving] = useState(false);
 
-  const marcarEstudado = (id: string) => {
-    setEstudados((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      localStorage.setItem("bookquest_repertorios_estudados", JSON.stringify([...next]));
-      return next;
-    });
+  const handleFinish = async () => {
+    setSaving(true);
+    const ok = await saveDiagnosis({ focus, targetExams: exams, weeklyHours: hours });
+    setSaving(false);
+    if (ok) onComplete();
   };
 
-  const filteredRepertorios = useMemo(() => {
-    let list = repertorios;
-    if (selectedTema) {
-      list = list.filter((r) => r.temas.includes(selectedTema));
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(
-        (r) =>
-          r.titulo.toLowerCase().includes(q) ||
-          r.autor.toLowerCase().includes(q) ||
-          r.temas.some((t) => t.includes(q))
-      );
-    }
-    return list;
-  }, [searchQuery, selectedTema]);
-
-  const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
-    { key: "biblioteca", label: "Biblioteca", icon: BookOpen },
-    { key: "busca", label: "Buscar Tema", icon: Search },
-    { key: "rapido", label: "Rápido", icon: Zap },
-    { key: "redacoes", label: "Redações", icon: BookMarked },
-    { key: "conquistas", label: "Conquistas", icon: Trophy },
-  ];
+  const toggleExam = (id: string) => {
+    setExams(prev => prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]);
+  };
 
   return (
-    <Layout isPremium={isPremium}>
-      <div className="py-8" data-tutorial="enem-header">
-        {/* Premium Banner for non-premium */}
-        {!isPremium && (
-          <div className="rounded-2xl p-4 mb-6 bg-accent/5 border border-accent/20 animate-fade-in">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
-                  <Lock className="w-5 h-5 text-accent" />
-                </div>
-                <div>
-                  <p className="font-bold text-sm">Conteúdo Premium</p>
-                  <p className="text-xs text-muted-foreground">Visualização prévia — assine para interagir</p>
-                </div>
-              </div>
-              <Link to="/premium">
-                <Button size="sm" className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
-                  <Crown className="w-4 h-4" />
-                  Assinar Premium
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* Header */}
-        <div className="mb-8 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-3">
-            <Crown className="w-3.5 h-3.5" />
-            Premium
-          </div>
-          <h1 className="text-3xl font-serif font-bold mb-2 flex items-center gap-3">
-            <GraduationCap className="w-8 h-8 text-primary" />
-            Repertório para Redação
-          </h1>
-          <p className="text-muted-foreground text-sm max-w-2xl">
-            Desenvolva argumentos poderosos para ENEM e vestibulares usando obras literárias como repertório sociocultural. Pesquise por tema, estude exemplos e conquiste badges.
-          </p>
+    <div className="max-w-lg mx-auto space-y-6 py-8">
+      <div className="text-center mb-8">
+        <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-4">
+          <Target className="h-7 w-7 text-accent" />
         </div>
+        <h2 className="text-xl font-bold text-foreground">Diagnóstico Acadêmico</h2>
+        <p className="text-sm text-muted-foreground mt-1">Vamos personalizar sua trilha de estudos</p>
+      </div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 mb-8 overflow-x-auto pb-2 scrollbar-hide">
-          {tabs.map((tab) => (
+      {/* Progress */}
+      <div className="flex gap-1.5">
+        {[0, 1, 2].map(i => (
+          <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? "bg-accent" : "bg-muted/40"}`} />
+        ))}
+      </div>
+
+      {step === 0 && (
+        <div className="space-y-3">
+          <h3 className="font-semibold text-foreground">Qual seu foco principal?</h3>
+          {[
+            { value: "enem", label: "ENEM", desc: "Repertório sociocultural para redação e interpretação de texto" },
+            { value: "vestibulares", label: "Vestibulares", desc: "Obras obrigatórias e análise literária para provas específicas" },
+            { value: "ambos", label: "Ambos", desc: "Preparação completa para ENEM e vestibulares" },
+          ].map(opt => (
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
-                activeTab === tab.key
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              key={opt.value}
+              onClick={() => { setFocus(opt.value); setStep(1); }}
+              className={`w-full text-left p-4 rounded-xl border transition-colors ${
+                focus === opt.value ? "border-accent bg-accent/10" : "border-border bg-card hover:bg-muted/30"
               }`}
             >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
+              <p className="font-medium text-foreground">{opt.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
             </button>
           ))}
         </div>
+      )}
 
-        {/* Tab Content */}
-        <div className={!isPremium ? "opacity-70 pointer-events-none select-none" : ""}>
-          {/* ═══ BIBLIOTECA DE REPERTÓRIOS ═══ */}
-          {activeTab === "biblioteca" && (
-            <div className="space-y-4 animate-fade-in">
-              {/* Search + Filter */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Buscar por título, autor ou tema..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-                {selectedTema && (
-                  <button
-                    onClick={() => setSelectedTema(null)}
-                    className="flex items-center gap-1 px-3 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium"
-                  >
-                    <Filter className="w-3.5 h-3.5" />
-                    {selectedTema}
-                    <span className="ml-1">✕</span>
-                  </button>
-                )}
-              </div>
+      {step === 1 && (focus === "vestibulares" || focus === "ambos") && (
+        <div className="space-y-3">
+          <h3 className="font-semibold text-foreground">Quais vestibulares você pretende prestar?</h3>
+          <div className="grid grid-cols-2 gap-2">
+            {VESTIBULARES.map(v => (
+              <button
+                key={v.id}
+                onClick={() => toggleExam(v.id)}
+                className={`p-3 rounded-xl border text-sm font-medium transition-colors ${
+                  exams.includes(v.id) ? "border-accent bg-accent/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted/30"
+                }`}
+              >
+                {exams.includes(v.id) && <CheckCircle className="h-3.5 w-3.5 inline mr-1.5 text-accent" />}
+                {v.label}
+              </button>
+            ))}
+          </div>
+          <Button onClick={() => setStep(2)} disabled={exams.length === 0} className="w-full mt-2">
+            Continuar <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      )}
 
-              {/* Repertório Cards */}
-              {filteredRepertorios.map((rep) => {
-                const isExpanded = expandedId === rep.id;
-                const isEstudado = estudados.has(rep.id);
-                return (
-                  <div
-                    key={rep.id}
-                    className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                      isEstudado
-                        ? "bg-primary/5 border-primary/20"
-                        : "bg-card border-border hover:border-primary/30"
-                    }`}
-                  >
-                    {/* Header */}
-                    <button
-                      onClick={() => setExpandedId(isExpanded ? null : rep.id)}
-                      className="w-full flex items-start gap-4 p-5 text-left"
-                    >
-                      <div className="w-12 h-16 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center flex-shrink-0">
-                        <BookOpen className="w-5 h-5 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-serif font-bold text-base">{rep.titulo}</h3>
-                          {isEstudado && (
-                            <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase">
-                              Estudado
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">{rep.autor}</p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {rep.temas.slice(0, 3).map((t) => (
-                            <span
-                              key={t}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedTema(t);
-                              }}
-                              className="px-2 py-0.5 rounded-full bg-muted text-[11px] text-muted-foreground hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors"
-                            >
-                              {t}
-                            </span>
-                          ))}
-                          {rep.temas.length > 3 && (
-                            <span className="px-2 py-0.5 text-[11px] text-muted-foreground">
-                              +{rep.temas.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <ChevronRight
-                        className={`w-5 h-5 text-muted-foreground flex-shrink-0 mt-2 transition-transform duration-300 ${
-                          isExpanded ? "rotate-90" : ""
-                        }`}
-                      />
-                    </button>
+      {step === 1 && focus === "enem" && (
+        <div className="space-y-3">
+          <h3 className="font-semibold text-foreground">Quantas horas por semana pode dedicar à leitura?</h3>
+          <div className="grid grid-cols-3 gap-2">
+            {[3, 5, 7, 10, 15, 20].map(h => (
+              <button
+                key={h}
+                onClick={() => setHours(h)}
+                className={`p-3 rounded-xl border text-sm font-medium transition-colors ${
+                  hours === h ? "border-accent bg-accent/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted/30"
+                }`}
+              >
+                {h}h/semana
+              </button>
+            ))}
+          </div>
+          <Button onClick={handleFinish} disabled={saving} className="w-full mt-2">
+            {saving ? "Salvando..." : "Criar minha trilha"}
+          </Button>
+        </div>
+      )}
 
-                    {/* Expanded Content */}
-                    {isExpanded && (
-                      <div className="px-5 pb-5 space-y-4 animate-fade-in">
-                        <div className="h-px bg-border" />
+      {step === 2 && (
+        <div className="space-y-3">
+          <h3 className="font-semibold text-foreground">Quantas horas por semana pode dedicar à leitura?</h3>
+          <div className="grid grid-cols-3 gap-2">
+            {[3, 5, 7, 10, 15, 20].map(h => (
+              <button
+                key={h}
+                onClick={() => setHours(h)}
+                className={`p-3 rounded-xl border text-sm font-medium transition-colors ${
+                  hours === h ? "border-accent bg-accent/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted/30"
+                }`}
+              >
+                {h}h/semana
+              </button>
+            ))}
+          </div>
+          <Button onClick={handleFinish} disabled={saving} className="w-full mt-2">
+            {saving ? "Salvando..." : "Criar minha trilha"}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
 
-                        {/* Resumo */}
-                        <div>
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                            Contexto da Obra
-                          </h4>
-                          <p className="text-sm leading-relaxed">{rep.resumo}</p>
-                        </div>
+/* ═══════════ MAIN PAGE ═══════════ */
 
-                        {/* Exemplo de Uso */}
-                        <div className="rounded-xl bg-accent/5 border border-accent/15 p-4">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-accent mb-2 flex items-center gap-1.5">
-                            <Lightbulb className="w-3.5 h-3.5" />
-                            Exemplo de Uso em Redação
-                          </h4>
-                          <p className="text-sm leading-relaxed italic text-muted-foreground">
-                            "{rep.exemploUso}"
-                          </p>
-                        </div>
+const Enem = () => {
+  const { isPremium } = useProfile();
+  const { user } = useAuth();
+  const { diagnosis, loading: diagLoading, hasDiagnosis, resetDiagnosis } = useAcademicDiagnosis();
+  const [showDiagnosis, setShowDiagnosis] = useState(false);
+  const [searchTema, setSearchTema] = useState("");
+  const [selectedTemaFilter, setSelectedTemaFilter] = useState<string | null>(null);
+  const [expandedRepertorio, setExpandedRepertorio] = useState<string | null>(null);
+  const [expandedObra, setExpandedObra] = useState<string | null>(null);
+  const [selectedVestibular, setSelectedVestibular] = useState<string | null>(null);
+  const [studiedIds, setStudiedIds] = useState<Set<string>>(() => {
+    const saved = localStorage.getItem("bookquest_studied_repertorios");
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
 
-                        {/* Action */}
-                        <div className="flex justify-end">
-                          <Button
-                            size="sm"
-                            onClick={() => marcarEstudado(rep.id)}
-                            className={
-                              isEstudado
-                                ? "bg-muted text-muted-foreground hover:bg-muted/80"
-                                : "bg-primary text-primary-foreground hover:bg-primary/90"
-                            }
-                          >
-                            {isEstudado ? "Desmarcar" : "Marcar como Estudado ✓"}
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+  const markStudied = (id: string) => {
+    const updated = new Set(studiedIds);
+    if (updated.has(id)) updated.delete(id); else updated.add(id);
+    setStudiedIds(updated);
+    localStorage.setItem("bookquest_studied_repertorios", JSON.stringify([...updated]));
+  };
 
-              {filteredRepertorios.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Search className="w-8 h-8 mx-auto mb-3 opacity-40" />
-                  <p className="text-sm">Nenhum repertório encontrado para essa busca.</p>
-                </div>
-              )}
-            </div>
-          )}
+  // Determine which tab to show based on diagnosis
+  const defaultTab = useMemo(() => {
+    if (!diagnosis) return "enem";
+    if (diagnosis.focus === "vestibulares") return "vestibulares";
+    return "enem";
+  }, [diagnosis]);
 
-          {/* ═══ BUSCA POR TEMA ═══ */}
-          {activeTab === "busca" && (
-            <div className="animate-fade-in">
-              <p className="text-sm text-muted-foreground mb-6">
-                Selecione um tema para encontrar repertórios literários relacionados.
-              </p>
-              <div className="flex flex-wrap gap-2 mb-8">
-                {todosOsTemas.map((tema) => {
-                  const count = repertorios.filter((r) => r.temas.includes(tema)).length;
-                  return (
-                    <button
-                      key={tema}
-                      onClick={() => {
-                        setSelectedTema(tema);
-                        setActiveTab("biblioteca");
-                      }}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-primary/5 transition-all text-sm"
-                    >
-                      <span className="capitalize">{tema}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-bold">
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+  // Filter repertorios
+  const filteredRepertorios = useMemo(() => {
+    let list = repertorios;
+    const query = searchTema.toLowerCase().trim();
+    if (query) list = list.filter(r => r.temas.some(t => t.includes(query)) || r.titulo.toLowerCase().includes(query));
+    if (selectedTemaFilter) list = list.filter(r => r.temas.includes(selectedTemaFilter));
+    return list;
+  }, [searchTema, selectedTemaFilter]);
 
-          {/* ═══ REPERTÓRIO RÁPIDO ═══ */}
-          {activeTab === "rapido" && (
-            <div className="space-y-3 animate-fade-in">
-              <p className="text-sm text-muted-foreground mb-4">
-                Revisão rápida de repertórios — ideal para estudo de última hora.
-              </p>
-              {repertorios.map((rep) => (
-                <div
-                  key={rep.id}
-                  className="flex gap-4 p-4 rounded-xl bg-card border border-border"
-                >
-                  <div className="w-1 rounded-full bg-primary flex-shrink-0" />
-                  <div>
-                    <h4 className="font-serif font-bold text-sm mb-0.5">
-                      {rep.titulo}{" "}
-                      <span className="font-sans font-normal text-muted-foreground">
-                        — {rep.autor}
-                      </span>
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {rep.resumoRapido}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+  // Filter obras by vestibular
+  const filteredObras = useMemo(() => {
+    if (!selectedVestibular) return obrasVestibular;
+    return obrasVestibular.filter(o => o.vestibulares.includes(selectedVestibular));
+  }, [selectedVestibular]);
 
-          {/* ═══ REDAÇÕES MODELO ═══ */}
-          {activeTab === "redacoes" && (
-            <div className="space-y-6 animate-fade-in">
-              <p className="text-sm text-muted-foreground mb-4">
-                Exemplos de como repertórios foram usados em redações de alto nível.
-              </p>
-              {redacoesModelo.map((red, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl bg-card border border-border p-6"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2.5 py-1 rounded-full bg-accent/10 text-accent text-[11px] font-bold">
-                      {red.ano}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
-                      {red.repertorio}
-                    </span>
-                  </div>
-                  <h4 className="font-serif font-bold mb-3">{red.tema}</h4>
-                  <div className="rounded-xl bg-muted/50 p-4 border-l-4 border-primary">
-                    <p className="text-sm italic leading-relaxed text-muted-foreground">
-                      "{red.trecho}"
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+  // Show premium gate for non-premium
+  if (!isPremium) {
+    return (
+      <Layout>
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <GraduationCap className="h-16 w-16 text-muted-foreground mb-4" />
+          <h1 className="text-2xl font-bold text-foreground mb-2">Trilhas Acadêmicas</h1>
+          <p className="text-muted-foreground mb-6 max-w-md">
+            Acesse repertórios socioculturais para o ENEM e obras obrigatórias de vestibulares com o plano Premium.
+          </p>
+          <Button asChild><a href="/premium">Assinar Premium</a></Button>
+        </div>
+      </Layout>
+    );
+  }
 
-          {/* ═══ CONQUISTAS ═══ */}
-          {activeTab === "conquistas" && (
-            <div className="animate-fade-in">
-              <p className="text-sm text-muted-foreground mb-6">
-                Estude repertórios e desbloqueie conquistas! Você estudou{" "}
-                <span className="font-bold text-primary">{estudados.size}</span> de{" "}
-                <span className="font-bold">{repertorios.length}</span> repertórios.
-              </p>
+  // Show diagnosis if first visit
+  if (!diagLoading && user && !hasDiagnosis && !showDiagnosis) {
+    return (
+      <Layout isPremium={isPremium}>
+        <DiagnosisQuiz onComplete={() => setShowDiagnosis(false)} />
+      </Layout>
+    );
+  }
 
-              <div className="grid sm:grid-cols-2 gap-4">
-                {badges.map((badge) => {
-                  const unlocked = estudados.size >= badge.meta;
-                  return (
-                    <div
-                      key={badge.nome}
-                      className={`rounded-2xl border p-5 flex items-center gap-4 transition-all ${
-                        unlocked
-                          ? "bg-accent/5 border-accent/20 shadow-lg shadow-accent/10"
-                          : "bg-card border-border opacity-60"
-                      }`}
-                    >
-                      <div
-                        className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                          unlocked
-                            ? "bg-accent/10"
-                            : "bg-muted"
-                        }`}
-                      >
-                        <badge.icon
-                          className={`w-7 h-7 ${
-                            unlocked ? "text-accent" : "text-muted-foreground"
-                          }`}
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-sm">{badge.nome}</h4>
-                        <p className="text-xs text-muted-foreground">{badge.descricao}</p>
-                        <div className="mt-2 w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-accent rounded-full transition-all duration-500"
-                            style={{
-                              width: `${Math.min(100, (estudados.size / badge.meta) * 100)}%`,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+  if (showDiagnosis) {
+    return (
+      <Layout isPremium={isPremium}>
+        <DiagnosisQuiz onComplete={() => setShowDiagnosis(false)} />
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout isPremium={isPremium}>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <GraduationCap className="h-7 w-7 text-accent" />
+              Trilhas Acadêmicas
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              {diagnosis?.focus === "enem" && "Foco: ENEM — Repertório sociocultural"}
+              {diagnosis?.focus === "vestibulares" && `Foco: Vestibulares — ${diagnosis.target_exams.map(e => VESTIBULARES.find(v => v.id === e)?.label).filter(Boolean).join(", ")}`}
+              {diagnosis?.focus === "ambos" && "Foco: ENEM + Vestibulares"}
+              {!diagnosis && "Prepare-se para ENEM e Vestibulares"}
+            </p>
+          </div>
+          {hasDiagnosis && (
+            <Button variant="outline" size="sm" onClick={() => { resetDiagnosis(); setShowDiagnosis(true); }}>
+              <RotateCcw className="h-3.5 w-3.5 mr-1" />
+              Refazer diagnóstico
+            </Button>
           )}
         </div>
 
-        {/* Non-premium CTA overlay */}
-        {!isPremium && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground text-sm mb-4">
-              Assine o Premium para acessar todos os repertórios, exemplos de redação e conquistas.
-            </p>
-            <Link to="/premium">
-              <Button className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
-                <Crown className="w-4 h-4" />
-                Desbloquear Repertórios
-              </Button>
-            </Link>
-          </div>
-        )}
+        {/* Main tabs */}
+        <Tabs defaultValue={defaultTab} className="w-full">
+          <TabsList className="bg-muted/50 w-full">
+            <TabsTrigger value="enem" className="flex-1">
+              <Lightbulb className="h-4 w-4 mr-1.5" />
+              ENEM
+            </TabsTrigger>
+            <TabsTrigger value="vestibulares" className="flex-1">
+              <BookOpen className="h-4 w-4 mr-1.5" />
+              Vestibulares
+            </TabsTrigger>
+            <TabsTrigger value="conquistas" className="flex-1">
+              <Trophy className="h-4 w-4 mr-1.5" />
+              Conquistas
+            </TabsTrigger>
+          </TabsList>
+
+          {/* ═══ ENEM TAB ═══ */}
+          <TabsContent value="enem" className="mt-4 space-y-6">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por tema (ex: desigualdade, tecnologia...)"
+                value={searchTema}
+                onChange={e => setSearchTema(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            {/* Theme filters */}
+            <div className="flex flex-wrap gap-1.5">
+              {TEMAS_ENEM.slice(0, 10).map(tema => (
+                <button
+                  key={tema}
+                  onClick={() => setSelectedTemaFilter(selectedTemaFilter === tema ? null : tema)}
+                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                    selectedTemaFilter === tema
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {tema}
+                </button>
+              ))}
+            </div>
+
+            {/* Repertoire cards */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
+                Biblioteca de Repertórios ({filteredRepertorios.length})
+              </h3>
+              {filteredRepertorios.map(r => {
+                const isExpanded = expandedRepertorio === r.id;
+                const isStudied = studiedIds.has(r.id);
+                return (
+                  <Card key={r.id} className={`bg-card border-border transition-colors ${isStudied ? "border-accent/30" : ""}`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <button onClick={() => setExpandedRepertorio(isExpanded ? null : r.id)} className="text-left flex-1">
+                          <h4 className="font-semibold text-foreground text-sm">{r.titulo}</h4>
+                          <p className="text-xs text-muted-foreground">{r.autor}</p>
+                        </button>
+                        <div className="flex items-center gap-2">
+                          {isStudied && <CheckCircle className="h-4 w-4 text-accent" />}
+                          <button
+                            onClick={() => markStudied(r.id)}
+                            className={`text-xs px-2 py-1 rounded-md transition-colors ${
+                              isStudied ? "bg-accent/10 text-accent" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                            }`}
+                          >
+                            {isStudied ? "Estudado" : "Marcar"}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {r.temas.map(t => (
+                          <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">{t}</span>
+                        ))}
+                      </div>
+
+                      <p className="text-xs text-muted-foreground">{r.resumoRapido}</p>
+
+                      {isExpanded && (
+                        <div className="mt-4 space-y-3 pt-3 border-t border-border/30">
+                          <div>
+                            <h5 className="text-xs font-bold text-foreground uppercase tracking-wider mb-1">Resumo</h5>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{r.resumo}</p>
+                          </div>
+                          <div className="bg-accent/5 border border-accent/10 rounded-lg p-3">
+                            <h5 className="text-xs font-bold text-accent uppercase tracking-wider mb-1 flex items-center gap-1">
+                              <Sparkles className="h-3 w-3" />
+                              Exemplo de uso em redação
+                            </h5>
+                            <p className="text-xs text-foreground/80 leading-relaxed italic">"{r.exemploUso}"</p>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          {/* ═══ VESTIBULARES TAB ═══ */}
+          <TabsContent value="vestibulares" className="mt-4 space-y-6">
+            {/* Vestibular filter */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedVestibular(null)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  !selectedVestibular ? "bg-accent text-accent-foreground" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                Todos
+              </button>
+              {VESTIBULARES.map(v => (
+                <button
+                  key={v.id}
+                  onClick={() => setSelectedVestibular(selectedVestibular === v.id ? null : v.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    selectedVestibular === v.id ? "bg-accent text-accent-foreground" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Recommended based on diagnosis */}
+            {diagnosis?.target_exams && diagnosis.target_exams.length > 0 && !selectedVestibular && (
+              <div className="bg-accent/5 border border-accent/10 rounded-xl p-4">
+                <h3 className="text-xs font-bold text-accent uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <Target className="h-3.5 w-3.5" />
+                  Recomendado para você
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Baseado no seu diagnóstico: {diagnosis.target_exams.map(e => VESTIBULARES.find(v => v.id === e)?.label).filter(Boolean).join(", ")}
+                </p>
+              </div>
+            )}
+
+            {/* Obras list */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
+                Obras Obrigatórias ({filteredObras.length})
+              </h3>
+              {filteredObras.map(obra => {
+                const isExpanded = expandedObra === obra.id;
+                const isStudied = studiedIds.has(`vest-${obra.id}`);
+                return (
+                  <Card key={obra.id} className={`bg-card border-border transition-colors ${isStudied ? "border-accent/30" : ""}`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <button onClick={() => setExpandedObra(isExpanded ? null : obra.id)} className="text-left flex-1">
+                          <h4 className="font-semibold text-foreground text-sm">{obra.titulo}</h4>
+                          <p className="text-xs text-muted-foreground">{obra.autor} · {obra.genero}</p>
+                        </button>
+                        <button
+                          onClick={() => markStudied(`vest-${obra.id}`)}
+                          className={`text-xs px-2 py-1 rounded-md transition-colors ${
+                            isStudied ? "bg-accent/10 text-accent" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                          }`}
+                        >
+                          {isStudied ? "✓ Estudado" : "Marcar"}
+                        </button>
+                      </div>
+
+                      {/* Vestibular badges */}
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {obra.vestibulares.map(v => {
+                          const vest = VESTIBULARES.find(x => x.id === v);
+                          return (
+                            <span key={v} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-foreground font-medium">
+                              {vest?.label}
+                            </span>
+                          );
+                        })}
+                      </div>
+
+                      {isExpanded && (
+                        <div className="mt-4 space-y-4 pt-3 border-t border-border/30">
+                          {/* Context */}
+                          <div>
+                            <h5 className="text-xs font-bold text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              Contexto Histórico
+                            </h5>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{obra.contextoHistorico}</p>
+                          </div>
+
+                          {/* Key themes */}
+                          <div>
+                            <h5 className="text-xs font-bold text-foreground uppercase tracking-wider mb-1">Temas para Redação</h5>
+                            <div className="flex flex-wrap gap-1">
+                              {obra.temasRedacao.map(t => (
+                                <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent">{t}</span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Important quotes */}
+                          <div>
+                            <h5 className="text-xs font-bold text-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+                              <Sparkles className="h-3 w-3" />
+                              Frases Importantes
+                            </h5>
+                            {obra.frasesImportantes.map((f, i) => (
+                              <p key={i} className="text-xs text-foreground/70 italic mb-1.5 pl-3 border-l-2 border-accent/30">"{f}"</p>
+                            ))}
+                          </div>
+
+                          {/* Chapters */}
+                          <div>
+                            <h5 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                              <BookOpen className="h-3 w-3" />
+                              Resumo por Capítulos
+                            </h5>
+                            <div className="space-y-2">
+                              {obra.capitulos.map((cap, i) => (
+                                <div key={i} className="bg-muted/30 rounded-lg p-3">
+                                  <p className="text-xs font-semibold text-foreground">{i + 1}. {cap.titulo}</p>
+                                  <p className="text-xs text-muted-foreground mt-0.5">{cap.resumo}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          {/* ═══ CONQUISTAS TAB ═══ */}
+          <TabsContent value="conquistas" className="mt-4 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { id: "first", label: "Primeiro Repertório", desc: "Estude 1 repertório", goal: 1, icon: "📖" },
+                { id: "five", label: "Estudante Dedicado", desc: "Estude 5 repertórios", goal: 5, icon: "📚" },
+                { id: "ten", label: "Mestre do Repertório", desc: "Estude 10 repertórios", goal: 10, icon: "🎓" },
+                { id: "vest3", label: "Vestibulando", desc: "Estude 3 obras de vestibular", goal: 3, icon: "🏆" },
+                { id: "all-vest", label: "Preparado Total", desc: "Estude todas as obras", goal: obrasVestibular.length, icon: "👑" },
+              ].map(badge => {
+                const repertorioCount = [...studiedIds].filter(id => !id.startsWith("vest-")).length;
+                const vestCount = [...studiedIds].filter(id => id.startsWith("vest-")).length;
+                const progress = badge.id.includes("vest") ? vestCount : repertorioCount;
+                const unlocked = progress >= badge.goal;
+                return (
+                  <Card key={badge.id} className={`bg-card border-border ${unlocked ? "border-accent/30" : ""}`}>
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <div className={`text-2xl ${unlocked ? "" : "grayscale opacity-40"}`}>{badge.icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-semibold ${unlocked ? "text-foreground" : "text-muted-foreground"}`}>{badge.label}</p>
+                        <p className="text-xs text-muted-foreground">{badge.desc}</p>
+                        <div className="h-1.5 rounded-full overflow-hidden bg-muted/60 mt-1.5">
+                          <div
+                            className="h-full rounded-full bg-accent transition-all"
+                            style={{ width: `${Math.min((progress / badge.goal) * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-muted-foreground">{Math.min(progress, badge.goal)}/{badge.goal}</span>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
