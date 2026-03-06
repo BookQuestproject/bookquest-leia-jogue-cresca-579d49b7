@@ -18,6 +18,7 @@ import {
   LogIn,
   LogOut,
   Settings,
+  Swords,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
