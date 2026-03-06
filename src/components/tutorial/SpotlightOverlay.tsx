@@ -319,13 +319,12 @@ const SpotlightOverlay = () => {
         style={{
           width: 160,
           height: "auto",
-          [agathaSide === "left" ? "left" : "right"]: 16,
-          [agathaSide === "left" ? "right" : "left"]: "auto",
+          left: agathaSide === "left" ? 16 : `calc(100vw - 176px)`,
           transform: showOverlay
             ? (agathaSide === "left" ? "translateY(0) scaleX(-1)" : "translateY(0) scaleX(1)")
-            : "translateY(110%)",
+            : `translateY(110%) ${agathaSide === "left" ? "scaleX(-1)" : "scaleX(1)"}`,
           opacity: showOverlay ? 1 : 0,
-          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease, left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease, left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       />
     </div>
