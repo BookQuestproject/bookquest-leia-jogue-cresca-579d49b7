@@ -114,7 +114,7 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
   // Auto-start on first visit to home
   useEffect(() => {
     if (!isCompleted && location.pathname === "/home") {
-      const timer = setTimeout(() => setIsActive(true), 800);
+      const timer = setTimeout(() => setIsActive(true), 300);
       return () => clearTimeout(timer);
     }
   }, [isCompleted, location.pathname]);

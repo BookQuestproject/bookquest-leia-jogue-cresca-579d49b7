@@ -117,7 +117,7 @@ const Index = () => {
 
         {/* ═══════════ HERO SECTION — Call to Action ═══════════ */}
         {hasActiveTrail ? (
-          <div className="mb-8 animate-fade-in">
+          <div className="mb-8 animate-fade-in" data-tutorial="welcome-header">
             {/* Motivational banner */}
             {motivational && (
               <div className="flex items-center gap-2 mb-4 px-4 py-2.5 rounded-lg bg-accent/8 border border-accent/15">
@@ -271,7 +271,7 @@ const Index = () => {
           </div>
         ) : (
           /* Welcome header — no active trail */
-          <header className="mb-8 animate-fade-in">
+          <header className="mb-8 animate-fade-in" data-tutorial="welcome-header">
             <p className="text-xs text-accent font-semibold uppercase tracking-[0.15em] mb-2 flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5" />
               Bem-vindo ao BookQuest
