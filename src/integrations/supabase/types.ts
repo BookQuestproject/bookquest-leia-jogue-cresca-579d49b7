@@ -462,6 +462,48 @@ export type Database = {
         }
         Relationships: []
       }
+      reading_plans: {
+        Row: {
+          book_id: string
+          book_title: string | null
+          created_at: string
+          current_day: number
+          daily_minutes: number
+          daily_pages: number
+          id: string
+          is_active: boolean
+          total_pages: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          book_title?: string | null
+          created_at?: string
+          current_day?: number
+          daily_minutes: number
+          daily_pages: number
+          id?: string
+          is_active?: boolean
+          total_pages: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          book_title?: string | null
+          created_at?: string
+          current_day?: number
+          daily_minutes?: number
+          daily_pages?: number
+          id?: string
+          is_active?: boolean
+          total_pages?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reading_progress: {
         Row: {
           book_id: string
@@ -500,6 +542,84 @@ export type Database = {
           is_paused?: boolean
           notes?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      social_challenges: {
+        Row: {
+          challenge_type: string
+          challenged_id: string
+          challenged_progress: number
+          challenger_id: string
+          challenger_progress: number
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          goal_value: number
+          id: string
+          status: string
+          title: string
+          updated_at: string
+          winner_id: string | null
+          xp_reward: number
+        }
+        Insert: {
+          challenge_type: string
+          challenged_id: string
+          challenged_progress?: number
+          challenger_id: string
+          challenger_progress?: number
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          goal_value?: number
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Update: {
+          challenge_type?: string
+          challenged_id?: string
+          challenged_progress?: number
+          challenger_id?: string
+          challenger_progress?: number
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          goal_value?: number
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Relationships: []
+      }
+      streak_freezes: {
+        Row: {
+          id: string
+          quantity: number
+          updated_at: string
+          used_dates: string[] | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          quantity?: number
+          updated_at?: string
+          used_dates?: string[] | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          quantity?: number
+          updated_at?: string
+          used_dates?: string[] | null
           user_id?: string
         }
         Relationships: []
