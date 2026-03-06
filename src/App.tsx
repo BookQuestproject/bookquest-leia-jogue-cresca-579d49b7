@@ -32,6 +32,10 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
+import EduDashboard from "./pages/edu/EduDashboard";
+import EduTurmas from "./pages/edu/EduTurmas";
+import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
+import EduRelatorios from "./pages/edu/EduRelatorios";
 
 // App configuration
 const queryClient = new QueryClient();
