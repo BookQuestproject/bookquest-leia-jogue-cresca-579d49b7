@@ -30,7 +30,21 @@ const SpotlightOverlay = () => {
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
   const [isVisible, setIsVisible] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
   const retryCountRef = useRef(0);
+
+  // Handle mount/unmount with exit animation
+  useEffect(() => {
+    if (isActive) {
+      setShouldRender(true);
+      const t = setTimeout(() => setIsVisible(true), 80);
+      return () => clearTimeout(t);
+    } else {
+      setIsVisible(false);
+      const t = setTimeout(() => setShouldRender(false), 700);
+      return () => clearTimeout(t);
+    }
+  }, [isActive]);
 
   const findAndHighlight = useCallback(() => {
     if (!currentStepData) {
@@ -40,20 +54,17 @@ const SpotlightOverlay = () => {
 
     const el = document.querySelector(currentStepData.target);
     if (!el) {
-      // Navigate if needed
       if (currentStepData.route && location.pathname !== currentStepData.route) {
         navigate(currentStepData.route);
         retryCountRef.current = 0;
         setTimeout(findAndHighlight, 200);
         return;
       }
-      // Retry a few times, then auto-skip
       retryCountRef.current += 1;
       if (retryCountRef.current < 10) {
         setTimeout(findAndHighlight, 250);
         return;
       }
-      // Element truly doesn't exist — auto-skip this step
       retryCountRef.current = 0;
       nextStep();
       return;
@@ -62,10 +73,8 @@ const SpotlightOverlay = () => {
     retryCountRef.current = 0;
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Update immediately, then refine after scroll settles
     const updatePosition = () => {
       const rect = el.getBoundingClientRect();
-
       const newRect: Rect = {
         top: rect.top - PADDING,
         left: rect.left - PADDING,
@@ -74,60 +83,32 @@ const SpotlightOverlay = () => {
       };
       setTargetRect(newRect);
 
-      // Calculate tooltip position
-      const placement = currentStepData.placement || "bottom";
-      const tooltipW = 320;
-      const tooltipH = 200;
+      // Tooltip positioned above Agatha (bottom-right speech bubble)
+      const tooltipW = 340;
       const vw = window.innerWidth;
       const vh = window.innerHeight;
+      const agathaPosRight = 16;
+      const agathaWidth = 160;
+      const agathaCenterX = vw - agathaPosRight - agathaWidth / 2;
 
-      let style: React.CSSProperties = { position: "fixed", width: tooltipW, zIndex: 10002 };
-
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      let top = 0;
-      let left = 0;
-
-      if (placement === "bottom" && rect.bottom + 12 + tooltipH < vh) {
-        top = rect.bottom + 12;
-        left = centerX - tooltipW / 2;
-      } else if (placement === "top" && rect.top - 12 - tooltipH > 0) {
-        top = rect.top - 12 - tooltipH;
-        left = centerX - tooltipW / 2;
-      } else if (placement === "right" && rect.right + 12 + tooltipW < vw) {
-        top = centerY - tooltipH / 2;
-        left = rect.right + 12;
-      } else if (placement === "left" && rect.left - 12 - tooltipW > 0) {
-        top = centerY - tooltipH / 2;
-        left = rect.left - 12 - tooltipW;
-      } else {
-        if (rect.bottom + 12 + tooltipH < vh) {
-          top = rect.bottom + 12;
-          left = centerX - tooltipW / 2;
-        } else if (rect.top - 12 - tooltipH > 0) {
-          top = rect.top - 12 - tooltipH;
-          left = centerX - tooltipW / 2;
-        } else {
-          top = vh / 2 - tooltipH / 2;
-          left = vw / 2 - tooltipW / 2;
-        }
-      }
-
-      style.top = Math.max(8, Math.min(top, vh - tooltipH - 8));
-      style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
+      let style: React.CSSProperties = {
+        position: "fixed",
+        width: tooltipW,
+        zIndex: 10002,
+        // Position above Agatha
+        bottom: 200,
+        left: Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8)),
+      };
 
       setTooltipStyle(style);
     };
 
-    // Instant update + refine after scroll
     updatePosition();
     setTimeout(updatePosition, 150);
   }, [currentStepData, location.pathname, navigate, nextStep]);
 
-  // Navigate to step's route if needed
   useEffect(() => {
     if (!isActive || !currentStepData) return;
-
     if (currentStepData.route && location.pathname !== currentStepData.route) {
       navigate(currentStepData.route);
       const timer = setTimeout(findAndHighlight, 200);
@@ -137,12 +118,10 @@ const SpotlightOverlay = () => {
     }
   }, [isActive, currentStep, currentStepData, location.pathname, navigate, findAndHighlight]);
 
-  // Recalculate on resize or scroll
   useEffect(() => {
     if (!isActive) return;
     const handler = () => findAndHighlight();
     window.addEventListener("resize", handler);
-    // Recalculate when any scrollable container scrolls
     const scrollHandler = () => {
       if (!currentStepData) return;
       const el = document.querySelector(currentStepData.target);
@@ -162,26 +141,20 @@ const SpotlightOverlay = () => {
     };
   }, [isActive, findAndHighlight, currentStepData]);
 
-  // Don't block scrolling — let scrollIntoView work naturally
+  if (!shouldRender) return null;
 
-  // Animate in
-  useEffect(() => {
-    if (isActive) {
-      const t = setTimeout(() => setIsVisible(true), 50);
-      return () => clearTimeout(t);
-    } else {
-      setIsVisible(false);
-    }
-  }, [isActive]);
-
-  if (!isActive || !currentStepData) return null;
+  const showContent = isVisible && targetRect;
 
   return (
     <div className="fixed inset-0 z-[10000]" style={{ pointerEvents: "none" }}>
-      {/* Dark overlay with cutout — uses fixed viewport coords */}
+      {/* Dark overlay with cutout */}
       <svg
-        className="fixed inset-0 w-full h-full transition-opacity duration-300"
-        style={{ opacity: isVisible ? 1 : 0, pointerEvents: "auto" }}
+        className="fixed inset-0 w-full h-full"
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transition: "opacity 0.4s ease",
+          pointerEvents: isVisible ? "auto" : "none",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <defs>
@@ -212,26 +185,35 @@ const SpotlightOverlay = () => {
       {/* Spotlight border glow */}
       {targetRect && (
         <div
-          className="fixed rounded-xl border-2 border-accent shadow-[0_0_24px_hsl(var(--accent)/0.4)] transition-all duration-500 pointer-events-none"
+          className="fixed rounded-xl border-2 border-accent shadow-[0_0_24px_hsl(var(--accent)/0.4)] pointer-events-none"
           style={{
             top: targetRect.top,
             left: targetRect.left,
             width: targetRect.width,
             height: targetRect.height,
+            opacity: isVisible ? 1 : 0,
+            transition: "all 0.5s ease, opacity 0.4s ease",
           }}
         />
       )}
 
-      {/* Tooltip card — always interactive */}
+      {/* Speech bubble tooltip — positioned above Agatha */}
       <div
-        className="bg-card border border-border rounded-xl shadow-2xl p-5 transition-all duration-500"
+        className="bg-card border border-accent/30 rounded-2xl shadow-2xl p-5 relative"
         style={{
           ...tooltipStyle,
-          pointerEvents: "auto",
-          opacity: isVisible && targetRect ? 1 : 0,
-          transform: isVisible && targetRect ? "translateY(0)" : "translateY(8px)",
+          pointerEvents: showContent ? "auto" : "none",
+          opacity: showContent ? 1 : 0,
+          transform: showContent ? "translateY(0) scale(1)" : "translateY(20px) scale(0.95)",
+          transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       >
+        {/* Speech bubble tail pointing down toward Agatha */}
+        <div
+          className="absolute -bottom-3 right-16 w-6 h-6 bg-card border-b border-r border-accent/30 rotate-45"
+          style={{ zIndex: -1 }}
+        />
+
         {/* Step indicator */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex gap-1 overflow-hidden flex-1 mr-3">
@@ -251,15 +233,22 @@ const SpotlightOverlay = () => {
           <button
             onClick={skipTutorial}
             className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title="Pular tutorial"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <h4 className="text-base font-serif font-semibold mb-1.5">{currentStepData.title}</h4>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-          {currentStepData.description}
-        </p>
+        {currentStepData && (
+          <>
+            <h4 className="text-base font-serif font-semibold mb-1.5 text-accent">
+              {currentStepData.title}
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              {currentStepData.description}
+            </p>
+          </>
+        )}
 
         {/* Navigation */}
         <div className="flex items-center justify-between">
@@ -284,24 +273,24 @@ const SpotlightOverlay = () => {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </>
               ) : (
-                "Concluir!"
+                "Concluir! 🎉"
               )}
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Agatha mascot — bottom right */}
+      {/* Agatha mascot — bottom right with proper exit animation */}
       <img
         src={agathaMascot}
         alt="Agatha, guia do tutorial"
         className="fixed bottom-0 right-4 z-[10003] pointer-events-none select-none"
         style={{
-          width: 180,
+          width: 160,
           height: "auto",
-          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease",
-          transform: isVisible && targetRect ? "translateY(0)" : "translateY(100%)",
-          opacity: isVisible && targetRect ? 1 : 0,
+          transform: isVisible ? "translateY(0)" : "translateY(110%)",
+          opacity: isVisible ? 1 : 0,
+          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease",
         }}
       />
     </div>
