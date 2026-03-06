@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Flame, ChevronRight } from "lucide-react";
+import { Flame, ChevronRight, Snowflake } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useStreakFreeze } from "@/hooks/useStreakFreeze";
 
 interface StreakFlameProps {
   days: number;
@@ -47,6 +49,7 @@ const StreakFlame = ({ days }: StreakFlameProps) => {
   const streak = getStreakColor(days);
   const nextLevel = getNextLevel(days);
   const [showLevels, setShowLevels] = useState(false);
+  const { quantity: freezeCount, useFreeze, wasFrozenToday } = useStreakFreeze();
 
   const daysToNext = nextLevel ? nextLevel.min - days : 0;
   const currentLevelStart = streak.min;
