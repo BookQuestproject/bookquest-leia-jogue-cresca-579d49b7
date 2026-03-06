@@ -46,6 +46,14 @@ const SpotlightOverlay = () => {
     return () => clearTimeout(t);
   }, [currentStep, currentStepData]);
 
+  // Determine which side Agatha should be on based on step placement
+  useEffect(() => {
+    if (!currentStepData) return;
+    // Steps with placement "left" mean the target is on the right — move Agatha left
+    const shouldBeLeft = currentStepData.placement === "left";
+    setAgathaSide(shouldBeLeft ? "left" : "right");
+  }, [currentStep, currentStepData]);
+
   // Handle mount/unmount with exit animation
   useEffect(() => {
     if (isActive) {
