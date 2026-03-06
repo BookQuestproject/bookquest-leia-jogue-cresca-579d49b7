@@ -211,7 +211,7 @@ const SpotlightOverlay = () => {
       {/* Spotlight border glow */}
       {targetRect && (
         <div
-          className="fixed rounded-xl border-2 border-secondary shadow-[0_0_24px_hsl(var(--secondary)/0.4)] transition-all duration-500 pointer-events-none"
+          className="fixed rounded-xl border-2 border-accent shadow-[0_0_24px_hsl(var(--accent)/0.4)] transition-all duration-500 pointer-events-none"
           style={{
             top: targetRect.top,
             left: targetRect.left,
