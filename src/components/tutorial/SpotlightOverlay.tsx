@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTutorial } from "@/contexts/TutorialContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import agathaMascot from "@/assets/agatha-mascot.png";
 
 interface Rect {
   top: number;
@@ -289,6 +290,20 @@ const SpotlightOverlay = () => {
           </div>
         </div>
       </div>
+
+      {/* Agatha mascot — bottom right */}
+      <img
+        src={agathaMascot}
+        alt="Agatha, guia do tutorial"
+        className="fixed bottom-0 right-4 z-[10003] pointer-events-none select-none"
+        style={{
+          width: 180,
+          height: "auto",
+          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease",
+          transform: isVisible && targetRect ? "translateY(0)" : "translateY(100%)",
+          opacity: isVisible && targetRect ? 1 : 0,
+        }}
+      />
     </div>
   );
 };
