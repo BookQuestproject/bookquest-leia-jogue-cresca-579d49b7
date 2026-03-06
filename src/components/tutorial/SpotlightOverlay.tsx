@@ -204,7 +204,7 @@ const SpotlightOverlay = () => {
             left: targetRect.left,
             width: targetRect.width,
             height: targetRect.height,
-            opacity: isVisible ? 1 : 0,
+            opacity: showOverlay ? 1 : 0,
             transition: "all 0.5s ease, opacity 0.4s ease",
           }}
         />
