@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_diagnosis: {
+        Row: {
+          completed_at: string
+          focus: string
+          id: string
+          target_exams: string[] | null
+          updated_at: string
+          user_id: string
+          weekly_hours: number
+        }
+        Insert: {
+          completed_at?: string
+          focus: string
+          id?: string
+          target_exams?: string[] | null
+          updated_at?: string
+          user_id: string
+          weekly_hours?: number
+        }
+        Update: {
+          completed_at?: string
+          focus?: string
+          id?: string
+          target_exams?: string[] | null
+          updated_at?: string
+          user_id?: string
+          weekly_hours?: number
+        }
+        Relationships: []
+      }
       available_slots: {
         Row: {
           day_of_week: number

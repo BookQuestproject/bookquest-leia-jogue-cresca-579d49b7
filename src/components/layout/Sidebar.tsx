@@ -55,7 +55,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const premiumItems = [
     { icon: MessageSquare, label: "Book Club", path: "/bookclub" },
     { icon: Sparkles, label: "Mentoria", path: "/mentoria" },
-    { icon: GraduationCap, label: "ENEM e Vestibulares", path: "/enem" },
+    { icon: GraduationCap, label: "Trilhas Acadêmicas", path: "/enem" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
