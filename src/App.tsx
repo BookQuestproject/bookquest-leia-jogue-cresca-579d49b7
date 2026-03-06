@@ -33,6 +33,7 @@ import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
 import EduDashboard from "./pages/edu/EduDashboard";
+import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="/biblioteca" element={<Biblioteca />} />
                 <Route path="/missoes" element={<Missoes />} />
                 <Route path="/bookclub" element={<BookClub />} />
+                <Route path="/desafios" element={<Desafios />} />
                 <Route path="/mentoria" element={<Mentoria />} />
                 <Route path="/enem" element={<Enem />} />
                 <Route path="/configuracoes" element={<Configuracoes />} />

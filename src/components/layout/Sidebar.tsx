@@ -18,6 +18,7 @@ import {
   LogIn,
   LogOut,
   Settings,
+  Swords,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -47,6 +48,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
   const secondaryItems = [
     { icon: Users, label: "Comunidades", path: "/comunidade" },
+    { icon: Swords, label: "Desafios", path: "/desafios" },
     { icon: Newspaper, label: "Notícias", path: "/noticias" },
   ];
 

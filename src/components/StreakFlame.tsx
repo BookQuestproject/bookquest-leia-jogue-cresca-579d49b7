@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Flame, ChevronRight } from "lucide-react";
+import { Flame, ChevronRight, Snowflake } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useStreakFreeze } from "@/hooks/useStreakFreeze";
 
 interface StreakFlameProps {
   days: number;
@@ -47,6 +49,7 @@ const StreakFlame = ({ days }: StreakFlameProps) => {
   const streak = getStreakColor(days);
   const nextLevel = getNextLevel(days);
   const [showLevels, setShowLevels] = useState(false);
+  const { quantity: freezeCount, useFreeze, wasFrozenToday } = useStreakFreeze();
 
   const daysToNext = nextLevel ? nextLevel.min - days : 0;
   const currentLevelStart = streak.min;
@@ -130,6 +133,28 @@ const StreakFlame = ({ days }: StreakFlameProps) => {
           <div className="h-full rounded-full w-0" />
         </div>
       )}
+
+      {/* Streak Freeze */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <Snowflake className="w-3.5 h-3.5 text-blue-400" />
+          <span>{freezeCount} congelamento{freezeCount !== 1 ? "s" : ""}</span>
+        </div>
+        {days > 0 && !wasFrozenToday() && freezeCount > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 text-[10px] px-2 text-blue-400 hover:text-blue-300"
+            onClick={useFreeze}
+          >
+            <Snowflake className="w-3 h-3 mr-1" />
+            Usar
+          </Button>
+        )}
+        {wasFrozenToday() && (
+          <span className="text-[10px] text-blue-400 font-medium">❄️ Congelado hoje</span>
+        )}
+      </div>
 
       {/* View levels button */}
       <button
