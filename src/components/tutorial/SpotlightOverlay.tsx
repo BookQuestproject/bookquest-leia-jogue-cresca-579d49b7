@@ -32,6 +32,7 @@ const SpotlightOverlay = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [isDelayLocked, setIsDelayLocked] = useState(false);
+  const [agathaSide, setAgathaSide] = useState<"right" | "left">("right");
   const retryCountRef = useRef(0);
 
   // Handle minDelay lock per step
