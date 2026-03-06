@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTutorial } from "@/contexts/TutorialContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import agathaMascot from "@/assets/agatha-mascot.png";
 
 interface Rect {
   top: number;
