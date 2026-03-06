@@ -13,6 +13,8 @@ export interface TutorialStep {
   placement?: "top" | "bottom" | "left" | "right";
   /** Only show for admins */
   adminOnly?: boolean;
+  /** Minimum time (ms) before user can advance to next step */
+  minDelay?: number;
 }
 
 interface TutorialContextType {
@@ -40,6 +42,7 @@ const allSteps: TutorialStep[] = [
     description: "Bem-vindo ao BookQuest! Vou te mostrar como aproveitar a plataforma e transformar leitura em uma aventura incrível!",
     route: "/home",
     placement: "bottom",
+    minDelay: 5000,
   },
   {
     target: '[data-tutorial="sidebar-nav"]',

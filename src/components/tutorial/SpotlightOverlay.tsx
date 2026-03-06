@@ -31,7 +31,19 @@ const SpotlightOverlay = () => {
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const [isDelayLocked, setIsDelayLocked] = useState(false);
   const retryCountRef = useRef(0);
+
+  // Handle minDelay lock per step
+  useEffect(() => {
+    if (!currentStepData?.minDelay) {
+      setIsDelayLocked(false);
+      return;
+    }
+    setIsDelayLocked(true);
+    const t = setTimeout(() => setIsDelayLocked(false), currentStepData.minDelay);
+    return () => clearTimeout(t);
+  }, [currentStep, currentStepData]);
 
   // Handle mount/unmount with exit animation
   useEffect(() => {
@@ -265,7 +277,8 @@ const SpotlightOverlay = () => {
             <Button
               size="sm"
               onClick={nextStep}
-              className="gap-1 bg-accent text-accent-foreground hover:bg-accent/90"
+              disabled={isDelayLocked}
+              className="gap-1 bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {currentStep < totalSteps - 1 ? (
                 <>
