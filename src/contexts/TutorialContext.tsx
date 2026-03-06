@@ -170,8 +170,20 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const fallbackContext: TutorialContextType = {
+  isActive: false,
+  currentStep: 0,
+  totalSteps: 0,
+  currentStepData: null,
+  startTutorial: () => {},
+  stopTutorial: () => {},
+  nextStep: () => {},
+  prevStep: () => {},
+  skipTutorial: () => {},
+  isCompleted: true,
+};
+
 export const useTutorial = () => {
   const ctx = useContext(TutorialContext);
-  if (!ctx) throw new Error("useTutorial must be used within TutorialProvider");
-  return ctx;
+  return ctx ?? fallbackContext;
 };
