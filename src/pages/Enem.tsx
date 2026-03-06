@@ -286,9 +286,9 @@ const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
   const [hours, setHours] = useState(5);
   const [saving, setSaving] = useState(false);
 
-  const handleFinish = async () => {
+  const handleFinish = async (selectedHours?: number) => {
     setSaving(true);
-    const ok = await saveDiagnosis({ focus, targetExams: exams, weeklyHours: hours });
+    const ok = await saveDiagnosis({ focus, targetExams: exams, weeklyHours: selectedHours ?? hours });
     setSaving(false);
     if (ok) onComplete();
   };
@@ -366,7 +366,8 @@ const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
             {[3, 5, 7, 10, 15, 20].map(h => (
               <button
                 key={h}
-                onClick={() => setHours(h)}
+                onClick={() => { setHours(h); handleFinish(h); }}
+                disabled={saving}
                 className={`p-3 rounded-xl border text-sm font-medium transition-colors ${
                   hours === h ? "border-accent bg-accent/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted/30"
                 }`}
@@ -375,9 +376,7 @@ const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
               </button>
             ))}
           </div>
-          <Button onClick={handleFinish} disabled={saving} className="w-full mt-2">
-            {saving ? "Salvando..." : "Criar minha trilha"}
-          </Button>
+          {saving && <p className="text-center text-sm text-muted-foreground">Salvando...</p>}
         </div>
       )}
 
@@ -388,7 +387,8 @@ const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
             {[3, 5, 7, 10, 15, 20].map(h => (
               <button
                 key={h}
-                onClick={() => setHours(h)}
+                onClick={() => { setHours(h); handleFinish(h); }}
+                disabled={saving}
                 className={`p-3 rounded-xl border text-sm font-medium transition-colors ${
                   hours === h ? "border-accent bg-accent/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted/30"
                 }`}
@@ -397,9 +397,7 @@ const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
               </button>
             ))}
           </div>
-          <Button onClick={handleFinish} disabled={saving} className="w-full mt-2">
-            {saving ? "Salvando..." : "Criar minha trilha"}
-          </Button>
+          {saving && <p className="text-center text-sm text-muted-foreground">Salvando...</p>}
         </div>
       )}
     </div>
