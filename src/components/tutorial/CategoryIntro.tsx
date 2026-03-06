@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import agathaMascot from "@/assets/agatha-mascot.png";
 
 const VISITED_KEY = "bookquest_visited_categories_v2";
 
@@ -14,54 +15,59 @@ interface CategoryStep {
 
 const categorySteps: Record<string, CategoryStep[]> = {
   "/biblioteca": [
-    { target: '[data-tutorial="biblioteca-header"]', title: "📚 Biblioteca", description: "Bem-vindo à Biblioteca! Aqui você encontra todos os livros disponíveis no BookQuest.", placement: "bottom" },
-    { target: '[data-tutorial="biblioteca-search"]', title: "🔍 Busca e Filtros", description: "Use a busca e os filtros de gênero para encontrar exatamente o livro que procura.", placement: "bottom" },
-    { target: '[data-tutorial="biblioteca-genres"]', title: "🏷️ Gêneros", description: "Filtre rapidamente por gênero clicando nas categorias disponíveis.", placement: "bottom" },
-    { target: '[data-tutorial="biblioteca-suggest"]', title: "💡 Sugerir Livro", description: "Não encontrou um livro? Sugira e nossa equipe avaliará para adicionar à plataforma.", placement: "bottom" },
-    { target: '[data-tutorial="biblioteca-grid"]', title: "📖 Catálogo de Livros", description: "Clique em um livro para ver detalhes, sinopse e adicioná-lo à sua estante.", placement: "top" },
+    { target: '[data-tutorial="biblioteca-header"]', title: "📚 Biblioteca", description: "Bem-vindo à Biblioteca! Aqui você encontra todos os livros disponíveis no BookQuest. Vem comigo explorar!", placement: "bottom" },
+    { target: '[data-tutorial="biblioteca-search"]', title: "🔍 Busca e Filtros", description: "Use a busca e os filtros de gênero pra encontrar exatamente o livro que você procura. Eu adoro pesquisar!", placement: "bottom" },
+    { target: '[data-tutorial="biblioteca-genres"]', title: "🏷️ Gêneros", description: "Filtre rapidamente por gênero clicando nas categorias. Cada gênero tem surpresas incríveis esperando!", placement: "bottom" },
+    { target: '[data-tutorial="biblioteca-suggest"]', title: "💡 Sugerir Livro", description: "Não encontrou um livro? Me conta! Sugira e nossa equipe avalia pra adicionar à plataforma.", placement: "bottom" },
+    { target: '[data-tutorial="biblioteca-grid"]', title: "📖 Catálogo de Livros", description: "Clique em um livro pra ver detalhes, sinopse e adicionar à sua estante. Bora montar sua coleção!", placement: "top" },
   ],
   "/trilhas": [
-    { target: '[data-tutorial="trilhas-header"]', title: "🗺️ Trilhas Literárias", description: "Cada trilha é um livro completo dividido em capítulos para você ler no seu ritmo.", placement: "bottom" },
-    { target: '[data-tutorial="trilhas-grid"]', title: "📖 Escolha sua Trilha", description: "Clique em uma trilha para ver os capítulos, cronômetro de leitura e quizzes de compreensão.", placement: "bottom" },
+    { target: '[data-tutorial="trilhas-header"]', title: "🗺️ Trilhas Literárias", description: "Cada trilha é um livro completo dividido em capítulos pra você ler no seu ritmo. Eu vou te acompanhar!", placement: "bottom" },
+    { target: '[data-tutorial="trilhas-grid"]', title: "📖 Escolha sua Trilha", description: "Clique em uma trilha pra ver os capítulos, cronômetro de leitura e quizzes de compreensão. Vamos nessa!", placement: "bottom" },
   ],
   "/estante": [
-    { target: '[data-tutorial="estante-header"]', title: "📖 Minha Estante", description: "Aqui ficam todos os seus livros organizados por status de leitura.", placement: "bottom" },
-    { target: '[data-tutorial="estante-tabs"]', title: "📂 Categorias", description: "Organize seus livros entre: Lendo, Reelendo, Quero Ler, Lido, Abandonado e Favoritos.", placement: "bottom" },
-    { target: '[data-tutorial="estante-add"]', title: "➕ Adicionar Livro", description: "Clique aqui para ir à Biblioteca e adicionar novos livros à sua estante.", placement: "bottom" },
+    { target: '[data-tutorial="estante-header"]', title: "📖 Minha Estante", description: "Aqui ficam todos os seus livros organizados por status de leitura. Eu cuido da organização pra você!", placement: "bottom" },
+    { target: '[data-tutorial="estante-tabs"]', title: "📂 Categorias", description: "Organize seus livros entre: Lendo, Reelendo, Quero Ler, Lido, Abandonado e Favoritos. Tudo certinho!", placement: "bottom" },
+    { target: '[data-tutorial="estante-add"]', title: "➕ Adicionar Livro", description: "Clique aqui pra ir à Biblioteca e adicionar novos livros à sua estante. Quanto mais, melhor!", placement: "bottom" },
   ],
   "/missoes": [
-    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Complete missões para ganhar XP e subir no ranking. Veja seu progresso, sequência e nível aqui!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-daily"]', title: "⏰ Missões Diárias", description: "Essas missões reiniciam toda meia-noite. Complete-as todos os dias para manter sua sequência!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Missões Semanais", description: "Missões que reiniciam toda segunda-feira. Valem mais XP e exigem mais dedicação.", placement: "bottom" },
-    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Missões Mensais", description: "Grandes desafios que reiniciam no dia 1 de cada mês. Conquistar essas missões garante recompensas enormes!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Complete missões pra ganhar XP e subir no ranking. Eu vou torcer por você! Veja seu progresso aqui.", placement: "bottom" },
+    { target: '[data-tutorial="missoes-daily"]', title: "⏰ Missões Diárias", description: "Essas missões reiniciam toda meia-noite. Complete todos os dias pra manter sua sequência ativa!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Missões Semanais", description: "Missões que reiniciam toda segunda-feira. Valem mais XP e exigem mais dedicação. Eu acredito em você!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Missões Mensais", description: "Grandes desafios que reiniciam no dia 1 de cada mês. Conquistar essas garante recompensas enormes!", placement: "bottom" },
   ],
   "/ranking": [
-    { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em XP. Suba de Bronze a Lendário lendo e completando desafios!", placement: "bottom" },
-    { target: '[data-tutorial="ranking-countdown"]', title: "⏳ Contador Regressivo", description: "Mostra quantos dias faltam para o fechamento da semana. Ao final, os melhores sobem de patamar!", placement: "bottom" },
-    { target: '[data-tutorial="ranking-tiers"]', title: "🎖️ Patamares", description: "Explore os diferentes patamares clicando nas abas. Cada patamar tem vagas limitadas para avançar.", placement: "bottom" },
-    { target: '[data-tutorial="ranking-podium"]', title: "🥇 Pódio", description: "Os 3 primeiros colocados aparecem no pódio com destaque especial.", placement: "bottom" },
+    { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em XP. Suba de Bronze a Lendário lendo e completando desafios! Quem vai ser o campeão?", placement: "bottom" },
+    { target: '[data-tutorial="ranking-countdown"]', title: "⏳ Contador Regressivo", description: "Mostra quantos dias faltam pro fechamento da semana. Ao final, os melhores sobem de patamar!", placement: "bottom" },
+    { target: '[data-tutorial="ranking-tiers"]', title: "🎖️ Patamares", description: "Explore os diferentes patamares clicando nas abas. Cada patamar tem vagas limitadas pra avançar. Corre!", placement: "bottom" },
+    { target: '[data-tutorial="ranking-podium"]', title: "🥇 Pódio", description: "Os 3 primeiros colocados aparecem no pódio com destaque especial. Será que você chega lá?", placement: "bottom" },
   ],
   "/comunidade": [
-    { target: '[data-tutorial="comunidade-header"]', title: "💬 Comunidades", description: "Cada livro tem sua comunidade. Discuta, compartilhe teorias e conecte-se com outros leitores!", placement: "bottom" },
+    { target: '[data-tutorial="comunidade-header"]', title: "💬 Comunidades", description: "Cada livro tem sua comunidade. Discuta, compartilhe teorias e conecte-se com outros leitores! Eu amo uma boa conversa.", placement: "bottom" },
     { target: '[data-tutorial="comunidade-search"]', title: "🔍 Buscar Comunidade", description: "Encontre a comunidade do seu livro favorito usando a busca por título ou autor.", placement: "bottom" },
-    { target: '[data-tutorial="comunidade-grid"]', title: "📚 Comunidades Disponíveis", description: "Clique em uma comunidade para ver discussões, enviar mensagens e participar das conversas.", placement: "bottom" },
+    { target: '[data-tutorial="comunidade-grid"]', title: "📚 Comunidades Disponíveis", description: "Clique em uma comunidade pra ver discussões, enviar mensagens e participar das conversas.", placement: "bottom" },
   ],
   "/noticias": [
-    { target: '[data-tutorial="noticias-header"]', title: "📰 Notícias", description: "Fique por dentro das novidades do BookQuest: anúncios, atualizações e curiosidades literárias.", placement: "bottom" },
-    { target: '[data-tutorial="noticias-filters"]', title: "🏷️ Filtros", description: "Filtre as notícias por tipo: anúncios, atualizações ou curiosidades.", placement: "bottom" },
+    { target: '[data-tutorial="noticias-header"]', title: "📰 Notícias", description: "Fique por dentro das novidades do BookQuest! Eu trago anúncios, atualizações e curiosidades literárias pra você.", placement: "bottom" },
+    { target: '[data-tutorial="noticias-filters"]', title: "🏷️ Filtros", description: "Filtre as notícias por tipo: anúncios, atualizações ou curiosidades. Tudo organizadinho!", placement: "bottom" },
   ],
   "/mentoria": [
-    { target: '[data-tutorial="mentoria-header"]', title: "✨ Mentoria Literária", description: "Sessões em grupo com mentores para ajudar a criar e manter o hábito de leitura. Recurso Premium!", placement: "bottom" },
+    { target: '[data-tutorial="mentoria-header"]', title: "✨ Mentoria Literária", description: "Sessões em grupo com mentores pra ajudar a criar e manter o hábito de leitura. Recurso Premium! Vale muito a pena.", placement: "bottom" },
   ],
   "/perfil": [
-    { target: '[data-tutorial="perfil-header"]', title: "👤 Meu Perfil", description: "Veja suas estatísticas, conquistas, ranking e todo seu histórico de leitura num só lugar.", placement: "bottom" },
+    { target: '[data-tutorial="perfil-header"]', title: "👤 Meu Perfil", description: "Veja suas estatísticas, conquistas, ranking e todo seu histórico de leitura num só lugar. Eu tô orgulhosa!", placement: "bottom" },
     { target: '[data-tutorial="perfil-stats"]', title: "📊 Suas Estatísticas", description: "Acompanhe capítulos lidos, tempo de leitura, livros concluídos e seu patamar no ranking.", placement: "bottom" },
-    { target: '[data-tutorial="perfil-achievements"]', title: "🏅 Conquistas", description: "Desbloqueie conquistas conforme avança na sua jornada. Colecione todas!", placement: "top" },
+    { target: '[data-tutorial="perfil-achievements"]', title: "🏅 Conquistas", description: "Desbloqueie conquistas conforme avança na sua jornada. Colecione todas! Eu vou acompanhar.", placement: "top" },
   ],
   "/configuracoes": [
-    { target: '[data-tutorial="config-header"]', title: "⚙️ Configurações", description: "Ajuste tema, notificações e preferências da sua conta.", placement: "bottom" },
-    { target: '[data-tutorial="config-theme"]', title: "🌓 Tema", description: "Alterne entre tema claro e escuro conforme sua preferência.", placement: "bottom" },
-    { target: '[data-tutorial="config-tutorial-reset"]', title: "🔄 Reiniciar Tutoriais", description: "Quer rever os tutoriais guiados? Clique aqui para resetar e vê-los novamente.", placement: "bottom" },
+    { target: '[data-tutorial="config-header"]', title: "⚙️ Configurações", description: "Ajuste tema, notificações e preferências da sua conta. Deixe tudo do seu jeitinho!", placement: "bottom" },
+    { target: '[data-tutorial="config-theme"]', title: "🌓 Tema", description: "Alterne entre tema claro e escuro conforme sua preferência. Eu fico bonita nos dois!", placement: "bottom" },
+    { target: '[data-tutorial="config-tutorial-reset"]', title: "🔄 Reiniciar Tutoriais", description: "Quer me ver de novo explicando tudo? Clique aqui pra resetar e rever os tutoriais guiados.", placement: "bottom" },
+  ],
+  "/desafios": [
+    { target: '[data-tutorial="desafios-header"]', title: "⚔️ Desafios Sociais", description: "Bem-vindo à arena de desafios! Aqui você pode competir com amigos e colegas em metas de leitura. Quem lê mais?", placement: "bottom" },
+    { target: '[data-tutorial="desafios-create"]', title: "📩 Criar Desafio", description: "Clique aqui pra enviar um desafio pro email de um amigo. Escolha o tipo e veja quem vence! Eu aposto em você.", placement: "bottom" },
+    { target: '[data-tutorial="desafios-tabs"]', title: "📊 Acompanhe seus Desafios", description: "Navegue entre desafios ativos, enviados e histórico. Cada vitória rende XP e glória! Bora competir!", placement: "bottom" },
   ],
 };
 
@@ -128,7 +134,6 @@ const CategoryIntro = () => {
     const visited = getVisited();
     if (visited.includes(categoryPath)) return;
 
-    // Wait briefly for category UI mount
     const timer = setTimeout(() => {
       setSteps(stepsForCategory);
       setCurrentStep(0);
@@ -164,40 +169,21 @@ const CategoryIntro = () => {
     };
   }, []);
 
-  const computeTooltip = useCallback((rect: DOMRect, placement: string) => {
-    const tooltipW = Math.min(320, window.innerWidth - 32);
-    const tooltipH = 200;
+  const computeTooltip = useCallback(() => {
+    const tooltipW = Math.min(340, window.innerWidth - 32);
     const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const style: React.CSSProperties = { position: "fixed", width: tooltipW, zIndex: 10002 };
+    const agathaPosRight = 16;
+    const agathaWidth = 160;
+    const agathaCenterX = vw - agathaPosRight - agathaWidth / 2;
 
-    const centerX = rect.left + rect.width / 2;
-    let top = 0;
-    let left = 0;
+    const style: React.CSSProperties = {
+      position: "fixed",
+      width: tooltipW,
+      zIndex: 10002,
+      bottom: 200,
+      left: Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8)),
+    };
 
-    // Try requested placement, then fallback
-    const canBottom = rect.bottom + 12 + tooltipH < vh;
-    const canTop = rect.top - 12 - tooltipH > 0;
-
-    if (placement === "bottom" && canBottom) {
-      top = rect.bottom + 12;
-      left = centerX - tooltipW / 2;
-    } else if (placement === "top" && canTop) {
-      top = rect.top - 12 - tooltipH;
-      left = centerX - tooltipW / 2;
-    } else if (canBottom) {
-      top = rect.bottom + 12;
-      left = centerX - tooltipW / 2;
-    } else if (canTop) {
-      top = rect.top - 12 - tooltipH;
-      left = centerX - tooltipW / 2;
-    } else {
-      top = vh / 2 - tooltipH / 2;
-      left = vw / 2 - tooltipW / 2;
-    }
-
-    style.top = Math.max(8, Math.min(top, vh - tooltipH - 8));
-    style.left = Math.max(8, Math.min(left, vw - tooltipW - 8));
     return style;
   }, []);
 
@@ -214,7 +200,6 @@ const CategoryIntro = () => {
         setTimeout(findAndHighlight, RETRY_INTERVAL);
         return;
       }
-      // Skip step
       retryCountRef.current = 0;
       if (currentStep < steps.length - 1) {
         setCurrentStep(prev => prev + 1);
@@ -227,16 +212,13 @@ const CategoryIntro = () => {
     retryCountRef.current = 0;
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // Use IntersectionObserver to wait until element is visible, then measure
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
           observer.disconnect();
-          // Small extra delay for scroll to settle
           setTimeout(() => {
-            const rect = el.getBoundingClientRect();
             setTargetRect(updateRect(el));
-            setTooltipStyle(computeTooltip(rect, step.placement || "bottom"));
+            setTooltipStyle(computeTooltip());
           }, 200);
         }
       },
@@ -244,12 +226,10 @@ const CategoryIntro = () => {
     );
     observer.observe(el);
 
-    // Fallback if observer doesn't trigger
     setTimeout(() => {
       observer.disconnect();
-      const rect = el.getBoundingClientRect();
       setTargetRect(updateRect(el));
-      setTooltipStyle(computeTooltip(rect, step.placement || "bottom"));
+      setTooltipStyle(computeTooltip());
     }, 800);
   }, [steps, currentStep, active, dismiss, updateRect, computeTooltip]);
 
@@ -272,9 +252,8 @@ const CategoryIntro = () => {
       if (!el) return;
       cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
         setTargetRect(updateRect(el));
-        setTooltipStyle(computeTooltip(rect, step.placement || "bottom"));
+        setTooltipStyle(computeTooltip());
       });
     };
 
@@ -312,13 +291,18 @@ const CategoryIntro = () => {
   if (!active || !steps.length) return null;
 
   const stepData = steps[currentStep];
+  const showContent = isVisible && targetRect;
 
   return (
     <div className="fixed inset-0 z-[10000]" style={{ pointerEvents: "none" }}>
-      {/* Overlay */}
+      {/* Dark overlay with cutout */}
       <svg
-        className="fixed inset-0 w-full h-full transition-opacity duration-300"
-        style={{ opacity: isVisible ? 1 : 0, pointerEvents: "auto" }}
+        className="fixed inset-0 w-full h-full"
+        style={{
+          opacity: showContent ? 1 : 0,
+          transition: "opacity 0.4s ease",
+          pointerEvents: showContent ? "auto" : "none",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <defs>
@@ -341,7 +325,7 @@ const CategoryIntro = () => {
           y="0"
           width="100%"
           height="100%"
-          fill="rgba(0,0,0,0.7)"
+          fill="hsl(var(--background) / 0.82)"
           mask="url(#cat-spotlight-mask)"
         />
       </svg>
@@ -349,26 +333,35 @@ const CategoryIntro = () => {
       {/* Glow border */}
       {targetRect && (
         <div
-          className="fixed rounded-xl border-2 border-accent shadow-[0_0_24px_hsl(var(--accent)/0.4)] transition-all duration-300 pointer-events-none"
+          className="fixed rounded-xl border-2 border-accent shadow-[0_0_24px_hsl(var(--accent)/0.4)] pointer-events-none"
           style={{
             top: targetRect.top,
             left: targetRect.left,
             width: targetRect.width,
             height: targetRect.height,
+            opacity: showContent ? 1 : 0,
+            transition: "all 0.5s ease, opacity 0.4s ease",
           }}
         />
       )}
 
-      {/* Tooltip */}
+      {/* Speech bubble tooltip — positioned above Agatha */}
       <div
-        className="bg-card border border-border rounded-xl shadow-2xl p-5 transition-all duration-300"
+        className="bg-card border border-accent/30 rounded-2xl shadow-2xl p-5 relative"
         style={{
           ...tooltipStyle,
-          pointerEvents: "auto",
-          opacity: isVisible && targetRect ? 1 : 0,
-          transform: isVisible && targetRect ? "translateY(0)" : "translateY(8px)",
+          pointerEvents: showContent ? "auto" : "none",
+          opacity: showContent ? 1 : 0,
+          transform: showContent ? "translateY(0) scale(1)" : "translateY(20px) scale(0.95)",
+          transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       >
+        {/* Speech bubble tail pointing down toward Agatha */}
+        <div
+          className="absolute -bottom-3 right-16 w-6 h-6 bg-card border-b border-r border-accent/30 rotate-45"
+          style={{ zIndex: -1 }}
+        />
+
         {/* Step dots */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex gap-1 overflow-hidden flex-1 mr-3">
@@ -393,7 +386,7 @@ const CategoryIntro = () => {
           </button>
         </div>
 
-        <h4 className="text-base font-serif font-semibold mb-1.5">{stepData.title}</h4>
+        <h4 className="text-base font-serif font-semibold mb-1.5 text-accent">{stepData.title}</h4>
         <p className="text-sm text-muted-foreground leading-relaxed mb-4">
           {stepData.description}
         </p>
@@ -420,12 +413,26 @@ const CategoryIntro = () => {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </>
               ) : (
-                "Entendi!"
+                "Entendi! 🎉"
               )}
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Agatha mascot — bottom right */}
+      <img
+        src={agathaMascot}
+        alt="Agatha, guia do tutorial"
+        className="fixed bottom-0 right-4 z-[10003] pointer-events-none select-none"
+        style={{
+          width: 160,
+          height: "auto",
+          transform: showContent ? "translateY(0)" : "translateY(110%)",
+          opacity: showContent ? 1 : 0,
+          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease",
+        }}
+      />
     </div>
   );
 };
