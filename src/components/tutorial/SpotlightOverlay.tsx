@@ -32,6 +32,7 @@ const SpotlightOverlay = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [isDelayLocked, setIsDelayLocked] = useState(false);
+  const [agathaSide, setAgathaSide] = useState<"right" | "left">("right");
   const retryCountRef = useRef(0);
 
   // Handle minDelay lock per step
@@ -43,6 +44,14 @@ const SpotlightOverlay = () => {
     setIsDelayLocked(true);
     const t = setTimeout(() => setIsDelayLocked(false), currentStepData.minDelay);
     return () => clearTimeout(t);
+  }, [currentStep, currentStepData]);
+
+  // Determine which side Agatha should be on based on step placement
+  useEffect(() => {
+    if (!currentStepData) return;
+    // Steps with placement "left" mean the target is on the right — move Agatha left
+    const shouldBeLeft = currentStepData.placement === "left";
+    setAgathaSide(shouldBeLeft ? "left" : "right");
   }, [currentStep, currentStepData]);
 
   // Handle mount/unmount with exit animation
@@ -95,21 +104,27 @@ const SpotlightOverlay = () => {
       };
       setTargetRect(newRect);
 
-      // Tooltip positioned above Agatha (bottom-right speech bubble)
+      // Tooltip positioned above Agatha — dynamic side
       const tooltipW = 340;
       const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const agathaPosRight = 16;
       const agathaWidth = 160;
-      const agathaCenterX = vw - agathaPosRight - agathaWidth / 2;
+      const agathaMargin = 16;
+
+      let tooltipLeft: number;
+      if (agathaSide === "left") {
+        const agathaCenterX = agathaMargin + agathaWidth / 2;
+        tooltipLeft = Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8));
+      } else {
+        const agathaCenterX = vw - agathaMargin - agathaWidth / 2;
+        tooltipLeft = Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8));
+      }
 
       let style: React.CSSProperties = {
         position: "fixed",
         width: tooltipW,
         zIndex: 10002,
-        // Position above Agatha
         bottom: 200,
-        left: Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8)),
+        left: tooltipLeft,
       };
 
       setTooltipStyle(style);
@@ -117,7 +132,7 @@ const SpotlightOverlay = () => {
 
     updatePosition();
     setTimeout(updatePosition, 150);
-  }, [currentStepData, location.pathname, navigate, nextStep]);
+  }, [currentStepData, location.pathname, navigate, nextStep, agathaSide]);
 
   useEffect(() => {
     if (!isActive || !currentStepData) return;
@@ -223,7 +238,9 @@ const SpotlightOverlay = () => {
       >
         {/* Speech bubble tail pointing down toward Agatha */}
         <div
-          className="absolute -bottom-3 right-16 w-6 h-6 bg-card border-b border-r border-accent/30 rotate-45"
+          className={`absolute -bottom-3 w-6 h-6 bg-card border-b border-r border-accent/30 rotate-45 transition-all duration-500 ${
+            agathaSide === "left" ? "left-16" : "right-16"
+          }`}
           style={{ zIndex: -1 }}
         />
 
@@ -294,17 +311,20 @@ const SpotlightOverlay = () => {
         </div>
       </div>
 
-      {/* Agatha mascot — bottom right with proper exit animation */}
+      {/* Agatha mascot — dynamic side with smooth animation */}
       <img
         src={agathaMascot}
         alt="Agatha, guia do tutorial"
-        className="fixed bottom-0 right-4 z-[10003] pointer-events-none select-none"
+        className="fixed bottom-0 z-[10003] pointer-events-none select-none"
         style={{
           width: 160,
           height: "auto",
-          transform: showOverlay ? "translateY(0)" : "translateY(110%)",
+          left: agathaSide === "left" ? 16 : `calc(100vw - 176px)`,
+          transform: showOverlay
+            ? (agathaSide === "left" ? "translateY(0) scaleX(-1)" : "translateY(0) scaleX(1)")
+            : `translateY(110%) ${agathaSide === "left" ? "scaleX(-1)" : "scaleX(1)"}`,
           opacity: showOverlay ? 1 : 0,
-          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease",
+          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease, left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       />
     </div>
