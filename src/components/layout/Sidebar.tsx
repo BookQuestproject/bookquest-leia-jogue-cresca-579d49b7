@@ -141,6 +141,32 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
           Premium
         </p>
         {premiumItems.map((item) => renderItem(item, true))}
+
+        {/* Admin EDU section */}
+        {isAdmin && (
+          <>
+            <div className="my-3 mx-3 border-t border-border/30" />
+            <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-blue-400/60">
+              Educacional
+            </p>
+            <Link
+              to="/edu"
+              className={`
+                group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-200
+                ${location.pathname.startsWith("/edu")
+                  ? "text-foreground bg-sidebar-accent"
+                  : "text-muted-foreground/70 hover:text-foreground hover:bg-sidebar-accent/50"
+                }
+              `}
+            >
+              {location.pathname.startsWith("/edu") && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-accent" />
+              )}
+              <GraduationCap className={`w-[18px] h-[18px] flex-shrink-0 transition-colors ${location.pathname.startsWith("/edu") ? "text-accent" : ""}`} />
+              <span className="truncate">BookQuest EDU</span>
+            </Link>
+          </>
+        )}
       </nav>
 
       {/* Bottom section */}

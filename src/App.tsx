@@ -32,6 +32,10 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
+import EduDashboard from "./pages/edu/EduDashboard";
+import EduTurmas from "./pages/edu/EduTurmas";
+import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
+import EduRelatorios from "./pages/edu/EduRelatorios";
 
 // App configuration
 const queryClient = new QueryClient();
@@ -71,6 +75,10 @@ const App = () => (
                 <Route path="/noticias" element={<Noticias />} />
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/edu" element={<EduDashboard />} />
+                <Route path="/edu/turmas" element={<EduTurmas />} />
+                <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
+                <Route path="/edu/relatorios" element={<EduRelatorios />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
               </QuizGate>

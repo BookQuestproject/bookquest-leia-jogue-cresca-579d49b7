@@ -104,6 +104,77 @@ export type Database = {
         }
         Relationships: []
       }
+      class_members: {
+        Row: {
+          class_id: string
+          id: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          class_id: string
+          id?: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          class_id?: string
+          id?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_members_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          access_code: string
+          book_id: string | null
+          book_title: string | null
+          created_at: string
+          grade: string | null
+          id: string
+          is_active: boolean
+          name: string
+          reading_deadline: string | null
+          teacher_id: string
+          updated_at: string
+        }
+        Insert: {
+          access_code: string
+          book_id?: string | null
+          book_title?: string | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          reading_deadline?: string | null
+          teacher_id: string
+          updated_at?: string
+        }
+        Update: {
+          access_code?: string
+          book_id?: string | null
+          book_title?: string | null
+          created_at?: string
+          grade?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          reading_deadline?: string | null
+          teacher_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       group_session_participants: {
         Row: {
           attended: boolean | null
@@ -459,6 +530,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_class_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
