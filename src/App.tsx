@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileProvider } from "@/hooks/useProfile";
 import { TutorialProvider } from "@/contexts/TutorialContext";
-import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
+import AgathaTutorial from "@/components/tutorial/AgathaTutorial";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
 import Landing from "./pages/Landing";
@@ -44,7 +44,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <TutorialProvider>
-              <SpotlightOverlay />
+              <AgathaTutorial />
               <CategoryIntro />
               <QuizGate>
                 <Routes>
