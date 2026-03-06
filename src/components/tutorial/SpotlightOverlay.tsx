@@ -104,21 +104,27 @@ const SpotlightOverlay = () => {
       };
       setTargetRect(newRect);
 
-      // Tooltip positioned above Agatha (bottom-right speech bubble)
+      // Tooltip positioned above Agatha — dynamic side
       const tooltipW = 340;
       const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const agathaPosRight = 16;
       const agathaWidth = 160;
-      const agathaCenterX = vw - agathaPosRight - agathaWidth / 2;
+      const agathaMargin = 16;
+
+      let tooltipLeft: number;
+      if (agathaSide === "left") {
+        const agathaCenterX = agathaMargin + agathaWidth / 2;
+        tooltipLeft = Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8));
+      } else {
+        const agathaCenterX = vw - agathaMargin - agathaWidth / 2;
+        tooltipLeft = Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8));
+      }
 
       let style: React.CSSProperties = {
         position: "fixed",
         width: tooltipW,
         zIndex: 10002,
-        // Position above Agatha
         bottom: 200,
-        left: Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8)),
+        left: tooltipLeft,
       };
 
       setTooltipStyle(style);
