@@ -33,6 +33,7 @@ import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
 
+// App configuration
 const queryClient = new QueryClient();
 
 const App = () => (
