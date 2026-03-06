@@ -177,6 +177,90 @@ const obrasVestibular: ObraVestibular[] = [
       { titulo: "O exílio", resumo: "Iracema abandona sua tribo por amor a Martim." },
     ],
   },
+  {
+    id: "o-alienista", titulo: "O Alienista", autor: "Machado de Assis",
+    vestibulares: ["fuvest", "unicamp", "unesp"],
+    genero: "Conto / Novela Realista",
+    contextoHistorico: "Publicado em 1882, é uma sátira ao cientificismo e ao poder autoritário. Machado de Assis critica a linha tênue entre razão e loucura, questionando os limites da ciência.",
+    temasRedacao: ["ciência e poder", "loucura vs razão", "autoritarismo", "relativismo", "crítica social"],
+    frasesImportantes: [
+      "A loucura, objeto dos meus estudos, era até agora uma ilha perdida no oceano da razão; começo a suspeitar que é um continente.",
+      "Suponho que o senhor não contesta que esta moça está louca. Está vestida de uma maneira fora do comum.",
+    ],
+    capitulos: [
+      { titulo: "A chegada de Simão Bacamarte", resumo: "O médico retorna a Itaguaí com o projeto de estudar a loucura e funda a Casa Verde." },
+      { titulo: "A Casa Verde", resumo: "O asilo cresce descontroladamente, internando cada vez mais cidadãos sob critérios arbitrários." },
+      { titulo: "A Revolta", resumo: "O barbeiro Porfírio lidera uma rebelião contra Bacamarte, mas acaba internado." },
+      { titulo: "O desfecho", resumo: "Bacamarte inverte seus critérios e, ao final, interna a si mesmo como o único louco verdadeiro." },
+    ],
+  },
+  {
+    id: "sao-bernardo", titulo: "São Bernardo", autor: "Graciliano Ramos",
+    vestibulares: ["fuvest", "unicamp", "ufmg"],
+    genero: "Romance Regionalista / Modernista",
+    contextoHistorico: "Publicado em 1934, no contexto da Segunda Fase do Modernismo. Retrata a brutalidade do sistema patriarcal e latifundiário do Nordeste brasileiro.",
+    temasRedacao: ["patriarcalismo", "violência doméstica", "coisificação humana", "capitalismo rural", "solidão"],
+    frasesImportantes: [
+      "Fiz coisas boas e coisas ruins; fiz coisas ruins como quem faz coisas boas.",
+      "Cinquenta anos perdidos, cinquenta anos gastos sem objetivo, a toa.",
+    ],
+    capitulos: [
+      { titulo: "A ascensão de Paulo Honório", resumo: "Ex-guia de cego narra como se tornou dono da fazenda São Bernardo através de métodos violentos." },
+      { titulo: "O casamento com Madalena", resumo: "Paulo Honório se casa com a professora Madalena, esperando que ela seja mais uma de suas posses." },
+      { titulo: "O ciúme e a tragédia", resumo: "O ciúme doentio de Paulo Honório sufoca Madalena, levando-a ao suicídio." },
+      { titulo: "A solidão", resumo: "Sozinho e destruído, Paulo Honório tenta encontrar sentido escrevendo suas memórias." },
+    ],
+  },
+  {
+    id: "angustia", titulo: "Angústia", autor: "Graciliano Ramos",
+    vestibulares: ["fuvest", "ufmg"],
+    genero: "Romance Psicológico",
+    contextoHistorico: "Publicado em 1936, é uma obra da Segunda Geração Modernista. Explora a mente atormentada de um funcionário público em Maceió, mesclando realidade e delírio.",
+    temasRedacao: ["alienação", "ciúme", "loucura", "classe social", "violência psicológica"],
+    frasesImportantes: [
+      "Levanto-me, bebo café, passo o dia escrevendo coisas que me repugnam.",
+      "As mãos sujas, mãos de assassino...",
+    ],
+    capitulos: [
+      { titulo: "Luís da Silva", resumo: "Apresentação do protagonista, um escritor frustrado e funcionário público que vive uma existência medíocre." },
+      { titulo: "Marina", resumo: "Luís se apaixona pela vizinha Marina, que o troca pelo rico e superficial Julião Tavares." },
+      { titulo: "A obsessão", resumo: "Consumido por ciúme e ódio, Luís mergulha em delírios e memórias fragmentadas da infância." },
+      { titulo: "O crime", resumo: "Luís assassina Julião Tavares e é tomado pelo remorso e pela paranoia." },
+    ],
+  },
+  {
+    id: "a-moreninha", titulo: "A Moreninha", autor: "Joaquim Manuel de Macedo",
+    vestibulares: ["unesp", "ufmg"],
+    genero: "Romance Romântico",
+    contextoHistorico: "Publicado em 1844, é considerado o primeiro romance brasileiro de sucesso. Representa o Romantismo urbano com idealização amorosa e costumes da sociedade carioca.",
+    temasRedacao: ["amor idealizado", "costumes sociais", "juventude", "romantismo brasileiro"],
+    frasesImportantes: [
+      "É ela! É ela! É ela! É ela!",
+      "A paixão é como a onda: vai e vem, e cada vez que vem, vem mais forte.",
+    ],
+    capitulos: [
+      { titulo: "A aposta", resumo: "Augusto, estudante de medicina, aposta com amigos que nunca se apaixonará, pois é namorador inconstante." },
+      { titulo: "A ilha de Paquetá", resumo: "Durante um fim de semana na ilha, Augusto conhece Carolina, a Moreninha, e se apaixona perdidamente." },
+      { titulo: "O breve e a promessa", resumo: "Augusto descobre que ele e Carolina já haviam se prometido na infância através de um breve." },
+    ],
+  },
+  {
+    id: "luciola", titulo: "Lucíola", autor: "José de Alencar",
+    vestibulares: ["fuvest", "unesp"],
+    genero: "Romance Urbano Romântico",
+    contextoHistorico: "Publicado em 1862, é um perfil de mulher que explora a dualidade entre pureza e pecado na sociedade carioca do Segundo Reinado. José de Alencar critica a hipocrisia moral da elite.",
+    temasRedacao: ["moralidade", "hipocrisia social", "redenção", "prostituição", "amor e sacrifício"],
+    frasesImportantes: [
+      "Quem sabe? A sociedade grande inventou um grande número de pecados que não estão no catecismo.",
+      "Eu não sou Lúcia; sou Lucíola, a borboleta de fogo.",
+    ],
+    capitulos: [
+      { titulo: "O encontro no Glória", resumo: "Paulo, jovem provinciano, avista Lúcia pela primeira vez e confunde-a com uma moça de família." },
+      { titulo: "A revelação", resumo: "Paulo descobre que Lúcia é uma cortesã famosa no Rio de Janeiro, mas não consegue afastar-se." },
+      { titulo: "A transformação", resumo: "O amor de Paulo desperta em Lúcia a pureza de Maria da Glória, seu verdadeiro nome." },
+      { titulo: "O sacrifício", resumo: "Lúcia adoece e morre, redimida pelo amor, carregando o filho que perdeu como símbolo de sua redenção." },
+    ],
+  },
 ];
 
 const VESTIBULARES = [
