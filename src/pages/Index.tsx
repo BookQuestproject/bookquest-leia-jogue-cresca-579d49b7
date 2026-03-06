@@ -12,6 +12,7 @@ import MobileHome from "@/components/mobile/MobileHome";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
 import StreakFlame from "@/components/StreakFlame";
+import { ReadingPlanCard } from "@/components/ReadingPlanWidget";
 import {
   Dialog,
   DialogContent,
@@ -540,6 +541,9 @@ const Index = () => {
                 ))}
               </div>
             </div>
+
+            {/* Reading Plan Card */}
+            <ReadingPlanCard />
 
             {/* Quiz Link */}
             <Link
