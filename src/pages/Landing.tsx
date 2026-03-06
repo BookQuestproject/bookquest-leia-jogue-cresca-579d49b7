@@ -238,49 +238,64 @@ const Landing = () => {
           className="py-24 sm:py-32 px-6 bg-card/50"
         >
           <div
-            className={`max-w-4xl mx-auto transition-all duration-700 ${
+            className={`max-w-5xl mx-auto transition-all duration-700 ${
               isVisible("recognition") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
+            {/* Header */}
             <div className="text-center mb-14">
-              <p className="text-sm uppercase tracking-[0.2em] text-accent mb-4 font-medium">
+              <span className="inline-block text-[11px] uppercase tracking-[0.25em] text-accent font-bold bg-accent/10 px-4 py-1.5 rounded-full mb-5">
                 Validação
-              </p>
+              </span>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold">
                 Reconhecimento e impacto real
               </h2>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-6">
-              {/* Pitch card */}
-              <div className="p-8 rounded-2xl border border-accent/20 bg-accent/[0.04] flex flex-col items-center text-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center">
-                  <Trophy className="w-7 h-7 text-accent" />
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+              {/* Card 1 – Conquista */}
+              <div className="rounded-2xl border border-accent/20 bg-primary/60 shadow-lg shadow-primary/20 overflow-hidden flex flex-col">
+                {/* Top visual area */}
+                <div className="flex flex-col items-center justify-center py-10 px-8 bg-accent/[0.06] border-b border-accent/10">
+                  <div className="w-16 h-16 rounded-full bg-accent/15 flex items-center justify-center mb-4 ring-4 ring-accent/10">
+                    <Trophy className="w-8 h-8 text-accent" />
+                  </div>
+                  <p className="text-3xl font-bold text-accent">+150</p>
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">projetos superados</p>
                 </div>
-                <h3 className="text-xl font-serif font-bold">Batalha de Pitch 2025</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Vencedor entre mais de <span className="text-foreground font-semibold">150 projetos</span> participantes, validando a proposta e o potencial da plataforma.
-                </p>
+                {/* Content */}
+                <div className="p-7 flex flex-col flex-1 text-center">
+                  <h3 className="text-xl font-serif font-bold mb-3">Batalha de Pitch 2025</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Projeto vencedor entre mais de{" "}
+                    <span className="text-accent font-semibold">150 projetos</span>, validando o potencial do BookQuest como solução inovadora para incentivar a leitura entre jovens.
+                  </p>
+                </div>
               </div>
 
-              {/* Premiação photo */}
-              <div className="rounded-2xl border border-border/40 bg-background/50 overflow-hidden flex flex-col">
-                <img
-                  src={premiacaoImg}
-                  alt="Equipe BookQuest recebendo premiação de 1º lugar na Batalha de Pitch 2025"
-                  className="w-full h-48 sm:h-56 object-cover"
-                />
-                <div className="p-6 text-center">
-                  <h3 className="text-xl font-serif font-bold">Momento da premiação</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-                    A equipe BookQuest no palco recebendo o prêmio de <span className="text-foreground font-semibold">1º lugar</span> na Batalha de Pitch 2025.
+              {/* Card 2 – Premiação */}
+              <div className="rounded-2xl border border-accent/20 bg-primary/60 shadow-lg shadow-primary/20 overflow-hidden flex flex-col">
+                {/* Image */}
+                <div className="overflow-hidden">
+                  <img
+                    src={premiacaoImg}
+                    alt="Equipe BookQuest recebendo premiação de 1º lugar na Batalha de Pitch 2025"
+                    className="w-full h-52 sm:h-56 object-cover"
+                  />
+                </div>
+                {/* Content */}
+                <div className="p-7 flex flex-col flex-1 text-center">
+                  <h3 className="text-xl font-serif font-bold mb-3">Momento da premiação</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    A equipe BookQuest recebendo o prêmio de{" "}
+                    <span className="text-accent font-semibold">1º lugar</span> na Batalha de Pitch 2025, competição que reuniu mais de 150 projetos inovadores.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* UFU mention */}
-            <p className="text-center text-sm text-muted-foreground/70 mt-8">
+            <p className="text-center text-sm text-muted-foreground/70 mt-10">
               Projeto com apoio acadêmico da{" "}
               <span className="text-foreground/80 font-medium">
                 Universidade Federal de Uberlândia (UFU)
