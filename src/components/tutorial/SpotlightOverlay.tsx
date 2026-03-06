@@ -73,8 +73,8 @@ const SpotlightOverlay = () => {
         return;
       }
       retryCountRef.current += 1;
-      if (retryCountRef.current < 10) {
-        setTimeout(findAndHighlight, 250);
+      if (retryCountRef.current < 20) {
+        setTimeout(findAndHighlight, 300);
         return;
       }
       retryCountRef.current = 0;
@@ -156,6 +156,7 @@ const SpotlightOverlay = () => {
   if (!shouldRender) return null;
 
   const showContent = isVisible && targetRect;
+  const showOverlay = isVisible && targetRect;
 
   return (
     <div className="fixed inset-0 z-[10000]" style={{ pointerEvents: "none" }}>
@@ -163,9 +164,9 @@ const SpotlightOverlay = () => {
       <svg
         className="fixed inset-0 w-full h-full"
         style={{
-          opacity: isVisible ? 1 : 0,
+          opacity: showOverlay ? 1 : 0,
           transition: "opacity 0.4s ease",
-          pointerEvents: isVisible ? "auto" : "none",
+          pointerEvents: showOverlay ? "auto" : "none",
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -203,7 +204,7 @@ const SpotlightOverlay = () => {
             left: targetRect.left,
             width: targetRect.width,
             height: targetRect.height,
-            opacity: isVisible ? 1 : 0,
+            opacity: showOverlay ? 1 : 0,
             transition: "all 0.5s ease, opacity 0.4s ease",
           }}
         />
@@ -301,8 +302,8 @@ const SpotlightOverlay = () => {
         style={{
           width: 160,
           height: "auto",
-          transform: isVisible ? "translateY(0)" : "translateY(110%)",
-          opacity: isVisible ? 1 : 0,
+          transform: showOverlay ? "translateY(0)" : "translateY(110%)",
+          opacity: showOverlay ? 1 : 0,
           transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease",
         }}
       />
