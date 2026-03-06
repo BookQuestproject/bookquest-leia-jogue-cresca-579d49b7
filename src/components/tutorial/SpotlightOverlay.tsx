@@ -132,7 +132,7 @@ const SpotlightOverlay = () => {
 
     updatePosition();
     setTimeout(updatePosition, 150);
-  }, [currentStepData, location.pathname, navigate, nextStep]);
+  }, [currentStepData, location.pathname, navigate, nextStep, agathaSide]);
 
   useEffect(() => {
     if (!isActive || !currentStepData) return;
