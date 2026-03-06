@@ -49,7 +49,7 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    if (!loading && user) navigate('/home');
+    if (!loading && user) navigate('/quiz-onboarding');
   }, [user, loading, navigate]);
 
   const validateForm = () => {
@@ -85,7 +85,7 @@ const Auth = () => {
           toast({ title: 'Erro', description: message, variant: 'destructive' });
         } else {
           toast({ title: 'Bem-vindo de volta!', description: 'Login realizado com sucesso' });
-          navigate('/home');
+          navigate('/quiz-onboarding');
         }
       } else {
         const { error } = await signUp(email, password);
@@ -96,7 +96,7 @@ const Auth = () => {
           toast({ title: 'Erro', description: message, variant: 'destructive' });
         } else {
           toast({ title: 'Conta criada!', description: 'Sua jornada literária começa agora' });
-          navigate('/home');
+          navigate('/quiz-onboarding');
         }
       }
     } catch {

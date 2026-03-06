@@ -42,7 +42,7 @@ const allSteps: TutorialStep[] = [
     description: "Bem-vindo ao BookQuest! Vou te mostrar como aproveitar a plataforma e transformar leitura em uma aventura incrível!",
     route: "/home",
     placement: "bottom",
-    minDelay: 5000,
+    minDelay: 0,
   },
   {
     target: '[data-tutorial="sidebar-nav"]',
