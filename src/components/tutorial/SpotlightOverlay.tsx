@@ -311,17 +311,21 @@ const SpotlightOverlay = () => {
         </div>
       </div>
 
-      {/* Agatha mascot — bottom right with proper exit animation */}
+      {/* Agatha mascot — dynamic side with smooth animation */}
       <img
         src={agathaMascot}
         alt="Agatha, guia do tutorial"
-        className="fixed bottom-0 right-4 z-[10003] pointer-events-none select-none"
+        className="fixed bottom-0 z-[10003] pointer-events-none select-none"
         style={{
           width: 160,
           height: "auto",
-          transform: showOverlay ? "translateY(0)" : "translateY(110%)",
+          [agathaSide === "left" ? "left" : "right"]: 16,
+          [agathaSide === "left" ? "right" : "left"]: "auto",
+          transform: showOverlay
+            ? (agathaSide === "left" ? "translateY(0) scaleX(-1)" : "translateY(0) scaleX(1)")
+            : "translateY(110%)",
           opacity: showOverlay ? 1 : 0,
-          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease",
+          transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease, left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       />
     </div>
