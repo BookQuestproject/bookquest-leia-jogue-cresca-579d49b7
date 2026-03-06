@@ -115,7 +115,7 @@ const Desafios = () => {
   return (
     <Layout isPremium={isPremium}>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between" data-tutorial="desafios-header">
           <div>
             <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
               <Swords className="h-7 w-7 text-accent" />
@@ -123,7 +123,7 @@ const Desafios = () => {
             </h1>
             <p className="text-sm text-muted-foreground mt-1">Desafie amigos e colegas de turma</p>
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-primary hover:bg-primary/80">
+          <Button onClick={() => setIsCreateOpen(true)} className="bg-primary hover:bg-primary/80" data-tutorial="desafios-create">
             <Send className="h-4 w-4 mr-2" />
             Novo Desafio
           </Button>
@@ -141,7 +141,7 @@ const Desafios = () => {
           </div>
         )}
 
-        <Tabs defaultValue="active" className="w-full">
+        <Tabs defaultValue="active" className="w-full" data-tutorial="desafios-tabs">
           <TabsList className="bg-muted/50">
             <TabsTrigger value="active">Ativos ({active.length})</TabsTrigger>
             <TabsTrigger value="sent">Enviados ({sent.length})</TabsTrigger>
