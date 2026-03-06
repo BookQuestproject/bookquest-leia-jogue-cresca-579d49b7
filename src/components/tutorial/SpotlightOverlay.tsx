@@ -238,7 +238,9 @@ const SpotlightOverlay = () => {
       >
         {/* Speech bubble tail pointing down toward Agatha */}
         <div
-          className="absolute -bottom-3 right-16 w-6 h-6 bg-card border-b border-r border-accent/30 rotate-45"
+          className={`absolute -bottom-3 w-6 h-6 bg-card border-b border-r border-accent/30 rotate-45 transition-all duration-500 ${
+            agathaSide === "left" ? "left-16" : "right-16"
+          }`}
           style={{ zIndex: -1 }}
         />
 
