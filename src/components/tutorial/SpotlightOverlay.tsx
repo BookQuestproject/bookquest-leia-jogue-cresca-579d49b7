@@ -239,9 +239,9 @@ const SpotlightOverlay = () => {
                 key={i}
                 className={`h-1.5 rounded-full transition-all duration-300 flex-shrink-0 ${
                   i === currentStep
-                    ? "w-4 bg-secondary"
+                    ? "w-4 bg-accent"
                     : i < currentStep
-                    ? "w-2 bg-secondary/50"
+                    ? "w-2 bg-accent/50"
                     : "w-2 bg-muted"
                 }`}
               />
@@ -275,7 +275,7 @@ const SpotlightOverlay = () => {
             <Button
               size="sm"
               onClick={nextStep}
-              className="gap-1 bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              className="gap-1 bg-accent text-accent-foreground hover:bg-accent/90"
             >
               {currentStep < totalSteps - 1 ? (
                 <>
