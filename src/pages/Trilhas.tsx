@@ -520,13 +520,10 @@ const Trilhas = () => {
   const filteredTrails = useMemo(() => {
     const userSelected = bookTrails.filter(b => isInMyTrails(b.title));
     const quizOnly = bookTrails.filter(b => isQuizRecommended(b.title) && !isInMyTrails(b.title));
-    const combined = [...quizOnly, ...userSelected];
-    // If user has no trails and no quiz recommendations, show all (first visit)
-    if (combined.length === 0) return bookTrails;
-    return combined;
+    return [...quizOnly, ...userSelected];
   }, [isInMyTrails, quizRecommendations]);
 
-  const hasPersonalTrails = filteredTrails.length !== bookTrails.length;
+  
 
   const handleSelectTrail = (book: BookTrail) => {
     setActiveTrail({
@@ -910,11 +907,36 @@ const Trilhas = () => {
           <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Biblioteca de Jornadas</p>
           <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Trilhas Literárias</h1>
           <p className="text-muted-foreground max-w-xl">
-            {hasPersonalTrails 
+            {filteredTrails.length > 0 
               ? "Suas trilhas personalizadas. Adicione mais livros pela Biblioteca."
-              : "Cada trilha representa uma jornada através de um livro. Adicione livros da Biblioteca às suas trilhas."}
+              : "Você ainda não tem trilhas. Faça o quiz ou adicione livros pela Biblioteca."}
           </p>
         </header>
+
+        {/* Empty state */}
+        {filteredTrails.length === 0 && (
+          <div className="text-center py-16 animate-fade-in">
+            <BookOpen className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-xl font-serif font-semibold mb-2">Nenhuma trilha ainda</h3>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              Faça o quiz literário para receber recomendações ou acesse a Biblioteca e adicione livros às suas trilhas.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Link to="/quiz-onboarding">
+                <Button variant="default" className="gap-2">
+                  <Play className="w-4 h-4" />
+                  Fazer o Quiz
+                </Button>
+              </Link>
+              <Link to="/biblioteca">
+                <Button variant="outline" className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Ir à Biblioteca
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Books Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-tutorial="trilhas-grid">
@@ -989,7 +1011,7 @@ const Trilhas = () => {
                   )}
 
                   {/* Remove from trails button */}
-                  {hasPersonalTrails && !isQuiz && (
+                  {!isQuiz && (
                     <button
                       onClick={(e) => {
                         e.preventDefault();

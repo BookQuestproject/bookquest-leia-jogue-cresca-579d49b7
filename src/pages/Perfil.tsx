@@ -1,5 +1,6 @@
 import { BookOpen, Star, Crown, Settings, Edit2, Clock, CheckCircle, Camera } from "lucide-react";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
@@ -20,6 +21,7 @@ const readingHistory = [
 ];
 
 const Perfil = () => {
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { profile, isPremium, loading: profileLoading, refreshProfile } = useProfile();
   const { stats, loading: statsLoading, formatTime } = useReadingStats();
@@ -255,7 +257,13 @@ const Perfil = () => {
                 Identificado pelo quiz literário
               </p>
             </div>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate("/premium")}
+              className="gap-1"
+            >
+              <Crown className="w-3.5 h-3.5 text-accent" />
               Refazer quiz
             </Button>
           </div>
