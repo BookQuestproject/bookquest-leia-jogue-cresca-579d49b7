@@ -449,6 +449,15 @@ const Quiz = () => {
     );
   };
 
+  const showGuidedReading = profile.level === "iniciante" || profile.level === "intermediario";
+
+  const getReadingPlan = (book: BookRecommendation) => {
+    const pagesPerMinute = 0.5;
+    const dailyPages = Math.max(1, Math.round(profile.timePerDay * pagesPerMinute));
+    const totalDays = Math.ceil(book.pages / dailyPages);
+    return { dailyPages, totalDays };
+  };
+
   const renderResultStep = () => {
     const genre = genreInfo[resultGenre];
     const recommendedBooks = getRecommendedBooks();
@@ -472,16 +481,47 @@ const Quiz = () => {
           <div className="border-t border-white/[0.08] pt-6">
             <h3 className="font-bold mb-4">📚 Livros recomendados para você:</h3>
             <div className="grid gap-3">
-              {recommendedBooks.map((book, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.06]">
-                  <BookOpen className="w-5 h-5 text-accent flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{book.title}</p>
-                    <p className="text-xs text-white/50">{book.author} • {book.pages} páginas</p>
+              {recommendedBooks.map((book, index) => {
+                const plan = showGuidedReading ? getReadingPlan(book) : null;
+                return (
+                  <div key={index} className="rounded-xl bg-white/[0.06] overflow-hidden">
+                    <div className="flex items-center gap-3 p-3">
+                      <BookOpen className="w-5 h-5 text-accent flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{book.title}</p>
+                        <p className="text-xs text-white/50">{book.author} • {book.pages} páginas</p>
+                      </div>
+                      <span className="text-xs px-2 py-1 rounded-full bg-accent/20 text-accent">~{book.readingTime}</span>
+                    </div>
+                    {plan && (
+                      <div className="px-3 pb-3">
+                        <div className="bg-accent/10 border border-accent/20 rounded-lg p-3 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-3.5 h-3.5 text-accent" />
+                            <p className="text-xs font-bold text-accent uppercase tracking-wider">Leitura Guiada</p>
+                          </div>
+                          <p className="text-sm text-white/90">
+                            📖 Comece lendo da <span className="font-bold text-accent">página 1</span> até a <span className="font-bold text-accent">página {plan.dailyPages}</span>
+                          </p>
+                          <div className="flex items-center gap-3 text-xs text-white/50">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              ~{profile.timePerDay} min/dia
+                            </span>
+                            <span>•</span>
+                            <span>~{plan.dailyPages} pág/dia</span>
+                            <span>•</span>
+                            <span>~{plan.totalDays} dias no total</span>
+                          </div>
+                          <p className="text-[11px] text-white/40 italic">
+                            Esse é o mínimo sugerido para o dia — fique à vontade para ler mais! 🚀
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <span className="text-xs px-2 py-1 rounded-full bg-accent/20 text-accent">~{book.readingTime}</span>
-                </div>
-              ))}
+                );
+              })}
               {recommendedBooks.length === 0 && (
                 <p className="text-white/50 text-sm text-center py-4">Nenhum livro encontrado. Explore a biblioteca!</p>
               )}
