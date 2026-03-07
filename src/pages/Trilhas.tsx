@@ -623,14 +623,20 @@ const Trilhas = () => {
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const isPremium = false;
 
-  // Quiz recommendations
-  const quizRecommendations: string[] = (() => {
+  // Quiz recommendations (reactive via state)
+  const [quizRecommendations, setQuizRecommendations] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem("bookquest-quiz-recommendations");
       return stored ? JSON.parse(stored) : [];
     } catch { return []; }
-  })();
+  });
   const isQuizRecommended = (title: string) => quizRecommendations.some(r => normaliseTitle(r) === normaliseTitle(title));
+
+  const removeQuizRecommendation = (title: string) => {
+    const updated = quizRecommendations.filter(r => normaliseTitle(r) !== normaliseTitle(title));
+    setQuizRecommendations(updated);
+    localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(updated));
+  };
 
   // Filter trails: only show user-selected + quiz-recommended, with quiz first
   const filteredTrails = useMemo(() => {
@@ -1126,21 +1132,7 @@ const Trilhas = () => {
                     </div>
                   )}
 
-                  {/* Remove from trails button */}
-                  {!isQuiz && (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        removeTrail(book.title);
-                        toast.success(`"${book.title}" removido das trilhas`);
-                      }}
-                      className="absolute top-3 right-3 w-7 h-7 rounded-full bg-card/80 flex items-center justify-center hover:bg-destructive/80 transition-colors"
-                      title="Remover da trilha"
-                    >
-                      <X className="w-3.5 h-3.5 text-muted-foreground hover:text-white" />
-                    </button>
-                  )}
+                  {/* Remove button moved below */}
                 </div>
 
                 {/* Content */}
@@ -1212,6 +1204,23 @@ const Trilhas = () => {
                       )}
                     </button>
                   ) : null}
+
+                  {/* Remove from trails */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (isQuiz) {
+                        removeQuizRecommendation(book.title);
+                      }
+                      removeTrail(book.title);
+                      toast.success(`"${book.title}" removido das trilhas`);
+                    }}
+                    className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    Remover da trilha
+                  </button>
                 </div>
               </Link>
             );

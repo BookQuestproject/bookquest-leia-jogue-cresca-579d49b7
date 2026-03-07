@@ -6,6 +6,8 @@ import ProgressBar from "@/components/ProgressBar";
 import { Input } from "@/components/ui/input";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
+import { useBookshelf } from "@/hooks/useBookshelf";
+import { bookTrails } from "@/pages/Trilhas";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 
 interface ReaderProfile {
@@ -245,6 +247,7 @@ const QuizOnboarding = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { updateQuizCompleted } = useProfile();
+  const { addBook } = useBookshelf();
   
   const [step, setStep] = useState<QuizStep>("name");
   const [profile, setProfile] = useState<ReaderProfile>({
@@ -364,6 +367,23 @@ const QuizOnboarding = () => {
     const recommendedBooks = getRecommendedBooks();
     const titles = recommendedBooks.map(b => b.title);
     localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(titles));
+
+    // Add all recommended books to the user's bookshelf as "quero-ler"
+    const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    recommendedBooks.forEach((book, index) => {
+      // Try to find real cover from bookTrails catalog
+      const trailBook = bookTrails.find(t => normalise(t.title) === normalise(book.title));
+      const cover = trailBook?.coverImage || `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(book.title.slice(0, 15))}`;
+      addBook(
+        {
+          id: 9000 + index,
+          title: book.title,
+          author: book.author,
+          cover,
+        },
+        "quero-ler"
+      );
+    });
     
     const literaryProfile = {
       name: profile.name,
