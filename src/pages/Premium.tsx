@@ -167,9 +167,15 @@ const Premium = () => {
               </h3>
               <p className="text-muted-foreground">Para leitores dedicados</p>
             </div>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">R$ 29,90</span>
-              <span className="text-muted-foreground">/mês</span>
+            <div className="mb-2">
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg text-muted-foreground line-through">R$ 29,90</span>
+                <span className="text-4xl font-bold text-gold">R$ 19,90</span>
+                <span className="text-muted-foreground">/mês</span>
+              </div>
+              <span className="inline-block mt-1 px-2 py-0.5 rounded bg-gold/15 text-gold text-xs font-semibold">
+                🔥 Oferta de lançamento
+              </span>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
               Inclui: Book Club, Mentoria Literária, Trilhas ENEM/Vestibulares, Quiz ilimitado
