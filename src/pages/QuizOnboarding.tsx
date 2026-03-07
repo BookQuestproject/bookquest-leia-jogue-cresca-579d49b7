@@ -760,10 +760,11 @@ const QuizOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary text-white overflow-hidden">
+    <div className="min-h-screen relative overflow-x-hidden text-foreground">
+      {/* Background gradients - same as Landing */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.06] via-transparent to-accent/[0.03]" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-accent/[0.04] blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] via-transparent to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-accent/[0.03] blur-[150px]" />
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
         {renderStep()}
