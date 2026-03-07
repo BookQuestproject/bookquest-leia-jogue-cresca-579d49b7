@@ -1210,12 +1210,8 @@ const Trilhas = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // Remove from quiz recommendations if applicable
                       if (isQuiz) {
-                        const updatedRecs = quizRecommendations.filter(
-                          r => normaliseTitle(r) !== normaliseTitle(book.title)
-                        );
-                        localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(updatedRecs));
+                        removeQuizRecommendation(book.title);
                       }
                       removeTrail(book.title);
                       toast.success(`"${book.title}" removido das trilhas`);
