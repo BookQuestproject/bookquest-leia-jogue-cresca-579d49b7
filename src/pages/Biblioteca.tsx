@@ -629,6 +629,28 @@ const Biblioteca = () => {
                       );
                     })}
                   </div>
+                  {/* Add to trail button in inspect modal */}
+                  {hasTrail(inspectedBook.title) && (
+                    <div className="mt-3">
+                      <Button
+                        variant={isInMyTrails(inspectedBook.title) ? "outline" : "default"}
+                        size="sm"
+                        className="gap-2"
+                        onClick={() => {
+                          if (isInMyTrails(inspectedBook.title)) {
+                            removeTrail(inspectedBook.title);
+                            toast.success(`"${inspectedBook.title}" removido das trilhas`);
+                          } else {
+                            addTrail(inspectedBook.title);
+                            toast.success(`"${inspectedBook.title}" adicionado às trilhas!`);
+                          }
+                        }}
+                      >
+                        <MapPin className="w-4 h-4" />
+                        {isInMyTrails(inspectedBook.title) ? "Remover da Trilha" : "Adicionar à Trilha Literária"}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </>
             )}
