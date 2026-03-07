@@ -56,6 +56,13 @@ export function useBookshelf() {
     emitChange();
   }, []);
 
+  const removeBook = useCallback((bookTitle: string) => {
+    const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const key = normalise(bookTitle);
+    books = books.filter(b => normalise(b.title) !== key);
+    emitChange();
+  }, []);
+
   const moveBook = useCallback((bookId: number, newCategory: ShelfCategory) => {
     books = books.map(b => b.id === bookId ? { ...b, category: newCategory } : b);
     emitChange();
@@ -66,5 +73,5 @@ export function useBookshelf() {
     emitChange();
   }, []);
 
-  return { books: currentBooks, addBook, moveBook, updateBook };
+  return { books: currentBooks, addBook, removeBook, moveBook, updateBook };
 }
