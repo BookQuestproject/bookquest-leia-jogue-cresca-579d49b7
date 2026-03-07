@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Zap, Star, ChevronRight } from "lucide-react";
+import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Zap, Star, ChevronRight, Lock } from "lucide-react";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";

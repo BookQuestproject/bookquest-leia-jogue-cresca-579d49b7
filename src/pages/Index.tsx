@@ -547,7 +547,7 @@ const Index = () => {
 
             {/* Quiz Link */}
             <Link
-              to="/quiz"
+              to={quizCompleted && !isPremium ? "/premium" : "/quiz"}
               className="rounded-xl p-4 flex items-center gap-3 transition-all hover:shadow-md hover:shadow-accent/5 animate-fade-in group bg-card border border-border"
               style={{ animationDelay: "0.4s" }}
             >
@@ -556,10 +556,15 @@ const Index = () => {
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-[13px]">Quiz Literário</p>
-                <p className="text-[11px] text-muted-foreground">Descubra seu gênero ideal</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {quizCompleted && !isPremium ? "Premium — Refazer quiz" : "Descubra seu gênero ideal"}
+                </p>
               </div>
-              <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-accent transition-colors" />
-            </Link>
+              {quizCompleted && !isPremium ? (
+                <Lock className="w-4 h-4 text-accent" />
+              ) : (
+                <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-accent transition-colors" />
+              )}
           </div>
         </div>
       </div>
