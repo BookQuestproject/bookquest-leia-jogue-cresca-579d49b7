@@ -427,14 +427,37 @@ const Biblioteca = () => {
                       Selecionar
                     </Button>
                   ) : (
-                    <Button 
-                      variant="hero" 
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => handleInspect(book)}
-                    >
-                      Inspecionar
-                    </Button>
+                    <>
+                      <Button 
+                        variant="hero" 
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleInspect(book)}
+                      >
+                        Inspecionar
+                      </Button>
+                      {hasTrail(book.title) && (
+                        <Button
+                          variant={isInMyTrails(book.title) ? "outline" : "secondary"}
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => {
+                            if (isInMyTrails(book.title)) {
+                              removeTrail(book.title);
+                              toast.success(`"${book.title}" removido das trilhas`);
+                            } else {
+                              addTrail(book.title);
+                              toast.success(`"${book.title}" adicionado às trilhas!`, {
+                                description: "Acesse Trilhas Literárias para começar",
+                              });
+                            }
+                          }}
+                        >
+                          <MapPin className="w-3.5 h-3.5" />
+                          {isInMyTrails(book.title) ? "Na Trilha" : "Trilha"}
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
