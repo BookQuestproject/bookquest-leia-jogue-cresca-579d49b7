@@ -359,6 +359,11 @@ const QuizOnboarding = () => {
 
   const handleFinishQuiz = async () => {
     setIsSaving(true);
+
+    // Save quiz recommendations to localStorage so Trilhas filters correctly
+    const recommendedBooks = getRecommendedBooks();
+    const titles = recommendedBooks.map(b => b.title);
+    localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(titles));
     
     const literaryProfile = {
       name: profile.name,
