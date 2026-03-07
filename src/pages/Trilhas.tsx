@@ -520,10 +520,7 @@ const Trilhas = () => {
   const filteredTrails = useMemo(() => {
     const userSelected = bookTrails.filter(b => isInMyTrails(b.title));
     const quizOnly = bookTrails.filter(b => isQuizRecommended(b.title) && !isInMyTrails(b.title));
-    const combined = [...quizOnly, ...userSelected];
-    // If user has no trails and no quiz recommendations, show all (first visit)
-    if (combined.length === 0) return bookTrails;
-    return combined;
+    return [...quizOnly, ...userSelected];
   }, [isInMyTrails, quizRecommendations]);
 
   const hasPersonalTrails = filteredTrails.length !== bookTrails.length;
