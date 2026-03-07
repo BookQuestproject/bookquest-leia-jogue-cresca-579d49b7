@@ -21,6 +21,7 @@ const readingHistory = [
 ];
 
 const Perfil = () => {
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { profile, isPremium, loading: profileLoading, refreshProfile } = useProfile();
   const { stats, loading: statsLoading, formatTime } = useReadingStats();
