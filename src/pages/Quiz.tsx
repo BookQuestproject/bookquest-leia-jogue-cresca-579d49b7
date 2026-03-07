@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
 import { Input } from "@/components/ui/input";
