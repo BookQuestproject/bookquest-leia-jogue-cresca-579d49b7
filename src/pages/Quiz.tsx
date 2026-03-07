@@ -210,7 +210,15 @@ const ageRangeToMaxAge = (range: string): number => {
 
 const Quiz = () => {
   const navigate = useNavigate();
+  const { quizCompleted, isPremium, loading: profileLoading } = useProfile();
   const [step, setStep] = useState<QuizStep>("name");
+
+  // Block non-premium users who already completed the quiz
+  useEffect(() => {
+    if (!profileLoading && quizCompleted && !isPremium) {
+      navigate("/premium", { replace: true });
+    }
+  }, [profileLoading, quizCompleted, isPremium, navigate]);
   const [profile, setProfile] = useState<ReaderProfile>({
     name: "",
     ageRange: "14-17",
