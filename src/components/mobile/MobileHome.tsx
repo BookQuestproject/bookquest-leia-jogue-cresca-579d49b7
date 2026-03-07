@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 const MobileHome = () => {
   const navigate = useNavigate();
   const { activeTrail } = useActiveTrail();
-  const { profile } = useProfile();
+  const { profile, isPremium } = useProfile();
 
   const userName = profile?.full_name?.split(" ")[0] || "Leitor";
   const hasActiveTrail = !!activeTrail;
