@@ -369,13 +369,17 @@ const QuizOnboarding = () => {
     localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(titles));
 
     // Add all recommended books to the user's bookshelf as "quero-ler"
+    const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     recommendedBooks.forEach((book, index) => {
+      // Try to find real cover from bookTrails catalog
+      const trailBook = bookTrails.find(t => normalise(t.title) === normalise(book.title));
+      const cover = trailBook?.coverImage || `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(book.title.slice(0, 15))}`;
       addBook(
         {
-          id: 9000 + index, // high ID to avoid conflicts, addBook will reassign if needed
+          id: 9000 + index,
           title: book.title,
           author: book.author,
-          cover: `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(book.title.slice(0, 15))}`,
+          cover,
         },
         "quero-ler"
       );
