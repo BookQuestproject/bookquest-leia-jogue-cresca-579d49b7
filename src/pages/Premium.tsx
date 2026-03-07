@@ -116,7 +116,7 @@ const Premium = () => {
           </div>
           <h1 className="text-3xl lg:text-5xl font-bold mb-4">
             Leve sua leitura ao<br />
-            <span className="text-gradient">próximo nível</span>
+            <span className="premium-aurora-text">próximo nível</span>
           </h1>
           <p className="text-muted-foreground max-w-lg mx-auto text-lg">
             Desbloqueie trilhas focadas em vestibulares, mentoria personalizada e muito mais
