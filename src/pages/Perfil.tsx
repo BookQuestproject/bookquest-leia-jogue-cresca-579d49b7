@@ -1,5 +1,6 @@
 import { BookOpen, Star, Crown, Settings, Edit2, Clock, CheckCircle, Camera } from "lucide-react";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
