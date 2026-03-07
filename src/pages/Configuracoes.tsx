@@ -17,8 +17,8 @@ const Configuracoes = () => {
     newMissions: true,
     community: false,
   });
+  const [soundOn, setSoundOnState] = useState(isSoundEnabled());
   const [privacy, setPrivacy] = useState({
-  const [soundOn, setSoundOn] = useState(isSoundEnabled());
     publicProfile: true,
     showInCommunity: true,
   });
