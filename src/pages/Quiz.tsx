@@ -460,8 +460,7 @@ const Quiz = () => {
           <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
             <Lightbulb className="w-8 h-8 text-accent" />
           </div>
-          <h2 className="text-2xl font-serif font-bold mb-4">{curiosity.title}</h2>
-          <p className="text-lg text-white/60 mb-8">{curiosity.text}</p>
+          <h2 className="text-xl sm:text-2xl font-serif font-bold mb-4 leading-relaxed">{curiosity.text}</h2>
           <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" size="lg" onClick={handleContinueCuriosity}>
             Continuar <ArrowRight className="w-5 h-5" />
           </Button>
