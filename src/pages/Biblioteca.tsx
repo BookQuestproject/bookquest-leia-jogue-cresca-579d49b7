@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles, Award } from "lucide-react";
+import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles, Award, MapPin } from "lucide-react";
+import { useMyTrails } from "@/hooks/useMyTrails";
+import { bookTrails } from "@/pages/Trilhas";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -92,6 +94,10 @@ const Biblioteca = () => {
   const { user } = useAuth();
   const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
+  const { addTrail, removeTrail, isInMyTrails } = useMyTrails();
+
+  const normaliseForTrail = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const hasTrail = (title: string) => bookTrails.some(b => normaliseForTrail(b.title) === normaliseForTrail(title));
 
   // Quiz recommendation titles
   const quizRecommendations: string[] = (() => {
