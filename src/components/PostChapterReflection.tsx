@@ -287,6 +287,23 @@ const PostChapterReflection = ({
       return next;
     });
 
+    // Play correct/incorrect sound for scorable questions
+    if (currentQ.type === "multiple_choice") {
+      const isCorrect = answer === currentQ.correctAnswer;
+      const isPartial = !isCorrect && (currentQ.partialAnswers || []).includes(answer);
+      if (isCorrect) {
+        playSound("success");
+      } else if (isPartial) {
+        playSound("complete");
+      } else {
+        playSound("error");
+      }
+    } else if (xp >= 3) {
+      playSound("success");
+    } else if (xp === 0 && currentQ.type !== "perception") {
+      playSound("error");
+    }
+
     setShowFeedback(true);
   };
 
