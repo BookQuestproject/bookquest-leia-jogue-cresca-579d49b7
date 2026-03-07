@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles, Award } from "lucide-react";
+import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles, Award, MapPin } from "lucide-react";
+import { useMyTrails } from "@/hooks/useMyTrails";
+import { bookTrails } from "@/pages/Trilhas";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -92,6 +94,10 @@ const Biblioteca = () => {
   const { user } = useAuth();
   const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
+  const { addTrail, removeTrail, isInMyTrails } = useMyTrails();
+
+  const normaliseForTrail = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const hasTrail = (title: string) => bookTrails.some(b => normaliseForTrail(b.title) === normaliseForTrail(title));
 
   // Quiz recommendation titles
   const quizRecommendations: string[] = (() => {
@@ -421,14 +427,37 @@ const Biblioteca = () => {
                       Selecionar
                     </Button>
                   ) : (
-                    <Button 
-                      variant="hero" 
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => handleInspect(book)}
-                    >
-                      Inspecionar
-                    </Button>
+                    <>
+                      <Button 
+                        variant="hero" 
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleInspect(book)}
+                      >
+                        Inspecionar
+                      </Button>
+                      {hasTrail(book.title) && (
+                        <Button
+                          variant={isInMyTrails(book.title) ? "outline" : "secondary"}
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => {
+                            if (isInMyTrails(book.title)) {
+                              removeTrail(book.title);
+                              toast.success(`"${book.title}" removido das trilhas`);
+                            } else {
+                              addTrail(book.title);
+                              toast.success(`"${book.title}" adicionado às trilhas!`, {
+                                description: "Acesse Trilhas Literárias para começar",
+                              });
+                            }
+                          }}
+                        >
+                          <MapPin className="w-3.5 h-3.5" />
+                          {isInMyTrails(book.title) ? "Na Trilha" : "Trilha"}
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -600,6 +629,28 @@ const Biblioteca = () => {
                       );
                     })}
                   </div>
+                  {/* Add to trail button in inspect modal */}
+                  {hasTrail(inspectedBook.title) && (
+                    <div className="mt-3">
+                      <Button
+                        variant={isInMyTrails(inspectedBook.title) ? "outline" : "default"}
+                        size="sm"
+                        className="gap-2"
+                        onClick={() => {
+                          if (isInMyTrails(inspectedBook.title)) {
+                            removeTrail(inspectedBook.title);
+                            toast.success(`"${inspectedBook.title}" removido das trilhas`);
+                          } else {
+                            addTrail(inspectedBook.title);
+                            toast.success(`"${inspectedBook.title}" adicionado às trilhas!`);
+                          }
+                        }}
+                      >
+                        <MapPin className="w-4 h-4" />
+                        {isInMyTrails(inspectedBook.title) ? "Remover da Trilha" : "Adicionar à Trilha Literária"}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </>
             )}
