@@ -235,7 +235,32 @@ const Configuracoes = () => {
             </div>
           </section>
 
-          {/* Tutorial */}
+          {/* Sons */}
+          <section className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-4 border-b border-border">
+              <h2 className="font-bold flex items-center gap-2">
+                <Volume2 className="w-5 h-5 text-primary" />
+                Sons
+              </h2>
+            </div>
+            <div className="divide-y divide-border">
+              <div className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-medium">Efeitos sonoros</p>
+                  <p className="text-sm text-muted-foreground">Sons ao clicar em botões e completar ações</p>
+                </div>
+                <Switch 
+                  checked={soundOn}
+                  onCheckedChange={(checked) => {
+                    setSoundOnState(checked);
+                    setSoundEnabled(checked);
+                    toast({ title: checked ? "Sons ativados" : "Sons desativados" });
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+
           <section className="glass-card rounded-2xl overflow-hidden" data-tutorial="config-tutorial-reset">
             <div className="p-4 border-b border-border">
               <h2 className="font-bold flex items-center gap-2">
