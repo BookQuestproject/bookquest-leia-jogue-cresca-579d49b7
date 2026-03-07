@@ -1136,14 +1136,31 @@ const Trilhas = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
+                <div className="p-5 relative">
+                  {/* Remove X button - top right of info area */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (isQuiz) {
+                        removeQuizRecommendation(book.title);
+                      }
+                      removeTrail(book.title);
+                      toast.success(`"${book.title}" removido das trilhas`);
+                    }}
+                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-muted/80 flex items-center justify-center hover:bg-destructive/80 hover:text-white transition-colors z-10"
+                    title="Remover da trilha"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+
                   <p 
                     className="text-xs uppercase tracking-wider font-medium mb-1"
                     style={{ color: `hsl(${themeColor})` }}
                   >
                     {book.genre}
                   </p>
-                  <h3 className="font-serif text-lg font-semibold mb-1">{book.title}</h3>
+                  <h3 className="font-serif text-lg font-semibold mb-1 pr-8">{book.title}</h3>
                   <p className="text-sm text-muted-foreground mb-3">{book.author}</p>
                   
                   {currentChapter && (
@@ -1204,23 +1221,6 @@ const Trilhas = () => {
                       )}
                     </button>
                   ) : null}
-
-                  {/* Remove from trails */}
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (isQuiz) {
-                        removeQuizRecommendation(book.title);
-                      }
-                      removeTrail(book.title);
-                      toast.success(`"${book.title}" removido das trilhas`);
-                    }}
-                    className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                    Remover da trilha
-                  </button>
                 </div>
               </Link>
             );
