@@ -93,6 +93,16 @@ const Biblioteca = () => {
   const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
 
+  // Quiz recommendation titles
+  const quizRecommendations: string[] = (() => {
+    try {
+      const stored = localStorage.getItem("bookquest-quiz-recommendations");
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  })();
+  const normaliseTitle = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const isQuizRecommended = (title: string) => quizRecommendations.some(r => normaliseTitle(r) === normaliseTitle(title));
+
   // Fetch approved suggestions from the database (visible to all authenticated users)
   const [approvedBooks, setApprovedBooks] = useState<Book[]>([]);
   
