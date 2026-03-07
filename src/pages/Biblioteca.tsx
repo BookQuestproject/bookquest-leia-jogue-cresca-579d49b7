@@ -214,6 +214,14 @@ const Biblioteca = () => {
       toast.error("Preencha o título do livro");
       return;
     }
+    if (!newBook.author.trim()) {
+      toast.error("Preencha o autor do livro");
+      return;
+    }
+    if (!newBook.externalLink.trim()) {
+      toast.error("Preencha o link de referência");
+      return;
+    }
 
     if (duplicateBook) {
       toast.error(`"${duplicateBook.title}" já está disponível na biblioteca!`);
@@ -502,10 +510,11 @@ const Biblioteca = () => {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Autor
-                </label>
-                <Input
-                  placeholder="Ex: Patrick Rothfuss"
+                  Autor <span className="text-destructive">*</span>
+                 </label>
+                 <Input
+                   placeholder="Ex: Patrick Rothfuss"
+                   required
                   value={newBook.author}
                   onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
                 />
@@ -513,10 +522,11 @@ const Biblioteca = () => {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Link de referência
-                </label>
-                <Input
-                  placeholder="https://amazon.com.br/... ou link da editora"
+                  Link de referência <span className="text-destructive">*</span>
+                 </label>
+                 <Input
+                   placeholder="https://amazon.com.br/... ou link da editora"
+                   required
                   value={newBook.externalLink}
                   onChange={(e) => setNewBook({ ...newBook, externalLink: e.target.value })}
                 />
