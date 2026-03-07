@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin } from "lucide-react";
+import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin, Award, X } from "lucide-react";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
+import { useMyTrails } from "@/hooks/useMyTrails";
 import { toast } from "sonner";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -95,7 +96,7 @@ const bookTrails: BookTrail[] = [
     title: "Percy Jackson e o Ladrão de Raios",
     author: "Rick Riordan",
     cover: "⚡",
-    coverImage: "/images/covers/percy-jackson.jpg",
+    coverImage: "https://m.media-amazon.com/images/I/81a4VFOlxFL._AC_UF1000,1000_QL80_.jpg",
     totalChapters: 22,
     isPremium: false,
     genre: "Mitologia",
@@ -111,7 +112,7 @@ const bookTrails: BookTrail[] = [
     title: "Dom Casmurro",
     author: "Machado de Assis",
     cover: "📜",
-    coverImage: "/images/covers/dom-casmurro.jpg",
+    coverImage: "https://m.media-amazon.com/images/I/61dKS9CIBYL._AC_UF1000,1000_QL80_.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Romance Brasileiro",
@@ -138,7 +139,6 @@ const bookTrails: BookTrail[] = [
       { id: 3, title: "O Asteroide B-612", status: "locked", icon: "🪐", totalPages: 8 },
     ]
   },
-  // --- Auto-generated trails for all other catalog books ---
   {
     id: "senhor-dos-aneis",
     title: "O Senhor dos Anéis",
@@ -180,7 +180,7 @@ const bookTrails: BookTrail[] = [
     title: "E Não Sobrou Nenhum",
     author: "Agatha Christie",
     cover: "🔪",
-    coverImage: "/images/covers/e-nao-sobrou-nenhum.jpg",
+    coverImage: "https://m.media-amazon.com/images/I/91O4YwMiNOL._AC_UF1000,1000_QL80_.jpg",
     totalChapters: 14,
     isPremium: false,
     genre: "Mistério",
@@ -192,7 +192,7 @@ const bookTrails: BookTrail[] = [
     title: "A Culpa é das Estrelas",
     author: "John Green",
     cover: "🌟",
-    coverImage: "/images/covers/a-culpa-e-das-estrelas.jpg",
+    coverImage: "https://m.media-amazon.com/images/I/71sBKhB9q3L._AC_UF1000,1000_QL80_.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Romance",
@@ -228,7 +228,7 @@ const bookTrails: BookTrail[] = [
     title: "Sapiens",
     author: "Yuval Noah Harari",
     cover: "🧠",
-    coverImage: "https://m.media-amazon.com/images/I/71N3-FFSDxL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "https://m.media-amazon.com/images/I/713jIoMO3UL._AC_UF1000,1000_QL80_.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Não-Ficção",
@@ -264,7 +264,7 @@ const bookTrails: BookTrail[] = [
     title: "A Garota no Trem",
     author: "Paula Hawkins",
     cover: "🚂",
-    coverImage: "https://m.media-amazon.com/images/I/81Lp3-MXMcL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "https://m.media-amazon.com/images/I/81YkqyaFVEL._AC_UF1000,1000_QL80_.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Mistério",
@@ -488,10 +488,17 @@ const bookTrails: BookTrail[] = [
     chapters: generateChapters(544, 12),
   },
 ];
+
+// Export for use in Biblioteca
+export { bookTrails };
+
+const normaliseTitle = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 const Trilhas = () => {
   const { bookId } = useParams();
   const navigate = useNavigate();
   const { activeTrail, setActiveTrail } = useActiveTrail();
+  const { isInMyTrails, removeTrail } = useMyTrails();
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -499,6 +506,27 @@ const Trilhas = () => {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const isPremium = false;
+
+  // Quiz recommendations
+  const quizRecommendations: string[] = (() => {
+    try {
+      const stored = localStorage.getItem("bookquest-quiz-recommendations");
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  })();
+  const isQuizRecommended = (title: string) => quizRecommendations.some(r => normaliseTitle(r) === normaliseTitle(title));
+
+  // Filter trails: only show user-selected + quiz-recommended, with quiz first
+  const filteredTrails = useMemo(() => {
+    const userSelected = bookTrails.filter(b => isInMyTrails(b.title));
+    const quizOnly = bookTrails.filter(b => isQuizRecommended(b.title) && !isInMyTrails(b.title));
+    const combined = [...quizOnly, ...userSelected];
+    // If user has no trails and no quiz recommendations, show all (first visit)
+    if (combined.length === 0) return bookTrails;
+    return combined;
+  }, [isInMyTrails, quizRecommendations]);
+
+  const hasPersonalTrails = filteredTrails.length !== bookTrails.length;
 
   const handleSelectTrail = (book: BookTrail) => {
     setActiveTrail({
@@ -543,31 +571,25 @@ const Trilhas = () => {
 
     const formatReadingTime = (seconds: number) => {
       const minutes = Math.floor(seconds / 60);
-      if (minutes > 0) {
-        return `${minutes}min`;
-      }
+      if (minutes > 0) return `${minutes}min`;
       return `${seconds}s`;
     };
 
     const handleChapterClick = (chapter: Chapter, chapterIndex: number) => {
-      // Dynamic unlock check - same logic as rendering
       const previousChapter = chapterIndex > 0 ? book.chapters[chapterIndex - 1] : null;
       const isPreviousCompleted = previousChapter 
         ? (previousChapter.status === "completed" || isChapterCompleted(previousChapter.id))
         : true;
       const isUnlocked = chapterIndex === 0 || isPreviousCompleted;
       
-      if (!isUnlocked) return; // Use dynamic check instead of static status
+      if (!isUnlocked) return;
       
-      // Check if chapter is completed from database
       const isCompletedFromDB = isChapterCompleted(chapter.id);
       
       if (isCompletedFromDB || chapter.status === "completed") {
-        // Open the completed chapter modal
         setCompletedChapterForModal(chapter);
         setShowCompletedModal(true);
       } else {
-        // Navigate to chapter reading page
         navigate(`/ler/${bookId}/${chapter.id}`);
       }
     };
@@ -587,13 +609,11 @@ const Trilhas = () => {
     return (
       <Layout isPremium={isPremium}>
         <div className="max-w-4xl mx-auto py-8 section-bg-challenges">
-          {/* Back Button */}
           <Link to="/trilhas" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 text-sm">
             <ArrowLeft className="w-4 h-4" />
             Voltar às trilhas
           </Link>
 
-          {/* Book Header - Burgundy banner like in reference */}
           <header 
             className="rounded-xl p-6 mb-8 animate-fade-in"
             style={{
@@ -623,7 +643,6 @@ const Trilhas = () => {
             </div>
           </header>
 
-          {/* Continue Reading CTA */}
           {currentChapter && (
             <div className="flex justify-center mb-8">
               <Button 
@@ -640,12 +659,8 @@ const Trilhas = () => {
             </div>
           )}
 
-          {/* Chapters as Open/Closed Books */}
           <div className="space-y-4 animate-fade-in" style={{ animationDelay: "0.2s" }}>
             {book.chapters.map((chapter, index) => {
-              // Dynamic unlock logic: chapter is unlocked if:
-              // 1. It's the first chapter (always unlocked)
-              // 2. The previous chapter is completed (from DB or static status)
               const previousChapter = index > 0 ? book.chapters[index - 1] : null;
               const isPreviousCompleted = previousChapter 
                 ? (previousChapter.status === "completed" || isChapterCompleted(previousChapter.id))
@@ -653,14 +668,9 @@ const Trilhas = () => {
               
               const isCompletedFromDB = isChapterCompleted(chapter.id);
               const isCompleted = chapter.status === "completed" || isCompletedFromDB;
-              
-              // A chapter is unlocked if it's the first one, or previous is completed
               const isUnlocked = index === 0 || isPreviousCompleted;
               const isLocked = !isUnlocked;
-              
-              // Current chapter is the first unlocked but not completed
               const isCurrent = isUnlocked && !isCompleted;
-              
               const isOpenBook = isUnlocked;
               const readingTime = getReadingTime(chapter.id);
 
@@ -690,7 +700,6 @@ const Trilhas = () => {
                             : 'none',
                         }}
                       >
-                        {/* Paper texture for open books */}
                         {isOpenBook && (
                           <div 
                             className="absolute inset-0 opacity-20"
@@ -700,7 +709,6 @@ const Trilhas = () => {
                           />
                         )}
 
-                        {/* Left book spine effect for open books */}
                         {isOpenBook && (
                           <div 
                             className="absolute left-0 top-0 bottom-0 w-3"
@@ -711,7 +719,6 @@ const Trilhas = () => {
                         )}
 
                         <div className="relative p-4 flex items-center gap-4">
-                          {/* Book cover / illustration area */}
                           <div 
                             className="w-20 h-24 rounded flex-shrink-0 flex items-center justify-center overflow-hidden"
                             style={{
@@ -722,7 +729,6 @@ const Trilhas = () => {
                             <span className={`text-3xl ${isLocked ? 'opacity-50' : ''}`}>{chapter.icon}</span>
                           </div>
 
-                          {/* Chapter info */}
                           <div className="flex-1">
                             <p 
                               className="text-xs font-medium mb-1"
@@ -736,7 +742,6 @@ const Trilhas = () => {
                             <p className="text-xs text-muted-foreground">
                               Capítulo {chapter.id} de {book.totalChapters}
                             </p>
-                            {/* Show reading time for completed chapters */}
                             {isCompleted && readingTime > 0 && (
                               <div className="flex items-center gap-1 mt-1">
                                 <Clock className="w-3 h-3 text-green-600" />
@@ -747,7 +752,6 @@ const Trilhas = () => {
                             )}
                           </div>
 
-                          {/* Right side: Lock or Bookmark */}
                           {isLocked ? (
                             <div 
                               className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
@@ -769,7 +773,6 @@ const Trilhas = () => {
                           )}
                         </div>
 
-                        {/* Current chapter indicator bar */}
                         {isCurrent && (
                           <div 
                             className="absolute bottom-0 left-0 right-0 h-1"
@@ -780,14 +783,12 @@ const Trilhas = () => {
                         )}
                       </button>
                     </TooltipTrigger>
-                    {/* Tooltip handled by BookmarkMarker */}
                   </Tooltip>
                 </TooltipProvider>
               );
             })}
           </div>
 
-          {/* Next chapters hint */}
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
               <ArrowLeft className="w-4 h-4 rotate-180" />
@@ -795,7 +796,6 @@ const Trilhas = () => {
             </p>
           </div>
 
-          {/* Question Modal */}
           <Dialog open={showQuestion} onOpenChange={setShowQuestion}>
             <DialogContent className="max-w-lg">
               <DialogHeader>
@@ -882,14 +882,13 @@ const Trilhas = () => {
             </DialogContent>
           </Dialog>
 
-          {/* Completed Chapter Modal */}
           {completedChapterForModal && (
             <CompletedChapterModal
               isOpen={showCompletedModal}
               onClose={() => {
                 setShowCompletedModal(false);
                 setCompletedChapterForModal(null);
-                refetch(); // Refresh progress data
+                refetch();
               }}
               chapter={completedChapterForModal}
               bookId={bookId}
@@ -911,18 +910,21 @@ const Trilhas = () => {
           <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Biblioteca de Jornadas</p>
           <h1 className="text-3xl lg:text-4xl font-serif font-semibold mb-2">Trilhas Literárias</h1>
           <p className="text-muted-foreground max-w-xl">
-            Cada trilha representa uma jornada através de um livro. Explore capítulo por capítulo, responda perguntas e evolua como leitor.
+            {hasPersonalTrails 
+              ? "Suas trilhas personalizadas. Adicione mais livros pela Biblioteca."
+              : "Cada trilha representa uma jornada através de um livro. Adicione livros da Biblioteca às suas trilhas."}
           </p>
         </header>
 
         {/* Books Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-tutorial="trilhas-grid">
-          {bookTrails.map((book, index) => {
+          {filteredTrails.map((book, index) => {
             const completedChapters = book.chapters.filter(c => c.status === "completed").length;
             const progress = (completedChapters / book.totalChapters) * 100;
             const currentChapter = book.chapters.find(c => c.status === "current");
             const themeColor = book.themeColor;
             const isCurrentTrail = activeTrail?.bookId === book.id;
+            const isQuiz = isQuizRecommended(book.title);
 
             return (
               <Link
@@ -932,7 +934,7 @@ const Trilhas = () => {
                   book.isPremium && !isPremium ? "opacity-80 cursor-not-allowed" : ""
                 }`}
                 style={{ 
-                  animationDelay: `${index * 0.1}s`,
+                  animationDelay: `${index * 0.05}s`,
                   borderColor: progress > 0 ? `hsl(${themeColor} / 0.3)` : undefined,
                 }}
                 onClick={e => book.isPremium && !isPremium && e.preventDefault()}
@@ -949,6 +951,7 @@ const Trilhas = () => {
                       src={book.coverImage} 
                       alt={book.title}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
                         (e.target as HTMLImageElement).parentElement!.querySelector('.emoji-fallback')?.classList.remove('hidden');
@@ -957,6 +960,14 @@ const Trilhas = () => {
                   ) : null}
                   <span className={`text-5xl emoji-fallback ${book.coverImage ? 'hidden absolute' : ''}`}>{book.cover}</span>
                   
+                  {/* Quiz recommendation badge */}
+                  {isQuiz && (
+                    <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded bg-accent/90 text-xs font-semibold text-accent-foreground">
+                      <Award className="w-3 h-3" />
+                      Recomendado
+                    </div>
+                  )}
+
                   {book.isPremium && !isPremium && (
                     <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded bg-card/90 text-xs font-medium">
                       <Crown className="w-3 h-3 text-accent" />
@@ -975,6 +986,22 @@ const Trilhas = () => {
                       <CheckCircle className="w-3 h-3" />
                       {completedChapters}/{book.totalChapters}
                     </div>
+                  )}
+
+                  {/* Remove from trails button */}
+                  {hasPersonalTrails && !isQuiz && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        removeTrail(book.title);
+                        toast.success(`"${book.title}" removido das trilhas`);
+                      }}
+                      className="absolute top-3 right-3 w-7 h-7 rounded-full bg-card/80 flex items-center justify-center hover:bg-destructive/80 transition-colors"
+                      title="Remover da trilha"
+                    >
+                      <X className="w-3.5 h-3.5 text-muted-foreground hover:text-white" />
+                    </button>
                   )}
                 </div>
 
