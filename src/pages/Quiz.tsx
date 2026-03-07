@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useProfile } from "@/hooks/useProfile";
 import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
@@ -209,7 +210,15 @@ const ageRangeToMaxAge = (range: string): number => {
 
 const Quiz = () => {
   const navigate = useNavigate();
+  const { quizCompleted, isPremium, loading: profileLoading } = useProfile();
   const [step, setStep] = useState<QuizStep>("name");
+
+  // Block non-premium users who already completed the quiz
+  useEffect(() => {
+    if (!profileLoading && quizCompleted && !isPremium) {
+      navigate("/premium", { replace: true });
+    }
+  }, [profileLoading, quizCompleted, isPremium, navigate]);
   const [profile, setProfile] = useState<ReaderProfile>({
     name: "",
     ageRange: "14-17",
