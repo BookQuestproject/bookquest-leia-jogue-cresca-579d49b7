@@ -133,7 +133,7 @@ interface BookRecommendation {
 const genreBooks: Record<string, BookRecommendation[]> = {
   fantasia: [
     { title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", pages: 96, readingTime: "2h", level: "iniciante", minAge: 10 },
-    { title: "Percy Jackson - O Ladrão de Raios", author: "Rick Riordan", pages: 400, readingTime: "8h", level: "iniciante", minAge: 10 },
+    { title: "Percy Jackson e o Ladrão de Raios", author: "Rick Riordan", pages: 400, readingTime: "8h", level: "iniciante", minAge: 10 },
     { title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", pages: 264, readingTime: "6h", level: "intermediario", minAge: 10 },
     { title: "As Crônicas de Nárnia", author: "C.S. Lewis", pages: 768, readingTime: "16h", level: "intermediario", minAge: 10 },
     { title: "O Senhor dos Anéis", author: "J.R.R. Tolkien", pages: 1200, readingTime: "30h", level: "avancado", minAge: 14 },
@@ -166,7 +166,7 @@ const genreBooks: Record<string, BookRecommendation[]> = {
   aventura: [
     { title: "As Aventuras de Pi", author: "Yann Martel", pages: 320, readingTime: "6h", level: "iniciante", minAge: 12 },
     { title: "Jogos Vorazes", author: "Suzanne Collins", pages: 400, readingTime: "8h", level: "iniciante", minAge: 14 },
-    { title: "Maze Runner", author: "James Dashner", pages: 400, readingTime: "8h", level: "intermediario", minAge: 14 },
+    { title: "Maze Runner - Correr ou Morrer", author: "James Dashner", pages: 400, readingTime: "8h", level: "intermediario", minAge: 14 },
     { title: "Divergente", author: "Veronica Roth", pages: 496, readingTime: "10h", level: "intermediario", minAge: 14 },
     { title: "A Ilha do Tesouro", author: "Robert Louis Stevenson", pages: 304, readingTime: "7h", level: "avancado", minAge: 12 },
     { title: "20.000 Léguas Submarinas", author: "Júlio Verne", pages: 448, readingTime: "10h", level: "avancado", minAge: 14 },
