@@ -255,7 +255,13 @@ const Perfil = () => {
                 Identificado pelo quiz literário
               </p>
             </div>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate("/premium")}
+              className="gap-1"
+            >
+              <Crown className="w-3.5 h-3.5 text-accent" />
               Refazer quiz
             </Button>
           </div>
