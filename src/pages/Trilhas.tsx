@@ -623,14 +623,20 @@ const Trilhas = () => {
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const isPremium = false;
 
-  // Quiz recommendations
-  const quizRecommendations: string[] = (() => {
+  // Quiz recommendations (reactive via state)
+  const [quizRecommendations, setQuizRecommendations] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem("bookquest-quiz-recommendations");
       return stored ? JSON.parse(stored) : [];
     } catch { return []; }
-  })();
+  });
   const isQuizRecommended = (title: string) => quizRecommendations.some(r => normaliseTitle(r) === normaliseTitle(title));
+
+  const removeQuizRecommendation = (title: string) => {
+    const updated = quizRecommendations.filter(r => normaliseTitle(r) !== normaliseTitle(title));
+    setQuizRecommendations(updated);
+    localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(updated));
+  };
 
   // Filter trails: only show user-selected + quiz-recommended, with quiz first
   const filteredTrails = useMemo(() => {
