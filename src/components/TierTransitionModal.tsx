@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { RankingTier, tierConfig } from "@/components/RankingBadge";
 import { Progress } from "@/components/ui/progress";
+import { playSound } from "@/hooks/useSoundEffects";
 
 interface TierTransitionModalProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ const TierTransitionModal = ({ isOpen, fromTier, toTier, onClose }: TierTransiti
     }
 
     setPhase("backdrop");
-    const t1 = setTimeout(() => setPhase("icon-in"), 150);
+    const t1 = setTimeout(() => { setPhase("icon-in"); playSound(isPromotion ? "achievement" : "error"); }, 150);
     const t2 = setTimeout(() => setPhase("text-in"), 500);
     const t3 = setTimeout(() => setPhase("xp-bar"), 900);
     const t4 = setTimeout(() => setPhase("fade-out"), 1800);

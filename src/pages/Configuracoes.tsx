@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle } from "lucide-react";
+import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
+import { isSoundEnabled, setSoundEnabled } from "@/hooks/useSoundEffects";
 
 const Configuracoes = () => {
   const { toast } = useToast();
@@ -16,6 +17,7 @@ const Configuracoes = () => {
     newMissions: true,
     community: false,
   });
+  const [soundOn, setSoundOnState] = useState(isSoundEnabled());
   const [privacy, setPrivacy] = useState({
     publicProfile: true,
     showInCommunity: true,
@@ -233,7 +235,32 @@ const Configuracoes = () => {
             </div>
           </section>
 
-          {/* Tutorial */}
+          {/* Sons */}
+          <section className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-4 border-b border-border">
+              <h2 className="font-bold flex items-center gap-2">
+                <Volume2 className="w-5 h-5 text-primary" />
+                Sons
+              </h2>
+            </div>
+            <div className="divide-y divide-border">
+              <div className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-medium">Efeitos sonoros</p>
+                  <p className="text-sm text-muted-foreground">Sons ao clicar em botões e completar ações</p>
+                </div>
+                <Switch 
+                  checked={soundOn}
+                  onCheckedChange={(checked) => {
+                    setSoundOnState(checked);
+                    setSoundEnabled(checked);
+                    toast({ title: checked ? "Sons ativados" : "Sons desativados" });
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+
           <section className="glass-card rounded-2xl overflow-hidden" data-tutorial="config-tutorial-reset">
             <div className="p-4 border-b border-border">
               <h2 className="font-bold flex items-center gap-2">
