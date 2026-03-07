@@ -398,22 +398,22 @@ const QuizOnboarding = () => {
       <div className="text-center mb-8">
         <img src={logoCrown} alt="BookQuest" className="w-20 h-20 object-contain mx-auto mb-6 drop-shadow-lg" />
         <h1 className="text-3xl font-serif font-bold mb-2">Vamos começar!</h1>
-        <p className="text-white/60">Primeiro, como você quer ser chamado?</p>
+        <p className="text-muted-foreground">Primeiro, como você quer ser chamado?</p>
       </div>
 
-      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8">
+      <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-8">
         <Input
           placeholder="Digite seu nome..."
           value={profile.name}
           onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-          className="text-lg bg-white/[0.06] border-white/[0.1] text-white placeholder:text-white/40 focus-visible:ring-accent mb-6"
+          className="text-lg bg-foreground/[0.06] border-foreground/[0.1] text-foreground placeholder:text-muted-foreground focus-visible:ring-accent mb-6"
         />
 
         <div className="flex items-center justify-between">
           <button
             onClick={handleSkipQuiz}
             disabled={isSaving}
-            className="text-sm text-white/40 underline hover:text-white/60 transition-colors"
+            className="text-sm text-muted-foreground/60 underline hover:text-muted-foreground transition-colors"
           >
             Pular quiz
           </button>
@@ -430,7 +430,7 @@ const QuizOnboarding = () => {
 
       <div className="mt-6">
         <ProgressBar value={progress} max={100} />
-        <p className="text-xs text-white/40 text-center mt-2">Pergunta 1 de {TOTAL_STEPS}</p>
+        <p className="text-xs text-muted-foreground/60 text-center mt-2">Pergunta 1 de {TOTAL_STEPS}</p>
       </div>
     </div>
   );
@@ -448,10 +448,10 @@ const QuizOnboarding = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-serif font-bold mb-2">Qual a sua faixa etária, {profile.name}?</h1>
-          <p className="text-white/60">Isso nos ajuda a recomendar livros adequados para você.</p>
+          <p className="text-muted-foreground">Isso nos ajuda a recomendar livros adequados para você.</p>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-6">
           <div className="space-y-3 mb-6">
             {ageOptions.map((age) => (
               <button
@@ -460,17 +460,17 @@ const QuizOnboarding = () => {
                 className={`w-full p-4 rounded-xl text-left transition-all ${
                   profile.ageRange === age.id
                     ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                    : "bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.1] border border-foreground/[0.08]"
                 }`}
               >
                 <p className="font-bold">{age.label}</p>
-                <p className={`text-xs ${profile.ageRange === age.id ? "text-accent-foreground/70" : "text-white/50"}`}>{age.desc}</p>
+                <p className={`text-xs ${profile.ageRange === age.id ? "text-accent-foreground/70" : "text-muted-foreground"}`}>{age.desc}</p>
               </button>
             ))}
           </div>
 
           <div className="flex gap-3">
-            <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/[0.08]" onClick={() => setStep("name")}>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]" onClick={() => setStep("name")}>
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" onClick={() => setStep("level")}>
@@ -481,7 +481,7 @@ const QuizOnboarding = () => {
 
         <div className="mt-6">
           <ProgressBar value={progress} max={100} />
-          <p className="text-xs text-white/40 text-center mt-2">Pergunta 2 de {TOTAL_STEPS}</p>
+          <p className="text-xs text-muted-foreground/60 text-center mt-2">Pergunta 2 de {TOTAL_STEPS}</p>
         </div>
       </div>
     );
@@ -499,10 +499,10 @@ const QuizOnboarding = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-serif font-bold mb-2">Qual é o seu nível de leitura?</h1>
-          <p className="text-white/60">Vamos recomendar livros do tamanho ideal para você.</p>
+          <p className="text-muted-foreground">Vamos recomendar livros do tamanho ideal para você.</p>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-6">
           <div className="space-y-3 mb-6">
             {levels.map((level) => (
               <button
@@ -511,17 +511,17 @@ const QuizOnboarding = () => {
                 className={`w-full p-4 rounded-xl text-left transition-all ${
                   profile.level === level.id
                     ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                    : "bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.1] border border-foreground/[0.08]"
                 }`}
               >
                 <p className="font-bold">{level.label}</p>
-                <p className={`text-xs ${profile.level === level.id ? "text-accent-foreground/70" : "text-white/50"}`}>{level.desc}</p>
+                <p className={`text-xs ${profile.level === level.id ? "text-accent-foreground/70" : "text-muted-foreground"}`}>{level.desc}</p>
               </button>
             ))}
           </div>
 
           <div className="flex gap-3">
-            <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/[0.08]" onClick={() => setStep("age")}>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]" onClick={() => setStep("age")}>
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" onClick={() => setStep("time")}>
@@ -532,7 +532,7 @@ const QuizOnboarding = () => {
 
         <div className="mt-6">
           <ProgressBar value={progress} max={100} />
-          <p className="text-xs text-white/40 text-center mt-2">Pergunta 3 de {TOTAL_STEPS}</p>
+          <p className="text-xs text-muted-foreground/60 text-center mt-2">Pergunta 3 de {TOTAL_STEPS}</p>
         </div>
       </div>
     );
@@ -551,10 +551,10 @@ const QuizOnboarding = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-serif font-bold mb-2">Quanto tempo por dia para leitura?</h1>
-          <p className="text-white/60">Não se preocupe, qualquer tempo é válido!</p>
+          <p className="text-muted-foreground">Não se preocupe, qualquer tempo é válido!</p>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-6">
+        <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-6">
           <div className="grid grid-cols-2 gap-3 mb-6">
             {timeOptions.map((time) => (
               <button
@@ -563,17 +563,17 @@ const QuizOnboarding = () => {
                 className={`p-4 rounded-xl text-center transition-all ${
                   profile.timePerDay === time.value
                     ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                    : "bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.1] border border-foreground/[0.08]"
                 }`}
               >
                 <p className="font-bold text-lg">{time.label}</p>
-                <p className={`text-xs ${profile.timePerDay === time.value ? "text-accent-foreground/70" : "text-white/50"}`}>{time.desc}</p>
+                <p className={`text-xs ${profile.timePerDay === time.value ? "text-accent-foreground/70" : "text-muted-foreground"}`}>{time.desc}</p>
               </button>
             ))}
           </div>
 
           <div className="flex gap-3">
-            <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/[0.08]" onClick={() => setStep("level")}>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]" onClick={() => setStep("level")}>
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" onClick={() => setStep("questions")}>
@@ -584,7 +584,7 @@ const QuizOnboarding = () => {
 
         <div className="mt-6">
           <ProgressBar value={progress} max={100} />
-          <p className="text-xs text-white/40 text-center mt-2">Pergunta 4 de {TOTAL_STEPS}</p>
+          <p className="text-xs text-muted-foreground/60 text-center mt-2">Pergunta 4 de {TOTAL_STEPS}</p>
         </div>
       </div>
     );
@@ -595,12 +595,12 @@ const QuizOnboarding = () => {
     const curiosity = curiosities[curiosityIndex];
     return (
       <div className="max-w-2xl w-full">
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 text-center">
+        <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-8 text-center">
           <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
             <Lightbulb className="w-8 h-8 text-accent" />
           </div>
           <h2 className="text-2xl font-serif font-bold mb-4">{curiosity.title}</h2>
-          <p className="text-lg text-white/60 mb-8">{curiosity.text}</p>
+          <p className="text-lg text-muted-foreground mb-8">{curiosity.text}</p>
           <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" size="lg" onClick={handleContinueCuriosity}>
             Continuar <ArrowRight className="w-5 h-5" />
           </Button>
@@ -620,44 +620,44 @@ const QuizOnboarding = () => {
             <Sparkles className="w-10 h-10 text-accent" />
           </div>
           <h1 className="text-3xl font-serif font-bold mb-2">Parabéns, {profile.name}!</h1>
-          <p className="text-white/60">Descobrimos seu perfil literário!</p>
+          <p className="text-muted-foreground">Descobrimos seu perfil literário!</p>
         </div>
 
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8 mb-8">
+        <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-8 mb-8">
           <h2 className="text-2xl font-bold text-accent mb-4">{genre?.title}</h2>
-          <p className="text-lg text-white/60 mb-6">{genre?.description}</p>
+          <p className="text-lg text-muted-foreground mb-6">{genre?.description}</p>
           
-          <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-white/[0.06] rounded-xl">
+          <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-foreground/[0.06] rounded-xl">
             <div className="text-center">
-              <p className="text-sm text-white/50">Idade</p>
+              <p className="text-sm text-muted-foreground">Idade</p>
               <p className="font-bold">{profile.ageRange}</p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-white/50">Nível</p>
+              <p className="text-sm text-muted-foreground">Nível</p>
               <p className="font-bold capitalize">{profile.level}</p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-white/50">Tempo/dia</p>
+              <p className="text-sm text-muted-foreground">Tempo/dia</p>
               <p className="font-bold">{profile.timePerDay} min</p>
             </div>
           </div>
           
-          <div className="border-t border-white/[0.08] pt-6">
+          <div className="border-t border-foreground/[0.08] pt-6">
             <h3 className="font-bold mb-4">Livros recomendados para você:</h3>
             <div className="space-y-3">
               {recommendedBooks.map((book, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-white/[0.06] rounded-xl">
+                <div key={index} className="flex items-center gap-3 p-3 bg-foreground/[0.06] rounded-xl">
                   <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
                     <BookOpen className="w-5 h-5 text-accent" />
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-sm">{book.title}</p>
-                    <p className="text-xs text-white/50">{book.author} • {book.readingTime}</p>
+                    <p className="text-xs text-muted-foreground">{book.author} • {book.readingTime}</p>
                   </div>
                 </div>
               ))}
               {recommendedBooks.length === 0 && (
-                <p className="text-white/50 text-sm text-center py-4">Nenhum livro encontrado com os filtros atuais. Explore a biblioteca!</p>
+                <p className="text-muted-foreground text-sm text-center py-4">Nenhum livro encontrado com os filtros atuais. Explore a biblioteca!</p>
               )}
             </div>
           </div>
@@ -683,7 +683,7 @@ const QuizOnboarding = () => {
       <div className="max-w-2xl w-full">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-white/50">
+            <span className="text-sm text-muted-foreground">
               Pergunta {getCurrentStepNumber()} de {TOTAL_STEPS}
             </span>
             <span className="text-sm font-medium text-accent">{Math.round(progress)}%</span>
@@ -691,7 +691,7 @@ const QuizOnboarding = () => {
           <ProgressBar value={progress} max={100} />
         </div>
 
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-8">
+        <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-8">
           <h2 className="text-xl lg:text-2xl font-serif font-bold mb-6">{question.question}</h2>
 
           <div className="space-y-3 mb-8">
@@ -702,7 +702,7 @@ const QuizOnboarding = () => {
                 className={`w-full p-4 rounded-xl text-left transition-all ${
                   selectedOption === index
                     ? "bg-accent text-accent-foreground ring-2 ring-accent"
-                    : "bg-white/[0.06] text-white hover:bg-white/[0.1] border border-white/[0.08]"
+                    : "bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.1] border border-foreground/[0.08]"
                 }`}
               >
                 {option}
@@ -714,7 +714,7 @@ const QuizOnboarding = () => {
             {currentQuestion > 0 && (
               <Button
                 variant="ghost"
-                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
+                className="text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]"
                 onClick={() => {
                   setCurrentQuestion(currentQuestion - 1);
                   setAnswers(answers.slice(0, -1));
@@ -727,7 +727,7 @@ const QuizOnboarding = () => {
             {currentQuestion === 0 && (
               <Button
                 variant="ghost"
-                className="text-white/60 hover:text-white hover:bg-white/[0.08]"
+                className="text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08]"
                 onClick={() => setStep("time")}
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -760,10 +760,11 @@ const QuizOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary text-white overflow-hidden">
+    <div className="min-h-screen relative overflow-x-hidden text-foreground">
+      {/* Background gradients - same as Landing */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.06] via-transparent to-accent/[0.03]" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-accent/[0.04] blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] via-transparent to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-accent/[0.03] blur-[150px]" />
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
         {renderStep()}
