@@ -523,7 +523,7 @@ const Trilhas = () => {
     return [...quizOnly, ...userSelected];
   }, [isInMyTrails, quizRecommendations]);
 
-  const hasPersonalTrails = filteredTrails.length !== bookTrails.length;
+  
 
   const handleSelectTrail = (book: BookTrail) => {
     setActiveTrail({
@@ -1011,7 +1011,7 @@ const Trilhas = () => {
                   )}
 
                   {/* Remove from trails button */}
-                  {hasPersonalTrails && !isQuiz && (
+                  {!isQuiz && (
                     <button
                       onClick={(e) => {
                         e.preventDefault();
