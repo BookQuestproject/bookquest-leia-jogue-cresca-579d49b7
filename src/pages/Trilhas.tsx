@@ -1198,6 +1198,27 @@ const Trilhas = () => {
                       )}
                     </button>
                   ) : null}
+
+                  {/* Remove from trails */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Remove from quiz recommendations if applicable
+                      if (isQuiz) {
+                        const updatedRecs = quizRecommendations.filter(
+                          r => normaliseTitle(r) !== normaliseTitle(book.title)
+                        );
+                        localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(updatedRecs));
+                      }
+                      removeTrail(book.title);
+                      toast.success(`"${book.title}" removido das trilhas`);
+                    }}
+                    className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    Remover da trilha
+                  </button>
                 </div>
               </Link>
             );
