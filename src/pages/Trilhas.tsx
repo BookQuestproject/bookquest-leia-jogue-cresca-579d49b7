@@ -1126,21 +1126,7 @@ const Trilhas = () => {
                     </div>
                   )}
 
-                  {/* Remove from trails button */}
-                  {!isQuiz && (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        removeTrail(book.title);
-                        toast.success(`"${book.title}" removido das trilhas`);
-                      }}
-                      className="absolute top-3 right-3 w-7 h-7 rounded-full bg-card/80 flex items-center justify-center hover:bg-destructive/80 transition-colors"
-                      title="Remover da trilha"
-                    >
-                      <X className="w-3.5 h-3.5 text-muted-foreground hover:text-white" />
-                    </button>
-                  )}
+                  {/* Remove button moved below */}
                 </div>
 
                 {/* Content */}
