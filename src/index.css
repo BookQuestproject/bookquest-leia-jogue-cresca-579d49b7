@@ -1264,3 +1264,29 @@
     ) scale(0);
   }
 }
+
+/* ============ Premium Aurora Text ============ */
+
+.premium-aurora-text {
+  background: linear-gradient(
+    90deg,
+    hsl(220 90% 60%),
+    hsl(280 80% 65%),
+    hsl(330 85% 60%),
+    hsl(20 90% 60%),
+    hsl(45 95% 55%),
+    hsl(160 80% 50%),
+    hsl(220 90% 60%)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: aurora-flow 4s ease-in-out infinite;
+}
+
+@keyframes aurora-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
