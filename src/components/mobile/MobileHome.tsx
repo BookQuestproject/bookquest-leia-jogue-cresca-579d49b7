@@ -259,15 +259,21 @@ const MobileHome = () => {
       {/* Quick Links */}
       <div className="grid grid-cols-2 gap-2.5">
         <Link
-          to="/quiz"
+          to={profile?.quiz_completed && !isPremium ? "/premium" : "/quiz"}
           className="rounded-xl p-4 bg-card border border-border/60 flex items-center gap-3 active:scale-95 transition-transform"
         >
           <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center">
-            <Star className="w-4 h-4 text-accent" />
+            {profile?.quiz_completed && !isPremium ? (
+              <Lock className="w-4 h-4 text-accent" />
+            ) : (
+              <Star className="w-4 h-4 text-accent" />
+            )}
           </div>
           <div className="min-w-0">
             <p className="text-xs font-semibold truncate">Quiz Literário</p>
-            <p className="text-[10px] text-muted-foreground">Descubra seu gênero</p>
+            <p className="text-[10px] text-muted-foreground">
+              {profile?.quiz_completed && !isPremium ? "Premium" : "Descubra seu gênero"}
+            </p>
           </div>
         </Link>
         <Link

@@ -5,6 +5,7 @@ import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, He
 import Layout from "@/components/layout/Layout";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
+import { useProfile } from "@/hooks/useProfile";
 import { usePageBookmark } from "@/hooks/usePageBookmark";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileHome from "@/components/mobile/MobileHome";
@@ -25,6 +26,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { activeTrail } = useActiveTrail();
   const { isAdmin } = useAdmin();
+  const { quizCompleted, isPremium } = useProfile();
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -565,6 +567,7 @@ const Index = () => {
               ) : (
                 <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-accent transition-colors" />
               )}
+            </Link>
           </div>
         </div>
       </div>
