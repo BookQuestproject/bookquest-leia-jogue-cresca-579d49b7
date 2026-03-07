@@ -502,7 +502,7 @@ const Biblioteca = () => {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Autor <span className="text-muted-foreground text-xs">(opcional — a IA pode identificar)</span>
+                  Autor
                 </label>
                 <Input
                   placeholder="Ex: Patrick Rothfuss"
@@ -513,7 +513,7 @@ const Biblioteca = () => {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Link de referência <span className="text-muted-foreground text-xs">(opcional)</span>
+                  Link de referência
                 </label>
                 <Input
                   placeholder="https://amazon.com.br/... ou link da editora"
