@@ -422,7 +422,7 @@ const PostChapterReflection = ({
     if (ans === undefined || ans === "" || ans === null) return false;
     // Character questions require justification
     if (currentQ?.type === "character") {
-      return typeof ans === "object" && ans?.selected && (ans?.justification || "").trim().length > 0;
+      return typeof ans === "object" && ans?.choice !== undefined && (ans?.justification || "").trim().length >= 15;
     }
     return true;
   })();
