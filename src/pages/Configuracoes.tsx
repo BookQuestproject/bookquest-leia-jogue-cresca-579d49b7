@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle } from "lucide-react";
+import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
+import { isSoundEnabled, setSoundEnabled } from "@/hooks/useSoundEffects";
 
 const Configuracoes = () => {
   const { toast } = useToast();
@@ -17,6 +18,7 @@ const Configuracoes = () => {
     community: false,
   });
   const [privacy, setPrivacy] = useState({
+  const [soundOn, setSoundOn] = useState(isSoundEnabled());
     publicProfile: true,
     showInCommunity: true,
   });
