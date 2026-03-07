@@ -278,6 +278,18 @@ const Quiz = () => {
     const winningGenre = Object.entries(genreCount).reduce((a, b) => a[1] > b[1] ? a : b)[0];
     setResultGenre(winningGenre);
     setStep("result");
+
+    // Save recommended book titles to localStorage for the Biblioteca tag
+    const allBooksForGenre = genreBooks[winningGenre] || [];
+    const userMaxAge = ageRangeToMaxAge(profile.ageRange);
+    const recommended = allBooksForGenre.filter(book => {
+      if (book.minAge > userMaxAge) return false;
+      if (profile.level === "iniciante" && book.level !== "iniciante") return false;
+      if (profile.level === "intermediario" && book.level === "avancado") return false;
+      return true;
+    }).slice(0, 5);
+    const titles = recommended.map(b => b.title);
+    localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(titles));
   };
 
   const getRecommendedBooks = () => {

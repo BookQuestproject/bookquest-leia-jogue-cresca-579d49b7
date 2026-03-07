@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles } from "lucide-react";
+import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles, Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -92,6 +92,16 @@ const Biblioteca = () => {
   const { user } = useAuth();
   const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
+
+  // Quiz recommendation titles
+  const quizRecommendations: string[] = (() => {
+    try {
+      const stored = localStorage.getItem("bookquest-quiz-recommendations");
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  })();
+  const normaliseTitle = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const isQuizRecommended = (title: string) => quizRecommendations.some(r => normaliseTitle(r) === normaliseTitle(title));
 
   // Fetch approved suggestions from the database (visible to all authenticated users)
   const [approvedBooks, setApprovedBooks] = useState<Book[]>([]);
@@ -362,18 +372,29 @@ const Biblioteca = () => {
               className="glass-card rounded-2xl overflow-hidden card-hover animate-fade-in group"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <div className="flex gap-4 p-4">
-                <div className="w-20 h-28 rounded-xl flex-shrink-0 overflow-hidden shadow-md">
+                <div className="flex gap-4 p-4">
+                <div className="w-20 h-28 rounded-xl flex-shrink-0 overflow-hidden shadow-md bg-muted">
                   <img 
                     src={book.cover} 
                     alt={`Capa de ${book.title}`}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(book.title.slice(0, 15))}`;
+                    }}
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
-                    {book.genre}
-                  </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
+                      {book.genre}
+                    </span>
+                    {isQuizRecommended(book.title) && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-accent/20 text-accent font-medium flex items-center gap-1">
+                        <Award className="w-3 h-3" />
+                        Quiz
+                      </span>
+                    )}
+                  </div>
                   <h3 className="font-bold mt-1 truncate">{book.title}</h3>
                   <p className="text-sm text-muted-foreground">{book.author}</p>
                   <div className="flex items-center gap-2 mt-2">
@@ -530,11 +551,14 @@ const Biblioteca = () => {
                   <DialogTitle>{inspectedBook.title}</DialogTitle>
                 </DialogHeader>
                 <div className="flex gap-6 py-4">
-                  <div className="w-32 h-44 rounded-xl flex-shrink-0 overflow-hidden shadow-md">
+                  <div className="w-32 h-44 rounded-xl flex-shrink-0 overflow-hidden shadow-md bg-muted">
                     <img
                       src={inspectedBook.cover}
                       alt={`Capa de ${inspectedBook.title}`}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(inspectedBook.title.slice(0, 15))}`;
+                      }}
                     />
                   </div>
                   <div className="flex-1 space-y-3">
