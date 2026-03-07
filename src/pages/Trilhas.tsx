@@ -149,7 +149,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Fantasia",
     themeColor: "25 50% 25%",
-    chapters: generateChapters(1200, 22),
+    chapters: [
+      { id: 1, title: "Uma festa muito esperada", status: "current", icon: "🎉", totalPages: 30, question: { text: "Por que Bilbo decide deixar o Condado?", options: ["Ele foi expulso pelos hobbits", "Ele queria uma última aventura e sentia o peso do Anel", "Gandalf o obrigou a partir", "Ele precisava devolver o Anel a Sauron"], correctAnswer: 1, explanation: "Bilbo sentia que o Anel estava consumindo-o e desejava partir para uma última jornada, deixando tudo para Frodo." } },
+      { id: 2, title: "A sombra do passado", status: "locked", icon: "🌑", totalPages: 28 },
+      { id: 3, title: "Três é demais", status: "locked", icon: "🚶", totalPages: 24 },
+    ]
   },
   {
     id: "orgulho-preconceito",
@@ -161,7 +165,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Romance",
     themeColor: "340 40% 40%",
-    chapters: generateChapters(432, 15),
+    chapters: [
+      { id: 1, title: "O baile em Meryton", status: "current", icon: "💃", totalPages: 20, question: { text: "Qual foi a primeira impressão de Elizabeth sobre Mr. Darcy no baile?", options: ["Ela o achou charmoso e simpático", "Ela o achou orgulhoso e desagradável", "Ela não notou sua presença", "Ela ficou encantada imediatamente"], correctAnswer: 1, explanation: "Elizabeth ouviu Darcy recusar dançar com ela, dizendo que ela não era bonita o suficiente, formando uma impressão negativa." } },
+      { id: 2, title: "A visita a Netherfield", status: "locked", icon: "🏠", totalPages: 22 },
+      { id: 3, title: "O pedido de Mr. Collins", status: "locked", icon: "💍", totalPages: 18 },
+    ]
   },
   {
     id: "1984",
@@ -173,7 +181,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Ficção Científica",
     themeColor: "0 0% 25%",
-    chapters: generateChapters(328, 12),
+    chapters: [
+      { id: 1, title: "O Grande Irmão", status: "current", icon: "👁️", totalPages: 28, question: { text: "O que significa o slogan 'Guerra é Paz, Liberdade é Escravidão, Ignorância é Força'?", options: ["É um hino patriótico de Oceânia", "São contradições propositais usadas pelo Partido para controlar o pensamento", "São frases motivacionais para os trabalhadores", "É uma piada interna do governo"], correctAnswer: 1, explanation: "Os slogans representam o 'duplipensar' — a capacidade de aceitar duas ideias contraditórias ao mesmo tempo, essencial para o controle do Partido." } },
+      { id: 2, title: "O diário proibido", status: "locked", icon: "📓", totalPages: 24 },
+      { id: 3, title: "A Polícia do Pensamento", status: "locked", icon: "🚔", totalPages: 26 },
+    ]
   },
   {
     id: "e-nao-sobrou-nenhum",
@@ -185,7 +197,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Mistério",
     themeColor: "0 45% 30%",
-    chapters: generateChapters(272, 14),
+    chapters: [
+      { id: 1, title: "O convite misterioso", status: "current", icon: "✉️", totalPages: 20, question: { text: "O que os dez convidados tinham em comum ao chegar à Ilha do Soldado?", options: ["Todos eram amigos de infância", "Nenhum conhecia pessoalmente o anfitrião que os convidou", "Todos eram detetives famosos", "Todos trabalhavam no mesmo lugar"], correctAnswer: 1, explanation: "Nenhum dos convidados conhecia pessoalmente Mr. Owen, o misterioso anfitrião, cada um recebeu um convite sob circunstâncias diferentes." } },
+      { id: 2, title: "A acusação", status: "locked", icon: "🔊", totalPages: 18 },
+      { id: 3, title: "A primeira morte", status: "locked", icon: "💀", totalPages: 22 },
+    ]
   },
   {
     id: "culpa-das-estrelas",
@@ -197,7 +213,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Romance",
     themeColor: "200 50% 40%",
-    chapters: generateChapters(288, 12),
+    chapters: [
+      { id: 1, title: "O grupo de apoio", status: "current", icon: "💙", totalPages: 24, question: { text: "Como Hazel descreve sua relação com o grupo de apoio no início?", options: ["Ela adora ir e se sente acolhida", "Ela vai por obrigação da mãe e acha deprimente", "Ela é a líder do grupo", "Ela nunca participou antes"], correctAnswer: 1, explanation: "Hazel frequenta o grupo por insistência da mãe e inicialmente o vê como algo entediante e deprimente, até conhecer Augustus." } },
+      { id: 2, title: "Augustus Waters", status: "locked", icon: "🚬", totalPages: 22 },
+      { id: 3, title: "Uma Aflição Imperial", status: "locked", icon: "📖", totalPages: 26 },
+    ]
   },
   {
     id: "jogos-vorazes",
@@ -209,7 +229,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Aventura",
     themeColor: "30 60% 35%",
-    chapters: generateChapters(400, 15),
+    chapters: [
+      { id: 1, title: "O dia da Colheita", status: "current", icon: "🌾", totalPages: 26, question: { text: "Por que Katniss se voluntariou como tributo?", options: ["Ela queria fama e glória", "Para salvar sua irmã Prim, que foi sorteada", "Porque era obrigatório para os mais velhos", "Ela foi forçada pelo governo"], correctAnswer: 1, explanation: "Quando Primrose Everdeen foi sorteada, Katniss se ofereceu como voluntária para proteger sua irmã mais nova." } },
+      { id: 2, title: "A despedida", status: "locked", icon: "👋", totalPages: 22 },
+      { id: 3, title: "O trem para a Capital", status: "locked", icon: "🚂", totalPages: 28 },
+    ]
   },
   {
     id: "o-hobbit",
@@ -221,7 +245,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Fantasia",
     themeColor: "120 30% 30%",
-    chapters: generateChapters(320, 12),
+    chapters: [
+      { id: 1, title: "Uma festa inesperada", status: "current", icon: "🎉", totalPages: 28, question: { text: "O que Gandalf marcou na porta de Bilbo?", options: ["Um aviso de perigo", "Um sinal rúnico significando 'ladrão disponível'", "O nome de Bilbo em élfico", "Um mapa do tesouro"], correctAnswer: 1, explanation: "Gandalf riscou um sinal na porta de Bilbo indicando aos anões que ali morava um 'ladrão' disponível para a aventura." } },
+      { id: 2, title: "Carneiro assado", status: "locked", icon: "🍖", totalPages: 22 },
+      { id: 3, title: "Um breve descanso", status: "locked", icon: "🏔️", totalPages: 20 },
+    ]
   },
   {
     id: "sapiens",
@@ -233,7 +261,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Não-Ficção",
     themeColor: "180 30% 30%",
-    chapters: generateChapters(464, 15),
+    chapters: [
+      { id: 1, title: "Um animal insignificante", status: "current", icon: "🐒", totalPages: 30, question: { text: "Segundo Harari, o que diferenciou o Homo sapiens das outras espécies humanas?", options: ["A força física superior", "A capacidade de criar ficções e cooperar em grande escala", "A habilidade de usar ferramentas", "A vida em cavernas"], correctAnswer: 1, explanation: "Harari argumenta que a 'Revolução Cognitiva' deu aos Sapiens a capacidade única de criar mitos, permitindo cooperação entre grandes grupos de desconhecidos." } },
+      { id: 2, title: "A Árvore do Conhecimento", status: "locked", icon: "🌳", totalPages: 28 },
+      { id: 3, title: "Um dia na vida de Adão e Eva", status: "locked", icon: "🏕️", totalPages: 26 },
+    ]
   },
   {
     id: "cronicas-narnia",
@@ -245,7 +277,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Fantasia",
     themeColor: "30 45% 35%",
-    chapters: generateChapters(768, 20),
+    chapters: [
+      { id: 1, title: "Lúcia olha dentro do guarda-roupa", status: "current", icon: "🚪", totalPages: 18, question: { text: "O que Lúcia encontrou ao entrar no guarda-roupa?", options: ["Uma sala secreta cheia de tesouros", "Um mundo coberto de neve — Nárnia", "Outro quarto da casa", "Um túnel escuro e perigoso"], correctAnswer: 1, explanation: "Lúcia atravessou os casacos do guarda-roupa e descobriu o mundo mágico de Nárnia, coberto por um inverno eterno." } },
+      { id: 2, title: "O que Lúcia encontrou lá", status: "locked", icon: "🐐", totalPages: 20 },
+      { id: 3, title: "Edmundo e o guarda-roupa", status: "locked", icon: "🍬", totalPages: 18 },
+    ]
   },
   {
     id: "nome-do-vento",
@@ -257,7 +293,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Fantasia",
     themeColor: "210 40% 35%",
-    chapters: generateChapters(656, 18),
+    chapters: [
+      { id: 1, title: "Um silêncio triplo", status: "current", icon: "🤫", totalPages: 16, question: { text: "O que o 'silêncio triplo' no início do livro sugere sobre Kvothe?", options: ["Que ele é surdo", "Que ele vive uma vida pacífica e sem história", "Que ele é um homem escondendo um passado extraordinário", "Que a taverna está fechada"], correctAnswer: 2, explanation: "O silêncio triplo sugere que Kote (Kvothe) é um homem que carrega o peso de um passado lendário, agora escondido como um simples taberneiro." } },
+      { id: 2, title: "Uma beleza a ser destruída", status: "locked", icon: "🕯️", totalPages: 20 },
+      { id: 3, title: "Madeira e palavra", status: "locked", icon: "📜", totalPages: 22 },
+    ]
   },
   {
     id: "garota-no-trem",
@@ -269,7 +309,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Mistério",
     themeColor: "220 35% 30%",
-    chapters: generateChapters(336, 12),
+    chapters: [
+      { id: 1, title: "Rachel – A observadora", status: "current", icon: "👀", totalPages: 28, question: { text: "O que Rachel fazia todos os dias durante a viagem de trem?", options: ["Lia livros para passar o tempo", "Observava um casal 'perfeito' em uma casa ao lado dos trilhos", "Dormia durante todo o trajeto", "Fotografava a paisagem"], correctAnswer: 1, explanation: "Rachel observava obsessivamente um casal que morava em uma casa visível dos trilhos, criando fantasias sobre suas vidas perfeitas." } },
+      { id: 2, title: "Megan – O segredo", status: "locked", icon: "🤐", totalPages: 24 },
+      { id: 3, title: "Anna – A outra mulher", status: "locked", icon: "💔", totalPages: 26 },
+    ]
   },
   {
     id: "gone-girl",
@@ -281,7 +325,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Mistério",
     themeColor: "350 30% 28%",
-    chapters: generateChapters(432, 14),
+    chapters: [
+      { id: 1, title: "O garoto conhece a garota", status: "current", icon: "💑", totalPages: 22, question: { text: "O que acontece no quinto aniversário de casamento de Nick e Amy?", options: ["Eles fazem uma viagem romântica", "Amy desaparece misteriosamente", "Eles fazem uma festa surpresa", "Nick pede o divórcio"], correctAnswer: 1, explanation: "No quinto aniversário de casamento, Amy desaparece e sinais de luta são encontrados em casa, tornando Nick o principal suspeito." } },
+      { id: 2, title: "O diário de Amy", status: "locked", icon: "📔", totalPages: 24 },
+      { id: 3, title: "As aparências enganam", status: "locked", icon: "🎭", totalPages: 26 },
+    ]
   },
   {
     id: "codigo-da-vinci",
@@ -293,7 +341,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Mistério",
     themeColor: "45 40% 30%",
-    chapters: generateChapters(480, 16),
+    chapters: [
+      { id: 1, title: "O assassinato no Louvre", status: "current", icon: "🖼️", totalPages: 20, question: { text: "O que o curador Jacques Saunière fez antes de morrer?", options: ["Ligou para a polícia", "Posicionou seu corpo como o Homem Vitruviano e deixou pistas codificadas", "Escondeu a Mona Lisa", "Escreveu um testamento"], correctAnswer: 1, explanation: "Saunière usou seus últimos momentos para arranjar seu corpo como o Homem Vitruviano de Da Vinci e deixar mensagens cifradas para Robert Langdon." } },
+      { id: 2, title: "A cifra de Saunière", status: "locked", icon: "🔢", totalPages: 18 },
+      { id: 3, title: "Sophie Neveu", status: "locked", icon: "👩", totalPages: 22 },
+    ]
   },
   {
     id: "sherlock-holmes",
@@ -305,7 +357,11 @@ const bookTrails: BookTrail[] = [
     isPremium: true,
     genre: "Mistério",
     themeColor: "200 25% 28%",
-    chapters: generateChapters(1408, 25),
+    chapters: [
+      { id: 1, title: "Um Estudo em Vermelho", status: "current", icon: "🔴", totalPages: 30, question: { text: "Como Watson e Holmes se conheceram?", options: ["Eram vizinhos de infância", "Foram apresentados por um colega porque ambos precisavam dividir um apartamento", "Holmes o contratou como assistente", "Se encontraram em uma cena de crime"], correctAnswer: 1, explanation: "Watson, recém-voltado da guerra, precisava de um lugar para morar e foi apresentado a Holmes por Stamford, pois Holmes também buscava alguém para dividir o aluguel do 221B Baker Street." } },
+      { id: 2, title: "A ciência da dedução", status: "locked", icon: "🔬", totalPages: 24 },
+      { id: 3, title: "O mistério de Lauriston Gardens", status: "locked", icon: "🏚️", totalPages: 28 },
+    ]
   },
   {
     id: "como-eu-era-antes",
@@ -317,7 +373,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Romance",
     themeColor: "330 45% 45%",
-    chapters: generateChapters(384, 12),
+    chapters: [
+      { id: 1, title: "Louisa perde o emprego", status: "current", icon: "☕", totalPages: 24, question: { text: "Por que Louisa Clark aceita o emprego de cuidadora de Will Traynor?", options: ["Ela sempre sonhou em ser enfermeira", "Ela estava desempregada e precisava do dinheiro", "Will era seu amigo de infância", "Ela foi obrigada pela família dele"], correctAnswer: 1, explanation: "Louisa havia perdido seu emprego no café e aceitou o trabalho com Will por necessidade financeira, sem saber exatamente o que esperar." } },
+      { id: 2, title: "Will Traynor", status: "locked", icon: "♿", totalPages: 22 },
+      { id: 3, title: "Rotina e resistência", status: "locked", icon: "🔄", totalPages: 26 },
+    ]
   },
   {
     id: "poder-do-habito",
@@ -329,7 +389,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Não-Ficção",
     themeColor: "260 35% 35%",
-    chapters: generateChapters(408, 12),
+    chapters: [
+      { id: 1, title: "O loop do hábito", status: "current", icon: "🔁", totalPages: 34, question: { text: "Quais são os três componentes do 'loop do hábito'?", options: ["Motivação, ação e recompensa", "Deixa (gatilho), rotina e recompensa", "Planejamento, execução e reflexão", "Desejo, tentativa e fracasso"], correctAnswer: 1, explanation: "O loop do hábito consiste em uma deixa (gatilho que inicia o comportamento), uma rotina (o comportamento em si) e uma recompensa (o benefício que reforça o hábito)." } },
+      { id: 2, title: "O cérebro ansioso", status: "locked", icon: "🧠", totalPages: 30 },
+      { id: 3, title: "A regra de ouro da mudança", status: "locked", icon: "🏆", totalPages: 32 },
+    ]
   },
   {
     id: "mindset",
@@ -341,7 +405,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Não-Ficção",
     themeColor: "170 35% 35%",
-    chapters: generateChapters(320, 10),
+    chapters: [
+      { id: 1, title: "Os dois mindsets", status: "current", icon: "🧠", totalPages: 32, question: { text: "Qual é a diferença entre mindset fixo e mindset de crescimento?", options: ["Fixo é pessimista e crescimento é otimista", "Fixo acredita que habilidades são inatas; crescimento acredita que podem ser desenvolvidas", "Fixo é para adultos e crescimento é para crianças", "Não há diferença real entre os dois"], correctAnswer: 1, explanation: "O mindset fixo acredita que inteligência e talento são qualidades inatas e imutáveis, enquanto o mindset de crescimento acredita que podem ser desenvolvidos com esforço e aprendizado." } },
+      { id: 2, title: "Por dentro dos mindsets", status: "locked", icon: "🔍", totalPages: 28 },
+      { id: 3, title: "A verdade sobre habilidade", status: "locked", icon: "💡", totalPages: 30 },
+    ]
   },
   {
     id: "maze-runner",
@@ -353,7 +421,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Aventura",
     themeColor: "150 30% 28%",
-    chapters: generateChapters(400, 15),
+    chapters: [
+      { id: 1, title: "A Caixa", status: "current", icon: "📦", totalPages: 22, question: { text: "O que Thomas lembrava quando chegou à Clareira?", options: ["Toda a sua vida antes da Clareira", "Apenas seu nome — nada mais", "O rosto de sua família", "Como ele chegou ali"], correctAnswer: 1, explanation: "Thomas acordou na Caixa sem memórias, sabendo apenas seu primeiro nome. Todas as outras lembranças haviam sido apagadas." } },
+      { id: 2, title: "A Clareira", status: "locked", icon: "🏕️", totalPages: 24 },
+      { id: 3, title: "As regras dos Clareianos", status: "locked", icon: "📋", totalPages: 20 },
+    ]
   },
   {
     id: "divergente",
@@ -365,7 +437,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Aventura",
     themeColor: "15 55% 35%",
-    chapters: generateChapters(496, 15),
+    chapters: [
+      { id: 1, title: "O teste de aptidão", status: "current", icon: "💉", totalPages: 24, question: { text: "Por que o resultado do teste de Tris foi considerado perigoso?", options: ["Ela não teve resultado nenhum", "Ela teve aptidão para múltiplas facções — ela é Divergente", "Ela foi aprovada para a facção errada", "O teste deu erro técnico"], correctAnswer: 1, explanation: "Tris mostrou aptidão para mais de uma facção, o que a classificou como 'Divergente' — algo considerado perigoso pelo sistema de controle." } },
+      { id: 2, title: "O dia da Escolha", status: "locked", icon: "🩸", totalPages: 22 },
+      { id: 3, title: "A iniciação na Audácia", status: "locked", icon: "🏋️", totalPages: 26 },
+    ]
   },
   {
     id: "aventuras-de-pi",
@@ -377,7 +453,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Aventura",
     themeColor: "200 45% 40%",
-    chapters: generateChapters(320, 12),
+    chapters: [
+      { id: 1, title: "O zoológico de Pondicherry", status: "current", icon: "🦁", totalPages: 26, question: { text: "Por que Pi recebeu esse nome incomum?", options: ["Era uma tradição familiar", "Seu nome vem de uma piscina famosa em Paris — Piscine Molitor", "Ele escolheu o nome quando criança", "Foi um erro no registro de nascimento"], correctAnswer: 1, explanation: "Pi se chama Piscine Molitor Patel, nome dado em homenagem a uma piscina em Paris. Ele adotou o apelido 'Pi' para evitar ser chamado de 'mijo' na escola." } },
+      { id: 2, title: "As três religiões de Pi", status: "locked", icon: "🙏", totalPages: 22 },
+      { id: 3, title: "O naufrágio", status: "locked", icon: "🚢", totalPages: 28 },
+    ]
   },
   {
     id: "ilha-do-tesouro",
@@ -389,7 +469,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Aventura",
     themeColor: "25 45% 30%",
-    chapters: generateChapters(304, 12),
+    chapters: [
+      { id: 1, title: "O velho marinheiro", status: "current", icon: "🧭", totalPages: 22, question: { text: "O que Billy Bones trouxe consigo para a estalagem do pai de Jim?", options: ["Um papagaio falante", "Um velho baú de marinheiro com um mapa do tesouro dentro", "Uma espada encantada", "Um barco miniatura"], correctAnswer: 1, explanation: "Billy Bones chegou à estalagem carregando um grande baú de marinheiro que continha, entre outras coisas, o mapa da Ilha do Tesouro." } },
+      { id: 2, title: "O Cão Negro", status: "locked", icon: "🐕", totalPages: 18 },
+      { id: 3, title: "A marca negra", status: "locked", icon: "⚫", totalPages: 20 },
+    ]
   },
   {
     id: "20000-leguas",
@@ -401,7 +485,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Aventura",
     themeColor: "195 50% 30%",
-    chapters: generateChapters(448, 15),
+    chapters: [
+      { id: 1, title: "O monstro marinho", status: "current", icon: "🐙", totalPages: 24, question: { text: "O que as pessoas acreditavam ser o 'monstro' que atacava navios?", options: ["Um kraken gigante", "Uma criatura marinha desconhecida de proporções enormes", "Um navio pirata disfarçado", "Uma baleia mutante"], correctAnswer: 1, explanation: "Relatos de diversos navios descreviam uma criatura luminosa e enorme nos oceanos, que na verdade era o submarino Nautilus do Capitão Nemo." } },
+      { id: 2, title: "A expedição", status: "locked", icon: "⚓", totalPages: 22 },
+      { id: 3, title: "O Nautilus", status: "locked", icon: "🚢", totalPages: 26 },
+    ]
   },
   {
     id: "rapido-devagar",
@@ -413,7 +501,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Não-Ficção",
     themeColor: "220 30% 35%",
-    chapters: generateChapters(608, 15),
+    chapters: [
+      { id: 1, title: "Os dois sistemas", status: "current", icon: "⚡", totalPages: 28, question: { text: "Qual a diferença entre o Sistema 1 e o Sistema 2 do pensamento?", options: ["Sistema 1 é lógico e Sistema 2 é emocional", "Sistema 1 é rápido e intuitivo; Sistema 2 é lento e deliberado", "Sistema 1 é usado por crianças e Sistema 2 por adultos", "Não há diferença prática entre eles"], correctAnswer: 1, explanation: "O Sistema 1 opera de forma automática e rápida, com pouco esforço. O Sistema 2 aloca atenção para atividades mentais trabalhosas e complexas." } },
+      { id: 2, title: "Atenção e esforço", status: "locked", icon: "🎯", totalPages: 26 },
+      { id: 3, title: "O controlador preguiçoso", status: "locked", icon: "😴", totalPages: 30 },
+    ]
   },
   {
     id: "breve-historia-tempo",
@@ -425,7 +517,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Não-Ficção",
     themeColor: "240 30% 25%",
-    chapters: generateChapters(256, 10),
+    chapters: [
+      { id: 1, title: "Nossa imagem do universo", status: "current", icon: "🌍", totalPages: 26, question: { text: "Qual é a famosa anedota que Hawking usa para abrir o livro?", options: ["A maçã de Newton", "A história da senhora que disse que o mundo fica em cima de uma tartaruga", "O sonho de Einstein", "A queda de Galileu da Torre de Pisa"], correctAnswer: 1, explanation: "Hawking abre o livro com a história de uma senhora que, após uma palestra, afirmou que o mundo fica sobre as costas de uma tartaruga, e 'são tartarugas até o fim'." } },
+      { id: 2, title: "Espaço e tempo", status: "locked", icon: "⏰", totalPages: 28 },
+      { id: 3, title: "O universo em expansão", status: "locked", icon: "💫", totalPages: 24 },
+    ]
   },
   {
     id: "me-chame-pelo-seu-nome",
@@ -437,7 +533,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Romance",
     themeColor: "30 50% 45%",
-    chapters: generateChapters(248, 10),
+    chapters: [
+      { id: 1, title: "A chegada de Oliver", status: "current", icon: "☀️", totalPages: 30, question: { text: "Qual foi a primeira impressão de Elio sobre Oliver?", options: ["Ele o adorou imediatamente", "Ele sentiu uma mistura de fascínio e irritação com sua confiança", "Ele o ignorou completamente", "Eles se tornaram melhores amigos na hora"], correctAnswer: 1, explanation: "Elio ficou intrigado e levemente irritado com a autoconfiança e o jeito despreocupado de Oliver, especialmente seu hábito de dizer 'Later!'." } },
+      { id: 2, title: "O verão italiano", status: "locked", icon: "🌻", totalPages: 28 },
+      { id: 3, title: "A muralha do silêncio", status: "locked", icon: "🤐", totalPages: 26 },
+    ]
   },
   {
     id: "anna-karenina",
@@ -449,7 +549,11 @@ const bookTrails: BookTrail[] = [
     isPremium: true,
     genre: "Romance",
     themeColor: "350 35% 30%",
-    chapters: generateChapters(864, 20),
+    chapters: [
+      { id: 1, title: "Todas as famílias felizes", status: "current", icon: "👪", totalPages: 22, question: { text: "Qual é a famosa frase de abertura de Anna Karenina?", options: ["Era o melhor dos tempos, era o pior dos tempos", "Todas as famílias felizes se parecem; cada família infeliz é infeliz à sua maneira", "Chame-me Ismael", "Em algum lugar da Mancha"], correctAnswer: 1, explanation: "A frase de abertura é uma das mais famosas da literatura: 'Todas as famílias felizes se parecem, cada família infeliz é infeliz à sua maneira.'" } },
+      { id: 2, title: "A crise dos Oblonsky", status: "locked", icon: "💔", totalPages: 24 },
+      { id: 3, title: "A chegada de Anna", status: "locked", icon: "🚂", totalPages: 20 },
+    ]
   },
   {
     id: "morro-ventos-uivantes",
@@ -461,7 +565,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Romance",
     themeColor: "270 25% 30%",
-    chapters: generateChapters(400, 14),
+    chapters: [
+      { id: 1, title: "A visita a Morro dos Ventos", status: "current", icon: "🏚️", totalPages: 24, question: { text: "Qual foi a primeira impressão de Lockwood ao visitar o Morro dos Ventos Uivantes?", options: ["Era um lugar acolhedor e alegre", "Era um lugar hostil e sombrio, com moradores rudes", "Era uma mansão luxuosa", "Estava abandonado e vazio"], correctAnswer: 1, explanation: "Lockwood encontrou um ambiente hostil e sombrio, com Heathcliff sendo rude e os cães ameaçadores, criando uma atmosfera de desconforto." } },
+      { id: 2, title: "A tempestade", status: "locked", icon: "⛈️", totalPages: 22 },
+      { id: 3, title: "A história de Nelly", status: "locked", icon: "📖", totalPages: 28 },
+    ]
   },
   {
     id: "silencio-inocentes",
@@ -473,7 +581,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Mistério",
     themeColor: "0 30% 25%",
-    chapters: generateChapters(352, 12),
+    chapters: [
+      { id: 1, title: "A estagiária do FBI", status: "current", icon: "🔍", totalPages: 24, question: { text: "Por que Clarice Starling foi enviada para entrevistar Hannibal Lecter?", options: ["Ela era a agente mais experiente", "Jack Crawford queria usar seu perfil psicológico para extrair informações de Lecter", "Lecter pediu especificamente por ela", "Foi um erro administrativo"], correctAnswer: 1, explanation: "Crawford enviou Clarice, ainda estagiária, porque acreditava que seu perfil — jovem, inteligente e vulnerável — poderia despertar o interesse de Lecter e fazê-lo cooperar." } },
+      { id: 2, title: "O encontro com Lecter", status: "locked", icon: "🦷", totalPages: 26 },
+      { id: 3, title: "Quid pro quo", status: "locked", icon: "🤝", totalPages: 22 },
+    ]
   },
   {
     id: "gene-egoista",
@@ -485,7 +597,11 @@ const bookTrails: BookTrail[] = [
     isPremium: false,
     genre: "Não-Ficção",
     themeColor: "140 35% 30%",
-    chapters: generateChapters(544, 12),
+    chapters: [
+      { id: 1, title: "Por que as pessoas existem?", status: "current", icon: "❓", totalPages: 28, question: { text: "Qual é a ideia central de Dawkins sobre a evolução?", options: ["Os organismos evoluem para o bem da espécie", "Os genes são as unidades fundamentais da seleção natural, e os organismos são suas 'máquinas de sobrevivência'", "A evolução é guiada por um propósito consciente", "Apenas os mais fortes sobrevivem"], correctAnswer: 1, explanation: "Dawkins argumenta que a seleção natural opera no nível dos genes, não dos organismos. Nós somos 'máquinas de sobrevivência' construídas pelos genes para garantir sua própria replicação." } },
+      { id: 2, title: "Os replicadores", status: "locked", icon: "🔄", totalPages: 26 },
+      { id: 3, title: "Espirais imortais", status: "locked", icon: "🧬", totalPages: 30 },
+    ]
   },
 ];
 
