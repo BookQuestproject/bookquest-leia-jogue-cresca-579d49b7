@@ -551,11 +551,14 @@ const Biblioteca = () => {
                   <DialogTitle>{inspectedBook.title}</DialogTitle>
                 </DialogHeader>
                 <div className="flex gap-6 py-4">
-                  <div className="w-32 h-44 rounded-xl flex-shrink-0 overflow-hidden shadow-md">
+                  <div className="w-32 h-44 rounded-xl flex-shrink-0 overflow-hidden shadow-md bg-muted">
                     <img
                       src={inspectedBook.cover}
                       alt={`Capa de ${inspectedBook.title}`}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(inspectedBook.title.slice(0, 15))}`;
+                      }}
                     />
                   </div>
                   <div className="flex-1 space-y-3">
