@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { CheckCircle, Star, TrendingUp, X, ChevronUp } from "lucide-react";
+import { playSound } from "@/hooks/useSoundEffects";
 
 interface MissionCompletedModalProps {
   isOpen: boolean;
@@ -38,17 +39,16 @@ const MissionCompletedModal = ({
       setPrevBarWidth(Math.max(0, Math.min((prevXp / nextLevelXp) * 100, 100)));
 
       timerRef.current = [
-        setTimeout(() => setPhase(1), 80),
+        setTimeout(() => { setPhase(1); playSound("success"); }, 80),
         setTimeout(() => setPhase(2), 350),
-        setTimeout(() => setPhase(3), 600),
+        setTimeout(() => { setPhase(3); playSound("xp"); }, 600),
         setTimeout(() => {
           setPhase(4);
-          // Animate bar from previous to current
           requestAnimationFrame(() => {
             setXpBarWidth(Math.min((currentXp / nextLevelXp) * 100, 100));
           });
         }, 850),
-        setTimeout(() => { if (leveledUp) setPhase(5); }, 1300),
+        setTimeout(() => { if (leveledUp) { setPhase(5); playSound("levelUp"); } }, 1300),
       ];
 
       return () => timerRef.current.forEach(clearTimeout);
