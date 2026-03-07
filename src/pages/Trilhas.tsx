@@ -939,12 +939,23 @@ const Trilhas = () => {
               >
                 {/* Cover */}
                 <div 
-                  className="h-36 flex items-center justify-center relative"
+                  className="h-44 flex items-center justify-center relative overflow-hidden"
                   style={{ 
                     background: `linear-gradient(135deg, hsl(${themeColor} / 0.15), hsl(${themeColor} / 0.05))`,
                   }}
                 >
-                  <span className="text-5xl">{book.cover}</span>
+                  {book.coverImage ? (
+                    <img 
+                      src={book.coverImage} 
+                      alt={book.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).parentElement!.querySelector('.emoji-fallback')?.classList.remove('hidden');
+                      }}
+                    />
+                  ) : null}
+                  <span className={`text-5xl emoji-fallback ${book.coverImage ? 'hidden absolute' : ''}`}>{book.cover}</span>
                   
                   {book.isPremium && !isPremium && (
                     <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded bg-card/90 text-xs font-medium">
