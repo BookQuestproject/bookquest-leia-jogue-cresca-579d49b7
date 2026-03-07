@@ -112,12 +112,12 @@ const questions: Question[] = [
 
 const curiosities = [
   {
-    title: "Você sabia?",
-    text: "Pessoas que leem regularmente têm 2,5 vezes mais vocabulário ativo do que pessoas que não leem. Isso melhora a comunicação em todas as áreas da vida!",
+    text: "Pessoas que leem regularmente têm 2,5 vezes mais vocabulário ativo do que pessoas que não leem.",
+    subtitle: "Isso melhora a comunicação em todas as áreas da vida!",
   },
   {
-    title: "Curiosidade",
-    text: "Ler por apenas 6 minutos reduz o estresse em 68%, mais do que ouvir música ou tomar chá. A leitura é um dos relaxantes mais poderosos!",
+    text: "Ler por apenas 6 minutos reduz o estresse em 68%, mais do que ouvir música ou tomar chá.",
+    subtitle: "A leitura é um dos relaxantes mais poderosos do mundo!",
   },
 ];
 
@@ -460,7 +460,8 @@ const Quiz = () => {
           <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
             <Lightbulb className="w-8 h-8 text-accent" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-serif font-bold mb-4 leading-relaxed">{curiosity.text}</h2>
+          <h2 className="text-xl sm:text-2xl font-serif font-bold mb-3 leading-relaxed">{curiosity.text}</h2>
+          <p className="text-base text-white/50 mb-8">{curiosity.subtitle}</p>
           <Button className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2" size="lg" onClick={handleContinueCuriosity}>
             Continuar <ArrowRight className="w-5 h-5" />
           </Button>
