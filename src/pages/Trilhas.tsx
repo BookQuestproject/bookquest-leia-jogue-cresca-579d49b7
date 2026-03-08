@@ -352,7 +352,7 @@ const bookTrails: BookTrail[] = [
     title: "Sherlock Holmes - Obra Completa",
     author: "Arthur Conan Doyle",
     cover: "🕵️",
-    coverImage: "https://m.media-amazon.com/images/I/91aBOomjHjL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/sherlock-holmes.jpg",
     totalChapters: 25,
     isPremium: true,
     genre: "Mistério",
