@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Swords, Send, Check, X, Trophy, Clock, User, Zap } from "lucide-react";
+import { Swords, Send, Check, X, Trophy, Clock, User, Sparkles } from "lucide-react";
 
 const Desafios = () => {
   const { user } = useAuth();
@@ -38,7 +38,7 @@ const Desafios = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "active": return <Zap className="h-4 w-4 text-green-400" />;
+      case "active": return <Sparkles className="h-4 w-4 text-green-400" />;
       case "completed": return <Trophy className="h-4 w-4 text-accent" />;
       case "pending": return <Clock className="h-4 w-4 text-blue-400" />;
       case "declined": return <X className="h-4 w-4 text-destructive" />;

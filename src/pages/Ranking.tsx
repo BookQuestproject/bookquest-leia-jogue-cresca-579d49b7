@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock, ArrowUp, ChevronUp, Eye } from "lucide-react";
+import { Trophy, Crown, TrendingUp, Flame, Users, Target, Sparkles, Calendar, BookOpen, Lock, Clock, ArrowUp, ChevronUp, Eye } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import RankingBadge, { RankingTier, tierConfig, getTierFromXp } from "@/components/RankingBadge";
 import { Button } from "@/components/ui/button";
@@ -394,7 +394,7 @@ const Ranking = () => {
 
             <div className="ranking-info-card animate-fade-in">
               <div className="flex items-center gap-2 mb-3">
-                <Zap className="w-4 h-4 text-accent" />
+                <Sparkles className="w-4 h-4 text-accent" />
                 <h3 className="font-semibold text-sm">Como ganhar Essência</h3>
               </div>
               <div className="space-y-2.5">

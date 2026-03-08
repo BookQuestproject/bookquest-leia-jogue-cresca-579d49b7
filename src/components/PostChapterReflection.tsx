@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Sparkles, ChevronRight, CheckCircle, Star, Zap, MessageSquare, BarChart3, Brain, Users, Tag, Loader2, ShieldAlert } from "lucide-react";
+import { Sparkles, ChevronRight, CheckCircle, Star, MessageSquare, BarChart3, Brain, Users, Tag, Loader2, ShieldAlert } from "lucide-react";
+import EssenciaIcon from "@/components/EssenciaIcon";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
@@ -429,7 +430,7 @@ const PostChapterReflection = ({
           ))}
           <div className="border-t border-border pt-3 flex items-center justify-between">
             <span className="font-semibold flex items-center gap-2">
-              <Zap className="w-5 h-5" style={{ color: `hsl(${themeColor})` }} />
+              <Sparkles className="w-5 h-5" style={{ color: `hsl(${themeColor})` }} />
               Total
             </span>
             <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>

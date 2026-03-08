@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle, Zap } from "lucide-react";
+import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle } from "lucide-react";
+import EssenciaIcon from "@/components/EssenciaIcon";
 import Layout from "@/components/layout/Layout";
 import ProgressBar from "@/components/ProgressBar";
 import HabitToast from "@/components/missions/HabitToast";
@@ -281,7 +282,7 @@ const MissionCard = ({ mission, onComplete }: { mission: Mission; onComplete: (i
               )}
             </div>
             <span className="text-sm font-semibold text-accent flex items-center gap-1">
-              <Zap className="w-3 h-3" />
+              <EssenciaIcon size="xs" className="text-accent" />
               +{mission.essenciaValue} ✦
             </span>
           </div>
