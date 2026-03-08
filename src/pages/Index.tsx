@@ -13,6 +13,7 @@ import { useDailyMissions } from "@/hooks/useDailyMissions";
 import MobileHome from "@/components/mobile/MobileHome";
 import MissionCompletionToast from "@/components/MissionCompletionToast";
 import StreakCard from "@/components/StreakCard";
+import EssenciaCounter from "@/components/EssenciaCounter";
 
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
