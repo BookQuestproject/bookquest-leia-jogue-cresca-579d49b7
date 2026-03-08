@@ -102,6 +102,7 @@ const Biblioteca = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newBook, setNewBook] = useState({ title: "", author: "", reason: "", externalLink: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [trailToRemove, setTrailToRemove] = useState<string | null>(null);
   
   const { user } = useAuth();
   const { addBook } = useBookshelf();
