@@ -100,7 +100,7 @@ const MissionCompletedModal = ({
           <div className={`mission-scale-in ${phase >= 3 ? 'mission-scale-in-active' : ''}`}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/15 border border-accent/30 mb-5">
               <Star className="w-4 h-4 text-accent mission-star-spin" />
-              <span className="text-accent font-bold text-lg">+{xpGained} XP</span>
+              <span className="text-accent font-bold text-lg">+{xpGained} Essência</span>
             </div>
           </div>
 
