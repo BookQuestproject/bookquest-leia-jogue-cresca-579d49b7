@@ -576,7 +576,7 @@ const bookTrails: BookTrail[] = [
     title: "O Silêncio dos Inocentes",
     author: "Thomas Harris",
     cover: "🦋",
-    coverImage: "https://m.media-amazon.com/images/I/81hn+-RKtaL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/silencio-inocentes.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Mistério",
