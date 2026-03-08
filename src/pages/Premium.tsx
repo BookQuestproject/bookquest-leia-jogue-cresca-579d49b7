@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import FounderBadge from "@/components/FounderBadge";
 import EssenciaIcon from "@/components/EssenciaIcon";
 
-const FOUNDER_MAX = 200;
+const FOUNDER_MAX = 100;
 
 const Premium = () => {
   const navigate = useNavigate();
