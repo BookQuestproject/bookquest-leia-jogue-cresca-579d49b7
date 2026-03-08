@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Shield, HelpCircle, GripVertical, X, Eye } from "lucide-react";
+import { Shield, HelpCircle, GripVertical, X, Eye, Flame } from "lucide-react";
+import StreakAnimationPreview from "@/components/admin/StreakAnimationPreview";
 
 const FloatingAdminWidget = () => {
   const [position, setPosition] = useState({ x: 20, y: window.innerHeight - 160 });
