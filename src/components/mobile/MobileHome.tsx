@@ -3,14 +3,20 @@ import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Star, C
 import EssenciaIcon from "@/components/EssenciaIcon";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
+import { useUserStats } from "@/hooks/useUserStats";
+import { useDailyMissions } from "@/hooks/useDailyMissions";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
 import { getStreakColor } from "@/components/StreakFlame";
+import StreakCard from "@/components/StreakCard";
+import MissionCompletionToast from "@/components/MissionCompletionToast";
 import { Button } from "@/components/ui/button";
 
 const MobileHome = () => {
   const navigate = useNavigate();
   const { activeTrail } = useActiveTrail();
   const { profile, isPremium } = useProfile();
+  const { essencia, streak } = useUserStats();
+  const { missions: dailyMissions, recentCompletion, clearCompletion, completedCount: completedMissions } = useDailyMissions();
 
   const userName = profile?.full_name?.split(" ")[0] || "Leitor";
   const hasActiveTrail = !!activeTrail;
@@ -18,8 +24,8 @@ const MobileHome = () => {
   const completedChapters = activeTrail?.chapters.filter(c => c.status === "completed").length || 0;
 
   const userStats = {
-    points: 35,
-    streak: 0,
+    points: essencia,
+    streak: streak,
     totalChapters: activeTrail?.totalChapters || 0,
   };
 
@@ -31,14 +37,6 @@ const MobileHome = () => {
   const nextTier = getNextTierInfo(currentTier);
   const streakInfo = getStreakColor(userStats.streak);
   const themeColor = activeTrail?.themeColor || "220 60% 50%";
-
-  const dailyMissions = [
-    { title: "Complete 1 capítulo", progress: 0, goal: 1, reward: "+10 ✦", icon: BookOpen, completed: false },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 ✦", icon: Target, completed: false },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 ✦", icon: CheckCircle, completed: true },
-  ];
-
-  const completedMissions = dailyMissions.filter(m => m.completed).length;
 
   return (
     <div className="px-4 pt-2 pb-6 space-y-5 animate-fade-in">
@@ -175,6 +173,9 @@ const MobileHome = () => {
         </Link>
       </div>
 
+      {/* Streak Card */}
+      <StreakCard />
+
       {/* Ranking Progress Card */}
       {nextTier && (
         <Link
@@ -221,9 +222,9 @@ const MobileHome = () => {
           </Link>
         </div>
         <div className="space-y-2">
-          {dailyMissions.map((mission, i) => (
+          {dailyMissions.map((mission) => (
             <div
-              key={i}
+              key={mission.id}
               className={`flex items-center gap-3 p-2.5 rounded-lg ${
                 mission.completed ? "bg-accent/5 border border-accent/15" : "bg-muted/10 border border-border/30"
               }`}
@@ -251,7 +252,7 @@ const MobileHome = () => {
                   </div>
                 )}
               </div>
-              <span className="text-[10px] font-bold text-accent whitespace-nowrap">{mission.reward}</span>
+              <span className="text-[10px] font-bold text-accent whitespace-nowrap">{mission.rewardLabel}</span>
             </div>
           ))}
         </div>
@@ -290,6 +291,15 @@ const MobileHome = () => {
           </div>
         </Link>
       </div>
+
+      {/* Mission Completion Toast */}
+      {recentCompletion && (
+        <MissionCompletionToast
+          missionTitle={recentCompletion.missionTitle}
+          reward={recentCompletion.reward}
+          onClose={clearCompletion}
+        />
+      )}
     </div>
   );
 };

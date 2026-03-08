@@ -8,7 +8,11 @@ import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
 import { usePageBookmark } from "@/hooks/usePageBookmark";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUserStats } from "@/hooks/useUserStats";
+import { useDailyMissions } from "@/hooks/useDailyMissions";
 import MobileHome from "@/components/mobile/MobileHome";
+import MissionCompletionToast from "@/components/MissionCompletionToast";
+import StreakCard from "@/components/StreakCard";
 
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
@@ -27,6 +31,8 @@ const Index = () => {
   const { activeTrail } = useActiveTrail();
   const { isAdmin } = useAdmin();
   const { quizCompleted, isPremium } = useProfile();
+  const { essencia, streak } = useUserStats();
+  const { missions: dailyMissions, recentCompletion, clearCompletion } = useDailyMissions();
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -37,8 +43,8 @@ const Index = () => {
   const completedChapters = activeTrail?.chapters.filter(c => c.status === "completed").length || 0;
 
   const userStats = {
-    points: 35,
-    streak: 0,
+    points: essencia,
+    streak: streak,
     currentBook: activeTrail?.title || null,
     currentBookId: activeTrail?.bookId || null,
     currentChapter: currentChapter?.id || 0,
@@ -59,11 +65,6 @@ const Index = () => {
     explanation: ""
   };
 
-  const dailyMissions = [
-    { title: "Complete 1 capítulo hoje", progress: 0, goal: 1, reward: "+10 ✦", icon: BookOpen },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 ✦", icon: Target },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 ✦", icon: CheckCircle, completed: true },
-  ];
 
   const handleContinueReading = (chapterId?: number) => {
     if (!activeTrail) return;
@@ -463,30 +464,13 @@ const Index = () => {
               )}
             </div>
 
-            {/* Streak Card — positive tension */}
+            {/* Streak Card — improved */}
             <div
-              className="rounded-xl p-5 animate-fade-in bg-card border border-border"
+              className="animate-fade-in"
               data-tutorial="streak-card"
               style={{ animationDelay: "0.2s" }}
             >
-              <StreakFlame days={userStats.streak} showInfo={true} isAdmin={isAdmin} />
-              {/* Urgency message */}
-              {userStats.streak > 0 && (
-                <div className="mt-3 pt-3 border-t border-border/30 flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                  <p className="text-[11px] text-accent font-medium">
-                    Sua sequência expira em ~{Math.floor(Math.random() * 12) + 4}h. Leia para mantê-la!
-                  </p>
-                </div>
-              )}
-              {userStats.streak === 0 && (
-                <div className="mt-3 pt-3 border-t border-border/30 flex items-center gap-2">
-                  <Flame className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                  <p className="text-[11px] text-accent/80 font-medium">
-                    Leia hoje e inicie sua sequência de fogo!
-                  </p>
-                </div>
-              )}
+              <StreakCard />
             </div>
 
             {/* Daily Missions — strategic */}
@@ -538,7 +522,7 @@ const Index = () => {
                         </span>
                       </div>
                     </div>
-                    <span className="text-[11px] font-bold text-accent whitespace-nowrap">{mission.reward}</span>
+                    <span className="text-[11px] font-bold text-accent whitespace-nowrap">{mission.rewardLabel}</span>
                   </div>
                 ))}
               </div>
@@ -646,6 +630,15 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Mission Completion Toast */}
+      {recentCompletion && (
+        <MissionCompletionToast
+          missionTitle={recentCompletion.missionTitle}
+          reward={recentCompletion.reward}
+          onClose={clearCompletion}
+        />
+      )}
     </Layout>
   );
 };

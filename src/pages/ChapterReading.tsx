@@ -16,6 +16,7 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserStats } from "@/hooks/useUserStats";
 import { toast } from "sonner";
 
 // This would ideally come from a shared data source
@@ -450,7 +451,7 @@ const ChapterReading = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { progress, loading: progressLoading, saveProgress, markAsCompleted, clearProgress } = useReadingProgress(bookId, chapterId);
-  
+  const { addEssencia, streak, updateStreak } = useUserStats();
   const [readingState, setReadingState] = useState<ReadingState>("intro");
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -617,9 +618,20 @@ const ChapterReading = () => {
     setReadingState("reflection");
   };
 
-  const handleReflectionComplete = (xp: number) => {
+  const handleReflectionComplete = async (xp: number) => {
     setEarnedXp(xp);
     setReadingState("completed");
+
+    // Award Essência: base 10 (chapter) + reflection XP
+    const totalReward = 10 + xp;
+    await addEssencia(totalReward);
+
+    // Update streak (increment by 1)
+    await updateStreak(streak + 1);
+
+    toast.success(`+${totalReward} Essência ganha!`, {
+      description: "Capítulo concluído com sucesso.",
+    });
   };
 
   const handleBackToTrail = () => {
