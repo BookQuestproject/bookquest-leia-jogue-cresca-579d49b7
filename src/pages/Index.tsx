@@ -109,7 +109,9 @@ const Index = () => {
 
         {/* Top Bar: Essência + Settings */}
         <div className="flex items-center justify-end gap-2 mb-4 animate-fade-in">
-          <EssenciaCounter size="md" />
+          <div data-tutorial="essencia-counter">
+            <EssenciaCounter size="md" />
+          </div>
           <Button
             variant="ghost"
             size="icon"

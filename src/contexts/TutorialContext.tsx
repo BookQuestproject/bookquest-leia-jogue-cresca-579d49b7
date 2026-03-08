@@ -82,9 +82,16 @@ const allSteps: TutorialStep[] = [
   {
     target: '[data-tutorial="missions-card"]',
     title: "Missões Diárias 🎯",
-    description: "Complete missões todos os dias para ganhar pontos e manter sua sequência ativa! Agora é com você — comece sua jornada e conquiste sua tocha de leitor! 🔥",
+    description: "Complete missões todos os dias para ganhar pontos e manter sua sequência ativa!",
     route: "/home",
     placement: "left",
+  },
+  {
+    target: '[data-tutorial="essencia-counter"]',
+    title: "Essência ✦",
+    description: "Essência é a moeda do BookQuest! Você ganha Essência ao completar capítulos, missões e desafios. Use para desbloquear conquistas, subir no ranking e personalizar seu perfil. Quanto mais você lê, mais Essência acumula! Agora é com você — comece sua jornada e conquiste sua tocha de leitor! 🔥",
+    route: "/home",
+    placement: "bottom",
   },
 ];
 

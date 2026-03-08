@@ -274,7 +274,12 @@ const Configuracoes = () => {
                   ? "Você já completou o tutorial. Quer ver novamente?"
                   : "Aprenda a usar todas as funcionalidades do BookQuest."}
               </p>
-              <Button variant="outline" className="w-full gap-2" onClick={startTutorial}>
+              <Button variant="outline" className="w-full gap-2" onClick={() => {
+                // Reset home spotlight tutorial
+                startTutorial();
+                // Reset all category intro tutorials
+                localStorage.removeItem("bookquest_visited_categories_v2");
+              }}>
                 <HelpCircle className="w-4 h-4" />
                 Ver tutorial novamente
               </Button>
