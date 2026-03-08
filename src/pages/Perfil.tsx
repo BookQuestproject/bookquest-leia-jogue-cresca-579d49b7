@@ -31,6 +31,7 @@ const Perfil = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const { activeTitle, isFounder } = useUserBadges();
 
   const userName = profile?.full_name || "Você";
   const userEmail = profile?.email || "usuario@email.com";
