@@ -45,13 +45,14 @@ const EssenciaCounter = ({ className, size = "sm" }: EssenciaCounterProps) => {
           animating && "scale-110 border-accent/50 bg-accent/20 shadow-[0_0_12px_hsl(var(--accent)/0.3)]"
         )}
       >
-        <EssenciaIcon
-          size={size === "sm" ? "xs" : "sm"}
+        <span
           className={cn(
             "text-accent transition-transform duration-300",
             animating && "scale-125"
           )}
-        />
+        >
+          ✦
+        </span>
         <span>{essencia}</span>
       </div>
 

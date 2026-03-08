@@ -146,7 +146,7 @@ const MobileHome = () => {
           <div className="flex justify-center mb-1.5">
             <RankingBadge tier={currentTier} showLabel={false} size="sm" />
           </div>
-          <p className="text-xs font-bold text-foreground">{userStats.points} ✦</p>
+          <p className="text-xs font-bold text-foreground">{currentTier}</p>
           <p className="text-[10px] text-muted-foreground">Ranking</p>
         </Link>
 
