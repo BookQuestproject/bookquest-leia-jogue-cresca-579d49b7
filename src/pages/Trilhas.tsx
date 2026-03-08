@@ -320,7 +320,7 @@ const bookTrails: BookTrail[] = [
     title: "Gone Girl",
     author: "Gillian Flynn",
     cover: "🔍",
-    coverImage: "https://m.media-amazon.com/images/I/81mMoGJDBFL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/gone-girl.jpg",
     totalChapters: 14,
     isPremium: false,
     genre: "Mistério",
