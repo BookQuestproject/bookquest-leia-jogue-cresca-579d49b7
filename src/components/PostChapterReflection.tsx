@@ -767,7 +767,7 @@ const PostChapterReflection = ({
                   {fb.icon} {fb.title}
                 </p>
                 <span className={`text-sm font-bold px-2 py-0.5 rounded ${fb.badge}`} style={fb.badge ? undefined : { background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
-                  +{xp} XP
+                  +{xp} ✦
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">{fb.msg}</p>
