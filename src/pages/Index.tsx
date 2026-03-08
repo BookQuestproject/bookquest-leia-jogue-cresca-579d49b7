@@ -433,7 +433,7 @@ const Index = () => {
                 <div>
                   <RankingBadge tier={currentTier} size="sm" />
                   <p className="text-xs text-muted-foreground mt-1">
-                    {userStats.points} XP
+                    {userStats.points} ✦
                   </p>
                 </div>
               </div>
