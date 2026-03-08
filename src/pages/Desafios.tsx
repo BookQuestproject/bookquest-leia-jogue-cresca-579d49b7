@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Swords, Send, Check, X, Trophy, Clock, User, Zap } from "lucide-react";
+import { Swords, Send, Check, X, Trophy, Clock, User, Sparkles } from "lucide-react";
 
 const Desafios = () => {
   const { user } = useAuth();
