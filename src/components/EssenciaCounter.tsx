@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUserStats } from "@/hooks/useUserStats";
 import { cn } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 
 interface EssenciaCounterProps {
   className?: string;
