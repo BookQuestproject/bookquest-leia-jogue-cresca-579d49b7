@@ -31,6 +31,8 @@ const Index = () => {
   const { activeTrail } = useActiveTrail();
   const { isAdmin } = useAdmin();
   const { quizCompleted, isPremium } = useProfile();
+  const { essencia, streak } = useUserStats();
+  const { missions: dailyMissions, recentCompletion, clearCompletion } = useDailyMissions();
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -41,8 +43,8 @@ const Index = () => {
   const completedChapters = activeTrail?.chapters.filter(c => c.status === "completed").length || 0;
 
   const userStats = {
-    points: 35,
-    streak: 0,
+    points: essencia,
+    streak: streak,
     currentBook: activeTrail?.title || null,
     currentBookId: activeTrail?.bookId || null,
     currentChapter: currentChapter?.id || 0,
