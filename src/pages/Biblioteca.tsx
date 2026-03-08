@@ -1,6 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Sparkles, Award, MapPin } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import { useMyTrails } from "@/hooks/useMyTrails";
 import { bookTrails } from "@/pages/Trilhas";
