@@ -32,9 +32,9 @@ const MobileHome = () => {
   const themeColor = activeTrail?.themeColor || "220 60% 50%";
 
   const dailyMissions = [
-    { title: "Complete 1 capítulo", progress: 0, goal: 1, reward: "+10 XP", icon: BookOpen, completed: false },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 XP", icon: Target, completed: false },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 XP", icon: CheckCircle, completed: true },
+    { title: "Complete 1 capítulo", progress: 0, goal: 1, reward: "+10 ✦", icon: BookOpen, completed: false },
+    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 ✦", icon: Target, completed: false },
+    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 ✦", icon: CheckCircle, completed: true },
   ];
 
   const completedMissions = dailyMissions.filter(m => m.completed).length;
