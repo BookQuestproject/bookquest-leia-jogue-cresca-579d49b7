@@ -424,7 +424,7 @@ const PostChapterReflection = ({
                 {typeIcons[questions[i]?.type] || <Star className="w-4 h-4" />}
                 {typeLabels[questions[i]?.type] || "Pergunta"}
               </span>
-              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} XP</span>
+              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} ✦</span>
             </div>
           ))}
           <div className="border-t border-border pt-3 flex items-center justify-between">
