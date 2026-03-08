@@ -382,6 +382,7 @@ const PostChapterReflection = ({
   const handleNext = () => {
     setShowFeedback(false);
     setTabViolation(false);
+    setInvalidAnswer(false);
     tabViolationRef.current = false;
     if (currentIdx < questions.length - 1) {
       setCurrentIdx(prev => prev + 1);
