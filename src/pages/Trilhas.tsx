@@ -208,7 +208,7 @@ const bookTrails: BookTrail[] = [
     title: "A Culpa é das Estrelas",
     author: "John Green",
     cover: "🌟",
-    coverImage: "https://m.media-amazon.com/images/I/71sBKhB9q3L._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/a-culpa-e-das-estrelas.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Romance",
