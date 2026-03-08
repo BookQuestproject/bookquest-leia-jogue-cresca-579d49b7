@@ -707,7 +707,7 @@ const PostChapterReflection = ({
                 ? "Excelente reflexão! Resposta bem desenvolvida e relevante."
                 : xpPerQuestion[currentIdx] >= 2
                 ? "Boa reflexão! Tente incluir mais detalhes do capítulo."
-                : "Resposta breve. Desenvolva mais para ganhar mais XP!"}
+                : "Resposta breve. Desenvolva mais para ganhar mais Essência!"}
             </p>
           </div>
         )}
