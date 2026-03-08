@@ -93,7 +93,7 @@ const MobileMissoes = () => {
         <div className="w-px h-8 bg-border/40" />
         <div className="text-center flex-1">
           <p className="text-lg font-bold text-accent">{totalXp}</p>
-          <p className="text-[10px] text-muted-foreground">XP Total</p>
+          <p className="text-[10px] text-muted-foreground">Essência</p>
         </div>
       </div>
 
