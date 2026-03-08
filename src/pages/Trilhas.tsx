@@ -400,7 +400,7 @@ const bookTrails: BookTrail[] = [
     title: "Mindset",
     author: "Carol S. Dweck",
     cover: "🧩",
-    coverImage: "https://m.media-amazon.com/images/I/71sL0hJOj3L._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/mindset.jpg",
     totalChapters: 10,
     isPremium: false,
     genre: "Não-Ficção",
