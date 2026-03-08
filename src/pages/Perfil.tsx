@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobilePerfil from "@/components/mobile/MobilePerfil";
+import FounderBadge from "@/components/FounderBadge";
+import { useUserBadges } from "@/hooks/useUserBadges";
 
 const readingHistory = [
   { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", completedAt: "Dez 2023", pages: 208 },
