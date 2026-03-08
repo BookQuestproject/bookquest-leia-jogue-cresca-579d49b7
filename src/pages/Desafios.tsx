@@ -224,7 +224,7 @@ const Desafios = () => {
                         <p className="text-sm font-medium text-foreground">{t.title}</p>
                         <p className="text-xs text-muted-foreground">{t.description}</p>
                       </div>
-                      <span className="text-xs font-bold text-accent">+{t.xp} XP</span>
+                      <span className="text-xs font-bold text-accent">+{t.xp} ✦</span>
                     </button>
                   ))}
                 </div>

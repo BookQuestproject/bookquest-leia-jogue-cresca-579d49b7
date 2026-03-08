@@ -616,7 +616,7 @@ const Index = () => {
               }`}>
                 <p className="font-semibold mb-2">
                   {selectedAnswer === currentChapterQuestion.correctAnswer
-                    ? "✓ Correto! +10 XP"
+                    ? "✓ Correto! +10 Essência"
                     : "✗ Incorreto"}
                 </p>
                 <p className="text-sm text-muted-foreground">

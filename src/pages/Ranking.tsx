@@ -395,7 +395,7 @@ const Ranking = () => {
             <div className="ranking-info-card animate-fade-in">
               <div className="flex items-center gap-2 mb-3">
                 <Zap className="w-4 h-4 text-accent" />
-                <h3 className="font-semibold text-sm">Como ganhar XP</h3>
+                <h3 className="font-semibold text-sm">Como ganhar Essência</h3>
               </div>
               <div className="space-y-2.5">
                 <div className="flex items-center gap-2.5">

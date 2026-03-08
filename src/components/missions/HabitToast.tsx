@@ -40,7 +40,7 @@ const HabitToast = ({ isVisible, missionTitle, xp, onDone }: HabitToastProps) =>
         </div>
         <div>
           <p className="text-xs font-bold text-accent">Hábito fortalecido</p>
-          <p className="text-[11px] text-muted-foreground">{missionTitle} · +{xp} XP</p>
+          <p className="text-[11px] text-muted-foreground">{missionTitle} · +{xp} ✦</p>
         </div>
         <div className={`absolute inset-0 rounded-xl ${phase === "visible" ? "habit-shimmer" : ""}`} />
       </div>

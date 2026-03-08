@@ -923,7 +923,7 @@ const ChapterReading = () => {
                   <p className="text-3xl font-bold" style={{ color: `hsl(${themeColor})` }}>
                     +{earnedXp}
                   </p>
-                  <p className="text-xs text-muted-foreground">XP ganhos</p>
+                  <p className="text-xs text-muted-foreground">Essência ganha</p>
                 </div>
                 <div className="w-px h-10 bg-border" />
                 <div className="text-center">
