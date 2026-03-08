@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { NotificationBell } from "@/components/NotificationBell";
+import EssenciaCounter from "@/components/EssenciaCounter";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 interface MobileNavProps {
   isPremium?: boolean;
