@@ -85,7 +85,7 @@ const Index = () => {
     if (userStats.streak === 0) return { icon: Flame, text: "Leia hoje para iniciar sua sequência!", color: "text-accent" };
     if (nextTier) {
       const xpToNext = nextTier.pointsNeeded - userStats.points;
-      if (xpToNext <= 30) return { icon: Zap, text: `Você está a ${xpToNext} XP de subir para ${nextTier.label}!`, color: "text-accent" };
+      if (xpToNext <= 30) return { icon: Zap, text: `Você está a ${xpToNext} Essência de subir para ${nextTier.label}!`, color: "text-accent" };
     }
     return { icon: Zap, text: `Continue lendo para manter sua sequência de ${userStats.streak} dias!`, color: "text-accent" };
   };
