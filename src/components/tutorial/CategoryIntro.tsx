@@ -154,6 +154,7 @@ const CategoryIntro = () => {
   useEffect(() => {
     return () => {
       setActive(false);
+      setShouldRender(false);
       setIsVisible(false);
       setTargetRect(null);
     };
