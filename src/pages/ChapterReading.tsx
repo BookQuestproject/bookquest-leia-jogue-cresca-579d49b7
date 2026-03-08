@@ -451,7 +451,7 @@ const ChapterReading = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { progress, loading: progressLoading, saveProgress, markAsCompleted, clearProgress } = useReadingProgress(bookId, chapterId);
-  
+  const { addEssencia, streak, updateStreak } = useUserStats();
   const [readingState, setReadingState] = useState<ReadingState>("intro");
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
