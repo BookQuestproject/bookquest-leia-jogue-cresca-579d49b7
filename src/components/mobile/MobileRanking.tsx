@@ -133,7 +133,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
                 </div>
                 <p className="text-base mb-0.5">🥈</p>
                 <p className="text-[11px] font-semibold truncate">{tierUsers[1]?.isCurrentUser ? 'Você' : tierUsers[1]?.name}</p>
-                <p className="text-[11px] font-bold text-accent">{tierUsers[1]?.xp} XP</p>
+                <p className="text-[11px] font-bold text-accent">{tierUsers[1]?.essencia} ✦</p>
               </div>
               <div className="rounded-xl p-3 bg-card border border-accent/30 text-center">
                 <Crown className="w-4 h-4 text-accent mx-auto mb-1" />
