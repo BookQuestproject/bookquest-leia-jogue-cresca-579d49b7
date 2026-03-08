@@ -273,7 +273,37 @@ const PostChapterReflection = ({
       case "character": {
         const { choice, justification } = answer || {};
         xp = choice !== undefined ? 2 : 0;
-        if (justification && justification.trim().length > 15 && !isGibberish(justification)) xp += 2;
+        if (justification && justification.trim().length > 15 && !isGibberish(justification)) {
+          // Validate relevance: justification must reference the book, character, or question context
+          const justLower = justification.trim().toLowerCase();
+          const questionLower = currentQ.question.toLowerCase();
+          const bookLower = bookTitle.toLowerCase();
+          
+          // Extract key terms from the question (words with 4+ chars, excluding common words)
+          const stopWords = ["como", "você", "qual", "para", "sobre", "esse", "essa", "este", "esta", "dele", "dela", "acha", "seria", "fazer", "pode", "mais", "muito", "quando", "onde", "quem", "porque", "ainda", "sendo", "foram", "está", "estão", "isso", "aqui", "pela", "pelo", "entre", "após", "antes", "cada", "outro", "outra", "mesmo", "mesma", "todo", "toda", "algum", "alguma", "nenhum", "nenhuma", "seus", "suas", "nosso", "nossa", "vocês", "eles", "elas", "dele", "dela", "deles", "delas", "minha", "minha", "teria", "seria"];
+          const questionTerms = questionLower
+            .replace(/[?.,!;:""'']/g, "")
+            .split(/\s+/)
+            .filter(w => w.length >= 4 && !stopWords.includes(w));
+          
+          // Also include book title words and character options as relevant terms
+          const bookTerms = bookLower.split(/\s+/).filter(w => w.length >= 3);
+          const optionTerms = (currentQ.options || []).flatMap(o => o.toLowerCase().split(/\s+/).filter(w => w.length >= 3));
+          const allRelevantTerms = [...new Set([...questionTerms, ...bookTerms, ...optionTerms])];
+          
+          // Check if the justification contains at least 1 relevant term
+          const relevanceHits = allRelevantTerms.filter(term => justLower.includes(term)).length;
+          
+          // Also check minimum word count for substance
+          const wordCount = justification.trim().split(/\s+/).filter(w => w.length > 0).length;
+          
+          if (relevanceHits >= 1 && wordCount >= 4) {
+            xp += 2; // Full bonus: relevant and substantive
+          } else if (wordCount >= 6) {
+            xp += 1; // Partial: long enough but not clearly relevant
+          }
+          // else: no bonus — irrelevant or too short
+        }
         break;
       }
       case "theme":
