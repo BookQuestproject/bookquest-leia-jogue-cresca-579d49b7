@@ -143,6 +143,7 @@ const CategoryIntro = () => {
     const timer = setTimeout(() => {
       setSteps(stepsForCategory);
       setCurrentStep(0);
+      setShouldRender(true);
       setActive(true);
     }, 650);
 
