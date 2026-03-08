@@ -46,6 +46,7 @@ const MobileNav = ({
         </Link>
         
         <div className="flex items-center gap-2">
+          {user && <EssenciaCounter size="sm" />}
           {user && <NotificationBell />}
           <Link to="/estante" className="text-muted-foreground hover:text-foreground">
             <BookMarked className="w-5 h-5" />
