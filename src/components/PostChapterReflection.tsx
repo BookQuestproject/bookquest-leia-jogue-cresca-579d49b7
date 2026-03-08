@@ -746,26 +746,31 @@ const PostChapterReflection = ({
         {/* Feedback for character */}
         {showFeedback && currentQ?.type === "character" && (() => {
           const xp = xpPerQuestion[currentIdx];
-          const hasJustification = answers[currentIdx]?.justification?.length > 15;
+          const justification = answers[currentIdx]?.justification || "";
+          const hasJustification = justification.trim().length > 15;
+          const isHighQuality = xp >= 4; // choice (2) + full relevance bonus (2)
+          const isPartialQuality = xp === 3; // choice (2) + partial bonus (1)
+          const feedbackLevel = isHighQuality ? "excellent" : isPartialQuality ? "partial" : hasJustification ? "irrelevant" : "none";
+          
+          const feedbackConfig = {
+            excellent: { icon: "🎉", title: "Análise completa!", msg: "Excelente! Sua justificativa enriqueceu a análise do personagem. Continue assim!", bg: "bg-green-500/10 border border-green-500/20", badge: "bg-green-500/20 text-green-400" },
+            partial: { icon: "👍", title: "Boa tentativa!", msg: "Sua justificativa tem substância, mas tente conectar mais diretamente ao livro e à pergunta.", bg: "bg-yellow-500/10 border border-yellow-500/20", badge: "bg-yellow-500/20 text-yellow-400" },
+            irrelevant: { icon: "⚠️", title: "Justificativa insuficiente", msg: "Sua resposta não pareceu relacionada ao livro ou à pergunta. Tente usar elementos do texto para justificar.", bg: "bg-orange-500/10 border border-orange-500/20", badge: "bg-orange-500/20 text-orange-400" },
+            none: { icon: "✅", title: "Personagem escolhido!", msg: "Escolha registrada. Na próxima vez, elabore sua justificativa para ganhar mais XP!", bg: "bg-accent/10 border border-accent/20", badge: "" },
+          };
+          const fb = feedbackConfig[feedbackLevel];
+          
           return (
-            <div className={`p-4 rounded-lg space-y-2 ${
-              hasJustification ? "bg-green-500/10 border border-green-500/20" : "bg-accent/10 border border-accent/20"
-            }`}>
+            <div className={`p-4 rounded-lg space-y-2 ${fb.bg}`}>
               <div className="flex items-center justify-between">
                 <p className="font-semibold flex items-center gap-2">
-                  {hasJustification ? "🎉 Análise completa!" : "✅ Personagem escolhido!"}
+                  {fb.icon} {fb.title}
                 </p>
-                <span className={`text-sm font-bold px-2 py-0.5 rounded ${
-                  hasJustification ? "bg-green-500/20 text-green-400" : ""
-                }`} style={hasJustification ? undefined : { background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
+                <span className={`text-sm font-bold px-2 py-0.5 rounded ${fb.badge}`} style={fb.badge ? undefined : { background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
                   +{xp} XP
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                {hasJustification
-                  ? "Excelente! Sua justificativa enriqueceu a análise do personagem. Continue assim!"
-                  : "Escolha registrada. Na próxima vez, elabore sua justificativa para ganhar mais XP!"}
-              </p>
+              <p className="text-sm text-muted-foreground">{fb.msg}</p>
             </div>
           );
         })()}
