@@ -680,7 +680,7 @@ const PostChapterReflection = ({
                   : isPartial ? "bg-amber-500/20 text-amber-600" 
                   : "bg-destructive/20 text-destructive"
                 }`}>
-                  +{xp} XP
+                  +{xp} ✦
                 </span>
               </div>
               {!isCorrect && (
