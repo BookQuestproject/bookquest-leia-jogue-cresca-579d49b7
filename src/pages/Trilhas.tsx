@@ -224,7 +224,7 @@ const bookTrails: BookTrail[] = [
     title: "Jogos Vorazes",
     author: "Suzanne Collins",
     cover: "🏹",
-    coverImage: "https://m.media-amazon.com/images/I/71un2hI4mcL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/jogos-vorazes.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Aventura",
