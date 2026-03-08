@@ -522,7 +522,7 @@ const Index = () => {
                         </span>
                       </div>
                     </div>
-                    <span className="text-[11px] font-bold text-accent whitespace-nowrap">{mission.reward}</span>
+                    <span className="text-[11px] font-bold text-accent whitespace-nowrap">{mission.rewardLabel}</span>
                   </div>
                 ))}
               </div>
