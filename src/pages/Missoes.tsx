@@ -155,16 +155,18 @@ const Missoes = () => {
         </div>
 
         {/* ── Marcos ── */}
-        <MissionSection
-          title="Marcos de Evolução"
-          subtitle="Conquistas permanentes · Nunca reiniciam"
-          icon={<Crown className="w-5 h-5 text-accent" />}
-          missions={milestones}
-          onComplete={handleComplete}
-          accentClass="accent"
-          delay="0.4s"
-          permanent
-        />
+        <div data-tutorial="missoes-monthly">
+          <MissionSection
+            title="Marcos de Evolução"
+            subtitle="Conquistas permanentes · Nunca reiniciam"
+            icon={<Crown className="w-5 h-5 text-accent" />}
+            missions={milestones}
+            onComplete={handleComplete}
+            accentClass="accent"
+            delay="0.4s"
+            permanent
+          />
+        </div>
       </div>
 
       {/* Notifications */}
