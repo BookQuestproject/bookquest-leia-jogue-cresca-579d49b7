@@ -128,7 +128,7 @@ const bookTrails: BookTrail[] = [
     title: "O Pequeno Príncipe",
     author: "Antoine de Saint-Exupéry",
     cover: "⭐",
-    coverImage: "https://m.media-amazon.com/images/I/71OZY035QKL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/o-pequeno-principe.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Fábula",
