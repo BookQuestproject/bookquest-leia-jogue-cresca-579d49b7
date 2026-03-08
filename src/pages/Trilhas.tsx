@@ -256,7 +256,7 @@ const bookTrails: BookTrail[] = [
     title: "Sapiens",
     author: "Yuval Noah Harari",
     cover: "🧠",
-    coverImage: "https://m.media-amazon.com/images/I/713jIoMO3UL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/sapiens.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Não-Ficção",
