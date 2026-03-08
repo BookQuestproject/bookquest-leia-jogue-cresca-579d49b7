@@ -336,7 +336,7 @@ const bookTrails: BookTrail[] = [
     title: "O Código Da Vinci",
     author: "Dan Brown",
     cover: "🗝️",
-    coverImage: "https://m.media-amazon.com/images/I/815WORuYMML._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/codigo-da-vinci.jpg",
     totalChapters: 16,
     isPremium: false,
     genre: "Mistério",
