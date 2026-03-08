@@ -308,7 +308,7 @@ const Ranking = () => {
                               </div>
                               <div className="text-right">
                                 <p className={`font-bold text-sm ${inPromotion ? 'text-accent' : 'text-foreground'}`}>
-                                  {user.xp} XP
+                                  {user.essencia} ✦
                                 </p>
                                 <p className="text-xs text-muted-foreground">{user.streak}d</p>
                               </div>
