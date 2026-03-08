@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ArrowLeft, Lightbulb, BookOpen, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Lightbulb, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBookshelf } from "@/hooks/useBookshelf";
 import { bookTrails } from "@/pages/Trilhas";
 import logoCrown from "@/assets/logo-crown-transparent.png";
+import EssenciaIcon from "@/components/EssenciaIcon";
 
 interface ReaderProfile {
   name: string;
