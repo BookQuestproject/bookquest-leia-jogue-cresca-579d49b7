@@ -464,8 +464,7 @@ const Biblioteca = () => {
                           className="gap-1"
                           onClick={() => {
                             if (isInMyTrails(book.title)) {
-                              removeTrail(book.title);
-                              toast.success(`"${book.title}" removido das trilhas`);
+                              setTrailToRemove(book.title);
                             } else {
                               addTrail(book.title);
                               toast.success(`"${book.title}" adicionado às trilhas!`, {
