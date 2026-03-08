@@ -3,8 +3,12 @@ import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Star, C
 import EssenciaIcon from "@/components/EssenciaIcon";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
+import { useUserStats } from "@/hooks/useUserStats";
+import { useDailyMissions } from "@/hooks/useDailyMissions";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
 import { getStreakColor } from "@/components/StreakFlame";
+import StreakCard from "@/components/StreakCard";
+import MissionCompletionToast from "@/components/MissionCompletionToast";
 import { Button } from "@/components/ui/button";
 
 const MobileHome = () => {
