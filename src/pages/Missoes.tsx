@@ -24,9 +24,9 @@ import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
 
 const MILESTONE_TITLES: Record<string, string> = {
-  "milestone-30-streak": "Leitor Persistente",
-  "milestone-100-chapters": "Centenário Literário",
-  "milestone-10-books": "Guardião da Estante",
+  "milestone-streak": "Leitor Persistente",
+  "milestone-chapters": "Centenário Literário",
+  "milestone-books": "Guardião da Estante",
 };
 
 const Missoes = () => {
