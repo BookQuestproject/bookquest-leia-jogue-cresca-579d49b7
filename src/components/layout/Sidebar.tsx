@@ -24,7 +24,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useProfile } from "@/hooks/useProfile";
 import { NotificationBell } from "@/components/NotificationBell";
-import EssenciaCounter from "@/components/EssenciaCounter";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 
 interface SidebarProps {
