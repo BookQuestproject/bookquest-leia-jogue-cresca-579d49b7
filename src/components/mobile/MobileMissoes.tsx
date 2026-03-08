@@ -158,7 +158,7 @@ const MobileMissoes = () => {
                     </div>
                     <span className="text-xs font-bold text-accent flex items-center gap-1 ml-2 flex-shrink-0">
                       <Zap className="w-3 h-3" />
-                      +{mission.xpValue}
+                      +{mission.essenciaValue}
                     </span>
                   </div>
                   <p className="text-[11px] text-muted-foreground mb-1.5">{mission.description}</p>

@@ -107,7 +107,7 @@ const MissionCompletedModal = ({
           {/* XP Progress Bar */}
           <div className={`mission-slide-up ${phase >= 4 ? 'mission-slide-up-active' : ''}`}>
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-              <span>Progresso XP</span>
+              <span>Progresso Essência</span>
               <span>{currentXp}/{nextLevelXp}</span>
             </div>
             <div className="h-2.5 rounded-full bg-muted overflow-hidden relative">
