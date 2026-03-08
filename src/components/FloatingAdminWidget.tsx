@@ -7,6 +7,7 @@ const FloatingAdminWidget = () => {
   const [position, setPosition] = useState({ x: 20, y: window.innerHeight - 160 });
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
+  const [showStreakPreview, setShowStreakPreview] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const widgetRef = useRef<HTMLDivElement>(null);
 
