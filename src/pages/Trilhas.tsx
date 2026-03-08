@@ -528,7 +528,7 @@ const bookTrails: BookTrail[] = [
     title: "Me Chame Pelo Seu Nome",
     author: "André Aciman",
     cover: "🍑",
-    coverImage: "https://m.media-amazon.com/images/I/71pq5FYaPvL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/me-chame-pelo-seu-nome.jpg",
     totalChapters: 10,
     isPremium: false,
     genre: "Romance",
