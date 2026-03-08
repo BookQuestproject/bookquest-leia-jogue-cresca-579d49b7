@@ -37,7 +37,7 @@ const categorySteps: Record<string, CategoryStep[]> = {
     { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Marcos de Evolução", description: "Conquistas mensais que reiniciam a cada mês! Cada marco representa uma grande evolução na sua jornada.", placement: "bottom" },
   ],
   "/ranking": [
-    { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em XP. Suba de Bronze a Lendário lendo e completando desafios! Quem vai ser o campeão?", placement: "bottom" },
+    { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em Essência. Suba de Bronze a Lendário lendo e completando desafios! Quem vai ser o campeão?", placement: "bottom" },
     { target: '[data-tutorial="ranking-countdown"]', title: "⏳ Contador Regressivo", description: "Mostra quantos dias faltam pro fechamento da semana. Ao final, os melhores sobem de patamar!", placement: "bottom" },
     { target: '[data-tutorial="ranking-tiers"]', title: "🎖️ Patamares", description: "Explore os diferentes patamares clicando nas abas. Cada patamar tem vagas limitadas pra avançar. Corre!", placement: "bottom" },
     { target: '[data-tutorial="ranking-podium"]', title: "🥇 Pódio", description: "Os 3 primeiros colocados aparecem no pódio com destaque especial. Será que você chega lá?", placement: "bottom" },
