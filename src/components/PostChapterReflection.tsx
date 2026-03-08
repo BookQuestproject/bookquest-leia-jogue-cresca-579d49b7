@@ -388,7 +388,7 @@ const PostChapterReflection = ({
       <div className="animate-fade-in space-y-6 text-center py-12">
         <p className="text-muted-foreground">{error}</p>
         <Button variant="outline" onClick={() => onComplete(10)}>
-          Pular reflexão (+10 XP base)
+          Pular reflexão (+10 Essência base)
         </Button>
       </div>
     );
