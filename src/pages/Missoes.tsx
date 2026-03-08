@@ -106,7 +106,7 @@ const Missoes = () => {
               </div>
               <div className="w-px h-10 bg-border/60" />
               <div className="text-center">
-                <p className="text-lg font-bold text-accent">{totalXp} XP</p>
+                <p className="text-lg font-bold text-accent">{totalXp} ✦</p>
                 <p className="text-xs text-muted-foreground">{level.current}</p>
               </div>
             </div>
