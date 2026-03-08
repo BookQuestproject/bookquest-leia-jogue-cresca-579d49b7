@@ -299,7 +299,7 @@ const CategoryIntro = () => {
     setCurrentStep(prev => Math.max(0, prev - 1));
   }, []);
 
-  if (!active || !steps.length) return null;
+  if (!shouldRender || !steps.length) return null;
 
   const stepData = steps[currentStep];
   const showContent = isVisible && targetRect;
