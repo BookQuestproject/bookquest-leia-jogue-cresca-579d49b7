@@ -71,7 +71,7 @@ const bookTrails: BookTrail[] = [
     title: "Harry Potter e a Pedra Filosofal",
     author: "J.K. Rowling",
     cover: "🏰",
-    coverImage: "https://m.media-amazon.com/images/I/81ibfYk4qmL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/harry-potter-1.jpg",
     totalChapters: 17,
     isPremium: false,
     genre: "Fantasia",
