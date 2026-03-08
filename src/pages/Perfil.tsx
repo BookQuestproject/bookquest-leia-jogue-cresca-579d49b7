@@ -16,6 +16,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import MobilePerfil from "@/components/mobile/MobilePerfil";
 import FounderBadge from "@/components/FounderBadge";
 import { useUserBadges } from "@/hooks/useUserBadges";
+import ReferralCard from "@/components/ReferralCard";
 
 const readingHistory = [
   { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", completedAt: "Dez 2023", pages: 208 },
