@@ -13,6 +13,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -637,6 +647,7 @@ const Trilhas = () => {
   const [showResult, setShowResult] = useState(false);
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
+  const [trailToRemove, setTrailToRemove] = useState<{ title: string; isQuiz: boolean } | null>(null);
   const isPremium = false;
 
   // Quiz recommendations (reactive via state)
@@ -1158,11 +1169,7 @@ const Trilhas = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      if (isQuiz) {
-                        removeQuizRecommendation(book.title);
-                      }
-                      removeTrail(book.title);
-                      toast.success(`"${book.title}" removido das trilhas`);
+                      setTrailToRemove({ title: book.title, isQuiz });
                     }}
                     className="absolute top-3 right-3 w-6 h-6 rounded-full bg-muted/80 flex items-center justify-center hover:bg-destructive/80 hover:text-white transition-colors z-10"
                     title="Remover da trilha"
@@ -1243,6 +1250,35 @@ const Trilhas = () => {
           })}
         </div>
       </div>
+      {/* Confirm remove trail dialog */}
+      <AlertDialog open={!!trailToRemove} onOpenChange={(open) => { if (!open) setTrailToRemove(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover trilha literária?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja remover <strong>"{trailToRemove?.title}"</strong> das suas trilhas? Isso vai excluir todo o histórico de leitura desse livro.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (trailToRemove) {
+                  if (trailToRemove.isQuiz) {
+                    removeQuizRecommendation(trailToRemove.title);
+                  }
+                  removeTrail(trailToRemove.title);
+                  toast.success(`"${trailToRemove.title}" removido das trilhas`);
+                  setTrailToRemove(null);
+                }
+              }}
+            >
+              Sim, remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 };

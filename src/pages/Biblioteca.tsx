@@ -1,6 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Sparkles, Award, MapPin } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import { useMyTrails } from "@/hooks/useMyTrails";
 import { bookTrails } from "@/pages/Trilhas";
@@ -92,6 +102,7 @@ const Biblioteca = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newBook, setNewBook] = useState({ title: "", author: "", reason: "", externalLink: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [trailToRemove, setTrailToRemove] = useState<string | null>(null);
   
   const { user } = useAuth();
   const { addBook } = useBookshelf();
@@ -453,8 +464,7 @@ const Biblioteca = () => {
                           className="gap-1"
                           onClick={() => {
                             if (isInMyTrails(book.title)) {
-                              removeTrail(book.title);
-                              toast.success(`"${book.title}" removido das trilhas`);
+                              setTrailToRemove(book.title);
                             } else {
                               addTrail(book.title);
                               toast.success(`"${book.title}" adicionado às trilhas!`, {
@@ -650,8 +660,7 @@ const Biblioteca = () => {
                         className="gap-2"
                         onClick={() => {
                           if (isInMyTrails(inspectedBook.title)) {
-                            removeTrail(inspectedBook.title);
-                            toast.success(`"${inspectedBook.title}" removido das trilhas`);
+                            setTrailToRemove(inspectedBook.title);
                           } else {
                             addTrail(inspectedBook.title);
                             toast.success(`"${inspectedBook.title}" adicionado às trilhas!`);
@@ -669,6 +678,32 @@ const Biblioteca = () => {
           </DialogContent>
         </Dialog>
       </div>
+      {/* Confirm remove trail dialog */}
+      <AlertDialog open={!!trailToRemove} onOpenChange={(open) => { if (!open) setTrailToRemove(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover trilha literária?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja remover <strong>"{trailToRemove}"</strong> das suas trilhas? Isso vai excluir todo o histórico de leitura desse livro.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (trailToRemove) {
+                  removeTrail(trailToRemove);
+                  toast.success(`"${trailToRemove}" removido das trilhas`);
+                  setTrailToRemove(null);
+                }
+              }}
+            >
+              Sim, remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 };
