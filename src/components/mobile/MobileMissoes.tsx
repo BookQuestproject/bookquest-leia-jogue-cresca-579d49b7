@@ -40,19 +40,19 @@ const MobileMissoes = () => {
     if (!mission || mission.completed) return;
 
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, completed: true, progress: m.goal } : m));
-    setTotalXp(prev => prev + mission.xpValue);
+    setTotalXp(prev => prev + mission.essenciaValue);
 
     switch (mission.category) {
       case "habit":
-        setHabitToast({ title: mission.title, xp: mission.xpValue });
+        setHabitToast({ title: mission.title, xp: mission.essenciaValue });
         break;
       case "challenge":
-        setChallengeModal({ title: mission.title, xp: mission.xpValue });
+        setChallengeModal({ title: mission.title, xp: mission.essenciaValue });
         break;
       case "milestone":
         setMilestoneOverlay({
           title: mission.title,
-          xp: mission.xpValue,
+          xp: mission.essenciaValue,
           unlockedTitle: MILESTONE_TITLES[mission.id],
         });
         break;
