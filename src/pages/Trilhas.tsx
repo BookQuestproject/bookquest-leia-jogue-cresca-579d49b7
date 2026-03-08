@@ -1169,11 +1169,7 @@ const Trilhas = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      if (isQuiz) {
-                        removeQuizRecommendation(book.title);
-                      }
-                      removeTrail(book.title);
-                      toast.success(`"${book.title}" removido das trilhas`);
+                      setTrailToRemove({ title: book.title, isQuiz });
                     }}
                     className="absolute top-3 right-3 w-6 h-6 rounded-full bg-muted/80 flex items-center justify-center hover:bg-destructive/80 hover:text-white transition-colors z-10"
                     title="Remover da trilha"
