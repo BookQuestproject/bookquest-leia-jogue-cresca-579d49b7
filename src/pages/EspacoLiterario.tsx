@@ -13,7 +13,7 @@ const EspacoLiterario = () => {
     <Layout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
+        <div data-tutorial="espaco-header">
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <BookOpen className="w-6 h-6 text-accent" />
             Espaço Literário
@@ -25,16 +25,16 @@ const EspacoLiterario = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
-            <TabsTrigger value="comunidades" className="gap-1.5 text-xs sm:text-sm">
+          <TabsList className="grid w-full grid-cols-3 max-w-md" data-tutorial="espaco-tabs">
+            <TabsTrigger value="comunidades" className="gap-1.5 text-xs sm:text-sm" data-tutorial="espaco-comunidades">
               <MessageSquare className="w-4 h-4 hidden sm:block" />
               Comunidades
             </TabsTrigger>
-            <TabsTrigger value="avaliacoes" className="gap-1.5 text-xs sm:text-sm">
+            <TabsTrigger value="avaliacoes" className="gap-1.5 text-xs sm:text-sm" data-tutorial="espaco-avaliacoes">
               <Star className="w-4 h-4 hidden sm:block" />
               Avaliações
             </TabsTrigger>
-            <TabsTrigger value="clubes" className="gap-1.5 text-xs sm:text-sm">
+            <TabsTrigger value="clubes" className="gap-1.5 text-xs sm:text-sm" data-tutorial="espaco-clubes">
               <Users className="w-4 h-4 hidden sm:block" />
               Clubes
             </TabsTrigger>
