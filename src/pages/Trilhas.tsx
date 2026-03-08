@@ -560,7 +560,7 @@ const bookTrails: BookTrail[] = [
     title: "O Morro dos Ventos Uivantes",
     author: "Emily Brontë",
     cover: "🌪️",
-    coverImage: "https://m.media-amazon.com/images/I/81G0FvPt3SL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/morro-ventos-uivantes.jpg",
     totalChapters: 14,
     isPremium: false,
     genre: "Romance",
