@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getStreakColor } from "@/components/StreakFlame";
 import FounderBadge from "@/components/FounderBadge";
 import { useUserBadges } from "@/hooks/useUserBadges";
+import ReferralCard from "@/components/ReferralCard";
 
 const MobilePerfil = () => {
   const navigate = useNavigate();
