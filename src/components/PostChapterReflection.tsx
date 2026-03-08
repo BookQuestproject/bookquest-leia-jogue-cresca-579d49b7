@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Sparkles, ChevronRight, CheckCircle, Star, Zap, MessageSquare, BarChart3, Brain, Users, Tag, Loader2, ShieldAlert } from "lucide-react";
+import { Sparkles, ChevronRight, CheckCircle, Star, MessageSquare, BarChart3, Brain, Users, Tag, Loader2, ShieldAlert } from "lucide-react";
+import EssenciaIcon from "@/components/EssenciaIcon";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
