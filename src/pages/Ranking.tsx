@@ -222,7 +222,7 @@ const Ranking = () => {
                       </div>
                       <p className="text-lg mb-1">🥈</p>
                       <h3 className="font-semibold text-sm truncate">{top3[1]?.name}</h3>
-                      <p className="font-bold text-sm mt-1">{top3[1]?.xp} XP</p>
+                      <p className="font-bold text-sm mt-1">{top3[1]?.essencia} ✦</p>
                       <p className="text-xs text-muted-foreground">{top3[1]?.streak} dias</p>
                     </div>
                     <div className={`ranking-podium-card ranking-podium-first ${isInPromotionZone(1) ? 'ranking-promotion-zone' : ''}`}>
