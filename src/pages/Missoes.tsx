@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import Layout from "@/components/layout/Layout";
@@ -9,12 +9,19 @@ import MilestoneOverlay from "@/components/missions/MilestoneOverlay";
 import {
   type Mission,
   type MissionCategory,
-  HABIT_MISSIONS,
-  CHALLENGE_MISSIONS,
-  MILESTONE_MISSIONS,
-  ALL_MISSIONS,
+  getMissionsForLevel,
+  getReaderLevel,
   getLevel,
 } from "@/components/missions/MissionTypes";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useProfile } from "@/hooks/useProfile";
+import MobileMissoes from "@/components/mobile/MobileMissoes";
 import {
   Tooltip,
   TooltipContent,
