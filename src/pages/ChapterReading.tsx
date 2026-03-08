@@ -618,9 +618,20 @@ const ChapterReading = () => {
     setReadingState("reflection");
   };
 
-  const handleReflectionComplete = (xp: number) => {
+  const handleReflectionComplete = async (xp: number) => {
     setEarnedXp(xp);
     setReadingState("completed");
+
+    // Award Essência: base 10 (chapter) + reflection XP
+    const totalReward = 10 + xp;
+    await addEssencia(totalReward);
+
+    // Update streak (increment by 1)
+    await updateStreak(streak + 1);
+
+    toast.success(`+${totalReward} Essência ganha!`, {
+      description: "Capítulo concluído com sucesso.",
+    });
   };
 
   const handleBackToTrail = () => {
