@@ -734,7 +734,7 @@ const PostChapterReflection = ({
                 ✅ Tema identificado!
               </p>
               <span className="text-sm font-bold px-2 py-0.5 rounded" style={{ background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
-                +{xpPerQuestion[currentIdx]} XP
+                +{xpPerQuestion[currentIdx]} ✦
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
