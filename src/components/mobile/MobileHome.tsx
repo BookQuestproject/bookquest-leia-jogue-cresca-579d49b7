@@ -173,6 +173,9 @@ const MobileHome = () => {
         </Link>
       </div>
 
+      {/* Streak Card */}
+      <StreakCard />
+
       {/* Ranking Progress Card */}
       {nextTier && (
         <Link
@@ -219,9 +222,9 @@ const MobileHome = () => {
           </Link>
         </div>
         <div className="space-y-2">
-          {dailyMissions.map((mission, i) => (
+          {dailyMissions.map((mission) => (
             <div
-              key={i}
+              key={mission.id}
               className={`flex items-center gap-3 p-2.5 rounded-lg ${
                 mission.completed ? "bg-accent/5 border border-accent/15" : "bg-muted/10 border border-border/30"
               }`}
@@ -249,7 +252,7 @@ const MobileHome = () => {
                   </div>
                 )}
               </div>
-              <span className="text-[10px] font-bold text-accent whitespace-nowrap">{mission.reward}</span>
+              <span className="text-[10px] font-bold text-accent whitespace-nowrap">{mission.rewardLabel}</span>
             </div>
           ))}
         </div>
@@ -288,6 +291,15 @@ const MobileHome = () => {
           </div>
         </Link>
       </div>
+
+      {/* Mission Completion Toast */}
+      {recentCompletion && (
+        <MissionCompletionToast
+          missionTitle={recentCompletion.missionTitle}
+          reward={recentCompletion.reward}
+          onClose={clearCompletion}
+        />
+      )}
     </div>
   );
 };
