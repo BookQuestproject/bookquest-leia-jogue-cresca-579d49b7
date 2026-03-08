@@ -243,7 +243,7 @@ const Ranking = () => {
                       </div>
                       <p className="text-lg mb-1">🥉</p>
                       <h3 className="font-semibold text-sm truncate">{top3[2]?.name}</h3>
-                      <p className="font-bold text-sm mt-1">{top3[2]?.xp} XP</p>
+                      <p className="font-bold text-sm mt-1">{top3[2]?.essencia} ✦</p>
                       <p className="text-xs text-muted-foreground">{top3[2]?.streak} dias</p>
                     </div>
                   </div>
