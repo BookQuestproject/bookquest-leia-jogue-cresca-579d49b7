@@ -698,7 +698,7 @@ const PostChapterReflection = ({
           <div className={`p-4 rounded-lg ${xpPerQuestion[currentIdx] === 0 ? "bg-destructive/10" : "bg-accent/10"}`}>
             <p className="font-semibold mb-1 flex items-center gap-2">
               <Star className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
-              +{xpPerQuestion[currentIdx]} XP
+              +{xpPerQuestion[currentIdx]} ✦
             </p>
             <p className="text-sm text-muted-foreground">
               {xpPerQuestion[currentIdx] === 0
