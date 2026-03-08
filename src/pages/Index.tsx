@@ -65,11 +65,6 @@ const Index = () => {
     explanation: ""
   };
 
-  const dailyMissions = [
-    { title: "Complete 1 capítulo hoje", progress: 0, goal: 1, reward: "+10 ✦", icon: BookOpen },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 ✦", icon: Target },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 ✦", icon: CheckCircle, completed: true },
-  ];
 
   const handleContinueReading = (chapterId?: number) => {
     if (!activeTrail) return;
