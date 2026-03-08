@@ -736,13 +736,19 @@ const PostChapterReflection = ({
 
         {/* Feedback for open/prediction */}
         {showFeedback && (currentQ?.type === "open" || currentQ?.type === "prediction") && (
-          <div className={`p-4 rounded-lg ${xpPerQuestion[currentIdx] === 0 ? "bg-destructive/10" : "bg-accent/10"}`}>
+          <div className={`p-4 rounded-lg ${invalidAnswer ? "bg-destructive/10 border border-destructive/20" : xpPerQuestion[currentIdx] === 0 ? "bg-destructive/10" : "bg-accent/10"}`}>
             <p className="font-semibold mb-1 flex items-center gap-2">
-              <Star className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
-              +{xpPerQuestion[currentIdx]} ✦
+              {invalidAnswer ? (
+                <ShieldAlert className="w-4 h-4 text-destructive" />
+              ) : (
+                <Star className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
+              )}
+              {invalidAnswer ? "⚠️ Resposta inválida" : `+${xpPerQuestion[currentIdx]} ✦`}
             </p>
             <p className="text-sm text-muted-foreground">
-              {xpPerQuestion[currentIdx] === 0
+              {invalidAnswer
+                ? "Sua resposta contém caracteres aleatórios, números sem sentido ou texto sem relação com a pergunta. Escreva uma reflexão real para ganhar Essência."
+                : xpPerQuestion[currentIdx] === 0
                 ? "Resposta não reconhecida. Tente escrever uma reflexão real sobre o capítulo."
                 : xpPerQuestion[currentIdx] >= 4
                 ? "Excelente reflexão! Resposta bem desenvolvida e relevante."
