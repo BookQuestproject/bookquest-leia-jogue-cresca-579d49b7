@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getStreakColor } from "@/components/StreakFlame";
 import FounderBadge from "@/components/FounderBadge";
 import { useUserBadges } from "@/hooks/useUserBadges";
+import ReferralCard from "@/components/ReferralCard";
 
 const MobilePerfil = () => {
   const navigate = useNavigate();
@@ -167,6 +168,9 @@ const MobilePerfil = () => {
           <p className="text-sm font-bold" style={{ color: streakInfo.color }}>0 dias</p>
         </div>
       </div>
+
+      {/* Referral System */}
+      <ReferralCard />
 
       {/* Reading Stats */}
       <div className="rounded-xl p-4 bg-card border border-border/60">
