@@ -32,6 +32,7 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
+import AdminFounderPreview from "./pages/AdminFounderPreview";
 import EduDashboard from "./pages/edu/EduDashboard";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
@@ -77,6 +78,7 @@ const App = () => (
                 <Route path="/noticias" element={<Noticias />} />
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
                 <Route path="/edu" element={<EduDashboard />} />
                 <Route path="/edu/turmas" element={<EduTurmas />} />
                 <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
