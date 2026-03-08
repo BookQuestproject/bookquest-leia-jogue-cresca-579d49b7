@@ -67,7 +67,7 @@ const categorySteps: Record<string, CategoryStep[]> = {
   "/desafios": [
     { target: '[data-tutorial="desafios-header"]', title: "⚔️ Desafios Sociais", description: "Bem-vindo à arena de desafios! Aqui você pode competir com amigos e colegas em metas de leitura. Quem lê mais?", placement: "bottom" },
     { target: '[data-tutorial="desafios-create"]', title: "📩 Criar Desafio", description: "Clique aqui pra enviar um desafio pro email de um amigo. Escolha o tipo e veja quem vence! Eu aposto em você.", placement: "bottom" },
-    { target: '[data-tutorial="desafios-tabs"]', title: "📊 Acompanhe seus Desafios", description: "Navegue entre desafios ativos, enviados e histórico. Cada vitória rende XP e glória! Bora competir!", placement: "bottom" },
+    { target: '[data-tutorial="desafios-tabs"]', title: "📊 Acompanhe seus Desafios", description: "Navegue entre desafios ativos, enviados e histórico. Cada vitória rende Essência e glória! Bora competir!", placement: "bottom" },
   ],
   "/admin": [
     { target: '[data-tutorial="admin-panel"]', title: "🛡️ Painel Administrativo", description: "Bem-vindo ao painel de controle do BookQuest! Aqui você gerencia tudo: trilhas, mentorias e sugestões de livros.", placement: "bottom" },
