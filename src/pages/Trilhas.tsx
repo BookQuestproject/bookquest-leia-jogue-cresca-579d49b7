@@ -647,6 +647,7 @@ const Trilhas = () => {
   const [showResult, setShowResult] = useState(false);
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
+  const [trailToRemove, setTrailToRemove] = useState<{ title: string; isQuiz: boolean } | null>(null);
   const isPremium = false;
 
   // Quiz recommendations (reactive via state)
