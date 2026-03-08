@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { getTierFromXp, RankingTier } from '@/components/RankingBadge';
+import { getTierFromEssencia, RankingTier } from '@/components/RankingBadge';
 
 export interface RankingUser {
   id: string;
   name: string;
   avatar: string;
+  essencia: number;
+  /** @deprecated use essencia */
   xp: number;
   tier: RankingTier;
   streak: number;
@@ -28,7 +30,6 @@ export const useRanking = () => {
 
       if (error) throw error;
 
-      // Fetch profiles for names
       const userIds = (data as any[]).map((d: any) => d.user_id);
       
       if (userIds.length === 0) {
@@ -52,8 +53,9 @@ export const useRanking = () => {
           id: d.user_id,
           name,
           avatar: initials,
-          xp: d.xp || 0,
-          tier: getTierFromXp(d.xp || 0),
+          essencia: d.xp || 0,
+          xp: d.xp || 0, // backward compat
+          tier: getTierFromEssencia(d.xp || 0),
           streak: d.streak || 0,
           isCurrentUser: d.user_id === user?.id,
         };

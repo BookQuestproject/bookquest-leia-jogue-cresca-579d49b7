@@ -127,7 +127,7 @@ const MobilePerfil = () => {
             <span className="text-xs text-muted-foreground">
               Próximo nível: <span className="text-foreground font-medium">{nextTier.label}</span>
             </span>
-            <span className="text-xs font-bold text-accent">{userPoints}/{nextTier.pointsNeeded} XP</span>
+            <span className="text-xs font-bold text-accent">{userPoints}/{nextTier.pointsNeeded} ✦</span>
           </div>
           <div className="h-2.5 bg-muted/40 rounded-full overflow-hidden">
             <div

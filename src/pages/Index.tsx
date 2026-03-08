@@ -60,9 +60,9 @@ const Index = () => {
   };
 
   const dailyMissions = [
-    { title: "Complete 1 capítulo hoje", progress: 0, goal: 1, reward: "+10 XP", icon: BookOpen },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 XP", icon: Target },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 XP", icon: CheckCircle, completed: true },
+    { title: "Complete 1 capítulo hoje", progress: 0, goal: 1, reward: "+10 ✦", icon: BookOpen },
+    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 ✦", icon: Target },
+    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 ✦", icon: CheckCircle, completed: true },
   ];
 
   const handleContinueReading = (chapterId?: number) => {
@@ -85,7 +85,7 @@ const Index = () => {
     if (userStats.streak === 0) return { icon: Flame, text: "Leia hoje para iniciar sua sequência!", color: "text-accent" };
     if (nextTier) {
       const xpToNext = nextTier.pointsNeeded - userStats.points;
-      if (xpToNext <= 30) return { icon: Zap, text: `Você está a ${xpToNext} XP de subir para ${nextTier.label}!`, color: "text-accent" };
+      if (xpToNext <= 30) return { icon: Zap, text: `Você está a ${xpToNext} Essência de subir para ${nextTier.label}!`, color: "text-accent" };
     }
     return { icon: Zap, text: `Continue lendo para manter sua sequência de ${userStats.streak} dias!`, color: "text-accent" };
   };
@@ -433,7 +433,7 @@ const Index = () => {
                 <div>
                   <RankingBadge tier={currentTier} size="sm" />
                   <p className="text-xs text-muted-foreground mt-1">
-                    {userStats.points} XP
+                    {userStats.points} ✦
                   </p>
                 </div>
               </div>
@@ -447,7 +447,7 @@ const Index = () => {
                 <div className="pt-3 border-t border-border/30">
                   <div className="flex justify-between text-[11px] mb-2">
                     <span className="text-muted-foreground">Próximo: {nextTier.label}</span>
-                    <span className="font-bold text-accent">{userStats.points}/{nextTier.pointsNeeded} XP</span>
+                    <span className="font-bold text-accent">{userStats.points}/{nextTier.pointsNeeded} ✦</span>
                   </div>
                   <div className="h-2 bg-muted/40 rounded-full overflow-hidden">
                     <div
@@ -616,7 +616,7 @@ const Index = () => {
               }`}>
                 <p className="font-semibold mb-2">
                   {selectedAnswer === currentChapterQuestion.correctAnswer
-                    ? "✓ Correto! +10 XP"
+                    ? "✓ Correto! +10 Essência"
                     : "✗ Incorreto"}
                 </p>
                 <p className="text-sm text-muted-foreground">

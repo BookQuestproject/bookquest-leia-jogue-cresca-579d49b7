@@ -207,8 +207,8 @@ const TierTransitionModal = ({ isOpen, fromTier, toTier, onClose }: TierTransiti
           }}
         >
           <div className="flex justify-between text-xs text-white/60 mb-1.5">
-            <span>{targetConfig.minXp} XP</span>
-            <span>{targetConfig.maxXp === Infinity ? "∞" : `${targetConfig.maxXp} XP`}</span>
+            <span>{targetConfig.minEssencia} Essência</span>
+            <span>{targetConfig.maxEssencia === Infinity ? "∞" : `${targetConfig.maxEssencia} Essência`}</span>
           </div>
           <div className="h-2 rounded-full overflow-hidden bg-white/10">
             <div

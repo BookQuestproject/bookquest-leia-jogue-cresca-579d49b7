@@ -9,7 +9,7 @@ export interface Mission {
   icon: typeof BookOpen;
   progress: number;
   goal: number;
-  xpValue: number;
+  essenciaValue: number;
   category: MissionCategory;
   completed: boolean;
   autoComplete: boolean;
@@ -24,7 +24,7 @@ export const HABIT_MISSIONS: Mission[] = [
     icon: BookOpen,
     progress: 0,
     goal: 1,
-    xpValue: 15,
+    essenciaValue: 15,
     category: "habit",
     completed: false,
     autoComplete: true,
@@ -37,7 +37,7 @@ export const HABIT_MISSIONS: Mission[] = [
     icon: Clock,
     progress: 0,
     goal: 15,
-    xpValue: 10,
+    essenciaValue: 10,
     category: "habit",
     completed: false,
     autoComplete: true,
@@ -50,7 +50,7 @@ export const HABIT_MISSIONS: Mission[] = [
     icon: Target,
     progress: 0,
     goal: 1,
-    xpValue: 20,
+    essenciaValue: 20,
     category: "habit",
     completed: false,
     autoComplete: true,
@@ -66,7 +66,7 @@ export const CHALLENGE_MISSIONS: Mission[] = [
     icon: Star,
     progress: 2,
     goal: 5,
-    xpValue: 75,
+    essenciaValue: 75,
     category: "challenge",
     completed: false,
     autoComplete: true,
@@ -79,7 +79,7 @@ export const CHALLENGE_MISSIONS: Mission[] = [
     icon: Flame,
     progress: 3,
     goal: 7,
-    xpValue: 120,
+    essenciaValue: 120,
     category: "challenge",
     completed: false,
     autoComplete: true,
@@ -92,7 +92,7 @@ export const CHALLENGE_MISSIONS: Mission[] = [
     icon: Trophy,
     progress: 0,
     goal: 1,
-    xpValue: 200,
+    essenciaValue: 200,
     category: "challenge",
     completed: false,
     autoComplete: true,
@@ -108,7 +108,7 @@ export const MILESTONE_MISSIONS: Mission[] = [
     icon: Flame,
     progress: 3,
     goal: 30,
-    xpValue: 500,
+    essenciaValue: 500,
     category: "milestone",
     completed: false,
     autoComplete: true,
@@ -121,7 +121,7 @@ export const MILESTONE_MISSIONS: Mission[] = [
     icon: Award,
     progress: 12,
     goal: 100,
-    xpValue: 800,
+    essenciaValue: 800,
     category: "milestone",
     completed: false,
     autoComplete: true,
@@ -134,7 +134,7 @@ export const MILESTONE_MISSIONS: Mission[] = [
     icon: Crown,
     progress: 1,
     goal: 10,
-    xpValue: 1000,
+    essenciaValue: 1000,
     category: "milestone",
     completed: false,
     autoComplete: true,
@@ -145,23 +145,23 @@ export const MILESTONE_MISSIONS: Mission[] = [
 export const ALL_MISSIONS = [...HABIT_MISSIONS, ...CHALLENGE_MISSIONS, ...MILESTONE_MISSIONS];
 
 export const LEVELS = [
-  { name: "Iniciante", xp: 0 },
-  { name: "Explorador", xp: 100 },
-  { name: "Aventureiro", xp: 300 },
-  { name: "Mestre Leitor", xp: 600 },
-  { name: "Lenda Literária", xp: 1000 },
+  { name: "Iniciante", essencia: 0 },
+  { name: "Explorador", essencia: 100 },
+  { name: "Aventureiro", essencia: 300 },
+  { name: "Mestre Leitor", essencia: 600 },
+  { name: "Lenda Literária", essencia: 1000 },
 ];
 
-export const getLevel = (xp: number) => {
+export const getLevel = (essencia: number) => {
   for (let i = LEVELS.length - 1; i >= 0; i--) {
-    if (xp >= LEVELS[i].xp) {
+    if (essencia >= LEVELS[i].essencia) {
       const nextLevel = LEVELS[i + 1];
       return {
         current: LEVELS[i].name,
-        nextXp: nextLevel ? nextLevel.xp : LEVELS[i].xp,
+        nextEssencia: nextLevel ? nextLevel.essencia : LEVELS[i].essencia,
         next: nextLevel ? nextLevel.name : null,
       };
     }
   }
-  return { current: LEVELS[0].name, nextXp: LEVELS[1].xp, next: LEVELS[1].name };
+  return { current: LEVELS[0].name, nextEssencia: LEVELS[1].essencia, next: LEVELS[1].name };
 };

@@ -260,7 +260,7 @@ const Biblioteca = () => {
             icon: <Check className="w-4 h-4 text-green-500" />,
             duration: 5000,
           });
-          toast(`+15 XP 🎉`, {
+          toast(`+15 Essência 🎉`, {
             description: "Recompensa por sugerir um livro válido!",
             icon: <Zap className="w-4 h-4 text-accent" />,
             duration: 4000,

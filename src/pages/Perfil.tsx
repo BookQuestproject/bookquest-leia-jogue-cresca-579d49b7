@@ -202,7 +202,7 @@ const Perfil = () => {
                     Próximo nível: <span className="text-foreground font-medium">{nextTier.label}</span>
                   </span>
                   <span className="text-sm font-bold text-primary">
-                    {userPoints} / {nextTier.pointsNeeded} XP
+                    {userPoints} / {nextTier.pointsNeeded} ✦
                   </span>
                 </div>
                 <ProgressBar value={userPoints} max={nextTier.pointsNeeded} />

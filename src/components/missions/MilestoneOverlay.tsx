@@ -63,7 +63,7 @@ const MilestoneOverlay = ({ isOpen, onClose, missionTitle, xpGained, unlockedTit
           }`}>
             <p className="text-xs uppercase tracking-[0.2em] text-accent mb-2">Novo Marco Alcançado</p>
             <h2 className="text-2xl font-serif font-bold text-foreground mb-2">{missionTitle}</h2>
-            <p className="text-accent font-bold text-lg mb-3">+{xpGained} XP</p>
+            <p className="text-accent font-bold text-lg mb-3">+{xpGained} ✦</p>
             {unlockedTitle && (
               <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border border-secondary/30 bg-secondary/10 transition-all duration-500 ${
                 phase >= 4 ? "opacity-100 scale-100" : "opacity-0 scale-90"

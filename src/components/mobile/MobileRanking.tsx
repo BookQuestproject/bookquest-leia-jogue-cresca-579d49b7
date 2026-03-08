@@ -74,7 +74,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <RankingBadge tier={currentUserTier} showLabel={false} size="sm" />
-                <span className="text-sm font-semibold">{currentUser?.xp || 0} XP</span>
+                <span className="text-sm font-semibold">{currentUser?.essencia || 0} ✦</span>
               </div>
               <p className="text-[11px] text-accent font-medium">
                 Top {selectedTierInfo.slots} avançam de patamar
@@ -133,7 +133,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
                 </div>
                 <p className="text-base mb-0.5">🥈</p>
                 <p className="text-[11px] font-semibold truncate">{tierUsers[1]?.isCurrentUser ? 'Você' : tierUsers[1]?.name}</p>
-                <p className="text-[11px] font-bold text-accent">{tierUsers[1]?.xp} XP</p>
+                <p className="text-[11px] font-bold text-accent">{tierUsers[1]?.essencia} ✦</p>
               </div>
               <div className="rounded-xl p-3 bg-card border border-accent/30 text-center">
                 <Crown className="w-4 h-4 text-accent mx-auto mb-1" />
@@ -142,7 +142,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
                 </div>
                 <p className="text-lg mb-0.5">🥇</p>
                 <p className="text-[11px] font-bold truncate">{tierUsers[0]?.isCurrentUser ? 'Você' : tierUsers[0]?.name}</p>
-                <p className="text-xs font-bold text-accent">{tierUsers[0]?.xp} XP</p>
+                <p className="text-xs font-bold text-accent">{tierUsers[0]?.essencia} ✦</p>
               </div>
               <div className="rounded-xl p-3 bg-card border border-border/60 text-center pt-8">
                 <p className="text-xs font-bold text-muted-foreground mb-1">3º</p>
@@ -151,7 +151,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
                 </div>
                 <p className="text-base mb-0.5">🥉</p>
                 <p className="text-[11px] font-semibold truncate">{tierUsers[2]?.isCurrentUser ? 'Você' : tierUsers[2]?.name}</p>
-                <p className="text-[11px] font-bold text-accent">{tierUsers[2]?.xp} XP</p>
+                <p className="text-[11px] font-bold text-accent">{tierUsers[2]?.essencia} ✦</p>
               </div>
             </div>
           )}
@@ -186,7 +186,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-sm font-bold ${inPromotion ? "text-accent" : ""}`}>{user.xp} XP</p>
+                    <p className={`text-sm font-bold ${inPromotion ? "text-accent" : ""}`}>{user.essencia} ✦</p>
                     <div className="flex items-center gap-0.5 justify-end">
                       <Flame className="w-3 h-3 text-accent/60" />
                       <span className="text-[10px] text-muted-foreground">{user.streak}d</span>

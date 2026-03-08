@@ -53,7 +53,7 @@ const ChallengeModal = ({ isOpen, onClose, missionTitle, xpGained }: ChallengeMo
           <div className={`transition-all duration-500 delay-100 ${phase >= 3 ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/15 border border-accent/30">
               <Star className="w-4 h-4 text-accent mission-star-spin" />
-              <span className="text-accent font-bold text-lg">+{xpGained} XP</span>
+              <span className="text-accent font-bold text-lg">+{xpGained} ✦</span>
             </div>
           </div>
         </div>

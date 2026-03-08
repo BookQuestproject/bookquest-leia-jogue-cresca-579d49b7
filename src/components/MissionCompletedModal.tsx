@@ -41,7 +41,7 @@ const MissionCompletedModal = ({
       timerRef.current = [
         setTimeout(() => { setPhase(1); playSound("success"); }, 80),
         setTimeout(() => setPhase(2), 350),
-        setTimeout(() => { setPhase(3); playSound("xp"); }, 600),
+        setTimeout(() => { setPhase(3); playSound("essencia"); }, 600),
         setTimeout(() => {
           setPhase(4);
           requestAnimationFrame(() => {
@@ -100,14 +100,14 @@ const MissionCompletedModal = ({
           <div className={`mission-scale-in ${phase >= 3 ? 'mission-scale-in-active' : ''}`}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/15 border border-accent/30 mb-5">
               <Star className="w-4 h-4 text-accent mission-star-spin" />
-              <span className="text-accent font-bold text-lg">+{xpGained} XP</span>
+              <span className="text-accent font-bold text-lg">+{xpGained} Essência</span>
             </div>
           </div>
 
           {/* XP Progress Bar */}
           <div className={`mission-slide-up ${phase >= 4 ? 'mission-slide-up-active' : ''}`}>
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-              <span>Progresso XP</span>
+              <span>Progresso Essência</span>
               <span>{currentXp}/{nextLevelXp}</span>
             </div>
             <div className="h-2.5 rounded-full bg-muted overflow-hidden relative">

@@ -32,9 +32,9 @@ const MobileHome = () => {
   const themeColor = activeTrail?.themeColor || "220 60% 50%";
 
   const dailyMissions = [
-    { title: "Complete 1 capítulo", progress: 0, goal: 1, reward: "+10 XP", icon: BookOpen, completed: false },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 XP", icon: Target, completed: false },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 XP", icon: CheckCircle, completed: true },
+    { title: "Complete 1 capítulo", progress: 0, goal: 1, reward: "+10 ✦", icon: BookOpen, completed: false },
+    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 ✦", icon: Target, completed: false },
+    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 ✦", icon: CheckCircle, completed: true },
   ];
 
   const completedMissions = dailyMissions.filter(m => m.completed).length;
@@ -143,7 +143,7 @@ const MobileHome = () => {
           <div className="flex justify-center mb-1.5">
             <RankingBadge tier={currentTier} showLabel={false} size="sm" />
           </div>
-          <p className="text-xs font-bold text-foreground">{userStats.points} XP</p>
+          <p className="text-xs font-bold text-foreground">{userStats.points} ✦</p>
           <p className="text-[10px] text-muted-foreground">Ranking</p>
         </Link>
 
@@ -190,9 +190,9 @@ const MobileHome = () => {
           <div className="flex items-center gap-3 mb-3">
             <RankingBadge tier={currentTier} size="sm" />
             <div className="flex-1">
-              <p className="text-sm font-semibold">{userStats.points} XP</p>
+              <p className="text-sm font-semibold">{userStats.points} ✦</p>
               <p className="text-[11px] text-muted-foreground">
-                Faltam <span className="text-accent font-bold">{nextTier.pointsNeeded - userStats.points} XP</span> para {nextTier.label}
+                Faltam <span className="text-accent font-bold">{nextTier.pointsNeeded - userStats.points} ✦</span> para {nextTier.label}
               </p>
             </div>
           </div>

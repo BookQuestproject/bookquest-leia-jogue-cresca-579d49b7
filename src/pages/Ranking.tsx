@@ -222,7 +222,7 @@ const Ranking = () => {
                       </div>
                       <p className="text-lg mb-1">🥈</p>
                       <h3 className="font-semibold text-sm truncate">{top3[1]?.name}</h3>
-                      <p className="font-bold text-sm mt-1">{top3[1]?.xp} XP</p>
+                      <p className="font-bold text-sm mt-1">{top3[1]?.essencia} ✦</p>
                       <p className="text-xs text-muted-foreground">{top3[1]?.streak} dias</p>
                     </div>
                     <div className={`ranking-podium-card ranking-podium-first ${isInPromotionZone(1) ? 'ranking-promotion-zone' : ''}`}>
@@ -233,7 +233,7 @@ const Ranking = () => {
                       </div>
                       <p className="text-xl mb-1">🥇</p>
                       <h3 className="font-serif font-semibold text-sm truncate">{top3[0]?.name}</h3>
-                      <p className="font-bold text-sm mt-1">{top3[0]?.xp} XP</p>
+                      <p className="font-bold text-sm mt-1">{top3[0]?.essencia} ✦</p>
                       <p className="text-xs text-muted-foreground">{top3[0]?.streak} dias</p>
                     </div>
                     <div className={`ranking-podium-card mt-6 ${isInPromotionZone(3) ? 'ranking-promotion-zone' : ''}`}>
@@ -243,7 +243,7 @@ const Ranking = () => {
                       </div>
                       <p className="text-lg mb-1">🥉</p>
                       <h3 className="font-semibold text-sm truncate">{top3[2]?.name}</h3>
-                      <p className="font-bold text-sm mt-1">{top3[2]?.xp} XP</p>
+                      <p className="font-bold text-sm mt-1">{top3[2]?.essencia} ✦</p>
                       <p className="text-xs text-muted-foreground">{top3[2]?.streak} dias</p>
                     </div>
                   </div>
@@ -308,7 +308,7 @@ const Ranking = () => {
                               </div>
                               <div className="text-right">
                                 <p className={`font-bold text-sm ${inPromotion ? 'text-accent' : 'text-foreground'}`}>
-                                  {user.xp} XP
+                                  {user.essencia} ✦
                                 </p>
                                 <p className="text-xs text-muted-foreground">{user.streak}d</p>
                               </div>
@@ -370,7 +370,7 @@ const Ranking = () => {
                   )}
                 </div>
                 <div className="space-y-2 mt-3">
-                  <p className="text-xs text-muted-foreground">XP atual: <span className="text-accent font-bold">{(currentUser?.xp || 0) + userXpBoost}</span></p>
+                  <p className="text-xs text-muted-foreground">Essência atual: <span className="text-accent font-bold">{(currentUser?.essencia || 0) + userXpBoost}</span></p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {[5, 10, 20].map(amount => (
                       <button
@@ -395,7 +395,7 @@ const Ranking = () => {
             <div className="ranking-info-card animate-fade-in">
               <div className="flex items-center gap-2 mb-3">
                 <Zap className="w-4 h-4 text-accent" />
-                <h3 className="font-semibold text-sm">Como ganhar XP</h3>
+                <h3 className="font-semibold text-sm">Como ganhar Essência</h3>
               </div>
               <div className="space-y-2.5">
                 <div className="flex items-center gap-2.5">

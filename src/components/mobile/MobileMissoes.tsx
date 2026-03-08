@@ -40,19 +40,19 @@ const MobileMissoes = () => {
     if (!mission || mission.completed) return;
 
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, completed: true, progress: m.goal } : m));
-    setTotalXp(prev => prev + mission.xpValue);
+    setTotalXp(prev => prev + mission.essenciaValue);
 
     switch (mission.category) {
       case "habit":
-        setHabitToast({ title: mission.title, xp: mission.xpValue });
+        setHabitToast({ title: mission.title, xp: mission.essenciaValue });
         break;
       case "challenge":
-        setChallengeModal({ title: mission.title, xp: mission.xpValue });
+        setChallengeModal({ title: mission.title, xp: mission.essenciaValue });
         break;
       case "milestone":
         setMilestoneOverlay({
           title: mission.title,
-          xp: mission.xpValue,
+          xp: mission.essenciaValue,
           unlockedTitle: MILESTONE_TITLES[mission.id],
         });
         break;
@@ -93,7 +93,7 @@ const MobileMissoes = () => {
         <div className="w-px h-8 bg-border/40" />
         <div className="text-center flex-1">
           <p className="text-lg font-bold text-accent">{totalXp}</p>
-          <p className="text-[10px] text-muted-foreground">XP Total</p>
+          <p className="text-[10px] text-muted-foreground">Essência</p>
         </div>
       </div>
 
@@ -158,7 +158,7 @@ const MobileMissoes = () => {
                     </div>
                     <span className="text-xs font-bold text-accent flex items-center gap-1 ml-2 flex-shrink-0">
                       <Zap className="w-3 h-3" />
-                      +{mission.xpValue}
+                      +{mission.essenciaValue}
                     </span>
                   </div>
                   <p className="text-[11px] text-muted-foreground mb-1.5">{mission.description}</p>

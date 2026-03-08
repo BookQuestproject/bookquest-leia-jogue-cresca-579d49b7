@@ -188,7 +188,7 @@ const EduTurmaDetail = () => {
                           {chapters} capítulo{chapters !== 1 ? "s" : ""} lido{chapters !== 1 ? "s" : ""}
                         </p>
                       </div>
-                      <span className="text-sm font-bold text-accent">{xp} XP</span>
+                      <span className="text-sm font-bold text-accent">{xp} ✦</span>
                     </div>
                   );
                 })}

@@ -388,7 +388,7 @@ const PostChapterReflection = ({
       <div className="animate-fade-in space-y-6 text-center py-12">
         <p className="text-muted-foreground">{error}</p>
         <Button variant="outline" onClick={() => onComplete(10)}>
-          Pular reflexão (+10 XP base)
+          Pular reflexão (+10 Essência base)
         </Button>
       </div>
     );
@@ -416,7 +416,7 @@ const PostChapterReflection = ({
         <div className="bg-card rounded-xl p-6 border border-border max-w-sm mx-auto space-y-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Leitura do capítulo</span>
-            <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 XP</span>
+            <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 ✦</span>
           </div>
           {xpPerQuestion.map((xp, i) => (
             <div key={i} className="flex items-center justify-between text-sm">
@@ -424,7 +424,7 @@ const PostChapterReflection = ({
                 {typeIcons[questions[i]?.type] || <Star className="w-4 h-4" />}
                 {typeLabels[questions[i]?.type] || "Pergunta"}
               </span>
-              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} XP</span>
+              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} ✦</span>
             </div>
           ))}
           <div className="border-t border-border pt-3 flex items-center justify-between">
@@ -433,7 +433,7 @@ const PostChapterReflection = ({
               Total
             </span>
             <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>
-              +{finalXp} XP
+              +{finalXp} ✦
             </span>
           </div>
         </div>
@@ -680,7 +680,7 @@ const PostChapterReflection = ({
                   : isPartial ? "bg-amber-500/20 text-amber-600" 
                   : "bg-destructive/20 text-destructive"
                 }`}>
-                  +{xp} XP
+                  +{xp} ✦
                 </span>
               </div>
               {!isCorrect && (
@@ -698,7 +698,7 @@ const PostChapterReflection = ({
           <div className={`p-4 rounded-lg ${xpPerQuestion[currentIdx] === 0 ? "bg-destructive/10" : "bg-accent/10"}`}>
             <p className="font-semibold mb-1 flex items-center gap-2">
               <Star className="w-4 h-4" style={{ color: `hsl(${themeColor})` }} />
-              +{xpPerQuestion[currentIdx]} XP
+              +{xpPerQuestion[currentIdx]} ✦
             </p>
             <p className="text-sm text-muted-foreground">
               {xpPerQuestion[currentIdx] === 0
@@ -707,7 +707,7 @@ const PostChapterReflection = ({
                 ? "Excelente reflexão! Resposta bem desenvolvida e relevante."
                 : xpPerQuestion[currentIdx] >= 2
                 ? "Boa reflexão! Tente incluir mais detalhes do capítulo."
-                : "Resposta breve. Desenvolva mais para ganhar mais XP!"}
+                : "Resposta breve. Desenvolva mais para ganhar mais Essência!"}
             </p>
           </div>
         )}
@@ -720,7 +720,7 @@ const PostChapterReflection = ({
                 ✅ Percepção registrada!
               </p>
               <span className="text-sm font-bold px-2 py-0.5 rounded" style={{ background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
-                +{xpPerQuestion[currentIdx]} XP
+                +{xpPerQuestion[currentIdx]} ✦
               </span>
             </div>
           </div>
@@ -734,7 +734,7 @@ const PostChapterReflection = ({
                 ✅ Tema identificado!
               </p>
               <span className="text-sm font-bold px-2 py-0.5 rounded" style={{ background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
-                +{xpPerQuestion[currentIdx]} XP
+                +{xpPerQuestion[currentIdx]} ✦
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -756,7 +756,7 @@ const PostChapterReflection = ({
             excellent: { icon: "🎉", title: "Análise completa!", msg: "Excelente! Sua justificativa enriqueceu a análise do personagem. Continue assim!", bg: "bg-green-500/10 border border-green-500/20", badge: "bg-green-500/20 text-green-400" },
             partial: { icon: "👍", title: "Boa tentativa!", msg: "Sua justificativa tem substância, mas tente conectar mais diretamente ao livro e à pergunta.", bg: "bg-yellow-500/10 border border-yellow-500/20", badge: "bg-yellow-500/20 text-yellow-400" },
             irrelevant: { icon: "⚠️", title: "Justificativa insuficiente", msg: "Sua resposta não pareceu relacionada ao livro ou à pergunta. Tente usar elementos do texto para justificar.", bg: "bg-orange-500/10 border border-orange-500/20", badge: "bg-orange-500/20 text-orange-400" },
-            none: { icon: "✅", title: "Personagem escolhido!", msg: "Escolha registrada. Na próxima vez, elabore sua justificativa para ganhar mais XP!", bg: "bg-accent/10 border border-accent/20", badge: "" },
+            none: { icon: "✅", title: "Personagem escolhido!", msg: "Escolha registrada. Na próxima vez, elabore sua justificativa para ganhar mais Essência!", bg: "bg-accent/10 border border-accent/20", badge: "" },
           };
           const fb = feedbackConfig[feedbackLevel];
           
@@ -767,7 +767,7 @@ const PostChapterReflection = ({
                   {fb.icon} {fb.title}
                 </p>
                 <span className={`text-sm font-bold px-2 py-0.5 rounded ${fb.badge}`} style={fb.badge ? undefined : { background: `hsl(${themeColor} / 0.15)`, color: `hsl(${themeColor})` }}>
-                  +{xp} XP
+                  +{xp} ✦
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">{fb.msg}</p>
