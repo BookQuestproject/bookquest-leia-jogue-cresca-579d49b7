@@ -95,7 +95,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-56 bg-sidebar flex flex-col z-50 border-r border-border/40">
-      {/* Logo + Notifications */}
+      {/* Logo + Essência + Notifications */}
       <div className="px-5 py-5 flex items-center justify-between">
         <Link to="/home" className="flex items-center gap-2" reloadDocument={false}>
           <img
@@ -106,7 +106,10 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
             decoding="sync"
           />
         </Link>
-        {user && <NotificationBell />}
+        <div className="flex items-center gap-2">
+          {user && <EssenciaCounter size="sm" />}
+          {user && <NotificationBell />}
+        </div>
       </div>
 
       {/* Login CTA */}
