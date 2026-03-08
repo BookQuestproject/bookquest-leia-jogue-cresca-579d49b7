@@ -603,6 +603,22 @@ const bookTrails: BookTrail[] = [
       { id: 3, title: "Espirais imortais", status: "locked", icon: "🧬", totalPages: 30 },
     ]
   },
+  {
+    id: "melhor-que-nos-filmes",
+    title: "Melhor do que nos Filmes",
+    author: "Lynn Painter",
+    cover: "🎬",
+    coverImage: "/images/covers/melhor-que-nos-filmes.jpg",
+    totalChapters: 12,
+    isPremium: false,
+    genre: "Romance",
+    themeColor: "340 50% 45%",
+    chapters: [
+      { id: 1, title: "O vizinho irritante", status: "current", icon: "🏠", totalPages: 22, question: { text: "Como é a relação entre Liz e Wes no início da história?", options: ["São melhores amigos de infância", "São vizinhos que se detestam mutuamente", "São colegas de trabalho", "Nunca se encontraram antes"], correctAnswer: 1, explanation: "Liz e Wes são vizinhos que vivem uma rivalidade constante, trocando provocações e irritando um ao outro sempre que possível." } },
+      { id: 2, title: "O plano perfeito", status: "locked", icon: "📋", totalPages: 24 },
+      { id: 3, title: "Fingindo juntos", status: "locked", icon: "🎭", totalPages: 26 },
+    ]
+  },
 ];
 
 // Export for use in Biblioteca
