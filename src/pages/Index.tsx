@@ -630,6 +630,15 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Mission Completion Toast */}
+      {recentCompletion && (
+        <MissionCompletionToast
+          missionTitle={recentCompletion.missionTitle}
+          reward={recentCompletion.reward}
+          onClose={clearCompletion}
+        />
+      )}
     </Layout>
   );
 };
