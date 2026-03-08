@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Shield, HelpCircle, GripVertical, X, Eye } from "lucide-react";
+import { Shield, HelpCircle, GripVertical, X, Eye, Flame } from "lucide-react";
+import StreakAnimationPreview from "@/components/admin/StreakAnimationPreview";
 
 const FloatingAdminWidget = () => {
   const [position, setPosition] = useState({ x: 20, y: window.innerHeight - 160 });
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
+  const [showStreakPreview, setShowStreakPreview] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const widgetRef = useRef<HTMLDivElement>(null);
 
@@ -110,7 +112,16 @@ const FloatingAdminWidget = () => {
           <HelpCircle className="w-4 h-4 text-accent" />
           Testar Quiz
         </Link>
+        <button
+          onClick={() => setShowStreakPreview(true)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors w-full text-left"
+        >
+          <Flame className="w-4 h-4 text-accent" />
+          Preview Streak
+        </button>
       </div>
+
+      <StreakAnimationPreview open={showStreakPreview} onClose={() => setShowStreakPreview(false)} />
     </div>
   );
 };
