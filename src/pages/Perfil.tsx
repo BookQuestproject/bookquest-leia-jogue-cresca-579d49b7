@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobilePerfil from "@/components/mobile/MobilePerfil";
+import FounderBadge from "@/components/FounderBadge";
+import { useUserBadges } from "@/hooks/useUserBadges";
 
 const readingHistory = [
   { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", completedAt: "Dez 2023", pages: 208 },
@@ -29,6 +31,7 @@ const Perfil = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const { activeTitle, isFounder } = useUserBadges();
 
   const userName = profile?.full_name || "Você";
   const userEmail = profile?.email || "usuario@email.com";
@@ -139,20 +142,22 @@ const Perfil = () => {
               </div>
               
               <div className="flex-1 text-center sm:text-left">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
                   <h1 className="text-2xl font-bold">{userName}</h1>
                   <RankingBadge tier={currentTier} size="sm" />
-                  {isPremium ? (
+                  {isFounder && <FounderBadge size="sm" />}
+                  {isPremium && !isFounder && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-bold">
                       <Crown className="w-3 h-3" />
                       Premium
                     </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-bold">
-                      Free
-                    </span>
                   )}
                 </div>
+                {activeTitle && (
+                  <p className="text-xs font-semibold mb-1" style={{ color: isFounder ? "hsl(40 80% 55%)" : "hsl(var(--accent))" }}>
+                    {activeTitle}
+                  </p>
+                )}
                 <p className="text-muted-foreground mb-4">{userEmail}</p>
                 
                 <div className="grid grid-cols-3 gap-4">

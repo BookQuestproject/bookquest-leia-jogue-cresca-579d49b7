@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getStreakColor } from "@/components/StreakFlame";
+import FounderBadge from "@/components/FounderBadge";
+import { useUserBadges } from "@/hooks/useUserBadges";
 
 const MobilePerfil = () => {
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ const MobilePerfil = () => {
   const currentTier = getTierFromPoints(userPoints);
   const nextTier = getNextTierInfo(currentTier);
   const streakInfo = getStreakColor(0);
+  const { activeTitle, isFounder } = useUserBadges();
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -87,9 +90,15 @@ const MobilePerfil = () => {
         </div>
 
         <h1 className="text-lg font-bold">{userName}</h1>
+        {activeTitle && (
+          <p className="text-[11px] font-semibold mt-0.5" style={{ color: isFounder ? "hsl(40 80% 55%)" : "hsl(var(--accent))" }}>
+            {activeTitle}
+          </p>
+        )}
         <div className="flex items-center justify-center gap-2 mt-1 mb-3">
           <RankingBadge tier={currentTier} size="sm" />
-          {isPremium && (
+          {isFounder && <FounderBadge size="xs" />}
+          {isPremium && !isFounder && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-bold">
               <Crown className="w-3 h-3" />
               Premium
