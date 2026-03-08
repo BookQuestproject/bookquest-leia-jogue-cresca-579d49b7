@@ -368,7 +368,7 @@ const bookTrails: BookTrail[] = [
     title: "Como Eu Era Antes de Você",
     author: "Jojo Moyes",
     cover: "💕",
-    coverImage: "https://m.media-amazon.com/images/I/81NeVMPLLIL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/como-eu-era-antes.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Romance",
