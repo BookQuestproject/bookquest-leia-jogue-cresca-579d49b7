@@ -433,7 +433,7 @@ const PostChapterReflection = ({
               Total
             </span>
             <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>
-              +{finalXp} XP
+              +{finalXp} ✦
             </span>
           </div>
         </div>
