@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import agathaMascot from "@/assets/agatha-mascot.png";
 
-const VISITED_KEY = "bookquest_visited_categories_v2";
+const VISITED_KEY = "bookquest_visited_categories_v3";
 
 interface CategoryStep {
   target: string;

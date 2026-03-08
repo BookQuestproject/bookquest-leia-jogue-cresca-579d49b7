@@ -278,7 +278,11 @@ const Configuracoes = () => {
                 // Reset home spotlight tutorial
                 startTutorial();
                 // Reset all category intro tutorials
-                localStorage.removeItem("bookquest_visited_categories_v2");
+                localStorage.removeItem("bookquest_visited_categories_v3");
+                toast({
+                  title: "Tutoriais reiniciados",
+                  description: "Os tutoriais guiados aparecerão novamente ao visitar cada seção.",
+                });
               }}>
                 <HelpCircle className="w-4 h-4" />
                 Ver tutorial novamente
