@@ -447,7 +447,7 @@ const Index = () => {
                 <div className="pt-3 border-t border-border/30">
                   <div className="flex justify-between text-[11px] mb-2">
                     <span className="text-muted-foreground">Próximo: {nextTier.label}</span>
-                    <span className="font-bold text-accent">{userStats.points}/{nextTier.pointsNeeded} XP</span>
+                    <span className="font-bold text-accent">{userStats.points}/{nextTier.pointsNeeded} ✦</span>
                   </div>
                   <div className="h-2 bg-muted/40 rounded-full overflow-hidden">
                     <div
