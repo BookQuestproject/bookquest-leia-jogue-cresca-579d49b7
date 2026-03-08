@@ -756,7 +756,7 @@ const PostChapterReflection = ({
             excellent: { icon: "🎉", title: "Análise completa!", msg: "Excelente! Sua justificativa enriqueceu a análise do personagem. Continue assim!", bg: "bg-green-500/10 border border-green-500/20", badge: "bg-green-500/20 text-green-400" },
             partial: { icon: "👍", title: "Boa tentativa!", msg: "Sua justificativa tem substância, mas tente conectar mais diretamente ao livro e à pergunta.", bg: "bg-yellow-500/10 border border-yellow-500/20", badge: "bg-yellow-500/20 text-yellow-400" },
             irrelevant: { icon: "⚠️", title: "Justificativa insuficiente", msg: "Sua resposta não pareceu relacionada ao livro ou à pergunta. Tente usar elementos do texto para justificar.", bg: "bg-orange-500/10 border border-orange-500/20", badge: "bg-orange-500/20 text-orange-400" },
-            none: { icon: "✅", title: "Personagem escolhido!", msg: "Escolha registrada. Na próxima vez, elabore sua justificativa para ganhar mais XP!", bg: "bg-accent/10 border border-accent/20", badge: "" },
+            none: { icon: "✅", title: "Personagem escolhido!", msg: "Escolha registrada. Na próxima vez, elabore sua justificativa para ganhar mais Essência!", bg: "bg-accent/10 border border-accent/20", badge: "" },
           };
           const fb = feedbackConfig[feedbackLevel];
           
