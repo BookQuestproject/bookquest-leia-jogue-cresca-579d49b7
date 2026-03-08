@@ -370,7 +370,7 @@ const Ranking = () => {
                   )}
                 </div>
                 <div className="space-y-2 mt-3">
-                  <p className="text-xs text-muted-foreground">XP atual: <span className="text-accent font-bold">{(currentUser?.xp || 0) + userXpBoost}</span></p>
+                  <p className="text-xs text-muted-foreground">Essência atual: <span className="text-accent font-bold">{(currentUser?.essencia || 0) + userXpBoost}</span></p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {[5, 10, 20].map(amount => (
                       <button
