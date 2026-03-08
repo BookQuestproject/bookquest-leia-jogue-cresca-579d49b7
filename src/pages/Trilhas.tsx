@@ -304,7 +304,7 @@ const bookTrails: BookTrail[] = [
     title: "A Garota no Trem",
     author: "Paula Hawkins",
     cover: "🚂",
-    coverImage: "https://m.media-amazon.com/images/I/81YkqyaFVEL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/garota-no-trem.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Mistério",
