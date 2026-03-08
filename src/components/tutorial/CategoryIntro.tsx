@@ -31,10 +31,10 @@ const categorySteps: Record<string, CategoryStep[]> = {
     { target: '[data-tutorial="estante-add"]', title: "➕ Adicionar Livro", description: "Clique aqui pra ir à Biblioteca e adicionar novos livros à sua estante. Quanto mais, melhor!", placement: "bottom" },
   ],
   "/missoes": [
-    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Complete missões pra ganhar XP e subir no ranking. Eu vou torcer por você! Veja seu progresso aqui.", placement: "bottom" },
-    { target: '[data-tutorial="missoes-daily"]', title: "⏰ Missões Diárias", description: "Essas missões reiniciam toda meia-noite. Complete todos os dias pra manter sua sequência ativa!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Missões Semanais", description: "Missões que reiniciam toda segunda-feira. Valem mais XP e exigem mais dedicação. Eu acredito em você!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Missões Mensais", description: "Grandes desafios que reiniciam no dia 1 de cada mês. Conquistar essas garante recompensas enormes!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Aqui fica a Jornada de Evolução do Leitor! Complete atividades pra ganhar XP e subir no ranking. Eu vou torcer por você!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-daily"]', title: "📖 Hábitos de Leitura", description: "Sua base diária! Esses hábitos reiniciam toda meia-noite. Complete todos os dias pra manter sua sequência ativa!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Desafios de Crescimento", description: "Superação semanal! Reiniciam toda segunda-feira. Valem mais XP e exigem mais dedicação. Eu acredito em você!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Marcos de Evolução", description: "Conquistas permanentes que nunca reiniciam! Cada marco eterniza uma grande conquista na sua jornada.", placement: "bottom" },
   ],
   "/ranking": [
     { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em XP. Suba de Bronze a Lendário lendo e completando desafios! Quem vai ser o campeão?", placement: "bottom" },
@@ -111,6 +111,7 @@ const RETRY_INTERVAL = 300;
 const CategoryIntro = () => {
   const location = useLocation();
   const [active, setActive] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
   const [steps, setSteps] = useState<CategoryStep[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
@@ -142,6 +143,7 @@ const CategoryIntro = () => {
     const timer = setTimeout(() => {
       setSteps(stepsForCategory);
       setCurrentStep(0);
+      setShouldRender(true);
       setActive(true);
     }, 650);
 
@@ -152,16 +154,21 @@ const CategoryIntro = () => {
   useEffect(() => {
     return () => {
       setActive(false);
+      setShouldRender(false);
       setIsVisible(false);
       setTargetRect(null);
     };
   }, [location.pathname]);
 
   const dismiss = useCallback(() => {
-    setActive(false);
     setIsVisible(false);
-    setTargetRect(null);
-    markVisited(normalizeCategoryPath(location.pathname));
+    // Delay unmount to allow exit animation
+    setTimeout(() => {
+      setActive(false);
+      setShouldRender(false);
+      setTargetRect(null);
+      markVisited(normalizeCategoryPath(location.pathname));
+    }, 700);
   }, [location.pathname]);
 
   const updateRect = useCallback((el: Element) => {
@@ -292,7 +299,7 @@ const CategoryIntro = () => {
     setCurrentStep(prev => Math.max(0, prev - 1));
   }, []);
 
-  if (!active || !steps.length) return null;
+  if (!shouldRender || !steps.length) return null;
 
   const stepData = steps[currentStep];
   const showContent = isVisible && targetRect;
