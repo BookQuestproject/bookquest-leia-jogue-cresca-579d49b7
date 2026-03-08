@@ -212,7 +212,7 @@ const MobileHome = () => {
       <div className="rounded-xl p-4 bg-card border border-border/60">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-accent" />
+            <Sparkles className="w-4 h-4 text-accent" />
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Missões do Dia</span>
           </div>
           <Link to="/missoes" className="text-[11px] text-accent font-semibold">

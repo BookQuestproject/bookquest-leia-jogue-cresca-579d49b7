@@ -430,7 +430,7 @@ const PostChapterReflection = ({
           ))}
           <div className="border-t border-border pt-3 flex items-center justify-between">
             <span className="font-semibold flex items-center gap-2">
-              <Zap className="w-5 h-5" style={{ color: `hsl(${themeColor})` }} />
+              <EssenciaIcon size="md" style={{ color: `hsl(${themeColor})` }} />
               Total
             </span>
             <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>

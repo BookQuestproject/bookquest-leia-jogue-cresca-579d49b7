@@ -38,7 +38,7 @@ const Desafios = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "active": return <Zap className="h-4 w-4 text-green-400" />;
+      case "active": return <Sparkles className="h-4 w-4 text-green-400" />;
       case "completed": return <Trophy className="h-4 w-4 text-accent" />;
       case "pending": return <Clock className="h-4 w-4 text-blue-400" />;
       case "declined": return <X className="h-4 w-4 text-destructive" />;

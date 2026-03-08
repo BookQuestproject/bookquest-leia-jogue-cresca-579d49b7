@@ -282,7 +282,7 @@ const MissionCard = ({ mission, onComplete }: { mission: Mission; onComplete: (i
               )}
             </div>
             <span className="text-sm font-semibold text-accent flex items-center gap-1">
-              <Zap className="w-3 h-3" />
+              <EssenciaIcon size="xs" className="text-accent" />
               +{mission.essenciaValue} ✦
             </span>
           </div>

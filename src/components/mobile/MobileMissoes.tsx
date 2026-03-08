@@ -158,7 +158,7 @@ const MobileMissoes = () => {
                       )}
                     </div>
                     <span className="text-xs font-bold text-accent flex items-center gap-1 ml-2 flex-shrink-0">
-                      <Zap className="w-3 h-3" />
+                      <EssenciaIcon size="xs" className="text-accent" />
                       +{mission.essenciaValue}
                     </span>
                   </div>

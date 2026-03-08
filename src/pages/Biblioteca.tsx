@@ -263,7 +263,7 @@ const Biblioteca = () => {
           });
           toast(`+15 Essência 🎉`, {
             description: "Recompensa por sugerir um livro válido!",
-            icon: <Zap className="w-4 h-4 text-accent" />,
+            icon: <EssenciaIcon size="sm" className="text-accent" />,
             duration: 4000,
           });
         } else if (!error && data?.success && data.book?.is_spam) {
