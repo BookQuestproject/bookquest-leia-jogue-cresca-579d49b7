@@ -480,7 +480,7 @@ const bookTrails: BookTrail[] = [
     title: "20.000 Léguas Submarinas",
     author: "Júlio Verne",
     cover: "🌊",
-    coverImage: "https://m.media-amazon.com/images/I/81CgD1YtGhL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/20000-leguas.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Aventura",
