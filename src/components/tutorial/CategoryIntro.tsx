@@ -238,10 +238,9 @@ const CategoryIntro = () => {
     }, 800);
   }, [steps, currentStep, active, dismiss, updateRect, computeTooltip]);
 
-  // Trigger on step change
+  // Trigger on step change — don't clear targetRect to avoid Agatha bouncing
   useEffect(() => {
     if (!active) return;
-    setTargetRect(null);
     const timer = setTimeout(findAndHighlight, 200);
     return () => clearTimeout(timer);
   }, [active, currentStep, findAndHighlight]);
