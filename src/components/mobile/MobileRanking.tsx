@@ -74,7 +74,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <RankingBadge tier={currentUserTier} showLabel={false} size="sm" />
-                <span className="text-sm font-semibold">{currentUser?.xp || 0} XP</span>
+                <span className="text-sm font-semibold">{currentUser?.essencia || 0} ✦</span>
               </div>
               <p className="text-[11px] text-accent font-medium">
                 Top {selectedTierInfo.slots} avançam de patamar
