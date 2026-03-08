@@ -192,7 +192,7 @@ const bookTrails: BookTrail[] = [
     title: "E Não Sobrou Nenhum",
     author: "Agatha Christie",
     cover: "🔪",
-    coverImage: "https://m.media-amazon.com/images/I/91O4YwMiNOL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/e-nao-sobrou-nenhum.jpg",
     totalChapters: 14,
     isPremium: false,
     genre: "Mistério",
