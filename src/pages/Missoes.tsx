@@ -39,7 +39,10 @@ const MILESTONE_TITLES: Record<string, string> = {
 
 const Missoes = () => {
   const isMobile = useIsMobile();
-  const [missions, setMissions] = useState<Mission[]>(ALL_MISSIONS);
+  const { profile } = useProfile();
+  const readerLevel = useMemo(() => getReaderLevel(profile?.literary_profile), [profile?.literary_profile]);
+  const levelMissions = useMemo(() => getMissionsForLevel(readerLevel), [readerLevel]);
+  const [missions, setMissions] = useState<Mission[]>(levelMissions.all);
   const [totalXp, setTotalXp] = useState(35);
 
   // Notification states
