@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Sparkles, Star, ChevronRight, Lock } from "lucide-react";
+import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Star, ChevronRight, Lock } from "lucide-react";
+import EssenciaIcon from "@/components/EssenciaIcon";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
