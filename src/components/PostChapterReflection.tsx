@@ -797,9 +797,11 @@ const PostChapterReflection = ({
           const hasJustification = justification.trim().length > 15;
           const isHighQuality = xp >= 4; // choice (2) + full relevance bonus (2)
           const isPartialQuality = xp === 3; // choice (2) + partial bonus (1)
-          const feedbackLevel = isHighQuality ? "excellent" : isPartialQuality ? "partial" : hasJustification ? "irrelevant" : "none";
+          const isGibberishJustification = invalidAnswer && hasJustification;
+          const feedbackLevel = isGibberishJustification ? "invalid" : isHighQuality ? "excellent" : isPartialQuality ? "partial" : hasJustification ? "irrelevant" : "none";
           
           const feedbackConfig = {
+            invalid: { icon: "⚠️", title: "Resposta inválida", msg: "Sua justificativa contém caracteres aleatórios ou texto sem sentido. Escreva uma justificativa real para ganhar bônus de Essência.", bg: "bg-destructive/10 border border-destructive/20", badge: "bg-destructive/20 text-destructive" },
             excellent: { icon: "🎉", title: "Análise completa!", msg: "Excelente! Sua justificativa enriqueceu a análise do personagem. Continue assim!", bg: "bg-green-500/10 border border-green-500/20", badge: "bg-green-500/20 text-green-400" },
             partial: { icon: "👍", title: "Boa tentativa!", msg: "Sua justificativa tem substância, mas tente conectar mais diretamente ao livro e à pergunta.", bg: "bg-yellow-500/10 border border-yellow-500/20", badge: "bg-yellow-500/20 text-yellow-400" },
             irrelevant: { icon: "⚠️", title: "Justificativa insuficiente", msg: "Sua resposta não pareceu relacionada ao livro ou à pergunta. Tente usar elementos do texto para justificar.", bg: "bg-orange-500/10 border border-orange-500/20", badge: "bg-orange-500/20 text-orange-400" },
