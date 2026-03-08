@@ -247,8 +247,12 @@ const PostChapterReflection = ({
     setAnswers(prev => ({ ...prev, [currentIdx]: value }));
   }, [currentIdx]);
 
+  // Track whether the last answer was flagged as invalid
+  const [invalidAnswer, setInvalidAnswer] = useState(false);
+
   const handleSubmitAnswer = () => {
     if (!currentQ) return;
+    setInvalidAnswer(false);
 
     // If question was annulled, force 0 XP and skip to feedback
     if (tabViolation) {
@@ -265,58 +269,86 @@ const PostChapterReflection = ({
     const answer = answers[currentIdx];
 
     switch (currentQ.type) {
-      case "open":
-        xp = scoreOpenAnswer(answer || "", currentQ.keywords);
+      case "open": {
+        const text = (answer || "").trim();
+        if (text && isGibberish(text)) {
+          setInvalidAnswer(true);
+          xp = 0;
+        } else {
+          xp = scoreOpenAnswer(text, currentQ.keywords);
+        }
         break;
+      }
       case "multiple_choice":
         xp = scoreMultipleChoice(answer ?? -1, currentQ.correctAnswer, currentQ.partialAnswers || []);
         break;
       case "perception":
         xp = answer !== undefined ? 2 : 0;
         break;
-      case "prediction":
-        xp = scoreOpenAnswer(answer || "", currentQ.keywords);
-        break;
-      case "character": {
-        const { choice, justification } = answer || {};
-        xp = choice !== undefined ? 2 : 0;
-        if (justification && justification.trim().length > 15 && !isGibberish(justification)) {
-          // Validate relevance: justification must reference the book, character, or question context
-          const justLower = justification.trim().toLowerCase();
-          const questionLower = currentQ.question.toLowerCase();
-          const bookLower = bookTitle.toLowerCase();
-          
-          // Extract key terms from the question (words with 4+ chars, excluding common words)
-          const stopWords = ["como", "você", "qual", "para", "sobre", "esse", "essa", "este", "esta", "dele", "dela", "acha", "seria", "fazer", "pode", "mais", "muito", "quando", "onde", "quem", "porque", "ainda", "sendo", "foram", "está", "estão", "isso", "aqui", "pela", "pelo", "entre", "após", "antes", "cada", "outro", "outra", "mesmo", "mesma", "todo", "toda", "algum", "alguma", "nenhum", "nenhuma", "seus", "suas", "nosso", "nossa", "vocês", "eles", "elas", "dele", "dela", "deles", "delas", "minha", "minha", "teria", "seria"];
-          const questionTerms = questionLower
-            .replace(/[?.,!;:""'']/g, "")
-            .split(/\s+/)
-            .filter(w => w.length >= 4 && !stopWords.includes(w));
-          
-          // Also include book title words and character options as relevant terms
-          const bookTerms = bookLower.split(/\s+/).filter(w => w.length >= 3);
-          const optionTerms = (currentQ.options || []).flatMap(o => o.toLowerCase().split(/\s+/).filter(w => w.length >= 3));
-          const allRelevantTerms = [...new Set([...questionTerms, ...bookTerms, ...optionTerms])];
-          
-          // Check if the justification contains at least 1 relevant term
-          const relevanceHits = allRelevantTerms.filter(term => justLower.includes(term)).length;
-          
-          // Also check minimum word count for substance
-          const wordCount = justification.trim().split(/\s+/).filter(w => w.length > 0).length;
-          
-          if (relevanceHits >= 1 && wordCount >= 4) {
-            xp += 2; // Full bonus: relevant and substantive
-          } else if (wordCount >= 6) {
-            xp += 1; // Partial: long enough but not clearly relevant
-          }
-          // else: no bonus — irrelevant or too short
+      case "prediction": {
+        const text = (answer || "").trim();
+        if (text && isGibberish(text)) {
+          setInvalidAnswer(true);
+          xp = 0;
+        } else {
+          xp = scoreOpenAnswer(text, currentQ.keywords);
         }
         break;
       }
-      case "theme":
-        xp = answer !== undefined ? 2 : 0;
-        if (typeof answer === "string" && answer.startsWith("other:") && answer.length > 8) xp += 1;
+      case "character": {
+        const { choice, justification } = answer || {};
+        xp = choice !== undefined ? 2 : 0;
+        if (justification && justification.trim().length > 15) {
+          if (isGibberish(justification)) {
+            setInvalidAnswer(true);
+            // Keep the 2 XP for the choice but no bonus
+          } else {
+            // Validate relevance: justification must reference the book, character, or question context
+            const justLower = justification.trim().toLowerCase();
+            const questionLower = currentQ.question.toLowerCase();
+            const bookLower = bookTitle.toLowerCase();
+            
+            // Extract key terms from the question (words with 4+ chars, excluding common words)
+            const stopWords = ["como", "você", "qual", "para", "sobre", "esse", "essa", "este", "esta", "dele", "dela", "acha", "seria", "fazer", "pode", "mais", "muito", "quando", "onde", "quem", "porque", "ainda", "sendo", "foram", "está", "estão", "isso", "aqui", "pela", "pelo", "entre", "após", "antes", "cada", "outro", "outra", "mesmo", "mesma", "todo", "toda", "algum", "alguma", "nenhum", "nenhuma", "seus", "suas", "nosso", "nossa", "vocês", "eles", "elas", "dele", "dela", "deles", "delas", "minha", "minha", "teria", "seria"];
+            const questionTerms = questionLower
+              .replace(/[?.,!;:""'']/g, "")
+              .split(/\s+/)
+              .filter(w => w.length >= 4 && !stopWords.includes(w));
+            
+            // Also include book title words and character options as relevant terms
+            const bookTerms = bookLower.split(/\s+/).filter(w => w.length >= 3);
+            const optionTerms = (currentQ.options || []).flatMap(o => o.toLowerCase().split(/\s+/).filter(w => w.length >= 3));
+            const allRelevantTerms = [...new Set([...questionTerms, ...bookTerms, ...optionTerms])];
+            
+            // Check if the justification contains at least 1 relevant term
+            const relevanceHits = allRelevantTerms.filter(term => justLower.includes(term)).length;
+            
+            // Also check minimum word count for substance
+            const wordCount = justification.trim().split(/\s+/).filter(w => w.length > 0).length;
+            
+            if (relevanceHits >= 1 && wordCount >= 4) {
+              xp += 2; // Full bonus: relevant and substantive
+            } else if (wordCount >= 6) {
+              xp += 1; // Partial: long enough but not clearly relevant
+            }
+            // else: no bonus — irrelevant or too short
+          }
+        }
         break;
+      }
+      case "theme": {
+        xp = answer !== undefined ? 2 : 0;
+        if (typeof answer === "string" && answer.startsWith("other:")) {
+          const otherText = answer.slice(6).trim();
+          if (otherText.length > 2 && isGibberish(otherText)) {
+            setInvalidAnswer(true);
+            // Keep base 2 XP for selecting theme, no bonus
+          } else if (otherText.length > 2) {
+            xp += 1;
+          }
+        }
+        break;
+      }
     }
 
     setXpPerQuestion(prev => {
@@ -336,6 +368,8 @@ const PostChapterReflection = ({
       } else {
         playSound("error");
       }
+    } else if (invalidAnswer) {
+      playSound("error");
     } else if (xp >= 3) {
       playSound("success");
     } else if (xp === 0 && currentQ.type !== "perception") {
