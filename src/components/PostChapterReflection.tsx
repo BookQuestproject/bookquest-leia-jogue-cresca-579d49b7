@@ -73,6 +73,10 @@ interface Props {
 
 function isGibberish(text: string): boolean {
   const trimmed = text.trim().toLowerCase();
+  if (trimmed.length === 0) return true;
+  // Mostly numbers or special characters (e.g. "12345", "!@#$%")
+  const alphaChars = trimmed.replace(/[^a-záéíóúâêôãõçà]/g, "");
+  if (alphaChars.length < trimmed.length * 0.4) return true;
   // Check for repeated character patterns (e.g. "aaaa", "asdasd")
   if (/(.)\1{4,}/.test(trimmed)) return true;
   // Check for very short repeated sequences (e.g. "ababab", "xyzxyz")
@@ -87,6 +91,8 @@ function isGibberish(text: string): boolean {
   // Random keyboard smash: too many consonant clusters
   const consonantClusters = trimmed.match(/[bcdfghjklmnpqrstvwxz]{5,}/g);
   if (consonantClusters && consonantClusters.length >= 1) return true;
+  // Single word that's not a real word pattern (e.g. "asdfgh")
+  if (words.length === 1 && trimmed.length > 5 && !/[aeiouyáéíóúâêôãõ].*[aeiouyáéíóúâêôãõ]/.test(trimmed)) return true;
   return false;
 }
 
