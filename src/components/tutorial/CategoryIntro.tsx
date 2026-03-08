@@ -159,10 +159,14 @@ const CategoryIntro = () => {
   }, [location.pathname]);
 
   const dismiss = useCallback(() => {
-    setActive(false);
     setIsVisible(false);
-    setTargetRect(null);
-    markVisited(normalizeCategoryPath(location.pathname));
+    // Delay unmount to allow exit animation
+    setTimeout(() => {
+      setActive(false);
+      setShouldRender(false);
+      setTargetRect(null);
+      markVisited(normalizeCategoryPath(location.pathname));
+    }, 700);
   }, [location.pathname]);
 
   const updateRect = useCallback((el: Element) => {
