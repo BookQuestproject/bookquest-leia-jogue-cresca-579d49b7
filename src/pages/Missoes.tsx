@@ -128,16 +128,18 @@ const Missoes = () => {
         </div>
 
         {/* ── Hábitos ── */}
-        <MissionSection
-          title="Hábitos de Leitura"
-          subtitle="Base diária · Reiniciam à meia-noite"
-          icon={<BookOpen className="w-5 h-5 text-accent" />}
-          missions={habits}
-          onComplete={handleComplete}
-          accentClass="accent"
-          delay="0.2s"
-          badge={`${habitsCompleted}/${habits.length} hoje`}
-        />
+        <div data-tutorial="missoes-daily">
+          <MissionSection
+            title="Hábitos de Leitura"
+            subtitle="Base diária · Reiniciam à meia-noite"
+            icon={<BookOpen className="w-5 h-5 text-accent" />}
+            missions={habits}
+            onComplete={handleComplete}
+            accentClass="accent"
+            delay="0.2s"
+            badge={`${habitsCompleted}/${habits.length} hoje`}
+          />
+        </div>
 
         {/* ── Desafios ── */}
         <MissionSection
