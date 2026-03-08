@@ -47,6 +47,13 @@ const categorySteps: Record<string, CategoryStep[]> = {
     { target: '[data-tutorial="comunidade-search"]', title: "🔍 Buscar Comunidade", description: "Encontre a comunidade do seu livro favorito usando a busca por título ou autor.", placement: "bottom" },
     { target: '[data-tutorial="comunidade-grid"]', title: "📚 Comunidades Disponíveis", description: "Clique em uma comunidade pra ver discussões, enviar mensagens e participar das conversas.", placement: "bottom" },
   ],
+  "/espaco-literario": [
+    { target: '[data-tutorial="espaco-header"]', title: "📖 Espaço Literário", description: "Bem-vindo ao Espaço Literário! Aqui é o ponto de encontro dos leitores. Avalie livros, participe de comunidades e entre em clubes de leitura!", placement: "bottom" },
+    { target: '[data-tutorial="espaco-tabs"]', title: "📑 Navegação por Abas", description: "Explore três áreas: Comunidades pra discutir livros, Avaliações pra compartilhar opiniões e Clubes pra ler junto com outros leitores!", placement: "bottom" },
+    { target: '[data-tutorial="espaco-comunidades"]', title: "💬 Comunidades", description: "Cada livro tem sua comunidade. Publique posts, comente, use stickers e conecte-se com leitores que amam os mesmos livros!", placement: "bottom" },
+    { target: '[data-tutorial="espaco-avaliacoes"]', title: "⭐ Avaliações de Livros", description: "Dê notas de 1 a 5 estrelas e escreva sua opinião. Ajude outros leitores a descobrir grandes livros!", placement: "bottom" },
+    { target: '[data-tutorial="espaco-clubes"]', title: "📚 Clubes de Leitura", description: "Entre em clubes pra ler junto com outros leitores. Acompanhe o progresso coletivo e participe das discussões de cada capítulo!", placement: "bottom" },
+  ],
   "/noticias": [
     { target: '[data-tutorial="noticias-header"]', title: "📰 Notícias", description: "Fique por dentro das novidades do BookQuest! Eu trago anúncios, atualizações e curiosidades literárias pra você.", placement: "bottom" },
     { target: '[data-tutorial="noticias-filters"]', title: "🏷️ Filtros", description: "Filtre as notícias por tipo: anúncios, atualizações ou curiosidades. Tudo organizadinho!", placement: "bottom" },
