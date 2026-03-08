@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { BookOpen, Clock, Flame, Trophy, Star, Award, Crown, CheckCircle } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import ProgressBar from "@/components/ProgressBar";
@@ -8,22 +8,25 @@ import MilestoneOverlay from "@/components/missions/MilestoneOverlay";
 import {
   type Mission,
   type MissionCategory,
-  HABIT_MISSIONS,
-  CHALLENGE_MISSIONS,
-  MILESTONE_MISSIONS,
-  ALL_MISSIONS,
+  getMissionsForLevel,
+  getReaderLevel,
   getLevel,
 } from "@/components/missions/MissionTypes";
+import { useProfile } from "@/hooks/useProfile";
 
 const MILESTONE_TITLES: Record<string, string> = {
-  "milestone-30-streak": "Leitor Persistente",
-  "milestone-100-chapters": "Centenário Literário",
-  "milestone-10-books": "Guardião da Estante",
+  "milestone-streak": "Leitor Persistente",
+  "milestone-chapters": "Centenário Literário",
+  "milestone-books": "Guardião da Estante",
 };
 
 const MobileMissoes = () => {
-  const [missions, setMissions] = useState<Mission[]>(ALL_MISSIONS);
+  const { profile } = useProfile();
+  const readerLevel = useMemo(() => getReaderLevel(profile?.literary_profile), [profile?.literary_profile]);
+  const levelMissions = useMemo(() => getMissionsForLevel(readerLevel), [readerLevel]);
+  const [missions, setMissions] = useState<Mission[]>(levelMissions.all);
   const [totalXp, setTotalXp] = useState(35);
+  const [activeTab, setActiveTab] = useState<MissionCategory>("habit");
   const [activeTab, setActiveTab] = useState<MissionCategory>("habit");
 
   // Notification states
