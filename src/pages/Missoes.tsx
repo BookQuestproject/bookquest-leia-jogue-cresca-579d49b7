@@ -142,15 +142,17 @@ const Missoes = () => {
         </div>
 
         {/* ── Desafios ── */}
-        <MissionSection
-          title="Desafios de Crescimento"
-          subtitle="Superação semanal · Reiniciam toda segunda"
-          icon={<Star className="w-5 h-5 text-secondary" />}
-          missions={challenges}
-          onComplete={handleComplete}
-          accentClass="secondary"
-          delay="0.3s"
-        />
+        <div data-tutorial="missoes-weekly">
+          <MissionSection
+            title="Desafios de Crescimento"
+            subtitle="Superação semanal · Reiniciam toda segunda"
+            icon={<Star className="w-5 h-5 text-secondary" />}
+            missions={challenges}
+            onComplete={handleComplete}
+            accentClass="secondary"
+            delay="0.3s"
+          />
+        </div>
 
         {/* ── Marcos ── */}
         <MissionSection
