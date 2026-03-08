@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Trophy, Crown, TrendingUp, Flame, Users, Target, Zap, Calendar, BookOpen, Lock, Clock, ArrowUp, ChevronUp, Eye } from "lucide-react";
+import { Trophy, Crown, TrendingUp, Flame, Users, Target, Sparkles, Calendar, BookOpen, Lock, Clock, ArrowUp, ChevronUp, Eye } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import RankingBadge, { RankingTier, tierConfig, getTierFromXp } from "@/components/RankingBadge";
 import { Button } from "@/components/ui/button";
