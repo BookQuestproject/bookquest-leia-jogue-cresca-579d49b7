@@ -643,7 +643,7 @@ const QuizOnboarding = () => {
       <div className="max-w-2xl w-full">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6 pulse-glow">
-            <Sparkles className="w-10 h-10 text-accent" />
+            <EssenciaIcon size="lg" className="text-accent" />
           </div>
           <h1 className="text-3xl font-serif font-bold mb-2">Parabéns, {profile.name}!</h1>
           <p className="text-muted-foreground">Descobrimos seu perfil literário!</p>
