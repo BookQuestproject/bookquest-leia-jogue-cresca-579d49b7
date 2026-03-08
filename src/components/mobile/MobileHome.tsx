@@ -15,6 +15,8 @@ const MobileHome = () => {
   const navigate = useNavigate();
   const { activeTrail } = useActiveTrail();
   const { profile, isPremium } = useProfile();
+  const { essencia, streak } = useUserStats();
+  const { missions: dailyMissions, recentCompletion, clearCompletion, completedCount: completedMissions } = useDailyMissions();
 
   const userName = profile?.full_name?.split(" ")[0] || "Leitor";
   const hasActiveTrail = !!activeTrail;
@@ -22,8 +24,8 @@ const MobileHome = () => {
   const completedChapters = activeTrail?.chapters.filter(c => c.status === "completed").length || 0;
 
   const userStats = {
-    points: 35,
-    streak: 0,
+    points: essencia,
+    streak: streak,
     totalChapters: activeTrail?.totalChapters || 0,
   };
 
@@ -35,14 +37,6 @@ const MobileHome = () => {
   const nextTier = getNextTierInfo(currentTier);
   const streakInfo = getStreakColor(userStats.streak);
   const themeColor = activeTrail?.themeColor || "220 60% 50%";
-
-  const dailyMissions = [
-    { title: "Complete 1 capítulo", progress: 0, goal: 1, reward: "+10 ✦", icon: BookOpen, completed: false },
-    { title: "Completar unidade de trilha", progress: 0, goal: 1, reward: "+25 ✦", icon: Target, completed: false },
-    { title: "Fazer login hoje", progress: 1, goal: 1, reward: "+5 ✦", icon: CheckCircle, completed: true },
-  ];
-
-  const completedMissions = dailyMissions.filter(m => m.completed).length;
 
   return (
     <div className="px-4 pt-2 pb-6 space-y-5 animate-fade-in">
