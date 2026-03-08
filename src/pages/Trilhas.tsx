@@ -240,7 +240,7 @@ const bookTrails: BookTrail[] = [
     title: "O Hobbit",
     author: "J.R.R. Tolkien",
     cover: "🐉",
-    coverImage: "https://m.media-amazon.com/images/I/91b0C2YNSrL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/o-hobbit.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Fantasia",
