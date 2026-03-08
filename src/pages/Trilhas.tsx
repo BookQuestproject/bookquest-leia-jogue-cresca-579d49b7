@@ -288,7 +288,7 @@ const bookTrails: BookTrail[] = [
     title: "O Nome do Vento",
     author: "Patrick Rothfuss",
     cover: "🌬️",
-    coverImage: "https://m.media-amazon.com/images/I/91b8oNwaV1L._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/nome-do-vento.jpg",
     totalChapters: 18,
     isPremium: false,
     genre: "Fantasia",
