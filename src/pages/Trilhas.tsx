@@ -544,7 +544,7 @@ const bookTrails: BookTrail[] = [
     title: "Anna Karenina",
     author: "Liev Tolstói",
     cover: "🚂",
-    coverImage: "https://m.media-amazon.com/images/I/71FVhDEFU-L._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/anna-karenina.jpg",
     totalChapters: 20,
     isPremium: true,
     genre: "Romance",
