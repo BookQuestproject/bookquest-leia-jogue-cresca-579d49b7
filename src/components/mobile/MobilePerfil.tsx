@@ -30,6 +30,7 @@ const MobilePerfil = () => {
   const currentTier = getTierFromPoints(userPoints);
   const nextTier = getNextTierInfo(currentTier);
   const streakInfo = getStreakColor(0);
+  const { activeTitle, isFounder } = useUserBadges();
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
