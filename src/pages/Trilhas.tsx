@@ -464,7 +464,7 @@ const bookTrails: BookTrail[] = [
     title: "A Ilha do Tesouro",
     author: "Robert Louis Stevenson",
     cover: "🏴‍☠️",
-    coverImage: "https://m.media-amazon.com/images/I/91PoLpjPHvL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/ilha-do-tesouro.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Aventura",
