@@ -3,7 +3,7 @@ import { useCallback, useRef } from "react";
 type SoundType =
   | "click"
   | "success"
-  | "xp"
+  | "essencia"
   | "levelUp"
   | "achievement"
   | "error"
@@ -91,7 +91,7 @@ const sounds: Record<SoundType, () => void> = {
     setTimeout(() => playTone(784, 0.2, "sine", 0.12), 200);
   },
 
-  xp: () => {
+  essencia: () => {
     playTone(880, 0.1, "triangle", 0.1);
     setTimeout(() => playTone(1100, 0.12, "triangle", 0.1), 60);
     setTimeout(() => playTone(1320, 0.15, "triangle", 0.08), 120);
