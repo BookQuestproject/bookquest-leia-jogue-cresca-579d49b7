@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle, Zap } from "lucide-react";
+import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle } from "lucide-react";
+import EssenciaIcon from "@/components/EssenciaIcon";
 import Layout from "@/components/layout/Layout";
 import ProgressBar from "@/components/ProgressBar";
 import HabitToast from "@/components/missions/HabitToast";
