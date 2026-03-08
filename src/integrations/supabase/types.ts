@@ -826,6 +826,7 @@ export type Database = {
           literary_profile: Json | null
           premium_expires_at: string | null
           quiz_completed: boolean | null
+          referral_code: string | null
           updated_at: string
         }
         Insert: {
@@ -838,6 +839,7 @@ export type Database = {
           literary_profile?: Json | null
           premium_expires_at?: string | null
           quiz_completed?: boolean | null
+          referral_code?: string | null
           updated_at?: string
         }
         Update: {
@@ -850,6 +852,7 @@ export type Database = {
           literary_profile?: Json | null
           premium_expires_at?: string | null
           quiz_completed?: boolean | null
+          referral_code?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -935,6 +938,42 @@ export type Database = {
           notes?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          referral_code: string
+          referred_id: string
+          referred_reward_claimed: boolean
+          referrer_id: string
+          referrer_reward_claimed: boolean
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_id: string
+          referred_reward_claimed?: boolean
+          referrer_id: string
+          referrer_reward_claimed?: boolean
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_id?: string
+          referred_reward_claimed?: boolean
+          referrer_id?: string
+          referrer_reward_claimed?: boolean
+          status?: string
         }
         Relationships: []
       }
@@ -1121,6 +1160,7 @@ export type Database = {
     }
     Functions: {
       generate_class_code: { Args: never; Returns: string }
+      generate_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
