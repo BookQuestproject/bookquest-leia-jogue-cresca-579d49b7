@@ -496,7 +496,7 @@ const bookTrails: BookTrail[] = [
     title: "Rápido e Devagar",
     author: "Daniel Kahneman",
     cover: "⚖️",
-    coverImage: "https://m.media-amazon.com/images/I/71f6HcZ0jTL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/rapido-devagar.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Não-Ficção",
