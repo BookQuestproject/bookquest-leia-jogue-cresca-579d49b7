@@ -16,6 +16,7 @@ import Quiz from "./pages/Quiz";
 import QuizOnboarding from "./pages/QuizOnboarding";
 import Ranking from "./pages/Ranking";
 import Comunidade from "./pages/Comunidade";
+import EspacoLiterario from "./pages/EspacoLiterario";
 import Premium from "./pages/Premium";
 import Perfil from "./pages/Perfil";
 import Trilhas from "./pages/Trilhas";
@@ -62,7 +63,8 @@ const App = () => (
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/quiz-onboarding" element={<QuizOnboarding />} />
                 <Route path="/ranking" element={<Ranking />} />
-                <Route path="/comunidade" element={<Comunidade />} />
+                <Route path="/comunidade" element={<EspacoLiterario />} />
+                <Route path="/espaco-literario" element={<EspacoLiterario />} />
                 <Route path="/premium" element={<Premium />} />
                 <Route path="/perfil" element={<Perfil />} />
                 <Route path="/trilhas" element={<Trilhas />} />

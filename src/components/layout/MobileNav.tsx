@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn } from "lucide-react";
+import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { NotificationBell } from "@/components/NotificationBell";
 import logoCrown from "@/assets/logo-crown-transparent.png";
