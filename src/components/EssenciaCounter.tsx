@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUserStats } from "@/hooks/useUserStats";
-import EssenciaIcon from "@/components/EssenciaIcon";
+import { cn } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 interface EssenciaCounterProps {
