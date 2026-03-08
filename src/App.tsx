@@ -16,6 +16,7 @@ import Quiz from "./pages/Quiz";
 import QuizOnboarding from "./pages/QuizOnboarding";
 import Ranking from "./pages/Ranking";
 import Comunidade from "./pages/Comunidade";
+import EspacoLiterario from "./pages/EspacoLiterario";
 import Premium from "./pages/Premium";
 import Perfil from "./pages/Perfil";
 import Trilhas from "./pages/Trilhas";
