@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { BookOpen, Clock, Flame, Trophy, Star, Award, Crown, CheckCircle, Zap } from "lucide-react";
+import { BookOpen, Clock, Flame, Trophy, Star, Award, Crown, CheckCircle } from "lucide-react";
+import EssenciaIcon from "@/components/EssenciaIcon";
 import ProgressBar from "@/components/ProgressBar";
 import HabitToast from "@/components/missions/HabitToast";
 import ChallengeModal from "@/components/missions/ChallengeModal";
