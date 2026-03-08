@@ -96,7 +96,7 @@ const bookTrails: BookTrail[] = [
     title: "Percy Jackson e o Ladrão de Raios",
     author: "Rick Riordan",
     cover: "⚡",
-    coverImage: "https://m.media-amazon.com/images/I/81a4VFOlxFL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/percy-jackson.jpg",
     totalChapters: 22,
     isPremium: false,
     genre: "Mitologia",
