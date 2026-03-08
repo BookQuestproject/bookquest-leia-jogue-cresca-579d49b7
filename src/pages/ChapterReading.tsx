@@ -430,6 +430,15 @@ const bookData: Record<string, {
       { id: 3, title: "Espirais imortais", icon: "🧬", totalPages: 30, question: { text: "Por que Dawkins chama os genes de 'imortais'?", options: ["Porque nunca se degradam", "Porque embora organismos morram, os genes são copiados e passados de geração em geração indefinidamente", "Porque existem desde o Big Bang", "Porque são protegidos por uma capa especial"], correctAnswer: 1, explanation: "Enquanto organismos individuais vivem e morrem, os genes são potencialmente imortais — são copiados e transmitidos através de gerações, podendo existir por milhões de anos." } },
     ]
   },
+  "melhor-que-nos-filmes": {
+    title: "Melhor do que nos Filmes",
+    themeColor: "340 50% 45%",
+    chapters: [
+      { id: 1, title: "O vizinho irritante", icon: "🏠", totalPages: 22, question: { text: "Como é a relação entre Liz e Wes no início da história?", options: ["São melhores amigos de infância", "São vizinhos que se detestam mutuamente", "São colegas de trabalho", "Nunca se encontraram antes"], correctAnswer: 1, explanation: "Liz e Wes são vizinhos que vivem uma rivalidade constante, trocando provocações e irritando um ao outro sempre que possível." } },
+      { id: 2, title: "O plano perfeito", icon: "📋", totalPages: 24, question: { text: "Qual é o plano que Liz e Wes fazem juntos?", options: ["Escrever um roteiro de filme", "Fingir um relacionamento para despertar ciúmes em seus respectivos crushes", "Organizar uma festa surpresa", "Participar de um concurso de talentos"], correctAnswer: 1, explanation: "Liz e Wes fazem um pacto para ajudar um ao outro a conquistar seus interesses amorosos, criando situações dignas de comédia romântica." } },
+      { id: 3, title: "Fingindo juntos", icon: "🎭", totalPages: 26, question: { text: "O que começa a mudar entre Liz e Wes enquanto fingem?", options: ["Eles passam a se odiar ainda mais", "Sentimentos reais começam a surgir entre eles", "Eles desistem do plano", "Seus crushes ficam com ciúmes"], correctAnswer: 1, explanation: "Conforme passam mais tempo juntos fingindo, Liz e Wes começam a perceber que a conexão entre eles é mais real do que qualquer roteiro de filme." } },
+    ]
+  },
 };
 
 import ReadingCountdown from "@/components/ReadingCountdown";
