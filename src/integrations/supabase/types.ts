@@ -205,6 +205,30 @@ export type Database = {
         }
         Relationships: []
       }
+      founder_subscriptions: {
+        Row: {
+          id: string
+          is_active: boolean
+          purchased_at: string
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean
+          purchased_at?: string
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_active?: boolean
+          purchased_at?: string
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       group_session_participants: {
         Row: {
           attended: boolean | null
@@ -654,6 +678,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          awarded_at: string
+          badge_label: string
+          badge_type: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          badge_label: string
+          badge_type: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          badge_label?: string
+          badge_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -671,6 +722,30 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_titles: {
+        Row: {
+          awarded_at: string
+          id: string
+          is_active: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          id?: string
+          is_active?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          id?: string
+          is_active?: boolean
+          title?: string
           user_id?: string
         }
         Relationships: []
