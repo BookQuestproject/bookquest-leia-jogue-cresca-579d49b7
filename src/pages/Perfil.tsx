@@ -275,6 +275,11 @@ const Perfil = () => {
           </div>
         </div>
 
+        {/* Referral Card */}
+        <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.18s" }}>
+          <ReferralCard />
+        </div>
+
         {/* Achievements Section - Dynamic */}
         <div className="mb-8 animate-fade-in" data-tutorial="perfil-achievements" style={{ animationDelay: "0.2s" }}>
           <AchievementsSection />

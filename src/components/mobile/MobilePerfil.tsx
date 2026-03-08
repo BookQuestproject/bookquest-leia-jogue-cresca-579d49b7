@@ -169,6 +169,9 @@ const MobilePerfil = () => {
         </div>
       </div>
 
+      {/* Referral System */}
+      <ReferralCard />
+
       {/* Reading Stats */}
       <div className="rounded-xl p-4 bg-card border border-border/60">
         <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
