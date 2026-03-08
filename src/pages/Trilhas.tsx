@@ -416,7 +416,7 @@ const bookTrails: BookTrail[] = [
     title: "Maze Runner - Correr ou Morrer",
     author: "James Dashner",
     cover: "🌀",
-    coverImage: "https://m.media-amazon.com/images/I/81ym3QUd3KL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/maze-runner.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Aventura",
