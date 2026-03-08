@@ -106,8 +106,9 @@ const Index = () => {
     <Layout>
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
 
-        {/* Top Bar: Settings */}
-        <div className="flex items-center justify-end mb-4 animate-fade-in">
+        {/* Top Bar: Essência + Settings */}
+        <div className="flex items-center justify-end gap-2 mb-4 animate-fade-in">
+          <EssenciaCounter size="md" />
           <Button
             variant="ghost"
             size="icon"
