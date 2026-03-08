@@ -448,7 +448,7 @@ const bookTrails: BookTrail[] = [
     title: "As Aventuras de Pi",
     author: "Yann Martel",
     cover: "🐯",
-    coverImage: "https://m.media-amazon.com/images/I/71VBl0lz13L._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/aventuras-de-pi.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Aventura",
