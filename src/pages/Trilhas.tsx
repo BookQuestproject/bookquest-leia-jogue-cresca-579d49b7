@@ -512,7 +512,7 @@ const bookTrails: BookTrail[] = [
     title: "Uma Breve História do Tempo",
     author: "Stephen Hawking",
     cover: "🌌",
-    coverImage: "https://m.media-amazon.com/images/I/81pX3R2R9cL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/breve-historia-tempo.jpg",
     totalChapters: 10,
     isPremium: false,
     genre: "Não-Ficção",
