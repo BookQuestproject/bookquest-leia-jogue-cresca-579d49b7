@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Zap, Sparkles, Award, MapPin } from "lucide-react";
+import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Sparkles, Award, MapPin } from "lucide-react";
+import EssenciaIcon from "@/components/EssenciaIcon";
 import { useMyTrails } from "@/hooks/useMyTrails";
 import { bookTrails } from "@/pages/Trilhas";
 import { supabase } from "@/integrations/supabase/client";
