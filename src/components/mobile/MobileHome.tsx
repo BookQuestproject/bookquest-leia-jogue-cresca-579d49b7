@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Star, ChevronRight, Lock } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
+import EssenciaCounter from "@/components/EssenciaCounter";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
 import { useUserStats } from "@/hooks/useUserStats";
