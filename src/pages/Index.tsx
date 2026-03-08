@@ -8,7 +8,11 @@ import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
 import { usePageBookmark } from "@/hooks/usePageBookmark";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUserStats } from "@/hooks/useUserStats";
+import { useDailyMissions } from "@/hooks/useDailyMissions";
 import MobileHome from "@/components/mobile/MobileHome";
+import MissionCompletionToast from "@/components/MissionCompletionToast";
+import StreakCard from "@/components/StreakCard";
 
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
