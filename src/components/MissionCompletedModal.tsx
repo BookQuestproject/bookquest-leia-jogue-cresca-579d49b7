@@ -41,7 +41,7 @@ const MissionCompletedModal = ({
       timerRef.current = [
         setTimeout(() => { setPhase(1); playSound("success"); }, 80),
         setTimeout(() => setPhase(2), 350),
-        setTimeout(() => { setPhase(3); playSound("xp"); }, 600),
+        setTimeout(() => { setPhase(3); playSound("essencia"); }, 600),
         setTimeout(() => {
           setPhase(4);
           requestAnimationFrame(() => {
