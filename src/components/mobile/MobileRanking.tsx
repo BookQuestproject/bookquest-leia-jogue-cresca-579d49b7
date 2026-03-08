@@ -186,7 +186,7 @@ const MobileRanking = ({ users, loading }: MobileRankingProps) => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-sm font-bold ${inPromotion ? "text-accent" : ""}`}>{user.xp} XP</p>
+                    <p className={`text-sm font-bold ${inPromotion ? "text-accent" : ""}`}>{user.essencia} ✦</p>
                     <div className="flex items-center gap-0.5 justify-end">
                       <Flame className="w-3 h-3 text-accent/60" />
                       <span className="text-[10px] text-muted-foreground">{user.streak}d</span>

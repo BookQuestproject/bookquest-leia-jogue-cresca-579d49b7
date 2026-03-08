@@ -190,9 +190,9 @@ const MobileHome = () => {
           <div className="flex items-center gap-3 mb-3">
             <RankingBadge tier={currentTier} size="sm" />
             <div className="flex-1">
-              <p className="text-sm font-semibold">{userStats.points} XP</p>
+              <p className="text-sm font-semibold">{userStats.points} ✦</p>
               <p className="text-[11px] text-muted-foreground">
-                Faltam <span className="text-accent font-bold">{nextTier.pointsNeeded - userStats.points} XP</span> para {nextTier.label}
+                Faltam <span className="text-accent font-bold">{nextTier.pointsNeeded - userStats.points} ✦</span> para {nextTier.label}
               </p>
             </div>
           </div>
