@@ -31,10 +31,10 @@ const categorySteps: Record<string, CategoryStep[]> = {
     { target: '[data-tutorial="estante-add"]', title: "➕ Adicionar Livro", description: "Clique aqui pra ir à Biblioteca e adicionar novos livros à sua estante. Quanto mais, melhor!", placement: "bottom" },
   ],
   "/missoes": [
-    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Aqui fica a Jornada de Evolução do Leitor! Complete atividades pra ganhar XP e subir no ranking. Eu vou torcer por você!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Aqui fica a Jornada de Evolução do Leitor! Complete atividades pra ganhar Essência ✦ e subir no ranking. Eu vou torcer por você!", placement: "bottom" },
     { target: '[data-tutorial="missoes-daily"]', title: "📖 Hábitos de Leitura", description: "Sua base diária! Esses hábitos reiniciam toda meia-noite. Complete todos os dias pra manter sua sequência ativa!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Desafios de Crescimento", description: "Superação semanal! Reiniciam toda segunda-feira. Valem mais XP e exigem mais dedicação. Eu acredito em você!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Marcos de Evolução", description: "Conquistas permanentes que nunca reiniciam! Cada marco eterniza uma grande conquista na sua jornada.", placement: "bottom" },
+    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Desafios de Crescimento", description: "Superação semanal! Reiniciam toda segunda-feira. Valem mais Essência e exigem mais dedicação. Eu acredito em você!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Marcos de Evolução", description: "Conquistas mensais que reiniciam a cada mês! Cada marco representa uma grande evolução na sua jornada.", placement: "bottom" },
   ],
   "/ranking": [
     { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em XP. Suba de Bronze a Lendário lendo e completando desafios! Quem vai ser o campeão?", placement: "bottom" },
