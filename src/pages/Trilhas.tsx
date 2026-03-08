@@ -592,7 +592,7 @@ const bookTrails: BookTrail[] = [
     title: "O Gene Egoísta",
     author: "Richard Dawkins",
     cover: "🧬",
-    coverImage: "https://m.media-amazon.com/images/I/71mhPCxz6vL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/gene-egoista.jpg",
     totalChapters: 12,
     isPremium: false,
     genre: "Não-Ficção",
