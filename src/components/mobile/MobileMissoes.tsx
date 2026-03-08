@@ -27,7 +27,6 @@ const MobileMissoes = () => {
   const [missions, setMissions] = useState<Mission[]>(levelMissions.all);
   const [totalXp, setTotalXp] = useState(35);
   const [activeTab, setActiveTab] = useState<MissionCategory>("habit");
-  const [activeTab, setActiveTab] = useState<MissionCategory>("habit");
 
   // Notification states
   const [habitToast, setHabitToast] = useState<{ title: string; xp: number } | null>(null);
