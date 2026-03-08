@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getStreakColor } from "@/components/StreakFlame";
+import FounderBadge from "@/components/FounderBadge";
+import { useUserBadges } from "@/hooks/useUserBadges";
 
 const MobilePerfil = () => {
   const navigate = useNavigate();
