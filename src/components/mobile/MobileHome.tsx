@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Play, Flame, Trophy, Target, CheckCircle, BookOpen, ArrowRight, Star, ChevronRight, Lock } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
+import EssenciaCounter from "@/components/EssenciaCounter";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
 import { useUserStats } from "@/hooks/useUserStats";
@@ -40,27 +41,30 @@ const MobileHome = () => {
 
   return (
     <div className="px-4 pt-2 pb-6 space-y-5 animate-fade-in">
-      {/* Greeting + Streak */}
+      {/* Greeting + Essência + Streak */}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-muted-foreground text-xs font-medium">Olá,</p>
           <h1 className="text-xl font-serif font-bold text-foreground">{userName} 👋</h1>
         </div>
-        <button
-          onClick={() => navigate("/perfil")}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border/60 active:scale-95 transition-transform ${userStats.streak === 0 ? "opacity-60" : ""}`}
-        >
-          <Flame
-            className="w-4 h-4"
-            style={{
-              color: userStats.streak === 0 ? "hsl(var(--muted-foreground))" : streakInfo.color,
-              filter: userStats.streak === 0 ? "grayscale(1)" : undefined,
-            }}
-          />
-          <span className="text-sm font-bold" style={{ color: userStats.streak === 0 ? "hsl(var(--muted-foreground))" : streakInfo.color }}>
-            {userStats.streak}
-          </span>
-        </button>
+        <div className="flex items-center gap-2">
+          <EssenciaCounter size="sm" />
+          <button
+            onClick={() => navigate("/perfil")}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border/60 active:scale-95 transition-transform ${userStats.streak === 0 ? "opacity-60" : ""}`}
+          >
+            <Flame
+              className="w-4 h-4"
+              style={{
+                color: userStats.streak === 0 ? "hsl(var(--muted-foreground))" : streakInfo.color,
+                filter: userStats.streak === 0 ? "grayscale(1)" : undefined,
+              }}
+            />
+            <span className="text-sm font-bold" style={{ color: userStats.streak === 0 ? "hsl(var(--muted-foreground))" : streakInfo.color }}>
+              {userStats.streak}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Continue Reading — Hero CTA */}

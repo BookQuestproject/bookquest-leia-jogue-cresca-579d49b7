@@ -13,6 +13,7 @@ import { useDailyMissions } from "@/hooks/useDailyMissions";
 import MobileHome from "@/components/mobile/MobileHome";
 import MissionCompletionToast from "@/components/MissionCompletionToast";
 import StreakCard from "@/components/StreakCard";
+import EssenciaCounter from "@/components/EssenciaCounter";
 
 import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
@@ -106,8 +107,9 @@ const Index = () => {
     <Layout>
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
 
-        {/* Top Bar: Settings */}
-        <div className="flex items-center justify-end mb-4 animate-fade-in">
+        {/* Top Bar: Essência + Settings */}
+        <div className="flex items-center justify-end gap-2 mb-4 animate-fade-in">
+          <EssenciaCounter size="md" />
           <Button
             variant="ghost"
             size="icon"
