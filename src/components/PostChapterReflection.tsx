@@ -416,7 +416,7 @@ const PostChapterReflection = ({
         <div className="bg-card rounded-xl p-6 border border-border max-w-sm mx-auto space-y-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Leitura do capítulo</span>
-            <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 XP</span>
+            <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 ✦</span>
           </div>
           {xpPerQuestion.map((xp, i) => (
             <div key={i} className="flex items-center justify-between text-sm">
