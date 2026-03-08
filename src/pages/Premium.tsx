@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import FounderBadge from "@/components/FounderBadge";
 import EssenciaIcon from "@/components/EssenciaIcon";
 
-const FOUNDER_MAX = 200;
+const FOUNDER_MAX = 100;
 
 const Premium = () => {
   const navigate = useNavigate();
@@ -93,6 +93,8 @@ const Premium = () => {
     "Trilhas ENEM e Vestibulares",
     "Book Club mensal com discussões guiadas",
     "Mentoria literária semanal",
+    "Criar e administrar Clubes de Leitura",
+    "Promover membros a administradores do clube",
     "Quiz literário ilimitado",
     "Missões exclusivas com mais Essência",
     "Badge Premium no perfil",

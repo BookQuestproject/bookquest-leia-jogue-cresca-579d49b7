@@ -46,7 +46,7 @@ export const useFounderStatus = (): FounderInfo => {
 
   return {
     totalFounders,
-    slotsRemaining: Math.max(0, 200 - totalFounders),
+    slotsRemaining: Math.max(0, 100 - totalFounders),
     isFounder,
     loading,
   };
