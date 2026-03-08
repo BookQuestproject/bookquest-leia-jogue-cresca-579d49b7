@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import Layout from "@/components/layout/Layout";
@@ -9,10 +9,8 @@ import MilestoneOverlay from "@/components/missions/MilestoneOverlay";
 import {
   type Mission,
   type MissionCategory,
-  HABIT_MISSIONS,
-  CHALLENGE_MISSIONS,
-  MILESTONE_MISSIONS,
-  ALL_MISSIONS,
+  getMissionsForLevel,
+  getReaderLevel,
   getLevel,
 } from "@/components/missions/MissionTypes";
 import {
@@ -22,17 +20,21 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
 
 const MILESTONE_TITLES: Record<string, string> = {
-  "milestone-30-streak": "Leitor Persistente",
-  "milestone-100-chapters": "Centenário Literário",
-  "milestone-10-books": "Guardião da Estante",
+  "milestone-streak": "Leitor Persistente",
+  "milestone-chapters": "Centenário Literário",
+  "milestone-books": "Guardião da Estante",
 };
 
 const Missoes = () => {
   const isMobile = useIsMobile();
-  const [missions, setMissions] = useState<Mission[]>(ALL_MISSIONS);
+  const { profile } = useProfile();
+  const readerLevel = useMemo(() => getReaderLevel(profile?.literary_profile), [profile?.literary_profile]);
+  const levelMissions = useMemo(() => getMissionsForLevel(readerLevel), [readerLevel]);
+  const [missions, setMissions] = useState<Mission[]>(levelMissions.all);
   const [totalXp, setTotalXp] = useState(35);
 
   // Notification states
@@ -158,13 +160,12 @@ const Missoes = () => {
         <div data-tutorial="missoes-monthly">
           <MissionSection
             title="Marcos de Evolução"
-            subtitle="Conquistas permanentes · Nunca reiniciam"
+            subtitle="Metas mensais · Reiniciam todo dia 1º"
             icon={<Crown className="w-5 h-5 text-accent" />}
             missions={milestones}
             onComplete={handleComplete}
             accentClass="accent"
             delay="0.4s"
-            permanent
           />
         </div>
       </div>

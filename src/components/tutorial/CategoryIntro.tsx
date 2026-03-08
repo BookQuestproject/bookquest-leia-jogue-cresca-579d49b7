@@ -31,13 +31,13 @@ const categorySteps: Record<string, CategoryStep[]> = {
     { target: '[data-tutorial="estante-add"]', title: "➕ Adicionar Livro", description: "Clique aqui pra ir à Biblioteca e adicionar novos livros à sua estante. Quanto mais, melhor!", placement: "bottom" },
   ],
   "/missoes": [
-    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Aqui fica a Jornada de Evolução do Leitor! Complete atividades pra ganhar XP e subir no ranking. Eu vou torcer por você!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-header"]', title: "🎯 Missões", description: "Aqui fica a Jornada de Evolução do Leitor! Complete atividades pra ganhar Essência ✦ e subir no ranking. Eu vou torcer por você!", placement: "bottom" },
     { target: '[data-tutorial="missoes-daily"]', title: "📖 Hábitos de Leitura", description: "Sua base diária! Esses hábitos reiniciam toda meia-noite. Complete todos os dias pra manter sua sequência ativa!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Desafios de Crescimento", description: "Superação semanal! Reiniciam toda segunda-feira. Valem mais XP e exigem mais dedicação. Eu acredito em você!", placement: "bottom" },
-    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Marcos de Evolução", description: "Conquistas permanentes que nunca reiniciam! Cada marco eterniza uma grande conquista na sua jornada.", placement: "bottom" },
+    { target: '[data-tutorial="missoes-weekly"]', title: "⭐ Desafios de Crescimento", description: "Superação semanal! Reiniciam toda segunda-feira. Valem mais Essência e exigem mais dedicação. Eu acredito em você!", placement: "bottom" },
+    { target: '[data-tutorial="missoes-monthly"]', title: "🏆 Marcos de Evolução", description: "Conquistas mensais que reiniciam a cada mês! Cada marco representa uma grande evolução na sua jornada.", placement: "bottom" },
   ],
   "/ranking": [
-    { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em XP. Suba de Bronze a Lendário lendo e completando desafios! Quem vai ser o campeão?", placement: "bottom" },
+    { target: '[data-tutorial="ranking-header"]', title: "🏆 Ranking Literário", description: "Competição semanal baseada em Essência. Suba de Bronze a Lendário lendo e completando desafios! Quem vai ser o campeão?", placement: "bottom" },
     { target: '[data-tutorial="ranking-countdown"]', title: "⏳ Contador Regressivo", description: "Mostra quantos dias faltam pro fechamento da semana. Ao final, os melhores sobem de patamar!", placement: "bottom" },
     { target: '[data-tutorial="ranking-tiers"]', title: "🎖️ Patamares", description: "Explore os diferentes patamares clicando nas abas. Cada patamar tem vagas limitadas pra avançar. Corre!", placement: "bottom" },
     { target: '[data-tutorial="ranking-podium"]', title: "🥇 Pódio", description: "Os 3 primeiros colocados aparecem no pódio com destaque especial. Será que você chega lá?", placement: "bottom" },
@@ -67,7 +67,7 @@ const categorySteps: Record<string, CategoryStep[]> = {
   "/desafios": [
     { target: '[data-tutorial="desafios-header"]', title: "⚔️ Desafios Sociais", description: "Bem-vindo à arena de desafios! Aqui você pode competir com amigos e colegas em metas de leitura. Quem lê mais?", placement: "bottom" },
     { target: '[data-tutorial="desafios-create"]', title: "📩 Criar Desafio", description: "Clique aqui pra enviar um desafio pro email de um amigo. Escolha o tipo e veja quem vence! Eu aposto em você.", placement: "bottom" },
-    { target: '[data-tutorial="desafios-tabs"]', title: "📊 Acompanhe seus Desafios", description: "Navegue entre desafios ativos, enviados e histórico. Cada vitória rende XP e glória! Bora competir!", placement: "bottom" },
+    { target: '[data-tutorial="desafios-tabs"]', title: "📊 Acompanhe seus Desafios", description: "Navegue entre desafios ativos, enviados e histórico. Cada vitória rende Essência e glória! Bora competir!", placement: "bottom" },
   ],
   "/admin": [
     { target: '[data-tutorial="admin-panel"]', title: "🛡️ Painel Administrativo", description: "Bem-vindo ao painel de controle do BookQuest! Aqui você gerencia tudo: trilhas, mentorias e sugestões de livros.", placement: "bottom" },
