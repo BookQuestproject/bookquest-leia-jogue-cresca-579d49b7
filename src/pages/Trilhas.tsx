@@ -144,7 +144,7 @@ const bookTrails: BookTrail[] = [
     title: "O Senhor dos Anéis",
     author: "J.R.R. Tolkien",
     cover: "💍",
-    coverImage: "https://m.media-amazon.com/images/I/71jLBXtWJWL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/senhor-dos-aneis.jpg",
     totalChapters: 22,
     isPremium: false,
     genre: "Fantasia",
