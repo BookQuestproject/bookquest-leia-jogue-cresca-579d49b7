@@ -22,14 +22,6 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useIsMobile } from "@/hooks/use-mobile";
-import MobileMissoes from "@/components/mobile/MobileMissoes";
 
 const MILESTONE_TITLES: Record<string, string> = {
   "milestone-30-streak": "Leitor Persistente",
