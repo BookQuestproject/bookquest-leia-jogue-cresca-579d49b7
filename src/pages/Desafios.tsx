@@ -64,7 +64,7 @@ const Desafios = () => {
                 <p className="text-xs text-muted-foreground">{c.description}</p>
               </div>
             </div>
-            <span className="text-xs font-bold text-accent">+{c.xp_reward} XP</span>
+            <span className="text-xs font-bold text-accent">+{c.xp_reward} ✦</span>
           </div>
 
           <div className="flex items-center gap-2 mb-3">
