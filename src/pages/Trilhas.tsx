@@ -160,7 +160,7 @@ const bookTrails: BookTrail[] = [
     title: "Orgulho e Preconceito",
     author: "Jane Austen",
     cover: "💌",
-    coverImage: "https://m.media-amazon.com/images/I/71Q1tPupKjL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/orgulho-e-preconceito.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Romance",
