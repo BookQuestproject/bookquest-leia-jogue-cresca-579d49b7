@@ -111,6 +111,7 @@ const RETRY_INTERVAL = 300;
 const CategoryIntro = () => {
   const location = useLocation();
   const [active, setActive] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
   const [steps, setSteps] = useState<CategoryStep[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
