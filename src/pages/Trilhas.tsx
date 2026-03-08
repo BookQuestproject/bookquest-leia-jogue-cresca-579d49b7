@@ -432,7 +432,7 @@ const bookTrails: BookTrail[] = [
     title: "Divergente",
     author: "Veronica Roth",
     cover: "🔥",
-    coverImage: "https://m.media-amazon.com/images/I/81s8PEVbqjL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "/images/covers/divergente.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Aventura",
