@@ -464,30 +464,13 @@ const Index = () => {
               )}
             </div>
 
-            {/* Streak Card — positive tension */}
+            {/* Streak Card — improved */}
             <div
-              className="rounded-xl p-5 animate-fade-in bg-card border border-border"
+              className="animate-fade-in"
               data-tutorial="streak-card"
               style={{ animationDelay: "0.2s" }}
             >
-              <StreakFlame days={userStats.streak} showInfo={true} isAdmin={isAdmin} />
-              {/* Urgency message */}
-              {userStats.streak > 0 && (
-                <div className="mt-3 pt-3 border-t border-border/30 flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                  <p className="text-[11px] text-accent font-medium">
-                    Sua sequência expira em ~{Math.floor(Math.random() * 12) + 4}h. Leia para mantê-la!
-                  </p>
-                </div>
-              )}
-              {userStats.streak === 0 && (
-                <div className="mt-3 pt-3 border-t border-border/30 flex items-center gap-2">
-                  <Flame className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                  <p className="text-[11px] text-accent/80 font-medium">
-                    Leia hoje e inicie sua sequência de fogo!
-                  </p>
-                </div>
-              )}
+              <StreakCard />
             </div>
 
             {/* Daily Missions — strategic */}
