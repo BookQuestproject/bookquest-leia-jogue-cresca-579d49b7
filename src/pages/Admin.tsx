@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Shield, BookOpen, Calendar, Target, Users, RefreshCw } from "lucide-react";
+import { Shield, BookOpen, Calendar, Target, Users, RefreshCw, Newspaper } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -10,6 +10,7 @@ import { useAdminGroupSessions, useAdminTracks } from "@/hooks/useAdminGroupMent
 import { AdminTracksPanel } from "@/components/admin/AdminTracksPanel";
 import { AdminGroupSessionsPanel } from "@/components/admin/AdminGroupSessionsPanel";
 import { AdminBookSuggestionsPanel } from "@/components/admin/AdminBookSuggestionsPanel";
+import AdminNewsPanel from "@/components/admin/AdminNewsPanel";
 
 const Admin = () => {
   const { user } = useAuth();
