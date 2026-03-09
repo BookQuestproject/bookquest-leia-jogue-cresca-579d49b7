@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Check, CheckCheck, X, BookOpen, Trash2 } from "lucide-react";
+import { Bell, Check, CheckCheck, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Popover,
@@ -58,35 +58,36 @@ const NotificationItem = ({
       }`}
       onClick={handleClick}
     >
-    <div className="flex items-start gap-2.5">
-      <span className="text-base mt-0.5 flex-shrink-0">
-        {typeIcons[notification.type] || "🔔"}
-      </span>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p className={`text-sm font-medium truncate ${notification.is_read ? "text-muted-foreground" : "text-foreground"}`}>
-            {notification.title}
+      <div className="flex items-start gap-2.5">
+        <span className="text-base mt-0.5 flex-shrink-0">
+          {typeIcons[notification.type] || "🔔"}
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className={`text-sm font-medium truncate ${notification.is_read ? "text-muted-foreground" : "text-foreground"}`}>
+              {notification.title}
+            </p>
+            {!notification.is_read && (
+              <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+            {notification.message}
           </p>
-          {!notification.is_read && (
-            <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-          )}
+          <p className="text-[10px] text-muted-foreground/60 mt-1">
+            {timeAgo(notification.created_at)}
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-          {notification.message}
-        </p>
-        <p className="text-[10px] text-muted-foreground/60 mt-1">
-          {timeAgo(notification.created_at)}
-        </p>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(notification.id);
+          }}
+          className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all p-1"
+        >
+          <X className="w-3 h-3" />
+        </button>
       </div>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete(notification.id);
-        }}
-        className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all p-1"
-      >
-        <X className="w-3 h-3" />
-      </button>
     </div>
   );
 };
