@@ -128,6 +128,10 @@ const Admin = () => {
           <TabsContent value="individual">
             <IndividualSessionsPanel sessions={sessions} />
           </TabsContent>
+
+          <TabsContent value="news">
+            <AdminNewsPanel />
+          </TabsContent>
         </Tabs>
       </div>
     </Layout>
