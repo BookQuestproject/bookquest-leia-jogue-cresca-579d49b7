@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Shield, BookOpen, Calendar, Target, Users, RefreshCw } from "lucide-react";
+import { Shield, BookOpen, Calendar, Target, Users, RefreshCw, Newspaper } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -10,6 +10,7 @@ import { useAdminGroupSessions, useAdminTracks } from "@/hooks/useAdminGroupMent
 import { AdminTracksPanel } from "@/components/admin/AdminTracksPanel";
 import { AdminGroupSessionsPanel } from "@/components/admin/AdminGroupSessionsPanel";
 import { AdminBookSuggestionsPanel } from "@/components/admin/AdminBookSuggestionsPanel";
+import AdminNewsPanel from "@/components/admin/AdminNewsPanel";
 
 const Admin = () => {
   const { user } = useAuth();
@@ -89,7 +90,7 @@ const Admin = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="suggestions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
             <TabsTrigger value="suggestions" className="gap-2">
               <BookOpen className="w-4 h-4" />
               <span className="hidden sm:inline">Sugestões</span>
@@ -105,6 +106,10 @@ const Admin = () => {
             <TabsTrigger value="individual" className="gap-2">
               <Calendar className="w-4 h-4" />
               <span className="hidden sm:inline">Avulsos</span>
+            </TabsTrigger>
+            <TabsTrigger value="news" className="gap-2">
+              <Newspaper className="w-4 h-4" />
+              <span className="hidden sm:inline">Notícias</span>
             </TabsTrigger>
           </TabsList>
 
@@ -122,6 +127,10 @@ const Admin = () => {
 
           <TabsContent value="individual">
             <IndividualSessionsPanel sessions={sessions} />
+          </TabsContent>
+
+          <TabsContent value="news">
+            <AdminNewsPanel />
           </TabsContent>
         </Tabs>
       </div>

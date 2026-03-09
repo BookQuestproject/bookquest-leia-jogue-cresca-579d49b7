@@ -955,6 +955,68 @@ export type Database = {
         }
         Relationships: []
       }
+      news: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_pinned: boolean
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_pinned?: boolean
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_pinned?: boolean
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      news_read_status: {
+        Row: {
+          id: string
+          news_id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          news_id: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          news_id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_read_status_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
