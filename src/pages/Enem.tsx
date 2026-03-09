@@ -533,6 +533,12 @@ const Enem = () => {
 
           {/* ═══ ENEM TAB ═══ */}
           <TabsContent value="enem" className="mt-4 space-y-6">
+            {/* Progress Panel */}
+            <RepertoireProgressPanel />
+
+            {/* Daily Challenge */}
+            <DailyChallenge />
+
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -561,10 +567,26 @@ const Enem = () => {
               ))}
             </div>
 
-            {/* Repertoire cards */}
+            {/* New Repertoire Cards */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
+                Biblioteca de Repertórios ({repertoriosCompletos.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {repertoriosCompletos.map(r => (
+                  <RepertoireCard
+                    key={r.id}
+                    repertoire={r}
+                    onClick={() => navigate(`/enem/repertorio/${r.id}`)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Legacy repertoire cards (old data) */}
             <div className="space-y-3">
               <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
-                Biblioteca de Repertórios ({filteredRepertorios.length})
+                Repertórios Rápidos ({filteredRepertorios.length})
               </h3>
               {filteredRepertorios.map(r => {
                 const isExpanded = expandedRepertorio === r.id;
@@ -609,7 +631,7 @@ const Enem = () => {
                               <Sparkles className="h-3 w-3" />
                               Exemplo de uso em redação
                             </h5>
-                            <p className="text-xs text-foreground/80 leading-relaxed italic">"{r.exemploUso}"</p>
+                            <p className="text-xs text-foreground/80 leading-relaxed italic">{r.exemploUso}</p>
                           </div>
                         </div>
                       )}
