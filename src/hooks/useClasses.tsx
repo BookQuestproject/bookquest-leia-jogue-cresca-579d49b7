@@ -7,14 +7,19 @@ export interface ClassData {
   id: string;
   name: string;
   grade: string | null;
+  description: string | null;
   book_id: string | null;
   book_title: string | null;
+  author: string | null;
+  total_pages: number | null;
+  reading_start_date: string | null;
   reading_deadline: string | null;
   access_code: string;
   teacher_id: string;
   created_at: string;
   updated_at: string;
   is_active: boolean;
+  is_archived: boolean | null;
 }
 
 export interface ClassMember {
