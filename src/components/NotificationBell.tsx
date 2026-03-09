@@ -92,6 +92,7 @@ const NotificationItem = ({
 };
 
 export const NotificationBell = ({ className = "" }: { className?: string }) => {
+  const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } =
     useNotifications();
   const [open, setOpen] = useState(false);
