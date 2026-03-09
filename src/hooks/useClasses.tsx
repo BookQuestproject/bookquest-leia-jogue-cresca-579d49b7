@@ -247,5 +247,15 @@ export const useClasses = () => {
     return true;
   };
 
-  return { classes, loading, fetchClasses, createClass, deleteClass, fetchClassMembers, joinClassByCode };
+  return { 
+    classes, 
+    loading, 
+    fetchClasses, 
+    createClass, 
+    deleteClass, 
+    archiveClass,
+    duplicateClass,
+    fetchClassMembers, 
+    joinClassByCode 
+  };
 };
