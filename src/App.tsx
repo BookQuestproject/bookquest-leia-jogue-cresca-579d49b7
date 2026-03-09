@@ -26,6 +26,7 @@ import Missoes from "./pages/Missoes";
 import BookClub from "./pages/BookClub";
 import Mentoria from "./pages/Mentoria";
 import Enem from "./pages/Enem";
+import RepertoireDetail from "./pages/RepertoireDetail";
 import Configuracoes from "./pages/Configuracoes";
 import Noticias from "./pages/Noticias";
 import Auth from "./pages/Auth";
