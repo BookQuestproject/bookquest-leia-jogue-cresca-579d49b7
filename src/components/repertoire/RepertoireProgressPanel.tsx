@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Book, Brain, Users, History, Palette } from 'lucide-react';
 import { useRepertoireMastery } from '@/hooks/useRepertoireMastery';
+import { repertoriosCompletos } from '@/data/repertorios';
 
 const categoryIcons = {
   Literatura: Book,
@@ -20,9 +21,7 @@ const categoryColors = {
 };
 
 export function RepertoireProgressPanel() {
-  const { getCategoryProgress, getTotalProgress } = useRepertoireMastery();
-  
-  const categories = ['Literatura', 'Filosofia', 'Sociologia', 'História', 'Artes'] as const;
+  const { getProgressPercentage, getTotalProgress } = useRepertoireMastery();
   
   const totalProgress = getTotalProgress();
 
@@ -45,19 +44,21 @@ export function RepertoireProgressPanel() {
           <Progress value={totalProgress} className="h-3" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {categories.map((category) => {
-            const Icon = categoryIcons[category];
-            const progress = getCategoryProgress(category);
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2">
+          {repertoriosCompletos.map((repertorio) => {
+            const Icon = categoryIcons[repertorio.categoria];
+            const progress = getProgressPercentage(repertorio.id);
             
             return (
-              <div key={category} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Icon className={`w-4 h-4 ${categoryColors[category]}`} />
-                    <span className="text-sm font-medium">{category}</span>
+              <div key={repertorio.id} className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${categoryColors[repertorio.categoria]}`} />
+                    <span className="text-sm font-medium truncate" title={repertorio.titulo}>
+                      {repertorio.titulo}
+                    </span>
                   </div>
-                  <span className="text-sm font-semibold text-accent">
+                  <span className="text-sm font-semibold text-accent flex-shrink-0">
                     {Math.round(progress)}%
                   </span>
                 </div>
