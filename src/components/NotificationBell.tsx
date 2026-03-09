@@ -146,6 +146,7 @@ export const NotificationBell = ({ className = "" }: { className?: string }) => 
                   notification={n}
                   onRead={markAsRead}
                   onDelete={deleteNotification}
+                  navigate={navigate}
                 />
               ))}
             </div>
