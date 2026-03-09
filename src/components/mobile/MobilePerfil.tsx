@@ -52,7 +52,7 @@ const MobilePerfil = () => {
       const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true });
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
-      const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+      const avatarUrl = publicUrl;
       const { error: updateError } = await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', user.id);
       if (updateError) throw updateError;
       await refreshProfile();

@@ -75,7 +75,7 @@ const Perfil = () => {
         .from('avatars')
         .getPublicUrl(filePath);
 
-      const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+      const avatarUrl = publicUrl;
 
       const { error: updateError } = await supabase
         .from('profiles')
