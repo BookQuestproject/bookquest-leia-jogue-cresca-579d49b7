@@ -57,8 +57,12 @@ export const useClasses = () => {
   const createClass = async (payload: {
     name: string;
     grade?: string;
+    description?: string;
     book_id?: string;
     book_title?: string;
+    author?: string;
+    total_pages?: number;
+    reading_start_date?: string;
     reading_deadline?: string;
   }) => {
     if (!user) return null;
@@ -98,6 +102,74 @@ export const useClasses = () => {
     }
     toast({ title: 'Turma excluída' });
     await fetchClasses();
+  };
+
+  const archiveClass = async (id: string) => {
+    const { error } = await supabase
+      .from('classes')
+      .update({ is_archived: true, is_active: false })
+      .eq('id', id);
+    
+    if (error) {
+      toast({ title: 'Erro', description: 'Falha ao arquivar turma.', variant: 'destructive' });
+      return;
+    }
+    await fetchClasses();
+  };
+
+  const duplicateClass = async (id: string) => {
+    const classData = classes.find(c => c.id === id);
+    if (!classData || !user) return null;
+
+    // Generate new code
+    const { data: codeData, error: codeError } = await supabase.rpc('generate_class_code');
+    if (codeError) {
+      toast({ title: 'Erro', description: 'Falha ao gerar código.', variant: 'destructive' });
+      return null;
+    }
+
+    // Create new class with same data
+    const { data: newClass, error: createError } = await supabase
+      .from('classes')
+      .insert({
+        name: `${classData.name} (Cópia)`,
+        grade: classData.grade,
+        description: classData.description,
+        book_id: classData.book_id,
+        book_title: classData.book_title,
+        author: classData.author,
+        total_pages: classData.total_pages,
+        teacher_id: user.id,
+        access_code: codeData as string,
+      })
+      .select()
+      .single();
+
+    if (createError) {
+      toast({ title: 'Erro', description: 'Falha ao duplicar turma.', variant: 'destructive' });
+      return null;
+    }
+
+    // Duplicate questions
+    const { data: questions } = await supabase
+      .from('class_questions')
+      .select('*')
+      .eq('class_id', id);
+
+    if (questions && questions.length > 0) {
+      const newQuestions = questions.map(q => ({
+        class_id: (newClass as ClassData).id,
+        chapter_number: q.chapter_number,
+        created_by: user.id,
+        question_text: q.question_text,
+      }));
+      
+      await supabase.from('class_questions').insert(newQuestions);
+    }
+
+    toast({ title: 'Turma duplicada!', description: 'Perguntas foram copiadas.' });
+    await fetchClasses();
+    return newClass as ClassData;
   };
 
   const fetchClassMembers = async (classId: string): Promise<ClassMember[]> => {
