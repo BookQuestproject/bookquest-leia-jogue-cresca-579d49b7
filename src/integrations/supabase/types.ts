@@ -65,6 +65,50 @@ export type Database = {
         }
         Relationships: []
       }
+      book_club_content: {
+        Row: {
+          content_type: string
+          created_at: string
+          created_by: string
+          description: string | null
+          file_url: string | null
+          id: string
+          monthly_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          monthly_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          monthly_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_club_content_monthly_id_fkey"
+            columns: ["monthly_id"]
+            isOneToOne: false
+            referencedRelation: "book_club_monthly"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       book_club_discussions: {
         Row: {
           chapter_ref: number | null
@@ -131,6 +175,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      book_club_monthly: {
+        Row: {
+          book_author: string
+          book_cover_url: string | null
+          book_title: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          month_year: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          book_author: string
+          book_cover_url?: string | null
+          book_title: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          month_year: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          book_author?: string
+          book_cover_url?: string | null
+          book_title?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          month_year?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       book_clubs: {
         Row: {
