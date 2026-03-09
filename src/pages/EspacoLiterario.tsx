@@ -25,7 +25,7 @@ const EspacoLiterario = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-md" data-tutorial="espaco-tabs">
+          <TabsList className="grid w-full grid-cols-2 max-w-md" data-tutorial="espaco-tabs">
             <TabsTrigger value="comunidades" className="gap-1.5 text-xs sm:text-sm" data-tutorial="espaco-comunidades">
               <MessageSquare className="w-4 h-4 hidden sm:block" />
               Comunidades
@@ -34,10 +34,12 @@ const EspacoLiterario = () => {
               <Star className="w-4 h-4 hidden sm:block" />
               Avaliações
             </TabsTrigger>
+            {/* Clubes tab temporarily disabled
             <TabsTrigger value="clubes" className="gap-1.5 text-xs sm:text-sm" data-tutorial="espaco-clubes">
               <Users className="w-4 h-4 hidden sm:block" />
               Clubes
             </TabsTrigger>
+            */}
           </TabsList>
 
           <TabsContent value="comunidades" className="mt-5">
