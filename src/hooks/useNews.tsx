@@ -47,11 +47,11 @@ export const useNews = () => {
         const newsWithReadStatus = (newsData || []).map(item => ({
           ...item,
           is_read: readNewsIds.has(item.id),
-        }));
+        })) as NewsItem[];
 
         setNews(newsWithReadStatus);
       } else {
-        setNews(newsData || []);
+        setNews((newsData || []) as NewsItem[]);
       }
     } catch (e: any) {
       console.error('Error fetching news:', e);
