@@ -276,6 +276,47 @@ export type Database = {
         }
         Relationships: []
       }
+      class_chapter_discussions: {
+        Row: {
+          chapter_number: number
+          chapter_title: string | null
+          class_id: string
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_number: number
+          chapter_title?: string | null
+          class_id: string
+          content: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_number?: number
+          chapter_title?: string | null
+          class_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_chapter_discussions_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       class_members: {
         Row: {
           class_id: string
@@ -305,44 +346,176 @@ export type Database = {
           },
         ]
       }
+      class_question_responses: {
+        Row: {
+          created_at: string
+          id: string
+          question_id: string
+          response_text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question_id: string
+          response_text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question_id?: string
+          response_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_question_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "class_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_questions: {
+        Row: {
+          chapter_number: number | null
+          class_id: string
+          created_at: string
+          created_by: string
+          id: string
+          question_text: string
+          updated_at: string
+        }
+        Insert: {
+          chapter_number?: number | null
+          class_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          question_text: string
+          updated_at?: string
+        }
+        Update: {
+          chapter_number?: number | null
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          question_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_questions_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_reading_progress: {
+        Row: {
+          class_id: string
+          created_at: string
+          current_page: number
+          id: string
+          is_up_to_date: boolean | null
+          last_read_date: string | null
+          pages_read_today: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          current_page?: number
+          id?: string
+          is_up_to_date?: boolean | null
+          last_read_date?: string | null
+          pages_read_today?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          current_page?: number
+          id?: string
+          is_up_to_date?: boolean | null
+          last_read_date?: string | null
+          pages_read_today?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_reading_progress_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       classes: {
         Row: {
           access_code: string
+          author: string | null
           book_id: string | null
           book_title: string | null
           created_at: string
+          description: string | null
           grade: string | null
           id: string
           is_active: boolean
+          is_archived: boolean | null
           name: string
           reading_deadline: string | null
+          reading_start_date: string | null
           teacher_id: string
+          total_pages: number | null
           updated_at: string
         }
         Insert: {
           access_code: string
+          author?: string | null
           book_id?: string | null
           book_title?: string | null
           created_at?: string
+          description?: string | null
           grade?: string | null
           id?: string
           is_active?: boolean
+          is_archived?: boolean | null
           name: string
           reading_deadline?: string | null
+          reading_start_date?: string | null
           teacher_id: string
+          total_pages?: number | null
           updated_at?: string
         }
         Update: {
           access_code?: string
+          author?: string | null
           book_id?: string | null
           book_title?: string | null
           created_at?: string
+          description?: string | null
           grade?: string | null
           id?: string
           is_active?: boolean
+          is_archived?: boolean | null
           name?: string
           reading_deadline?: string | null
+          reading_start_date?: string | null
           teacher_id?: string
+          total_pages?: number | null
           updated_at?: string
         }
         Relationships: []
