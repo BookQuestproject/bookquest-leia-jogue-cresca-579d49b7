@@ -90,7 +90,7 @@ const Admin = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="suggestions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
             <TabsTrigger value="suggestions" className="gap-2">
               <BookOpen className="w-4 h-4" />
               <span className="hidden sm:inline">Sugestões</span>
@@ -106,6 +106,10 @@ const Admin = () => {
             <TabsTrigger value="individual" className="gap-2">
               <Calendar className="w-4 h-4" />
               <span className="hidden sm:inline">Avulsos</span>
+            </TabsTrigger>
+            <TabsTrigger value="news" className="gap-2">
+              <Newspaper className="w-4 h-4" />
+              <span className="hidden sm:inline">Notícias</span>
             </TabsTrigger>
           </TabsList>
 
