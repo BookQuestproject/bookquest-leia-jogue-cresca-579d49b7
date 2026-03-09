@@ -31,19 +31,33 @@ const NotificationItem = ({
   notification,
   onRead,
   onDelete,
+  navigate,
 }: {
   notification: Notification;
   onRead: (id: string) => void;
   onDelete: (id: string) => void;
-}) => (
-  <div
-    className={`p-3 rounded-lg transition-colors cursor-pointer group ${
-      notification.is_read
-        ? "bg-transparent hover:bg-muted/50"
-        : "bg-primary/5 hover:bg-primary/10"
-    }`}
-    onClick={() => !notification.is_read && onRead(notification.id)}
-  >
+  navigate: (path: string) => void;
+}) => {
+  const handleClick = () => {
+    if (!notification.is_read) {
+      onRead(notification.id);
+    }
+    
+    // Se a notificação é sobre notícias, redirecionar para a página de notícias
+    if (notification.metadata && 'news_id' in notification.metadata) {
+      navigate('/noticias');
+    }
+  };
+
+  return (
+    <div
+      className={`p-3 rounded-lg transition-colors cursor-pointer group ${
+        notification.is_read
+          ? "bg-transparent hover:bg-muted/50"
+          : "bg-primary/5 hover:bg-primary/10"
+      }`}
+      onClick={handleClick}
+    >
     <div className="flex items-start gap-2.5">
       <span className="text-base mt-0.5 flex-shrink-0">
         {typeIcons[notification.type] || "🔔"}
