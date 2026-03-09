@@ -4,6 +4,7 @@ import {
   Award, Lightbulb, Zap, BookMarked, Filter, Target, Clock, CheckCircle,
   ArrowRight, RotateCcw,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAcademicDiagnosis } from "@/hooks/useAcademicDiagnosis";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RepertoireProgressPanel } from "@/components/repertoire/RepertoireProgressPanel";
+import { DailyChallenge } from "@/components/repertoire/DailyChallenge";
+import { RepertoireCard } from "@/components/repertoire/RepertoireCard";
+import { repertoriosCompletos } from "@/data/repertorios";
 
 /* ═══════════ DATA ═══════════ */
 

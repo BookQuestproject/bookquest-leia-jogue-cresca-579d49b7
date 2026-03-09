@@ -77,6 +77,7 @@ const App = () => (
                 <Route path="/desafios" element={<Desafios />} />
                 <Route path="/mentoria" element={<Mentoria />} />
                 <Route path="/enem" element={<Enem />} />
+                <Route path="/enem/repertorio/:id" element={<RepertoireDetail />} />
                 <Route path="/configuracoes" element={<Configuracoes />} />
                 <Route path="/noticias" element={<Noticias />} />
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
