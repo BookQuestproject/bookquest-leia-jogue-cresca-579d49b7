@@ -96,7 +96,7 @@ export const repertoriosCompletos: RepertorioCompleto[] = [
         'O mutismo de Fabiano simboliza...'
       ]
     },
-    paragrafoPronto: 'Em "Vidas Secas", Graciliano Ramos apresenta a família de Fabiano, retirantes nordestinos que enfrentam a miséria extrema e a desumanização causadas pela seca e pela exclusão social. O protagonista, reduzido a uma condição quase animal pela falta de oportunidades e educação, mal consegue se expressar, simbolizando como a pobreza sistêmica silencia e marginaliza parcelas da população. Esse retrato literário permanece atual ao refletir a persistente desigualdade social brasileira, onde milhões de pessoas continuam privadas de direitos fundamentais como educação, saúde e moradia digna, perpetuando ciclos de exclusão que atravessam gerações.',
+    paragrafoPronto: 'Em "Vidas Secas", Graciliano Ramos apresenta a família de Fabiano, retirantes nordestinos que enfrentam a miséria extrema e a desumanização causadas pela seca e pela exclusão social. O protagonista, reduzido a uma condição quase animal pela falta de oportunidades e educação, mal consegue se expressar, simbolizando como a pobreza sistêmica silencia e marginaliza parcelas da população. Esse retrato literário permanece atual ao refletir a persistente desigualdade social brasileira, onde milhões de pessoas continuam privadas de direitos fundamentais, perpetuando ciclos de exclusão que atravessam gerações.',
     frasesInteligentes: [
       'Assim como a família de Fabiano em "Vidas Secas", observa-se que...',
       'A obra de Graciliano Ramos evidencia como...',
