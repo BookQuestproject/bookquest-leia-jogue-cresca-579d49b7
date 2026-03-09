@@ -4,6 +4,7 @@ import {
   Award, Lightbulb, Zap, BookMarked, Filter, Target, Clock, CheckCircle,
   ArrowRight, RotateCcw,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAcademicDiagnosis } from "@/hooks/useAcademicDiagnosis";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RepertoireProgressPanel } from "@/components/repertoire/RepertoireProgressPanel";
+import { DailyChallenge } from "@/components/repertoire/DailyChallenge";
+import { RepertoireCard } from "@/components/repertoire/RepertoireCard";
+import { repertoriosCompletos } from "@/data/repertorios";
 
 /* ═══════════ DATA ═══════════ */
 
@@ -409,6 +414,7 @@ const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
 const Enem = () => {
   const { isPremium } = useProfile();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { diagnosis, loading: diagLoading, hasDiagnosis, resetDiagnosis } = useAcademicDiagnosis();
   const [showDiagnosis, setShowDiagnosis] = useState(false);
   const [searchTema, setSearchTema] = useState("");
@@ -527,6 +533,12 @@ const Enem = () => {
 
           {/* ═══ ENEM TAB ═══ */}
           <TabsContent value="enem" className="mt-4 space-y-6">
+            {/* Progress Panel */}
+            <RepertoireProgressPanel />
+
+            {/* Daily Challenge */}
+            <DailyChallenge />
+
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -555,10 +567,26 @@ const Enem = () => {
               ))}
             </div>
 
-            {/* Repertoire cards */}
+            {/* New Repertoire Cards */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
+                Biblioteca de Repertórios ({repertoriosCompletos.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {repertoriosCompletos.map(r => (
+                  <RepertoireCard
+                    key={r.id}
+                    repertoire={r}
+                    onClick={() => navigate(`/enem/repertorio/${r.id}`)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Legacy repertoire cards (old data) */}
             <div className="space-y-3">
               <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
-                Biblioteca de Repertórios ({filteredRepertorios.length})
+                Repertórios Rápidos ({filteredRepertorios.length})
               </h3>
               {filteredRepertorios.map(r => {
                 const isExpanded = expandedRepertorio === r.id;
@@ -603,7 +631,7 @@ const Enem = () => {
                               <Sparkles className="h-3 w-3" />
                               Exemplo de uso em redação
                             </h5>
-                            <p className="text-xs text-foreground/80 leading-relaxed italic">"{r.exemploUso}"</p>
+                            <p className="text-xs text-foreground/80 leading-relaxed italic">{r.exemploUso}</p>
                           </div>
                         </div>
                       )}

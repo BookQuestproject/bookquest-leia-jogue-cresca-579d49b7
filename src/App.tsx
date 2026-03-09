@@ -26,6 +26,7 @@ import Missoes from "./pages/Missoes";
 import BookClub from "./pages/BookClub";
 import Mentoria from "./pages/Mentoria";
 import Enem from "./pages/Enem";
+import RepertoireDetail from "./pages/RepertoireDetail";
 import Configuracoes from "./pages/Configuracoes";
 import Noticias from "./pages/Noticias";
 import Auth from "./pages/Auth";
@@ -76,6 +77,7 @@ const App = () => (
                 <Route path="/desafios" element={<Desafios />} />
                 <Route path="/mentoria" element={<Mentoria />} />
                 <Route path="/enem" element={<Enem />} />
+                <Route path="/enem/repertorio/:id" element={<RepertoireDetail />} />
                 <Route path="/configuracoes" element={<Configuracoes />} />
                 <Route path="/noticias" element={<Noticias />} />
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
