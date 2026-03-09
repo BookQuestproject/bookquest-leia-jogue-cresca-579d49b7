@@ -162,7 +162,7 @@ export const repertoriosCompletos: RepertorioCompleto[] = [
         'A distopia de Huxley antecipou debates sobre...'
       ]
     },
-    paragrafoPronto: 'Em "Admirável Mundo Novo", Aldous Huxley apresenta uma distopia onde o controle social não se exerce pela repressão, mas sim pela satisfação superficial constante. Os cidadãos são condicionados desde o nascimento a aceitar sua posição social e mantidos satisfeitos através da droga "soma" e de entretenimento incessante, eliminando qualquer possibilidade de pensamento crítico ou questionamento. Essa forma sutil de controle social encontra paralelos na sociedade contemporânea, onde o consumismo exacerbado e a busca por prazeres imediatos podem funcionar como mecanismos de alienação, impedindo reflexões mais profundas sobre desigualdades e problemas estruturais.',
+    paragrafoPronto: 'Em "Admirável Mundo Novo", Aldous Huxley apresenta uma distopia onde o controle social não se exerce pela repressão, mas sim pela satisfação superficial constante. Os cidadãos são condicionados desde o nascimento a aceitar sua posição social e mantidos satisfeitos através da droga soma e de entretenimento incessante, eliminando qualquer possibilidade de pensamento crítico ou questionamento. Essa forma sutil de controle social encontra paralelos na sociedade contemporânea, onde o consumismo exacerbado e a busca por prazeres imediatos podem funcionar como mecanismos de alienação, impedindo reflexões mais profundas sobre desigualdades e problemas estruturais.',
     frasesInteligentes: [
       'Assim como na sociedade retratada por Huxley, observa-se que...',
       'O "soma" da obra simboliza os mecanismos contemporâneos de...',
