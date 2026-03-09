@@ -15,7 +15,7 @@ export const repertoriosCompletos: RepertorioCompleto[] = [
       'Tecnologia e controle social',
       'Liberdade de expressão',
       'Manipulação da informação',
-      'Fake news',
+      'Notícias falsas',
       'Censura',
       'Poder do Estado',
       'Direitos individuais'
