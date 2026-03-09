@@ -414,6 +414,7 @@ const DiagnosisQuiz = ({ onComplete }: { onComplete: () => void }) => {
 const Enem = () => {
   const { isPremium } = useProfile();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { diagnosis, loading: diagLoading, hasDiagnosis, resetDiagnosis } = useAcademicDiagnosis();
   const [showDiagnosis, setShowDiagnosis] = useState(false);
   const [searchTema, setSearchTema] = useState("");
