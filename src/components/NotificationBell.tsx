@@ -88,8 +88,8 @@ const NotificationItem = ({
         <X className="w-3 h-3" />
       </button>
     </div>
-  </div>
-);
+  );
+};
 
 export const NotificationBell = ({ className = "" }: { className?: string }) => {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } =
