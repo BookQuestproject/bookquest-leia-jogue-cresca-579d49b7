@@ -36,7 +36,7 @@ const Auth = () => {
     setIsGoogleLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri: 'https://bookquest-leia-jogue-cresca.lovable.app/~oauth/initiate?provider=google',
+        redirect_uri: `${window.location.origin}`,
         extraParams: {
           prompt: 'select_account',
         },
