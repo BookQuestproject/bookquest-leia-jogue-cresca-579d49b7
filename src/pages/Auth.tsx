@@ -37,6 +37,9 @@ const Auth = () => {
     try {
       const result = await lovable.auth.signInWithOAuth('google', {
         redirect_uri: `${window.location.origin}/quiz-onboarding`,
+        extraParams: {
+          prompt: 'select_account',
+        },
       });
       if (result?.error) {
         console.error('Google OAuth error:', result.error);
