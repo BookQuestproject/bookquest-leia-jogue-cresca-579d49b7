@@ -459,7 +459,7 @@ const ChapterReading = () => {
   const [isTimerError, setIsTimerError] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const book = bookId ? bookData[bookId] : null;
   const chapter = book?.chapters.find(c => c.id === Number(chapterId));
