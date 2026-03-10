@@ -35,19 +35,52 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri: `${window.location.origin}`,
-        extraParams: {
-          prompt: 'select_account',
-        },
-      });
-      if (result?.error) {
-        console.error('Google OAuth error:', result.error);
-        toast({ title: 'Erro', description: 'Erro ao conectar com Google. Tente novamente.', variant: 'destructive' });
+      const isCustomDomain =
+        !window.location.hostname.includes('lovable.app') &&
+        !window.location.hostname.includes('lovableproject.com');
+
+      if (isCustomDomain) {
+        // Bypass Lovable auth-bridge for custom domains
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/quiz-onboarding`,
+            skipBrowserRedirect: true,
+            queryParams: {
+              prompt: 'select_account',
+            },
+          },
+        });
+
+        if (error) throw error;
+
+        if (data?.url) {
+          const oauthUrl = new URL(data.url);
+          const allowedHosts = ['accounts.google.com'];
+          if (!allowedHosts.some((host) => oauthUrl.hostname.includes(host))) {
+            // Allow Supabase auth URLs too
+            if (!oauthUrl.hostname.includes('supabase')) {
+              throw new Error('Invalid OAuth redirect URL');
+            }
+          }
+          window.location.href = data.url;
+        }
+      } else {
+        // For Lovable domains, use managed auth-bridge
+        const result = await lovable.auth.signInWithOAuth('google', {
+          redirect_uri: `${window.location.origin}`,
+          extraParams: {
+            prompt: 'select_account',
+          },
+        });
+        if (result?.error) {
+          console.error('Google OAuth error:', result.error);
+          toast({ title: 'Erro', description: 'Erro ao conectar com Google. Tente novamente.', variant: 'destructive' });
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Google OAuth exception:', err);
-      toast({ title: 'Erro', description: 'Ocorreu um erro inesperado ao conectar com Google', variant: 'destructive' });
+      toast({ title: 'Erro', description: err?.message || 'Ocorreu um erro inesperado ao conectar com Google', variant: 'destructive' });
     } finally {
       setIsGoogleLoading(false);
     }
