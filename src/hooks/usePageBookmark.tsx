@@ -10,7 +10,7 @@ export const usePageBookmark = (bookId: string | undefined) => {
   const { user } = useAuth();
   const [bookmarks, setBookmarks] = useState<PageBookmarks>({});
   const [loading, setLoading] = useState(true);
-  const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
+  const debounceTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
   // Load all bookmarks for the book
   useEffect(() => {
