@@ -35,14 +35,16 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri: window.location.origin,
+      const result = await lovable.auth.signInWithOAuth('google', {
+        redirect_uri: `${window.location.origin}/quiz-onboarding`,
       });
-      if (error) {
-        toast({ title: 'Erro', description: 'Erro ao conectar com Google', variant: 'destructive' });
+      if (result?.error) {
+        console.error('Google OAuth error:', result.error);
+        toast({ title: 'Erro', description: 'Erro ao conectar com Google. Tente novamente.', variant: 'destructive' });
       }
-    } catch {
-      toast({ title: 'Erro', description: 'Ocorreu um erro inesperado', variant: 'destructive' });
+    } catch (err) {
+      console.error('Google OAuth exception:', err);
+      toast({ title: 'Erro', description: 'Ocorreu um erro inesperado ao conectar com Google', variant: 'destructive' });
     } finally {
       setIsGoogleLoading(false);
     }
