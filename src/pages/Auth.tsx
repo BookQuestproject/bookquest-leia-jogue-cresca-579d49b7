@@ -35,14 +35,16 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri: window.location.origin,
+      const result = await lovable.auth.signInWithOAuth('google', {
+        redirect_uri: `${window.location.origin}/quiz-onboarding`,
       });
-      if (error) {
-        toast({ title: 'Erro', description: 'Erro ao conectar com Google', variant: 'destructive' });
+      if (result?.error) {
+        console.error('Google OAuth error:', result.error);
+        toast({ title: 'Erro', description: 'Erro ao conectar com Google. Tente novamente.', variant: 'destructive' });
       }
-    } catch {
-      toast({ title: 'Erro', description: 'Ocorreu um erro inesperado', variant: 'destructive' });
+    } catch (err) {
+      console.error('Google OAuth exception:', err);
+      toast({ title: 'Erro', description: 'Ocorreu um erro inesperado ao conectar com Google', variant: 'destructive' });
     } finally {
       setIsGoogleLoading(false);
     }
@@ -79,10 +81,12 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
-          const message = error.message.includes('Invalid login credentials')
-            ? 'Email ou senha incorretos'
-            : 'Erro ao fazer login';
-          toast({ title: 'Erro', description: message, variant: 'destructive' });
+          const msg = error.message.includes('Invalid login credentials')
+            ? 'Email ou senha incorretos. Se você ainda não tem conta, clique em "Cadastre-se".'
+            : error.message.includes('Email not confirmed')
+            ? 'Confirme seu email antes de fazer login. Verifique sua caixa de entrada.'
+            : 'Erro ao fazer login. Tente novamente.';
+          toast({ title: 'Erro no login', description: msg, variant: 'destructive' });
         } else {
           toast({ title: 'Bem-vindo de volta!', description: 'Login realizado com sucesso' });
           navigate('/quiz-onboarding');
@@ -91,12 +95,11 @@ const Auth = () => {
         const { error } = await signUp(email, password);
         if (error) {
           const message = error.message.includes('User already registered')
-            ? 'Este email já está cadastrado'
+            ? 'Este email já está cadastrado. Volte ao login para acessar.'
             : 'Erro ao criar conta';
           toast({ title: 'Erro', description: message, variant: 'destructive' });
         } else {
-          toast({ title: 'Conta criada!', description: 'Sua jornada literária começa agora' });
-          navigate('/quiz-onboarding');
+          toast({ title: 'Conta criada!', description: 'Verifique seu email para confirmar o cadastro.' });
         }
       }
     } catch {
