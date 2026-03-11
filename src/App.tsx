@@ -40,6 +40,8 @@ import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
+import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
+import TermosDeServico from "./pages/TermosDeServico";
 
 // App configuration
 const queryClient = new QueryClient();
