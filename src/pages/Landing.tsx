@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ArrowRight, Trophy, BookOpen, Target, Zap, Users, Quote, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -387,10 +387,20 @@ const Landing = () => {
 
         {/* Footer */}
         <footer className="py-8 px-6 border-t border-border/30">
-          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground/50">
-            <div className="flex items-center gap-2">
-              <img src={logoCrown} alt="BookQuest" className="w-5 h-5 object-contain" />
-              <span className="font-serif font-semibold text-foreground/60">BookQuest</span>
+          <div className="max-w-5xl mx-auto flex flex-col items-center gap-4 text-sm text-muted-foreground/50">
+            <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
+              <div className="flex items-center gap-2">
+                <img src={logoCrown} alt="BookQuest" className="w-5 h-5 object-contain" />
+                <span className="font-serif font-semibold text-foreground/60">BookQuest</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <Link to="/politica-de-privacidade" className="hover:text-foreground/70 transition-colors">
+                  Política de Privacidade
+                </Link>
+                <Link to="/termos-de-servico" className="hover:text-foreground/70 transition-colors">
+                  Termos de Serviço
+                </Link>
+              </div>
             </div>
             <p>© 2026 BookQuest. Todos os direitos reservados.</p>
           </div>

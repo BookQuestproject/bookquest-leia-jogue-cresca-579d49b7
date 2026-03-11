@@ -40,6 +40,8 @@ import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
+import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
+import TermosDeServico from "./pages/TermosDeServico";
 
 // App configuration
 const queryClient = new QueryClient();
@@ -87,6 +89,8 @@ const App = () => (
                 <Route path="/edu/turmas" element={<EduTurmas />} />
                 <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
                 <Route path="/edu/relatorios" element={<EduRelatorios />} />
+                <Route path="/politica-de-privacidade" element={<PoliticaDePrivacidade />} />
+                <Route path="/termos-de-servico" element={<TermosDeServico />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
               </QuizGate>
