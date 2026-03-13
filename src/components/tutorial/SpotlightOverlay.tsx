@@ -104,11 +104,12 @@ const SpotlightOverlay = () => {
       };
       setTargetRect(newRect);
 
-      // Tooltip positioned above Agatha — dynamic side
-      const tooltipW = 340;
-      const vw = window.innerWidth;
-      const agathaWidth = 160;
-      const agathaMargin = 16;
+      // Tooltip positioned above Agatha — responsive
+      const isMobile = vw < 768;
+      const tooltipW = isMobile ? Math.min(300, vw - 24) : 340;
+      const agathaWidth = isMobile ? 100 : 160;
+      const agathaMargin = isMobile ? 8 : 16;
+      const bottomOffset = isMobile ? 140 : 200;
 
       let tooltipLeft: number;
       if (agathaSide === "left") {
@@ -123,7 +124,7 @@ const SpotlightOverlay = () => {
         position: "fixed",
         width: tooltipW,
         zIndex: 10002,
-        bottom: 200,
+        bottom: bottomOffset,
         left: tooltipLeft,
       };
 
