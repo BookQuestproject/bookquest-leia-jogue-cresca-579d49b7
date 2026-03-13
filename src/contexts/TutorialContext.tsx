@@ -117,7 +117,12 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
   }, [location.pathname]);
 
   // Filter steps: remove admin-only if not admin
-  const availableSteps = allSteps.filter(s => !s.adminOnly || isAdmin);
+  const isMobileView = typeof window !== "undefined" && window.innerWidth < 1024;
+  const availableSteps = allSteps.filter(s => {
+    if (s.adminOnly && !isAdmin) return false;
+    if (s.desktopOnly && isMobileView) return false;
+    return true;
+  });
 
   // Filter to steps relevant to current route (or steps without route restriction)
   const currentRouteSteps = isActive ? availableSteps : [];

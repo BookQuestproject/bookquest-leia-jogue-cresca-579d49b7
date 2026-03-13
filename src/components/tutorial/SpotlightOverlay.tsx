@@ -229,7 +229,7 @@ const SpotlightOverlay = () => {
 
       {/* Speech bubble tooltip — positioned above Agatha */}
       <div
-        className="bg-card border border-accent/30 rounded-2xl shadow-2xl p-5 relative"
+        className="bg-card border border-accent/30 rounded-2xl shadow-2xl p-4 sm:p-5 relative max-w-[calc(100vw-16px)]"
         style={{
           ...tooltipStyle,
           pointerEvents: showContent ? "auto" : "none",
@@ -241,14 +241,14 @@ const SpotlightOverlay = () => {
         {/* Speech bubble tail pointing down toward Agatha */}
         <div
           className={`absolute -bottom-3 w-6 h-6 bg-card border-b border-r border-accent/30 rotate-45 transition-all duration-500 ${
-            agathaSide === "left" ? "left-16" : "right-16"
+            agathaSide === "left" ? "left-16" : "right-12 sm:right-16"
           }`}
           style={{ zIndex: -1 }}
         />
 
         {/* Step indicator */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex gap-1 overflow-hidden flex-1 mr-3">
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
+          <div className="flex gap-1 flex-wrap flex-1 mr-3">
             {Array.from({ length: totalSteps }).map((_, i) => (
               <div
                 key={i}
@@ -264,7 +264,7 @@ const SpotlightOverlay = () => {
           </div>
           <button
             onClick={skipTutorial}
-            className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex-shrink-0"
             title="Pular tutorial"
           >
             <X className="w-4 h-4" />
@@ -273,10 +273,10 @@ const SpotlightOverlay = () => {
 
         {currentStepData && (
           <>
-            <h4 className="text-base font-serif font-semibold mb-1.5 text-accent">
+            <h4 className="text-sm sm:text-base font-serif font-semibold mb-1 sm:mb-1.5 text-accent">
               {currentStepData.title}
             </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-4">
               {currentStepData.description}
             </p>
           </>
@@ -284,26 +284,26 @@ const SpotlightOverlay = () => {
 
         {/* Navigation */}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">
+          <span className="text-[10px] sm:text-xs text-muted-foreground">
             {currentStep + 1} / {totalSteps}
           </span>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2">
             {currentStep > 0 && (
-              <Button variant="ghost" size="sm" onClick={prevStep} className="gap-1">
-                <ArrowLeft className="w-3.5 h-3.5" />
-                Voltar
+              <Button variant="ghost" size="sm" onClick={prevStep} className="gap-1 text-xs h-8 px-2 sm:px-3">
+                <ArrowLeft className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span className="hidden sm:inline">Voltar</span>
               </Button>
             )}
             <Button
               size="sm"
               onClick={nextStep}
               disabled={isDelayLocked}
-              className="gap-1 bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="gap-1 bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed text-xs h-8 px-3 sm:px-4"
             >
               {currentStep < totalSteps - 1 ? (
                 <>
                   Próximo
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </>
               ) : (
                 "Concluir! 🎉"
