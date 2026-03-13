@@ -17,6 +17,7 @@ const MobileNav = ({
   const location = useLocation();
   const { user } = useAuth();
   const { profile } = useProfile();
+  const { activeTrail } = useActiveTrail();
   const [moreOpen, setMoreOpen] = useState(false);
 
   const menuItems = [
