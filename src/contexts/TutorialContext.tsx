@@ -52,6 +52,7 @@ const allSteps: TutorialStep[] = [
     description: "Aqui você encontra todas as seções: trilhas, missões, ranking, comunidades e muito mais. Use o menu para explorar!",
     route: "/home",
     placement: "right",
+    desktopOnly: true,
   },
   {
     target: '[data-tutorial="premium-cta"]',
@@ -59,6 +60,7 @@ const allSteps: TutorialStep[] = [
     description: "Assine o Premium para desbloquear Mentoria Literária, Book Club e conteúdos ENEM com acompanhamento semanal.",
     route: "/home",
     placement: "right",
+    desktopOnly: true,
   },
   {
     target: '[data-tutorial="current-trail"]',
