@@ -13,6 +13,8 @@ export interface TutorialStep {
   placement?: "top" | "bottom" | "left" | "right";
   /** Only show for admins */
   adminOnly?: boolean;
+  /** Only show on desktop (>= 1024px) */
+  desktopOnly?: boolean;
   /** Minimum time (ms) before user can advance to next step */
   minDelay?: number;
 }
@@ -50,6 +52,7 @@ const allSteps: TutorialStep[] = [
     description: "Aqui você encontra todas as seções: trilhas, missões, ranking, comunidades e muito mais. Use o menu para explorar!",
     route: "/home",
     placement: "right",
+    desktopOnly: true,
   },
   {
     target: '[data-tutorial="premium-cta"]',
@@ -57,6 +60,7 @@ const allSteps: TutorialStep[] = [
     description: "Assine o Premium para desbloquear Mentoria Literária, Book Club e conteúdos ENEM com acompanhamento semanal.",
     route: "/home",
     placement: "right",
+    desktopOnly: true,
   },
   {
     target: '[data-tutorial="current-trail"]',
@@ -113,7 +117,12 @@ export const TutorialProvider = ({ children }: { children: ReactNode }) => {
   }, [location.pathname]);
 
   // Filter steps: remove admin-only if not admin
-  const availableSteps = allSteps.filter(s => !s.adminOnly || isAdmin);
+  const isMobileView = typeof window !== "undefined" && window.innerWidth < 1024;
+  const availableSteps = allSteps.filter(s => {
+    if (s.adminOnly && !isAdmin) return false;
+    if (s.desktopOnly && isMobileView) return false;
+    return true;
+  });
 
   // Filter to steps relevant to current route (or steps without route restriction)
   const currentRouteSteps = isActive ? availableSteps : [];
