@@ -72,24 +72,50 @@ const MobileNav = ({
               <X className="w-5 h-5" />
             </button>
           </div>
+          {/* Active Trail Banner */}
+          {activeTrail && (
+            <Link
+              to={`/ler/${activeTrail.bookId}/${activeTrail.chapters.find(c => c.status === "current")?.id || 1}`}
+              onClick={() => setMoreOpen(false)}
+              className="flex items-center gap-3 p-3 rounded-xl mb-3 active:scale-[0.98] transition-transform"
+              style={{
+                background: `linear-gradient(135deg, hsl(${activeTrail.themeColor || "220 60% 50%"}), hsl(${activeTrail.themeColor || "220 60% 50%"} / 0.7))`,
+              }}
+            >
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-white/15">
+                <Play className="w-4 h-4 text-white fill-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-wider">Trilha atual</p>
+                <p className="text-white font-serif font-bold text-sm leading-tight truncate">{activeTrail.title}</p>
+              </div>
+              <span className="text-white/60 text-xs font-medium flex-shrink-0">
+                {activeTrail.chapters.filter(c => c.status === "completed").length}/{activeTrail.totalChapters}
+              </span>
+            </Link>
+          )}
+
           <div className="grid grid-cols-3 gap-2">
             {moreItems.map((item) => {
-              const locked = item.premium && !isPremium;
+              const locked = (item as any).premium && !isPremium;
+              const isHighlight = (item as any).highlight && !isPremium;
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setMoreOpen(false)}
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all ${
-                    isActive(item.path)
+                    isHighlight
+                      ? "bg-accent/15 text-accent border border-accent/30"
+                      : isActive(item.path)
                       ? "bg-accent/10 text-accent"
                       : locked
                       ? "text-muted-foreground/40"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
                   }`}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span className="text-[10px] font-medium text-center leading-tight">{item.label}</span>
+                  <item.icon className={`w-5 h-5 ${isHighlight ? "text-accent" : ""}`} />
+                  <span className={`text-[10px] font-medium text-center leading-tight ${isHighlight ? "text-accent font-bold" : ""}`}>{item.label}</span>
                 </Link>
               );
             })}
