@@ -13,6 +13,8 @@ export interface TutorialStep {
   placement?: "top" | "bottom" | "left" | "right";
   /** Only show for admins */
   adminOnly?: boolean;
+  /** Only show on desktop (>= 1024px) */
+  desktopOnly?: boolean;
   /** Minimum time (ms) before user can advance to next step */
   minDelay?: number;
 }
