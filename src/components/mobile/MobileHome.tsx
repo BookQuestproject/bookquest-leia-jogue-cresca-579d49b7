@@ -180,7 +180,9 @@ const MobileHome = () => {
       </div>
 
       {/* Streak Card */}
-      <StreakCard />
+      <div data-tutorial="streak-card">
+        <StreakCard />
+      </div>
 
       {/* Ranking Progress Card */}
       {nextTier && (
