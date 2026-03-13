@@ -1,9 +1,10 @@
 import { memo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn, Menu, Library, Swords, Newspaper, MessageSquare, Sparkles, GraduationCap, HelpCircle, X } from "lucide-react";
+import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn, Menu, Library, Swords, Newspaper, MessageSquare, Sparkles, GraduationCap, HelpCircle, X, Crown, Play } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useProfile } from "@/hooks/useProfile";
+import { useActiveTrail } from "@/hooks/useActiveTrail";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 
 interface MobileNavProps {
