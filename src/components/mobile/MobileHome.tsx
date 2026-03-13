@@ -219,7 +219,7 @@ const MobileHome = () => {
       )}
 
       {/* Daily Missions */}
-      <div className="rounded-xl p-4 bg-card border border-border/60">
+      <div className="rounded-xl p-4 bg-card border border-border/60" data-tutorial="missions-card">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <EssenciaIcon size="sm" className="text-accent" />
