@@ -35,6 +35,7 @@ import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
 import AdminFounderPreview from "./pages/AdminFounderPreview";
+import AuthCallback from "./pages/AuthCallback";
 import EduDashboard from "./pages/edu/EduDashboard";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
