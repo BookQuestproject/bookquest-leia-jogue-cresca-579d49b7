@@ -71,6 +71,7 @@ const MobileHome = () => {
       {hasActiveTrail ? (
         <button
           onClick={() => navigate(`/ler/${activeTrail!.bookId}/${currentChapter?.id || 1}`)}
+          data-tutorial="current-trail"
           className="w-full rounded-2xl p-5 text-left relative overflow-hidden active:scale-[0.98] transition-transform"
           style={{
             background: `linear-gradient(145deg, hsl(${themeColor}), hsl(${themeColor} / 0.8))`,
