@@ -37,6 +37,7 @@ const MobileNav = ({
     { icon: MessageSquare, label: "Book Club", path: "/bookclub", premium: true },
     { icon: Sparkles, label: "Mentoria", path: "/mentoria", premium: true },
     { icon: GraduationCap, label: "Trilhas Acadêmicas", path: "/enem", premium: true },
+    { icon: Crown, label: "Assine Premium", path: "/premium", highlight: true },
     { icon: User, label: user ? "Perfil" : "Entrar", path: user ? "/perfil" : "/auth" },
   ];
 
