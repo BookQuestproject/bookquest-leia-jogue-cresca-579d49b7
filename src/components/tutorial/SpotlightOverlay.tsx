@@ -312,15 +312,17 @@ const SpotlightOverlay = () => {
         </div>
       </div>
 
-      {/* Agatha mascot — dynamic side with smooth animation */}
+      {/* Agatha mascot — dynamic side with smooth animation, responsive size */}
       <img
         src={agathaMascot}
         alt="Agatha, guia do tutorial"
         className="fixed bottom-0 z-[10003] pointer-events-none select-none"
         style={{
-          width: 160,
+          width: window.innerWidth < 768 ? 100 : 160,
           height: "auto",
-          left: agathaSide === "left" ? 16 : `calc(100vw - 176px)`,
+          left: agathaSide === "left"
+            ? (window.innerWidth < 768 ? 8 : 16)
+            : `calc(100vw - ${window.innerWidth < 768 ? 108 : 176}px)`,
           transform: showOverlay
             ? (agathaSide === "left" ? "translateY(0) scaleX(-1)" : "translateY(0) scaleX(1)")
             : `translateY(110%) ${agathaSide === "left" ? "scaleX(-1)" : "scaleX(1)"}`,

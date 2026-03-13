@@ -440,14 +440,15 @@ const CategoryIntro = () => {
         </div>
       </div>
 
-      {/* Agatha mascot — bottom right */}
+      {/* Agatha mascot — bottom right, responsive */}
       <img
         src={agathaMascot}
         alt="Agatha, guia do tutorial"
-        className="fixed bottom-0 right-4 z-[10003] pointer-events-none select-none"
+        className="fixed bottom-0 z-[10003] pointer-events-none select-none"
         style={{
-          width: 160,
+          width: window.innerWidth < 768 ? 100 : 160,
           height: "auto",
+          right: window.innerWidth < 768 ? 8 : 16,
           transform: showContent ? "translateY(0)" : "translateY(110%)",
           opacity: showContent ? 1 : 0,
           transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease",
