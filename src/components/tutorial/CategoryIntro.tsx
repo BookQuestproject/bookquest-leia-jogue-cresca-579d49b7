@@ -189,17 +189,19 @@ const CategoryIntro = () => {
   }, []);
 
   const computeTooltip = useCallback(() => {
-    const tooltipW = Math.min(340, window.innerWidth - 32);
     const vw = window.innerWidth;
-    const agathaPosRight = 16;
-    const agathaWidth = 160;
+    const isMobile = vw < 768;
+    const tooltipW = isMobile ? Math.min(300, vw - 24) : Math.min(340, vw - 32);
+    const agathaWidth = isMobile ? 100 : 160;
+    const agathaPosRight = isMobile ? 8 : 16;
     const agathaCenterX = vw - agathaPosRight - agathaWidth / 2;
+    const bottomOffset = isMobile ? 140 : 200;
 
     const style: React.CSSProperties = {
       position: "fixed",
       width: tooltipW,
       zIndex: 10002,
-      bottom: 200,
+      bottom: bottomOffset,
       left: Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8)),
     };
 
