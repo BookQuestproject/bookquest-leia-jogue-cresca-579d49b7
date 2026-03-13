@@ -44,7 +44,7 @@ const Auth = () => {
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: `${window.location.origin}/quiz-onboarding`,
+            redirectTo: `${window.location.origin}/auth/callback`,
             skipBrowserRedirect: true,
             queryParams: {
               prompt: 'select_account',

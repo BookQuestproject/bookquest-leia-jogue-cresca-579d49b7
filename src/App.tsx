@@ -35,6 +35,7 @@ import NotFound from "./pages/NotFound";
 import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
 import AdminFounderPreview from "./pages/AdminFounderPreview";
+import AuthCallback from "./pages/AuthCallback";
 import EduDashboard from "./pages/edu/EduDashboard";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
@@ -63,6 +64,7 @@ const App = () => (
                 <Route path="/home" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/quiz-onboarding" element={<QuizOnboarding />} />
                 <Route path="/ranking" element={<Ranking />} />
