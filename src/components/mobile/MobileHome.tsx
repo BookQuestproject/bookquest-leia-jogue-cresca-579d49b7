@@ -142,6 +142,7 @@ const MobileHome = () => {
       <div className="grid grid-cols-3 gap-2.5">
         <Link
           to="/ranking"
+          data-tutorial="ranking-card"
           className="rounded-xl p-3 bg-card border border-border/60 text-center active:scale-95 transition-transform"
         >
           <div className="flex justify-center mb-1.5">
