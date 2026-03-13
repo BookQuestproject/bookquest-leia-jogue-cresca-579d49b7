@@ -105,6 +105,7 @@ const SpotlightOverlay = () => {
       setTargetRect(newRect);
 
       // Tooltip positioned above Agatha — responsive
+      const vw = window.innerWidth;
       const isMobile = vw < 768;
       const tooltipW = isMobile ? Math.min(300, vw - 24) : 340;
       const agathaWidth = isMobile ? 100 : 160;
