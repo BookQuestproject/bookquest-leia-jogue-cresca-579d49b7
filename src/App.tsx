@@ -64,6 +64,7 @@ const App = () => (
                 <Route path="/home" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/quiz-onboarding" element={<QuizOnboarding />} />
                 <Route path="/ranking" element={<Ranking />} />
