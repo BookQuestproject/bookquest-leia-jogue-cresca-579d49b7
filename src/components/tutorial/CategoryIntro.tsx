@@ -189,17 +189,19 @@ const CategoryIntro = () => {
   }, []);
 
   const computeTooltip = useCallback(() => {
-    const tooltipW = Math.min(340, window.innerWidth - 32);
     const vw = window.innerWidth;
-    const agathaPosRight = 16;
-    const agathaWidth = 160;
+    const isMobile = vw < 768;
+    const tooltipW = isMobile ? Math.min(300, vw - 24) : Math.min(340, vw - 32);
+    const agathaWidth = isMobile ? 100 : 160;
+    const agathaPosRight = isMobile ? 8 : 16;
     const agathaCenterX = vw - agathaPosRight - agathaWidth / 2;
+    const bottomOffset = isMobile ? 140 : 200;
 
     const style: React.CSSProperties = {
       position: "fixed",
       width: tooltipW,
       zIndex: 10002,
-      bottom: 200,
+      bottom: bottomOffset,
       left: Math.max(8, Math.min(agathaCenterX - tooltipW / 2, vw - tooltipW - 8)),
     };
 
@@ -438,14 +440,15 @@ const CategoryIntro = () => {
         </div>
       </div>
 
-      {/* Agatha mascot — bottom right */}
+      {/* Agatha mascot — bottom right, responsive */}
       <img
         src={agathaMascot}
         alt="Agatha, guia do tutorial"
-        className="fixed bottom-0 right-4 z-[10003] pointer-events-none select-none"
+        className="fixed bottom-0 z-[10003] pointer-events-none select-none"
         style={{
-          width: 160,
+          width: window.innerWidth < 768 ? 100 : 160,
           height: "auto",
+          right: window.innerWidth < 768 ? 8 : 16,
           transform: showContent ? "translateY(0)" : "translateY(110%)",
           opacity: showContent ? 1 : 0,
           transition: "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease",

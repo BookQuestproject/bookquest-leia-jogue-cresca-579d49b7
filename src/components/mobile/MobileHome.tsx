@@ -42,12 +42,12 @@ const MobileHome = () => {
   return (
     <div className="px-4 pt-2 pb-6 space-y-5 animate-fade-in">
       {/* Greeting + Essência + Streak */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-tutorial="welcome-header">
         <div>
           <p className="text-muted-foreground text-xs font-medium">Olá,</p>
           <h1 className="text-xl font-serif font-bold text-foreground">{userName} 👋</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" data-tutorial="essencia-counter">
           <EssenciaCounter size="sm" />
           <button
             onClick={() => navigate("/perfil")}
@@ -71,6 +71,7 @@ const MobileHome = () => {
       {hasActiveTrail ? (
         <button
           onClick={() => navigate(`/ler/${activeTrail!.bookId}/${currentChapter?.id || 1}`)}
+          data-tutorial="current-trail"
           className="w-full rounded-2xl p-5 text-left relative overflow-hidden active:scale-[0.98] transition-transform"
           style={{
             background: `linear-gradient(145deg, hsl(${themeColor}), hsl(${themeColor} / 0.8))`,
@@ -141,6 +142,7 @@ const MobileHome = () => {
       <div className="grid grid-cols-3 gap-2.5">
         <Link
           to="/ranking"
+          data-tutorial="ranking-card"
           className="rounded-xl p-3 bg-card border border-border/60 text-center active:scale-95 transition-transform"
         >
           <div className="flex justify-center mb-1.5">
@@ -178,7 +180,9 @@ const MobileHome = () => {
       </div>
 
       {/* Streak Card */}
-      <StreakCard />
+      <div data-tutorial="streak-card">
+        <StreakCard />
+      </div>
 
       {/* Ranking Progress Card */}
       {nextTier && (
@@ -215,7 +219,7 @@ const MobileHome = () => {
       )}
 
       {/* Daily Missions */}
-      <div className="rounded-xl p-4 bg-card border border-border/60">
+      <div className="rounded-xl p-4 bg-card border border-border/60" data-tutorial="missions-card">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <EssenciaIcon size="sm" className="text-accent" />

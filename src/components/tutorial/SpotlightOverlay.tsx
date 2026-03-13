@@ -104,11 +104,13 @@ const SpotlightOverlay = () => {
       };
       setTargetRect(newRect);
 
-      // Tooltip positioned above Agatha — dynamic side
-      const tooltipW = 340;
+      // Tooltip positioned above Agatha — responsive
       const vw = window.innerWidth;
-      const agathaWidth = 160;
-      const agathaMargin = 16;
+      const isMobile = vw < 768;
+      const tooltipW = isMobile ? Math.min(300, vw - 24) : 340;
+      const agathaWidth = isMobile ? 100 : 160;
+      const agathaMargin = isMobile ? 8 : 16;
+      const bottomOffset = isMobile ? 140 : 200;
 
       let tooltipLeft: number;
       if (agathaSide === "left") {
@@ -123,7 +125,7 @@ const SpotlightOverlay = () => {
         position: "fixed",
         width: tooltipW,
         zIndex: 10002,
-        bottom: 200,
+        bottom: bottomOffset,
         left: tooltipLeft,
       };
 
@@ -311,15 +313,17 @@ const SpotlightOverlay = () => {
         </div>
       </div>
 
-      {/* Agatha mascot — dynamic side with smooth animation */}
+      {/* Agatha mascot — dynamic side with smooth animation, responsive size */}
       <img
         src={agathaMascot}
         alt="Agatha, guia do tutorial"
         className="fixed bottom-0 z-[10003] pointer-events-none select-none"
         style={{
-          width: 160,
+          width: window.innerWidth < 768 ? 100 : 160,
           height: "auto",
-          left: agathaSide === "left" ? 16 : `calc(100vw - 176px)`,
+          left: agathaSide === "left"
+            ? (window.innerWidth < 768 ? 8 : 16)
+            : `calc(100vw - ${window.innerWidth < 768 ? 108 : 176}px)`,
           transform: showOverlay
             ? (agathaSide === "left" ? "translateY(0) scaleX(-1)" : "translateY(0) scaleX(1)")
             : `translateY(110%) ${agathaSide === "left" ? "scaleX(-1)" : "scaleX(1)"}`,
