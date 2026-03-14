@@ -100,7 +100,7 @@ const Biblioteca = () => {
   const [selectedGenre, setSelectedGenre] = useState("Todos");
   const [sortBy, setSortBy] = useState("Popularidade");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newBook, setNewBook] = useState({ title: "", author: "", reason: "", externalLink: "" });
+  const [newBook, setNewBook] = useState({ title: "", author: "", reason: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [trailToRemove, setTrailToRemove] = useState<string | null>(null);
   
