@@ -255,7 +255,6 @@ const Biblioteca = () => {
           body: {
             title: newBook.title,
             author: newBook.author || undefined,
-            external_link: newBook.externalLink || undefined,
             suggestion_id: suggestionId,
           },
         });
