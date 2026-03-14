@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { title, author, external_link, suggestion_id } = await req.json();
+    const { title, author, suggestion_id } = await req.json();
 
     if (!title) {
       return new Response(
