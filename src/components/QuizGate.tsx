@@ -39,7 +39,7 @@ const QuizGate = ({ children }: QuizGateProps) => {
 
   // Logged in but hasn't completed quiz
   if (!quizCompleted) {
-    return <Navigate to="/quiz-onboarding" replace />;
+    return <Navigate to="/quiz-literario" replace />;
   }
 
   return <>{children}</>;

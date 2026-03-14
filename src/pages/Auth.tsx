@@ -125,7 +125,7 @@ const Auth = () => {
           toast({ title: 'Erro no login', description: msg, variant: 'destructive' });
         } else {
           toast({ title: 'Bem-vindo de volta!', description: 'Login realizado com sucesso' });
-          navigate('/quiz-onboarding');
+          navigate('/quiz-literario');
         }
       } else {
         const { error } = await signUp(email, password);

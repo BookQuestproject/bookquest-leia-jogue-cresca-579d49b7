@@ -135,7 +135,7 @@ const CategoryIntro = () => {
       categoryPath === "/" ||
       categoryPath === "/home" ||
       categoryPath === "/auth" ||
-      categoryPath === "/quiz-onboarding" ||
+      categoryPath === "/quiz-literario" ||
       categoryPath === "/quiz"
     ) {
       return;
