@@ -53,8 +53,8 @@ export const useSocialChallenges = () => {
       const userIds = [...new Set(items.flatMap(c => [c.challenger_id, c.challenged_id]))];
       if (userIds.length > 0) {
         const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
+          .from('profiles_public' as any)
+          .select('id, full_name, avatar_url')
           .in('id', userIds);
 
         const nameMap = new Map((profiles ?? []).map(p => [p.id, p.full_name || p.email || 'Usuário']));
