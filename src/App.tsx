@@ -62,6 +62,7 @@ const App = () => (
                 <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/home" element={<Index />} />
+                <Route path="/dashboard" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
