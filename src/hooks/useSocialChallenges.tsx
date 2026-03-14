@@ -57,7 +57,7 @@ export const useSocialChallenges = () => {
           .select('id, full_name, avatar_url')
           .in('id', userIds);
 
-        const nameMap = new Map((profiles ?? []).map(p => [p.id, p.full_name || p.email || 'Usuário']));
+        const nameMap = new Map((profiles ?? []).map((p: any) => [p.id, p.full_name || 'Usuário']));
         items.forEach(c => {
           c.challenger_name = nameMap.get(c.challenger_id) || 'Usuário';
           c.challenged_name = nameMap.get(c.challenged_id) || 'Usuário';
