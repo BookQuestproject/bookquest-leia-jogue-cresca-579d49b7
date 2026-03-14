@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && hasOAuthHash()) {
           clearHash();
-          window.location.replace('/dashboard');
+          window.location.replace('/quiz-literario');
           return;
         }
 
