@@ -101,7 +101,7 @@ export const useSocialChallenges = () => {
       .from('social_challenges')
       .insert({
         challenger_id: user.id,
-        challenged_id: (targetProfile as any).id,
+        challenged_id: targetUserId,
         challenge_type: template.type,
         title: template.title,
         description: template.description,

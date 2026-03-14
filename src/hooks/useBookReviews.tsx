@@ -44,7 +44,7 @@ export const useBookReviews = (bookId?: string) => {
         .select('id, full_name, avatar_url')
         .in('id', userIds);
 
-      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));
 
       const enriched = (data || []).map(r => ({
         ...r,

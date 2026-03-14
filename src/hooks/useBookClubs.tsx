@@ -170,7 +170,7 @@ export const useClubDetail = (clubId: string | null) => {
         .select('id, full_name, avatar_url')
         .in('id', allUserIds);
 
-      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));
 
       setDiscussions((disc || []).map(d => ({
         ...d,

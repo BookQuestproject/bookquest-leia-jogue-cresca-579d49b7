@@ -43,7 +43,7 @@ export const useRanking = () => {
         .select('id, full_name, avatar_url')
         .in('id', userIds);
 
-      const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+      const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));
 
       const rankingUsers: RankingUser[] = (data as any[]).map((d: any) => {
         const profile = profileMap.get(d.user_id);
