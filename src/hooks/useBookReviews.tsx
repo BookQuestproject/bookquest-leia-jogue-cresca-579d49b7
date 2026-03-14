@@ -48,14 +48,14 @@ export const useBookReviews = (bookId?: string) => {
 
       const enriched = (data || []).map(r => ({
         ...r,
-        profile: profileMap.get(r.user_id) || { full_name: null, avatar_url: null },
+        profile: (profileMap.get(r.user_id) as any) || { full_name: null, avatar_url: null },
       }));
 
-      setReviews(enriched);
+      setReviews(enriched as any);
 
       if (user) {
         const mine = enriched.find(r => r.user_id === user.id);
-        setUserReview(mine || null);
+        setUserReview((mine as any) || null);
       }
     } catch (err) {
       console.error('Error fetching reviews:', err);
