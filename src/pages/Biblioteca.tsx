@@ -242,8 +242,7 @@ const Biblioteca = () => {
     const suggestionId = await createSuggestion(
       newBook.title,
       newBook.author,
-      newBook.reason,
-      newBook.externalLink
+      newBook.reason
     );
     
     if (suggestionId) {
