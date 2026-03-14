@@ -194,18 +194,18 @@ export const useClasses = () => {
     
     if (userIds.length > 0) {
       const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, avatar_url')
+        .from('profiles_public' as any)
+        .select('id, full_name, avatar_url')
         .in('id', userIds);
 
       if (profiles) {
-        const profileMap = new Map(profiles.map(p => [p.id, p]));
+        const profileMap = new Map(((profiles as any[]).map((p: any) => [p.id, p])));
         members.forEach(m => {
-          const prof = profileMap.get(m.user_id);
+          const prof = profileMap.get(m.user_id) as any;
           if (prof) {
             m.profile = {
               full_name: prof.full_name,
-              email: prof.email,
+              email: null,
               avatar_url: prof.avatar_url,
             };
           }

@@ -1474,9 +1474,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      award_badge: {
+        Args: {
+          _badge_label: string
+          _badge_type: string
+          _metadata?: Json
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      find_user_by_email: { Args: { _email: string }; Returns: string }
       generate_class_code: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
       has_role: {

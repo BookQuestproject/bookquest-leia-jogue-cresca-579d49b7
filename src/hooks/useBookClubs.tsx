@@ -166,21 +166,21 @@ export const useClubDetail = (clubId: string | null) => {
       ])];
 
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public' as any)
         .select('id, full_name, avatar_url')
         .in('id', allUserIds);
 
-      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));
 
       setDiscussions((disc || []).map(d => ({
         ...d,
-        profile: profileMap.get(d.user_id) || { full_name: null, avatar_url: null },
-      })));
+        profile: (profileMap.get(d.user_id) as any) || { full_name: null, avatar_url: null },
+      })) as any);
 
       setMembers((mems || []).map(m => ({
         ...m,
-        profile: profileMap.get(m.user_id) || { full_name: null, avatar_url: null },
-      })));
+        profile: (profileMap.get(m.user_id) as any) || { full_name: null, avatar_url: null },
+      })) as any);
     } catch (err) {
       console.error('Error fetching club detail:', err);
     } finally {

@@ -40,22 +40,22 @@ export const useBookReviews = (bookId?: string) => {
       // Fetch profiles for each review
       const userIds = [...new Set((data || []).map(r => r.user_id))];
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public' as any)
         .select('id, full_name, avatar_url')
         .in('id', userIds);
 
-      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));
 
       const enriched = (data || []).map(r => ({
         ...r,
-        profile: profileMap.get(r.user_id) || { full_name: null, avatar_url: null },
+        profile: (profileMap.get(r.user_id) as any) || { full_name: null, avatar_url: null },
       }));
 
-      setReviews(enriched);
+      setReviews(enriched as any);
 
       if (user) {
         const mine = enriched.find(r => r.user_id === user.id);
-        setUserReview(mine || null);
+        setUserReview((mine as any) || null);
       }
     } catch (err) {
       console.error('Error fetching reviews:', err);

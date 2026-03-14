@@ -133,10 +133,10 @@ export const useCommunityDetail = (communityId: string | null) => {
 
       // Fetch profiles
       const { data: profiles } = allUserIds.length > 0
-        ? await supabase.from('profiles').select('id, full_name, avatar_url').in('id', allUserIds)
+        ? await supabase.from('profiles_public' as any).select('id, full_name, avatar_url').in('id', allUserIds)
         : { data: [] };
 
-      const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+      const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));
 
       // Fetch user likes
       let userLikes = new Set<string>();

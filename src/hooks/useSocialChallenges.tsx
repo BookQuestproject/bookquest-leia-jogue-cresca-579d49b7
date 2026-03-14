@@ -53,11 +53,11 @@ export const useSocialChallenges = () => {
       const userIds = [...new Set(items.flatMap(c => [c.challenger_id, c.challenged_id]))];
       if (userIds.length > 0) {
         const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
+          .from('profiles_public' as any)
+          .select('id, full_name, avatar_url')
           .in('id', userIds);
 
-        const nameMap = new Map((profiles ?? []).map(p => [p.id, p.full_name || p.email || 'Usuário']));
+        const nameMap = new Map((profiles ?? []).map((p: any) => [p.id, p.full_name || 'Usuário']));
         items.forEach(c => {
           c.challenger_name = nameMap.get(c.challenger_id) || 'Usuário';
           c.challenged_name = nameMap.get(c.challenged_id) || 'Usuário';
@@ -80,19 +80,16 @@ export const useSocialChallenges = () => {
     const template = CHALLENGE_TEMPLATES.find(t => t.type === templateType);
     if (!template) return false;
 
-    // Find user by email
-    const { data: targetProfile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', challengedEmail)
-      .maybeSingle();
+    // Find user by email using secure server-side function
+    const { data: targetUserId } = await supabase
+      .rpc('find_user_by_email', { _email: challengedEmail });
 
-    if (!targetProfile) {
+    if (!targetUserId) {
       toast({ title: 'Usuário não encontrado', description: 'Verifique o email informado.', variant: 'destructive' });
       return false;
     }
 
-    if ((targetProfile as any).id === user.id) {
+    if (targetUserId === user.id) {
       toast({ title: 'Ops!', description: 'Você não pode desafiar a si mesmo.', variant: 'destructive' });
       return false;
     }
@@ -104,7 +101,7 @@ export const useSocialChallenges = () => {
       .from('social_challenges')
       .insert({
         challenger_id: user.id,
-        challenged_id: (targetProfile as any).id,
+        challenged_id: targetUserId,
         challenge_type: template.type,
         title: template.title,
         description: template.description,
