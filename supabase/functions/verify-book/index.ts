@@ -194,8 +194,9 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
           detailed_description: bookInfo.detailed_description,
           publication_year: bookInfo.publication_year,
           content_warnings: bookInfo.content_warnings,
+          chapters: bookInfo.chapters || [],
         }),
-        // Also store in chapters_list for backward compatibility
+        // Store chapter names and metadata for trail building
         chapters_list: JSON.stringify({
           verified: true,
           correct_title: bookInfo.correct_title,
@@ -206,8 +207,9 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
           cover_url: bookInfo.cover_url,
           description: bookInfo.description,
           detailed_description: bookInfo.detailed_description,
+          chapters: bookInfo.chapters || [],
         }),
-        admin_notes: `✅ Verificado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'}`,
+        admin_notes: `✅ Verificado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'} | Capítulos: ${(bookInfo.chapters || []).length}`,
       };
 
       // Update title and author with corrected versions
