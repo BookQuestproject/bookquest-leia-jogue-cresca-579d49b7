@@ -1,119 +1,62 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-
-type AuthWithSessionFromUrl = typeof supabase.auth & {
-  getSessionFromUrl?: (options?: { storeSession?: boolean }) => Promise<{
-    data?: { session: Session | null };
-    error?: Error | null;
-  }>;
-};
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const handledRef = useRef(false);
 
   useEffect(() => {
-    if (handledRef.current) return;
-    handledRef.current = true;
-
-    let timeoutId: number | undefined;
-    let unsubscribe: (() => void) | undefined;
-
-    const extractTokensFromHash = () => {
-      const hash = window.location.hash.startsWith("#")
-        ? window.location.hash.slice(1)
-        : window.location.hash;
-      const params = new URLSearchParams(hash);
-
-      return {
-        accessToken: params.get("access_token"),
-        refreshToken: params.get("refresh_token"),
-      };
-    };
-
-    const clearAuthHash = () => {
-      if (!window.location.hash) return;
-      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
-    };
-
-    const redirectWithSession = (session: Session | null) => {
-      if (!session) return false;
-      clearAuthHash();
-      navigate("/quiz-onboarding", { replace: true });
-      return true;
-    };
-
-    const handleCallback = async () => {
+    const processOAuthCallback = async () => {
       try {
-        const authClient = supabase.auth as AuthWithSessionFromUrl;
+        const hash = window.location.hash.startsWith("#")
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+        const params = new URLSearchParams(hash);
 
-        if (typeof authClient.getSessionFromUrl === "function") {
-          const { data, error } = await authClient.getSessionFromUrl({ storeSession: true });
-          if (error) {
-            console.error("Auth callback getSessionFromUrl error:", error);
-          }
-          if (redirectWithSession(data?.session ?? null)) {
-            return;
-          }
-        }
+        const accessToken = params.get("access_token");
+        const refreshToken = params.get("refresh_token");
+        const authError = params.get("error");
 
-        const {
-          data: { session: existingSession },
-          error: existingSessionError,
-        } = await supabase.auth.getSession();
-
-        if (existingSessionError) {
-          console.error("Auth callback getSession error:", existingSessionError);
-        }
-
-        if (redirectWithSession(existingSession)) {
+        if (authError) {
+          console.error("Auth callback OAuth error:", authError);
+          navigate("/auth", { replace: true });
           return;
         }
 
-        const { accessToken, refreshToken } = extractTokensFromHash();
+        if (!accessToken || !refreshToken) {
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
 
-        if (accessToken && refreshToken) {
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-
-          if (error) {
-            console.error("Auth callback setSession error:", error);
-          }
-
-          if (redirectWithSession(data.session)) {
+          if (session) {
+            navigate("/dashboard", { replace: true });
             return;
           }
+
+          navigate("/auth", { replace: true });
+          return;
         }
 
-        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-          if (redirectWithSession(session)) {
-            unsubscribe?.();
-            if (timeoutId) window.clearTimeout(timeoutId);
-          }
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
         });
 
-        unsubscribe = () => data.subscription.unsubscribe();
-
-        timeoutId = window.setTimeout(() => {
-          unsubscribe?.();
+        if (error || !data.session) {
+          console.error("Auth callback setSession error:", error);
           navigate("/auth", { replace: true });
-        }, 5000);
+          return;
+        }
+
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+        navigate("/dashboard", { replace: true });
       } catch (err) {
         console.error("Auth callback exception:", err);
         navigate("/auth", { replace: true });
       }
     };
 
-    handleCallback();
-
-    return () => {
-      if (timeoutId) window.clearTimeout(timeoutId);
-      unsubscribe?.();
-    };
+    processOAuthCallback();
   }, [navigate]);
 
   return (
