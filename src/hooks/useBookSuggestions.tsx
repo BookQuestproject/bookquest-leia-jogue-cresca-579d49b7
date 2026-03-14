@@ -62,8 +62,7 @@ export const useBookSuggestions = () => {
   const createSuggestion = async (
     title: string,
     author: string,
-    reason?: string,
-    externalLink?: string
+    reason?: string
   ): Promise<string | false> => {
     if (!user) {
       toast.error("Você precisa estar logado para sugerir um livro");
@@ -78,9 +77,6 @@ export const useBookSuggestions = () => {
         reason: reason?.trim() || null,
         status: "pending",
       };
-      if (externalLink?.trim()) {
-        insertData.external_link = externalLink.trim();
-      }
 
       const { data, error } = await supabase
         .from("book_suggestions")
