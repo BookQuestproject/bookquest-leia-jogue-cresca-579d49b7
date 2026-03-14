@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (session && hasOAuthHash()) {
         clearHash();
-        window.location.replace('/dashboard');
+        window.location.replace('/quiz-literario');
         return;
       }
 
