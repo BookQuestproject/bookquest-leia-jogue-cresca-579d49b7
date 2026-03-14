@@ -40,7 +40,7 @@ export const useBookReviews = (bookId?: string) => {
       // Fetch profiles for each review
       const userIds = [...new Set((data || []).map(r => r.user_id))];
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public' as any)
         .select('id, full_name, avatar_url')
         .in('id', userIds);
 

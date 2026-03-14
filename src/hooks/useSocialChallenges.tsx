@@ -80,19 +80,16 @@ export const useSocialChallenges = () => {
     const template = CHALLENGE_TEMPLATES.find(t => t.type === templateType);
     if (!template) return false;
 
-    // Find user by email
-    const { data: targetProfile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', challengedEmail)
-      .maybeSingle();
+    // Find user by email using secure server-side function
+    const { data: targetUserId } = await supabase
+      .rpc('find_user_by_email', { _email: challengedEmail });
 
-    if (!targetProfile) {
+    if (!targetUserId) {
       toast({ title: 'Usuário não encontrado', description: 'Verifique o email informado.', variant: 'destructive' });
       return false;
     }
 
-    if ((targetProfile as any).id === user.id) {
+    if (targetUserId === user.id) {
       toast({ title: 'Ops!', description: 'Você não pode desafiar a si mesmo.', variant: 'destructive' });
       return false;
     }

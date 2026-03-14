@@ -39,7 +39,7 @@ export const useRanking = () => {
       }
 
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public' as any)
         .select('id, full_name, avatar_url')
         .in('id', userIds);
 

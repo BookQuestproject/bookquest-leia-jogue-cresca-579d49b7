@@ -166,7 +166,7 @@ export const useClubDetail = (clubId: string | null) => {
       ])];
 
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('profiles_public' as any)
         .select('id, full_name, avatar_url')
         .in('id', allUserIds);
 

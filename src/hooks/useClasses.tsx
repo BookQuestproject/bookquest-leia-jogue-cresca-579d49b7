@@ -194,8 +194,8 @@ export const useClasses = () => {
     
     if (userIds.length > 0) {
       const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, avatar_url')
+        .from('profiles_public' as any)
+        .select('id, full_name, avatar_url')
         .in('id', userIds);
 
       if (profiles) {
