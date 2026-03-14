@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { title, author, external_link, suggestion_id } = await req.json();
+    const { title, author, suggestion_id } = await req.json();
 
     if (!title) {
       return new Response(
@@ -28,17 +28,15 @@ Deno.serve(async (req) => {
 
     console.log(`Verifying book: "${title}" by ${author || 'unknown'}`);
 
-    // Spam/content detection prompt
     const prompt = `You are an expert book verification and cataloging assistant. Analyze the following book suggestion and provide a comprehensive verification.
 
 Book title: "${title}"
 ${author ? `Author: "${author}"` : 'Author: not provided'}
-${external_link ? `Reference link: "${external_link}"` : ''}
 
 TASKS:
 1. SPAM CHECK: Determine if this is a legitimate book suggestion or spam/inappropriate content.
 2. EXISTENCE CHECK: Verify if this is a real, published book.
-3. DATA EXTRACTION: If the book exists, extract comprehensive metadata.
+3. DATA EXTRACTION: If the book exists, extract comprehensive metadata INCLUDING the full list of chapter names.
 
 RESPOND WITH A JSON OBJECT:
 
@@ -71,6 +69,7 @@ If the book EXISTS, respond with:
   "cover_url": "a real Amazon or Open Library cover image URL, or null if unknown",
   "book_summary": "brief editorial summary in Portuguese (2-3 sentences)",
   "narrative_context": "historical/literary context in Portuguese (2-3 sentences)",
+  "chapters": ["Chapter 1 title", "Chapter 2 title", "...all chapter titles in original language or Portuguese translation"],
   "content_warnings": ["list of content warnings if any, in Portuguese"],
   "is_appropriate": true or false (false if contains extremely inappropriate content for a literary platform)
 }
@@ -81,6 +80,7 @@ IMPORTANT:
 - Correct any typos in the title and author name
 - The genre MUST be one from the provided list
 - Be strict about existence verification - only confirm books that are definitely real published works
+- For chapters: list ALL real chapter titles from the book. If the book uses numbered chapters without titles, use "Capítulo 1", "Capítulo 2", etc. This is critical for building reading trails.
 
 Respond ONLY with valid JSON, no markdown or extra text.`;
 
@@ -194,8 +194,9 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
           detailed_description: bookInfo.detailed_description,
           publication_year: bookInfo.publication_year,
           content_warnings: bookInfo.content_warnings,
+          chapters: bookInfo.chapters || [],
         }),
-        // Also store in chapters_list for backward compatibility
+        // Store chapter names and metadata for trail building
         chapters_list: JSON.stringify({
           verified: true,
           correct_title: bookInfo.correct_title,
@@ -206,8 +207,9 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
           cover_url: bookInfo.cover_url,
           description: bookInfo.description,
           detailed_description: bookInfo.detailed_description,
+          chapters: bookInfo.chapters || [],
         }),
-        admin_notes: `✅ Verificado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'}`,
+        admin_notes: `✅ Verificado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'} | Capítulos: ${(bookInfo.chapters || []).length}`,
       };
 
       // Update title and author with corrected versions

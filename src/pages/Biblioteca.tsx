@@ -100,7 +100,7 @@ const Biblioteca = () => {
   const [selectedGenre, setSelectedGenre] = useState("Todos");
   const [sortBy, setSortBy] = useState("Popularidade");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newBook, setNewBook] = useState({ title: "", author: "", reason: "", externalLink: "" });
+  const [newBook, setNewBook] = useState({ title: "", author: "", reason: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [trailToRemove, setTrailToRemove] = useState<string | null>(null);
   
@@ -231,10 +231,6 @@ const Biblioteca = () => {
       toast.error("Preencha o autor do livro");
       return;
     }
-    if (!newBook.externalLink.trim()) {
-      toast.error("Preencha o link de referência");
-      return;
-    }
 
     if (duplicateBook) {
       toast.error(`"${duplicateBook.title}" já está disponível na biblioteca!`);
@@ -246,8 +242,7 @@ const Biblioteca = () => {
     const suggestionId = await createSuggestion(
       newBook.title,
       newBook.author,
-      newBook.reason,
-      newBook.externalLink
+      newBook.reason
     );
     
     if (suggestionId) {
@@ -260,7 +255,6 @@ const Biblioteca = () => {
           body: {
             title: newBook.title,
             author: newBook.author || undefined,
-            external_link: newBook.externalLink || undefined,
             suggestion_id: suggestionId,
           },
         });
@@ -295,7 +289,7 @@ const Biblioteca = () => {
         toast.info("Sugestão enviada! A verificação será feita manualmente.");
       }
 
-      setNewBook({ title: "", author: "", reason: "", externalLink: "" });
+      setNewBook({ title: "", author: "", reason: "" });
       setShowAddModal(false);
     }
     setIsSubmitting(false);
@@ -532,18 +526,8 @@ const Biblioteca = () => {
                 />
               </div>
 
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Link de referência <span className="text-destructive">*</span>
-                 </label>
-                 <Input
-                   placeholder="https://amazon.com.br/... ou link da editora"
-                   required
-                  value={newBook.externalLink}
-                  onChange={(e) => setNewBook({ ...newBook, externalLink: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground mt-1">Amazon, Skoob, editora, etc.</p>
-              </div>
+
+
 
               {duplicateBook && (
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
