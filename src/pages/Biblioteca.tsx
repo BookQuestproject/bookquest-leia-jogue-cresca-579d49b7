@@ -289,7 +289,7 @@ const Biblioteca = () => {
         toast.info("Sugestão enviada! A verificação será feita manualmente.");
       }
 
-      setNewBook({ title: "", author: "", reason: "", externalLink: "" });
+      setNewBook({ title: "", author: "", reason: "" });
       setShowAddModal(false);
     }
     setIsSubmitting(false);
