@@ -526,18 +526,8 @@ const Biblioteca = () => {
                 />
               </div>
 
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Link de referência <span className="text-destructive">*</span>
-                 </label>
-                 <Input
-                   placeholder="https://amazon.com.br/... ou link da editora"
-                   required
-                  value={newBook.externalLink}
-                  onChange={(e) => setNewBook({ ...newBook, externalLink: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground mt-1">Amazon, Skoob, editora, etc.</p>
-              </div>
+
+
 
               {duplicateBook && (
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
