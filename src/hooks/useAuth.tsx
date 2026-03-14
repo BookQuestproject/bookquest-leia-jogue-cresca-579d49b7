@@ -19,11 +19,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const hasOAuthHash = () => {
+      const rawHash = window.location.hash.startsWith('#')
+        ? window.location.hash.slice(1)
+        : window.location.hash;
+
+      if (!rawHash) return false;
+
+      const params = new URLSearchParams(rawHash);
+      const isRecoveryFlow = params.get('type') === 'recovery';
+      if (isRecoveryFlow) return false;
+
+      return Boolean(params.get('access_token') && params.get('refresh_token'));
+    };
+
+    const clearHash = () => {
+      if (!window.location.hash) return;
+      window.history.replaceState(
+        null,
+        '',
+        `${window.location.pathname}${window.location.search}`
+      );
+    };
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+
+        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && hasOAuthHash()) {
+          clearHash();
+          window.location.replace('/dashboard');
+          return;
+        }
+
         setLoading(false);
       }
     );
@@ -32,6 +62,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+
+      if (session && hasOAuthHash()) {
+        clearHash();
+        window.location.replace('/dashboard');
+        return;
+      }
+
       setLoading(false);
     });
 
