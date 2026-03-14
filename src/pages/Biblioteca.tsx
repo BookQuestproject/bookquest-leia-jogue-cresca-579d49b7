@@ -231,10 +231,6 @@ const Biblioteca = () => {
       toast.error("Preencha o autor do livro");
       return;
     }
-    if (!newBook.externalLink.trim()) {
-      toast.error("Preencha o link de referência");
-      return;
-    }
 
     if (duplicateBook) {
       toast.error(`"${duplicateBook.title}" já está disponível na biblioteca!`);
