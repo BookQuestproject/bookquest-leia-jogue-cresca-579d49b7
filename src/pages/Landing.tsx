@@ -14,7 +14,7 @@ const Landing = () => {
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const handleStart = () => {
-    navigate(user ? "/quiz-onboarding" : "/auth");
+    navigate(user ? "/quiz-literario" : "/auth");
   };
 
   useEffect(() => {
