@@ -87,7 +87,7 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    if (!loading && user) navigate('/quiz-onboarding');
+    if (!loading && user) navigate('/quiz-literario');
   }, [user, loading, navigate]);
 
   const validateForm = () => {
