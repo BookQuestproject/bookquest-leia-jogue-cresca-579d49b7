@@ -359,6 +359,51 @@ export type Database = {
         }
         Relationships: []
       }
+      book_trail_enrichments: {
+        Row: {
+          author: string
+          book_id: string
+          chapters: Json
+          cover_url: string | null
+          created_at: string
+          genre: string | null
+          id: string
+          source: string
+          theme_color: string | null
+          title: string
+          total_pages: number | null
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          book_id: string
+          chapters?: Json
+          cover_url?: string | null
+          created_at?: string
+          genre?: string | null
+          id?: string
+          source?: string
+          theme_color?: string | null
+          title: string
+          total_pages?: number | null
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          book_id?: string
+          chapters?: Json
+          cover_url?: string | null
+          created_at?: string
+          genre?: string | null
+          id?: string
+          source?: string
+          theme_color?: string | null
+          title?: string
+          total_pages?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       class_chapter_discussions: {
         Row: {
           chapter_number: number
