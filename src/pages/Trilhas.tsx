@@ -1,8 +1,10 @@
-import { useState, useMemo, memo } from "react";
+import { useState, useMemo, memo, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin, Award, X } from "lucide-react";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useMyTrails } from "@/hooks/useMyTrails";
+import { useEnrichedChapters } from "@/hooks/useEnrichedChapters";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -641,6 +643,7 @@ const Trilhas = () => {
   const navigate = useNavigate();
   const { activeTrail, setActiveTrail } = useActiveTrail();
   const { isInMyTrails, removeTrail } = useMyTrails();
+  const { enrichments, getEnrichment } = useEnrichedChapters();
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -648,7 +651,106 @@ const Trilhas = () => {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const [trailToRemove, setTrailToRemove] = useState<{ title: string; isQuiz: boolean } | null>(null);
+  const [dynamicTrails, setDynamicTrails] = useState<BookTrail[]>([]);
   const isPremium = false;
+
+  // Fetch approved book suggestions as dynamic trails
+  useEffect(() => {
+    const fetchApprovedTrails = async () => {
+      const { data, error } = await supabase
+        .from('book_suggestions')
+        .select('*')
+        .eq('status', 'approved');
+
+      if (error || !data) return;
+
+      const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const trails: BookTrail[] = data
+        .filter(s => {
+          // Skip if already in static bookTrails
+          return !bookTrails.some(b => normalise(b.title) === normalise(s.title));
+        })
+        .map(s => {
+          let chaptersData: any[] = [];
+          let meta: any = {};
+          
+          // Parse chapters_list
+          try {
+            const raw = typeof s.chapters_list === 'string' ? JSON.parse(s.chapters_list) : s.chapters_list;
+            if (raw?.chapters) chaptersData = raw.chapters;
+            meta = raw || {};
+          } catch {}
+
+          // Also check ai_verification_data for chapters
+          if (chaptersData.length === 0) {
+            try {
+              const aiData = typeof s.ai_verification_data === 'string' ? JSON.parse(s.ai_verification_data) : s.ai_verification_data;
+              if (aiData?.chapters) chaptersData = aiData.chapters;
+            } catch {}
+          }
+
+          const icons = ["📖", "📝", "🔍", "💡", "🌟", "📚", "🎯", "🏆", "🔑", "🌙", "⚡", "🎭", "🗺️", "💎", "🌊"];
+          const chapters: Chapter[] = chaptersData.length > 0
+            ? chaptersData.map((ch: any, i: number) => ({
+                id: i + 1,
+                title: ch.title || ch || `Capítulo ${i + 1}`,
+                status: (i === 0 ? "current" : "locked") as "completed" | "current" | "locked",
+                icon: ch.icon || icons[i % icons.length],
+                totalPages: Math.ceil((meta.pages || 200) / chaptersData.length),
+              }))
+            : generateChapters(meta.pages || 200);
+
+          const bookId = normalise(s.title).replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+          return {
+            id: `suggestion-${bookId}`,
+            title: meta.correct_title || s.title,
+            author: meta.correct_author || s.author || "Autor desconhecido",
+            cover: "📗",
+            coverImage: s.cover_url || meta.cover_url || undefined,
+            totalChapters: chapters.length,
+            chapters,
+            isPremium: false,
+            genre: s.genre || meta.genre || "Outros",
+            themeColor: "200 40% 35%",
+          };
+        });
+
+      setDynamicTrails(trails);
+    };
+
+    fetchApprovedTrails();
+  }, []);
+
+  // Merge enriched chapters into static bookTrails
+  const allTrails = useMemo(() => {
+    const enrichedStatic = bookTrails.map(trail => {
+      const enrichment = getEnrichment(trail.id);
+      if (!enrichment || enrichment.chapters.length === 0) return trail;
+
+      // Merge: keep first few manually curated chapters' questions but use enriched titles
+      const enrichedChapters: Chapter[] = enrichment.chapters.map((eCh, i) => {
+        const existingChapter = trail.chapters[i];
+        return {
+          id: eCh.id || i + 1,
+          title: eCh.title,
+          status: existingChapter?.status || (i === 0 ? "current" : "locked") as "completed" | "current" | "locked",
+          icon: eCh.icon || existingChapter?.icon || "📖",
+          currentPage: existingChapter?.currentPage,
+          totalPages: existingChapter?.totalPages || Math.ceil((enrichment.total_pages || 300) / enrichment.chapters.length),
+          question: existingChapter?.question,
+        };
+      });
+
+      return {
+        ...trail,
+        totalChapters: enrichedChapters.length,
+        chapters: enrichedChapters,
+      };
+    });
+
+    return [...enrichedStatic, ...dynamicTrails];
+  }, [enrichments, dynamicTrails, getEnrichment]);
 
   // Quiz recommendations (reactive via state)
   const [quizRecommendations, setQuizRecommendations] = useState<string[]>(() => {
@@ -667,10 +769,10 @@ const Trilhas = () => {
 
   // Filter trails: only show user-selected + quiz-recommended, with quiz first
   const filteredTrails = useMemo(() => {
-    const userSelected = bookTrails.filter(b => isInMyTrails(b.title));
-    const quizOnly = bookTrails.filter(b => isQuizRecommended(b.title) && !isInMyTrails(b.title));
+    const userSelected = allTrails.filter(b => isInMyTrails(b.title));
+    const quizOnly = allTrails.filter(b => isQuizRecommended(b.title) && !isInMyTrails(b.title));
     return [...quizOnly, ...userSelected];
-  }, [isInMyTrails, quizRecommendations]);
+  }, [isInMyTrails, quizRecommendations, allTrails]);
 
   
 
@@ -695,7 +797,7 @@ const Trilhas = () => {
 
   // Book detail view
   if (bookId) {
-    const book = bookTrails.find(b => b.id === bookId);
+    const book = allTrails.find(b => b.id === bookId);
     
     if (!book) {
       return (
