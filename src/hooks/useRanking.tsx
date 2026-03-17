@@ -25,7 +25,7 @@ export const useRanking = () => {
     try {
       const { data, error } = await supabase
         .from('user_xp' as any)
-        .select('user_id, xp, streak')
+        .select('user_id, xp, streak, assigned_tier, week_xp')
         .order('xp', { ascending: false });
 
       if (error) throw error;
