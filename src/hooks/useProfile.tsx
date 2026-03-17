@@ -86,10 +86,11 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     if (!user) return;
 
     try {
-      const payload = {
+      const payload: any = {
         id: user.id,
         email: user.email ?? null,
-        full_name: user.user_metadata?.full_name ?? null,
+        full_name: literaryProfile?.name || user.user_metadata?.full_name || null,
+        username: literaryProfile?.username || null,
         quiz_completed: true,
         literary_profile: literaryProfile,
       };
