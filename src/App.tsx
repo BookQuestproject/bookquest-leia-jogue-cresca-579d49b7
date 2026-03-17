@@ -103,6 +103,7 @@ const App = () => (
         </TooltipProvider>
       </ProfileProvider>
     </AuthProvider>
+    <Analytics />
   </QueryClientProvider>
 );
 
