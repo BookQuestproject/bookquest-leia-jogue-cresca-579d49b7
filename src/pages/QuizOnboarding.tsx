@@ -391,6 +391,7 @@ const QuizOnboarding = () => {
     
     const literaryProfile = {
       name: profile.name,
+      username: profile.username,
       ageRange: profile.ageRange,
       level: profile.level,
       timePerDay: profile.timePerDay,
