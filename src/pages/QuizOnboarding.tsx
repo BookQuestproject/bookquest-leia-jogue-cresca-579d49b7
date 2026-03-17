@@ -13,6 +13,7 @@ import EssenciaIcon from "@/components/EssenciaIcon";
 
 interface ReaderProfile {
   name: string;
+  username: string;
   ageRange: "10-13" | "14-17" | "18-25" | "26+";
   level: "iniciante" | "intermediario" | "avancado";
   timePerDay: number;
