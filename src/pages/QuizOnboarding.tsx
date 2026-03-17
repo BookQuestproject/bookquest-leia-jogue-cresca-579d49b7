@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Lightbulb, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
