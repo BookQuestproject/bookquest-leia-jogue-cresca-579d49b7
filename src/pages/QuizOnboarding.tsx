@@ -421,24 +421,86 @@ const QuizOnboarding = () => {
     }
   };
 
+  const validateUsername = (value: string) => {
+    const sanitized = value.toLowerCase().replace(/[^a-z0-9._]/g, "");
+    return sanitized;
+  };
+
+  const checkUsernameAvailability = async (username: string) => {
+    if (!username || username.length < 3) {
+      setUsernameError("O nome de usuário deve ter pelo menos 3 caracteres");
+      return false;
+    }
+    if (username.length > 20) {
+      setUsernameError("Máximo de 20 caracteres");
+      return false;
+    }
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("username", username)
+      .maybeSingle();
+    if (data) {
+      setUsernameError("Este nome de usuário já está em uso");
+      return false;
+    }
+    setUsernameError("");
+    return true;
+  };
+
+  const handleNameNext = async () => {
+    if (!profile.name.trim()) return;
+    if (!profile.username.trim()) {
+      setUsernameError("Escolha um nome de usuário");
+      return;
+    }
+    const available = await checkUsernameAvailability(profile.username);
+    if (available) {
+      setStep("age");
+    }
+  };
+
   // Step: Name
   const renderNameStep = () => (
     <div className="max-w-md w-full">
       <div className="text-center mb-8">
         <img src={logoCrown} alt="BookQuest" className="w-20 h-20 object-contain mx-auto mb-6 drop-shadow-lg" />
         <h1 className="text-3xl font-serif font-bold mb-2">Vamos começar!</h1>
-        <p className="text-muted-foreground">Primeiro, como você quer ser chamado?</p>
+        <p className="text-muted-foreground">Como você quer ser chamado?</p>
       </div>
 
-      <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-8">
-        <Input
-          placeholder="Digite seu nome..."
-          value={profile.name}
-          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-          className="text-lg bg-foreground/[0.06] border-foreground/[0.1] text-foreground placeholder:text-muted-foreground focus-visible:ring-accent mb-6"
-        />
+      <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.04] backdrop-blur-sm p-8 space-y-4">
+        <div>
+          <label className="text-sm font-medium text-foreground/80 mb-1.5 block">Nome de exibição</label>
+          <Input
+            placeholder="Seu nome..."
+            value={profile.name}
+            onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+            className="text-lg bg-foreground/[0.06] border-foreground/[0.1] text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+          />
+        </div>
 
-        <div className="flex items-center justify-between">
+        <div>
+          <label className="text-sm font-medium text-foreground/80 mb-1.5 block">Nome de usuário</label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">@</span>
+            <Input
+              placeholder="seunome"
+              value={profile.username}
+              onChange={(e) => {
+                const sanitized = validateUsername(e.target.value);
+                setProfile({ ...profile, username: sanitized });
+                setUsernameError("");
+              }}
+              className="pl-8 text-lg bg-foreground/[0.06] border-foreground/[0.1] text-foreground placeholder:text-muted-foreground focus-visible:ring-accent"
+              maxLength={20}
+            />
+          </div>
+          {usernameError && <p className="text-sm text-destructive mt-1">{usernameError}</p>}
+          <p className="text-xs text-muted-foreground/60 mt-1">Letras minúsculas, números, pontos e underlines. Único para você.</p>
+        </div>
+
+        <div className="flex items-center justify-between pt-2">
           <button
             onClick={handleSkipQuiz}
             disabled={isSaving}
@@ -448,8 +510,8 @@ const QuizOnboarding = () => {
           </button>
           <Button
             className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
-            onClick={() => profile.name.trim() && setStep("age")}
-            disabled={!profile.name.trim()}
+            onClick={handleNameNext}
+            disabled={!profile.name.trim() || !profile.username.trim()}
           >
             Próxima
             <ArrowRight className="w-4 h-4" />
