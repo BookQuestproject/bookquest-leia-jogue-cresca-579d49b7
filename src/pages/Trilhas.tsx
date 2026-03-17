@@ -797,7 +797,7 @@ const Trilhas = () => {
 
   // Book detail view
   if (bookId) {
-    const book = bookTrails.find(b => b.id === bookId);
+    const book = allTrails.find(b => b.id === bookId);
     
     if (!book) {
       return (
