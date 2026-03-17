@@ -254,10 +254,12 @@ const QuizOnboarding = () => {
   const [step, setStep] = useState<QuizStep>("name");
   const [profile, setProfile] = useState<ReaderProfile>({
     name: "",
+    username: "",
     ageRange: "14-17",
     level: "iniciante",
     timePerDay: 20,
   });
+  const [usernameError, setUsernameError] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [curiosityIndex, setCuriosityIndex] = useState(0);
