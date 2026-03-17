@@ -1146,6 +1146,7 @@ export type Database = {
           quiz_completed: boolean | null
           referral_code: string | null
           updated_at: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -1159,6 +1160,7 @@ export type Database = {
           quiz_completed?: boolean | null
           referral_code?: string | null
           updated_at?: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -1172,6 +1174,7 @@ export type Database = {
           quiz_completed?: boolean | null
           referral_code?: string | null
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -1447,27 +1450,36 @@ export type Database = {
       }
       user_xp: {
         Row: {
+          assigned_tier: string
           created_at: string
           id: string
+          last_week_reset: string | null
           streak: number
           updated_at: string
           user_id: string
+          week_xp: number
           xp: number
         }
         Insert: {
+          assigned_tier?: string
           created_at?: string
           id?: string
+          last_week_reset?: string | null
           streak?: number
           updated_at?: string
           user_id: string
+          week_xp?: number
           xp?: number
         }
         Update: {
+          assigned_tier?: string
           created_at?: string
           id?: string
+          last_week_reset?: string | null
           streak?: number
           updated_at?: string
           user_id?: string
+          week_xp?: number
           xp?: number
         }
         Relationships: []
