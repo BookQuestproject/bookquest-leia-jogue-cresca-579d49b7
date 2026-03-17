@@ -1,13 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Shield, HelpCircle, GripVertical, X, Eye, Flame } from "lucide-react";
+import { Shield, HelpCircle, GripVertical, X, Eye, Flame, Trophy } from "lucide-react";
 import StreakAnimationPreview from "@/components/admin/StreakAnimationPreview";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const FloatingAdminWidget = () => {
   const [position, setPosition] = useState({ x: 20, y: window.innerHeight - 160 });
   const [isDragging, setIsDragging] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [showStreakPreview, setShowStreakPreview] = useState(false);
+  const [promotingRanking, setPromotingRanking] = useState(false);
+  const { toast } = useToast();
   const dragOffset = useRef({ x: 0, y: 0 });
   const widgetRef = useRef<HTMLDivElement>(null);
 
@@ -118,6 +122,25 @@ const FloatingAdminWidget = () => {
         >
           <Flame className="w-4 h-4 text-accent" />
           Preview Streak
+        </button>
+        <button
+          onClick={async () => {
+            setPromotingRanking(true);
+            try {
+              const { data, error } = await supabase.functions.invoke('weekly-ranking-promotion');
+              if (error) throw error;
+              toast({ title: '✅ Ranking processado!', description: `${data.promotions} promoções, ${data.demotions} rebaixamentos` });
+            } catch (err: any) {
+              toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+            } finally {
+              setPromotingRanking(false);
+            }
+          }}
+          disabled={promotingRanking}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors w-full text-left"
+        >
+          <Trophy className="w-4 h-4 text-accent" />
+          {promotingRanking ? 'Processando...' : 'Processar Ranking Semanal'}
         </button>
       </div>
 

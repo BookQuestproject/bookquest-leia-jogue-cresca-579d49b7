@@ -130,10 +130,17 @@ const Auth = () => {
       } else {
         const { error } = await signUp(email, password);
         if (error) {
-          const message = error.message.includes('User already registered')
-            ? 'Este email já está cadastrado. Volte ao login para acessar.'
-            : 'Erro ao criar conta';
-          toast({ title: 'Erro', description: message, variant: 'destructive' });
+          let message = 'Erro ao criar conta. Tente novamente.';
+          if (error.message.includes('User already registered')) {
+            message = 'Este email já está cadastrado. Volte ao login para acessar.';
+          } else if (error.message.includes('weak') || error.message.includes('leaked') || error.message.includes('breach')) {
+            message = 'Essa senha é muito comum ou já foi exposta em vazamentos. Escolha uma senha mais forte e única.';
+          } else if (error.message.includes('password')) {
+            message = 'A senha não atende aos requisitos. Use pelo menos 6 caracteres com letras e números.';
+          } else if (error.message) {
+            message = error.message;
+          }
+          toast({ title: 'Erro no cadastro', description: message, variant: 'destructive' });
         } else {
           toast({ title: 'Conta criada!', description: 'Verifique seu email para confirmar o cadastro.' });
         }

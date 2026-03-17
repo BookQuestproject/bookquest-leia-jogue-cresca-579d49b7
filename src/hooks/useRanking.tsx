@@ -25,7 +25,7 @@ export const useRanking = () => {
     try {
       const { data, error } = await supabase
         .from('user_xp' as any)
-        .select('user_id, xp, streak')
+        .select('user_id, xp, streak, assigned_tier, week_xp')
         .order('xp', { ascending: false });
 
       if (error) throw error;
@@ -49,13 +49,17 @@ export const useRanking = () => {
         const profile = profileMap.get(d.user_id);
         const name = profile?.full_name || 'Usuário';
         const initials = name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
+        // Use assigned_tier if available, otherwise fall back to XP-based tier
+        const tier = d.assigned_tier && d.assigned_tier !== 'bronze' 
+          ? d.assigned_tier as RankingTier 
+          : getTierFromEssencia(d.xp || 0);
         return {
           id: d.user_id,
           name,
           avatar: initials,
           essencia: d.xp || 0,
-          xp: d.xp || 0, // backward compat
-          tier: getTierFromEssencia(d.xp || 0),
+          xp: d.xp || 0,
+          tier,
           streak: d.streak || 0,
           isCurrentUser: d.user_id === user?.id,
         };

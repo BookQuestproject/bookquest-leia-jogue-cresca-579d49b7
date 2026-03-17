@@ -112,7 +112,11 @@ export const useUserStats = () => {
       const newXp = globalStats.xp + amount;
       const { error } = await supabase
         .from('user_xp')
-        .update({ xp: newXp, updated_at: new Date().toISOString() })
+        .update({ 
+          xp: newXp, 
+          week_xp: (globalStats as any).week_xp ? (globalStats as any).week_xp + amount : amount,
+          updated_at: new Date().toISOString() 
+        })
         .eq('user_id', user.id);
 
       if (error) {
