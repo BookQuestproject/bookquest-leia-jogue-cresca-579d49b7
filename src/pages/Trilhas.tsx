@@ -1,8 +1,10 @@
-import { useState, useMemo, memo } from "react";
+import { useState, useMemo, memo, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin, Award, X } from "lucide-react";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useMyTrails } from "@/hooks/useMyTrails";
+import { useEnrichedChapters } from "@/hooks/useEnrichedChapters";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
