@@ -9,7 +9,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileProvider } from "@/hooks/useProfile";
 import { TutorialProvider } from "@/contexts/TutorialContext";
 import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
-import AccessibilityToolbar from "@/components/AccessibilityToolbar";
+
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
