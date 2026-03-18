@@ -19,7 +19,7 @@ const Configuracoes = () => {
     community: false,
   });
   const [soundOn, setSoundOnState] = useState(isSoundEnabled());
-  const { enabled, fontSize, highContrast, reducedMotion, increaseFontSize, decreaseFontSize, toggleHighContrast, toggleReducedMotion, toggleEnabled } = useAccessibility();
+  
   const [privacy, setPrivacy] = useState({
     publicProfile: true,
     showInCommunity: true,
