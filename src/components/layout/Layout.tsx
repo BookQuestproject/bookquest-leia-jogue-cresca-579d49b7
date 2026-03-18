@@ -28,7 +28,7 @@ const Layout = ({ children, isPremium = false }: LayoutProps) => {
       {isAdmin && <FloatingAdminWidget />}
 
       {/* Main Content */}
-      <main className="lg:ml-56 min-h-screen pb-20 lg:pb-0">
+      <main id="main-content" tabIndex={-1} className="lg:ml-56 min-h-screen pb-20 lg:pb-0 outline-none">
         <div className="p-4 lg:px-8 lg:py-6 max-w-6xl mx-auto">
           {children}
         </div>
