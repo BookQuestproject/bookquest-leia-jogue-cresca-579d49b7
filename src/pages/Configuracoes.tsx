@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2 } from "lucide-react";
+import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2, Accessibility } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
 import { isSoundEnabled, setSoundEnabled } from "@/hooks/useSoundEffects";
+import { useRybena } from "@/hooks/useRybena";
 
 const Configuracoes = () => {
   const { toast } = useToast();
@@ -18,6 +19,7 @@ const Configuracoes = () => {
     community: false,
   });
   const [soundOn, setSoundOnState] = useState(isSoundEnabled());
+  const { enabled: rybenaEnabled, toggle: toggleRybena } = useRybena();
   const [privacy, setPrivacy] = useState({
     publicProfile: true,
     showInCommunity: true,
@@ -255,6 +257,38 @@ const Configuracoes = () => {
                     setSoundOnState(checked);
                     setSoundEnabled(checked);
                     toast({ title: checked ? "Sons ativados" : "Sons desativados" });
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Acessibilidade */}
+          <section className="glass-card rounded-2xl overflow-hidden">
+            <div className="p-4 border-b border-border">
+              <h2 className="font-bold flex items-center gap-2">
+                <Accessibility className="w-5 h-5 text-primary" />
+                Acessibilidade
+              </h2>
+            </div>
+            <div className="divide-y divide-border">
+              <div className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-medium">Rybená</p>
+                  <p className="text-sm text-muted-foreground">
+                    Ative recursos de acessibilidade como leitura em voz alta, Libras, contraste e mais
+                  </p>
+                </div>
+                <Switch
+                  checked={rybenaEnabled}
+                  onCheckedChange={(checked) => {
+                    toggleRybena(checked);
+                    toast({
+                      title: checked ? "Acessibilidade ativada" : "Acessibilidade desativada",
+                      description: checked
+                        ? "O widget Rybená aparecerá em todas as páginas."
+                        : "O widget de acessibilidade foi removido.",
+                    });
                   }}
                 />
               </div>
