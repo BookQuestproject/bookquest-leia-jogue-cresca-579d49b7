@@ -105,7 +105,7 @@ const App = () => (
           </BrowserRouter>
           
         </TooltipProvider>
-        </AccessibilityProvider>
+        
       </ProfileProvider>
     </AuthProvider>
     <Analytics />

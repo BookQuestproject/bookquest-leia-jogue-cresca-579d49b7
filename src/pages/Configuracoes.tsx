@@ -263,54 +263,6 @@ const Configuracoes = () => {
             </div>
           </section>
 
-          {/* Acessibilidade */}
-          <section className="glass-card rounded-2xl overflow-hidden">
-            <div className="p-4 border-b border-border">
-              <h2 className="font-bold flex items-center gap-2">
-                <Accessibility className="w-5 h-5 text-primary" />
-                Acessibilidade
-              </h2>
-            </div>
-            <div className="divide-y divide-border">
-              <div className="flex items-center justify-between p-4">
-                <div>
-                  <p className="font-medium flex items-center gap-2"><Power className="w-4 h-4" /> Ativar recursos</p>
-                  <p className="text-sm text-muted-foreground">Liga ou desliga todos os recursos de acessibilidade</p>
-                </div>
-                <Switch checked={enabled} onCheckedChange={toggleEnabled} />
-              </div>
-              {enabled && (
-                <>
-                  <div className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium">Tamanho do texto</p>
-                      <p className="text-sm text-muted-foreground">
-                        {fontSize === 0 ? "Normal" : fontSize === 1 ? "Grande" : "Extra grande"}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={decreaseFontSize} disabled={fontSize === 0} aria-label="Diminuir texto">A-</Button>
-                      <Button variant="outline" size="sm" onClick={increaseFontSize} disabled={fontSize === 2} aria-label="Aumentar texto">A+</Button>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium">Alto contraste</p>
-                      <p className="text-sm text-muted-foreground">Aumenta o contraste de cores para melhor visibilidade</p>
-                    </div>
-                    <Switch checked={highContrast} onCheckedChange={toggleHighContrast} />
-                  </div>
-                  <div className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium">Reduzir animações</p>
-                      <p className="text-sm text-muted-foreground">Desativa animações e transições</p>
-                    </div>
-                    <Switch checked={reducedMotion} onCheckedChange={toggleReducedMotion} />
-                  </div>
-                </>
-              )}
-            </div>
-          </section>
 
           <section className="glass-card rounded-2xl overflow-hidden" data-tutorial="config-tutorial-reset">
             <div className="p-4 border-b border-border">
