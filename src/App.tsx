@@ -8,7 +8,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileProvider } from "@/hooks/useProfile";
 import { TutorialProvider } from "@/contexts/TutorialContext";
-import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
+
 
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
@@ -54,7 +54,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <ProfileProvider>
-        <AccessibilityProvider>
+        
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -105,7 +105,7 @@ const App = () => (
           </BrowserRouter>
           
         </TooltipProvider>
-        </AccessibilityProvider>
+        
       </ProfileProvider>
     </AuthProvider>
     <Analytics />
