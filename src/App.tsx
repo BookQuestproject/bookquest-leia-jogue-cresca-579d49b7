@@ -9,7 +9,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProfileProvider } from "@/hooks/useProfile";
 import { TutorialProvider } from "@/contexts/TutorialContext";
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
-import { useRybena } from "@/hooks/useRybena";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
 import Landing from "./pages/Landing";
