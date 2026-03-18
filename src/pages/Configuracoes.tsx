@@ -307,20 +307,6 @@ const Configuracoes = () => {
                     </div>
                     <Switch checked={reducedMotion} onCheckedChange={toggleReducedMotion} />
                   </div>
-                  <div className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium flex items-center gap-2"><Focus className="w-4 h-4" /> Modo foco (TDAH)</p>
-                      <p className="text-sm text-muted-foreground">Layout simplificado, mais espaçamento e menos distrações visuais</p>
-                    </div>
-                    <Switch checked={focusMode} onCheckedChange={toggleFocusMode} />
-                  </div>
-                  <div className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium flex items-center gap-2"><Hand className="w-4 h-4" /> Libras (VLibras)</p>
-                      <p className="text-sm text-muted-foreground">Exibe intérprete de Libras para conteúdos textuais</p>
-                    </div>
-                    <Switch checked={librasActive} onCheckedChange={toggleLibras} />
-                  </div>
                 </>
               )}
             </div>
