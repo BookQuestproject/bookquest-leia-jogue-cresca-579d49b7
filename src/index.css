@@ -147,6 +147,45 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+
+  /* Focus Mode — ADHD-friendly simplified layout */
+  .focus-mode {
+    --background: 222 20% 8%;
+    --card: 222 18% 12%;
+    --border: 222 15% 18%;
+  }
+
+  .focus-mode body {
+    letter-spacing: 0.02em;
+    word-spacing: 0.05em;
+  }
+
+  .focus-mode body::before,
+  .focus-mode body::after {
+    display: none !important;
+  }
+
+  .focus-mode .section-bg-challenges::before,
+  .focus-mode .section-bg-ranking::before,
+  .focus-mode .section-bg-community::before {
+    display: none !important;
+  }
+
+  .focus-mode main {
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .focus-mode p,
+  .focus-mode span,
+  .focus-mode li {
+    line-height: 1.8 !important;
+  }
+
+  .focus-mode .glass-card {
+    border: 1px solid hsl(var(--primary) / 0.15);
+  }
 }
 
 @layer base {
