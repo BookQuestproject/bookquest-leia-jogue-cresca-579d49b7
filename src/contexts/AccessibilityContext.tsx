@@ -4,9 +4,7 @@ interface AccessibilityState {
   fontSize: number; // 0 = normal, 1 = large, 2 = extra-large
   highContrast: boolean;
   reducedMotion: boolean;
-  enabled: boolean; // master toggle
-  librasActive: boolean;
-  focusMode: boolean;
+  enabled: boolean;
 }
 
 interface AccessibilityContextType extends AccessibilityState {
@@ -15,8 +13,6 @@ interface AccessibilityContextType extends AccessibilityState {
   toggleHighContrast: () => void;
   toggleReducedMotion: () => void;
   toggleEnabled: () => void;
-  toggleLibras: () => void;
-  toggleFocusMode: () => void;
   speakText: (text: string) => void;
   stopSpeaking: () => void;
   isSpeaking: boolean;
@@ -29,8 +25,6 @@ const defaults: AccessibilityState = {
   highContrast: false,
   reducedMotion: false,
   enabled: true,
-  librasActive: false,
-  focusMode: false,
 };
 
 const AccessibilityContext = createContext<AccessibilityContextType | null>(null);
@@ -53,12 +47,10 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
 
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  // Persist
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
-  // Apply font size to <html>
   useEffect(() => {
     const root = document.documentElement;
     if (!state.enabled) {
@@ -69,64 +61,13 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
     root.style.fontSize = sizes[state.fontSize] || "100%";
   }, [state.fontSize, state.enabled]);
 
-  // Apply high contrast
   useEffect(() => {
     document.documentElement.classList.toggle("high-contrast", state.enabled && state.highContrast);
   }, [state.highContrast, state.enabled]);
 
-  // Apply reduced motion
   useEffect(() => {
-    document.documentElement.classList.toggle("reduce-motion", state.enabled && (state.reducedMotion || state.focusMode));
-  }, [state.reducedMotion, state.enabled, state.focusMode]);
-
-  // Apply focus mode
-  useEffect(() => {
-    document.documentElement.classList.toggle("focus-mode", state.enabled && state.focusMode);
-  }, [state.focusMode, state.enabled]);
-
-  // Load VLibras when libras is active
-  useEffect(() => {
-    if (!state.enabled || !state.librasActive) {
-      // Remove VLibras widget if present
-      const widget = document.querySelector("[vw]");
-      if (widget) widget.classList.add("hidden");
-      return;
-    }
-
-    const widget = document.querySelector("[vw]");
-    if (widget) {
-      widget.classList.remove("hidden");
-      return;
-    }
-
-    // Inject VLibras script
-    const wrapper = document.createElement("div");
-    wrapper.setAttribute("vw", "");
-    wrapper.classList.add("enabled");
-
-    const accessBar = document.createElement("div");
-    accessBar.setAttribute("vw-access-button", "");
-    accessBar.classList.add("active");
-
-    const pluginWrapper = document.createElement("div");
-    pluginWrapper.setAttribute("vw-plugin-wrapper", "");
-
-    const topWrapper = document.createElement("div");
-    topWrapper.classList.add("vw-plugin-top-wrapper");
-    pluginWrapper.appendChild(topWrapper);
-
-    wrapper.appendChild(accessBar);
-    wrapper.appendChild(pluginWrapper);
-    document.body.appendChild(wrapper);
-
-    const script = document.createElement("script");
-    script.src = "https://vlibras.gov.br/app/vlibras-plugin.js";
-    script.onload = () => {
-      // @ts-ignore
-      new window.VLibras.Widget("https://vlibras.gov.br/app");
-    };
-    document.head.appendChild(script);
-  }, [state.librasActive, state.enabled]);
+    document.documentElement.classList.toggle("reduce-motion", state.enabled && state.reducedMotion);
+  }, [state.reducedMotion, state.enabled]);
 
   const increaseFontSize = useCallback(() => {
     setState((s) => ({ ...s, fontSize: Math.min(s.fontSize + 1, 2) }));
@@ -146,14 +87,6 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
 
   const toggleEnabled = useCallback(() => {
     setState((s) => ({ ...s, enabled: !s.enabled }));
-  }, []);
-
-  const toggleLibras = useCallback(() => {
-    setState((s) => ({ ...s, librasActive: !s.librasActive }));
-  }, []);
-
-  const toggleFocusMode = useCallback(() => {
-    setState((s) => ({ ...s, focusMode: !s.focusMode }));
   }, []);
 
   const speakText = useCallback((text: string) => {
@@ -182,8 +115,6 @@ export function AccessibilityProvider({ children }: { children: ReactNode }) {
         toggleHighContrast,
         toggleReducedMotion,
         toggleEnabled,
-        toggleLibras,
-        toggleFocusMode,
         speakText,
         stopSpeaking,
         isSpeaking,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2, Accessibility, Hand, Focus, Power } from "lucide-react";
+import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2, Accessibility, Power } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -19,7 +19,7 @@ const Configuracoes = () => {
     community: false,
   });
   const [soundOn, setSoundOnState] = useState(isSoundEnabled());
-  const { enabled, fontSize, highContrast, reducedMotion, focusMode, librasActive, increaseFontSize, decreaseFontSize, toggleHighContrast, toggleReducedMotion, toggleEnabled, toggleLibras, toggleFocusMode } = useAccessibility();
+  const { enabled, fontSize, highContrast, reducedMotion, increaseFontSize, decreaseFontSize, toggleHighContrast, toggleReducedMotion, toggleEnabled } = useAccessibility();
   const [privacy, setPrivacy] = useState({
     publicProfile: true,
     showInCommunity: true,
@@ -306,20 +306,6 @@ const Configuracoes = () => {
                       <p className="text-sm text-muted-foreground">Desativa animações e transições</p>
                     </div>
                     <Switch checked={reducedMotion} onCheckedChange={toggleReducedMotion} />
-                  </div>
-                  <div className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium flex items-center gap-2"><Focus className="w-4 h-4" /> Modo foco (TDAH)</p>
-                      <p className="text-sm text-muted-foreground">Layout simplificado, mais espaçamento e menos distrações visuais</p>
-                    </div>
-                    <Switch checked={focusMode} onCheckedChange={toggleFocusMode} />
-                  </div>
-                  <div className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium flex items-center gap-2"><Hand className="w-4 h-4" /> Libras (VLibras)</p>
-                      <p className="text-sm text-muted-foreground">Exibe intérprete de Libras para conteúdos textuais</p>
-                    </div>
-                    <Switch checked={librasActive} onCheckedChange={toggleLibras} />
                   </div>
                 </>
               )}
