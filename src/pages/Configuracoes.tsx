@@ -274,23 +274,29 @@ const Configuracoes = () => {
             <div className="divide-y divide-border">
               <div className="flex items-center justify-between p-4">
                 <div>
-                  <p className="font-medium">Rybená</p>
+                  <p className="font-medium">Tamanho do texto</p>
                   <p className="text-sm text-muted-foreground">
-                    Ative recursos de acessibilidade como leitura em voz alta, Libras, contraste e mais
+                    {fontSize === 0 ? "Normal" : fontSize === 1 ? "Grande" : "Extra grande"}
                   </p>
                 </div>
-                <Switch
-                  checked={rybenaEnabled}
-                  onCheckedChange={(checked) => {
-                    toggleRybena(checked);
-                    toast({
-                      title: checked ? "Acessibilidade ativada" : "Acessibilidade desativada",
-                      description: checked
-                        ? "O widget Rybená aparecerá em todas as páginas."
-                        : "O widget de acessibilidade foi removido.",
-                    });
-                  }}
-                />
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={decreaseFontSize} disabled={fontSize === 0} aria-label="Diminuir texto">A-</Button>
+                  <Button variant="outline" size="sm" onClick={increaseFontSize} disabled={fontSize === 2} aria-label="Aumentar texto">A+</Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-medium">Alto contraste</p>
+                  <p className="text-sm text-muted-foreground">Aumenta o contraste de cores para melhor visibilidade</p>
+                </div>
+                <Switch checked={highContrast} onCheckedChange={toggleHighContrast} />
+              </div>
+              <div className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-medium">Reduzir animações</p>
+                  <p className="text-sm text-muted-foreground">Desativa animações e transições</p>
+                </div>
+                <Switch checked={reducedMotion} onCheckedChange={toggleReducedMotion} />
               </div>
             </div>
           </section>
