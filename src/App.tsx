@@ -103,7 +103,7 @@ const App = () => (
               </QuizGate>
             </TutorialProvider>
           </BrowserRouter>
-          <AccessibilityToolbar />
+          
         </TooltipProvider>
         </AccessibilityProvider>
       </ProfileProvider>
