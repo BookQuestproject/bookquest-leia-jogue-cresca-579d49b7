@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
 import { isSoundEnabled, setSoundEnabled } from "@/hooks/useSoundEffects";
-import { useAccessibility } from "@/contexts/AccessibilityContext";
+
 
 const Configuracoes = () => {
   const { toast } = useToast();
