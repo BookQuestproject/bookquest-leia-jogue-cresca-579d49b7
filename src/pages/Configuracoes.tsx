@@ -274,30 +274,55 @@ const Configuracoes = () => {
             <div className="divide-y divide-border">
               <div className="flex items-center justify-between p-4">
                 <div>
-                  <p className="font-medium">Tamanho do texto</p>
-                  <p className="text-sm text-muted-foreground">
-                    {fontSize === 0 ? "Normal" : fontSize === 1 ? "Grande" : "Extra grande"}
-                  </p>
+                  <p className="font-medium flex items-center gap-2"><Power className="w-4 h-4" /> Ativar recursos</p>
+                  <p className="text-sm text-muted-foreground">Liga ou desliga todos os recursos de acessibilidade</p>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={decreaseFontSize} disabled={fontSize === 0} aria-label="Diminuir texto">A-</Button>
-                  <Button variant="outline" size="sm" onClick={increaseFontSize} disabled={fontSize === 2} aria-label="Aumentar texto">A+</Button>
-                </div>
+                <Switch checked={enabled} onCheckedChange={toggleEnabled} />
               </div>
-              <div className="flex items-center justify-between p-4">
-                <div>
-                  <p className="font-medium">Alto contraste</p>
-                  <p className="text-sm text-muted-foreground">Aumenta o contraste de cores para melhor visibilidade</p>
-                </div>
-                <Switch checked={highContrast} onCheckedChange={toggleHighContrast} />
-              </div>
-              <div className="flex items-center justify-between p-4">
-                <div>
-                  <p className="font-medium">Reduzir animações</p>
-                  <p className="text-sm text-muted-foreground">Desativa animações e transições</p>
-                </div>
-                <Switch checked={reducedMotion} onCheckedChange={toggleReducedMotion} />
-              </div>
+              {enabled && (
+                <>
+                  <div className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="font-medium">Tamanho do texto</p>
+                      <p className="text-sm text-muted-foreground">
+                        {fontSize === 0 ? "Normal" : fontSize === 1 ? "Grande" : "Extra grande"}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={decreaseFontSize} disabled={fontSize === 0} aria-label="Diminuir texto">A-</Button>
+                      <Button variant="outline" size="sm" onClick={increaseFontSize} disabled={fontSize === 2} aria-label="Aumentar texto">A+</Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="font-medium">Alto contraste</p>
+                      <p className="text-sm text-muted-foreground">Aumenta o contraste de cores para melhor visibilidade</p>
+                    </div>
+                    <Switch checked={highContrast} onCheckedChange={toggleHighContrast} />
+                  </div>
+                  <div className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="font-medium">Reduzir animações</p>
+                      <p className="text-sm text-muted-foreground">Desativa animações e transições</p>
+                    </div>
+                    <Switch checked={reducedMotion} onCheckedChange={toggleReducedMotion} />
+                  </div>
+                  <div className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="font-medium flex items-center gap-2"><Focus className="w-4 h-4" /> Modo foco (TDAH)</p>
+                      <p className="text-sm text-muted-foreground">Layout simplificado, mais espaçamento e menos distrações visuais</p>
+                    </div>
+                    <Switch checked={focusMode} onCheckedChange={toggleFocusMode} />
+                  </div>
+                  <div className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="font-medium flex items-center gap-2"><Hand className="w-4 h-4" /> Libras (VLibras)</p>
+                      <p className="text-sm text-muted-foreground">Exibe intérprete de Libras para conteúdos textuais</p>
+                    </div>
+                    <Switch checked={librasActive} onCheckedChange={toggleLibras} />
+                  </div>
+                </>
+              )}
             </div>
           </section>
 
