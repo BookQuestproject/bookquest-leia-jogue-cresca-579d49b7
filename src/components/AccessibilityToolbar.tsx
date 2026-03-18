@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Minus, Plus, Eye, Pause, Volume2, Power, Hand, Focus } from "lucide-react";
+import { Minus, Plus, Eye, Pause, Volume2 } from "lucide-react";
 import { useAccessibility } from "@/contexts/AccessibilityContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,15 +17,11 @@ const AccessibilityToolbar = () => {
     fontSize,
     highContrast,
     reducedMotion,
-    focusMode,
-    librasActive,
     increaseFontSize,
     decreaseFontSize,
     toggleHighContrast,
     toggleReducedMotion,
     toggleEnabled,
-    toggleLibras,
-    toggleFocusMode,
     isSpeaking,
     stopSpeaking,
   } = useAccessibility();
@@ -112,30 +108,6 @@ const AccessibilityToolbar = () => {
             >
               <Pause className="w-4 h-4" />
               Reduzir animações
-            </Button>
-
-            {/* Focus mode */}
-            <Button
-              variant={focusMode ? "default" : "outline"}
-              size="sm"
-              onClick={toggleFocusMode}
-              className="w-full justify-start gap-2"
-              aria-pressed={focusMode}
-            >
-              <Focus className="w-4 h-4" />
-              Modo foco (TDAH)
-            </Button>
-
-            {/* Libras */}
-            <Button
-              variant={librasActive ? "default" : "outline"}
-              size="sm"
-              onClick={toggleLibras}
-              className="w-full justify-start gap-2"
-              aria-pressed={librasActive}
-            >
-              <Hand className="w-4 h-4" />
-              Libras (VLibras)
             </Button>
 
             {/* TTS stop */}
