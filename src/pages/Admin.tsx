@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Shield, BookOpen, Calendar, Target, Users, RefreshCw, Newspaper } from "lucide-react";
+import { Shield, BookOpen, Calendar, Target, Users, RefreshCw, Newspaper, Library } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdmin } from "@/hooks/useAdmin";
