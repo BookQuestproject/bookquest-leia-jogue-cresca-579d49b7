@@ -114,6 +114,7 @@ const Biblioteca = () => {
   const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
   const { addTrail, removeTrail, isInMyTrails } = useMyTrails();
+  const { applyOverride } = useBookOverrides();
 
   const normaliseForTrail = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const hasTrail = (title: string) => bookTrails.some(b => normaliseForTrail(b.title) === normaliseForTrail(title));
