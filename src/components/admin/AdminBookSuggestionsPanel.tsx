@@ -186,6 +186,22 @@ const SuggestionCard = ({
               </div>
             )}
 
+            {/* AI-extracted chapters */}
+            {aiData?.chapters && aiData.chapters.length > 0 && (
+              <div className="p-3 rounded-lg bg-muted">
+                <p className="text-xs font-medium mb-2 flex items-center gap-1">
+                  <List className="w-3 h-3" /> Capítulos extraídos pela IA ({aiData.chapters.length})
+                </p>
+                <div className="max-h-48 overflow-y-auto space-y-0.5">
+                  {aiData.chapters.map((ch: string, i: number) => (
+                    <p key={i} className="text-xs text-muted-foreground">
+                      {i + 1}. {ch}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {suggestion.external_link && (
               <div className="p-3 rounded-lg bg-muted">
                 <p className="text-xs font-medium mb-1 flex items-center gap-1">
@@ -267,6 +283,13 @@ export const AdminBookSuggestionsPanel = () => {
     if (type === "approve") {
       setBookSummary(suggestion.book_summary || "");
       setNarrativeContext(suggestion.narrative_context || "");
+      // Pre-fill chapters from AI verification data
+      const aiData = parseAiData(suggestion);
+      if (aiData?.chapters && Array.isArray(aiData.chapters) && aiData.chapters.length > 0) {
+        setChaptersList(aiData.chapters.join("\n"));
+      } else {
+        setChaptersList("");
+      }
     }
   };
 
