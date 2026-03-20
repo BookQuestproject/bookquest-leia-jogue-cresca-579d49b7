@@ -282,17 +282,41 @@ export const AdminBookSuggestionsPanel = () => {
   const openAction = (suggestion: BookSuggestion, type: "approve" | "reject") => {
     setSelectedSuggestion(suggestion);
     setActionType(type);
-    // Pre-fill with AI data if available
     if (type === "approve") {
       setBookSummary(suggestion.book_summary || "");
       setNarrativeContext(suggestion.narrative_context || "");
-      // Pre-fill chapters from AI verification data
       const aiData = parseAiData(suggestion);
+      setCoverUrl(suggestion.cover_url || aiData?.cover_url || "");
       if (aiData?.chapters && Array.isArray(aiData.chapters) && aiData.chapters.length > 0) {
         setChaptersList(aiData.chapters.join("\n"));
       } else {
         setChaptersList("");
       }
+    }
+  };
+
+  const enrichChaptersForSuggestion = async (suggestion: BookSuggestion) => {
+    setEnrichingId(suggestion.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("enrich-book-chapters", {
+        body: {
+          books: [{
+            id: suggestion.id,
+            title: suggestion.title,
+            author: suggestion.author || "Desconhecido",
+            totalChapters: 20,
+            genre: suggestion.genre || "Ficção",
+          }],
+        },
+      });
+      if (error) throw error;
+      toast.success(`Capítulos enriquecidos para "${suggestion.title}"`);
+      await refetch();
+    } catch (err: any) {
+      console.error("Enrichment error:", err);
+      toast.error("Erro ao enriquecer capítulos");
+    } finally {
+      setEnrichingId(null);
     }
   };
 
