@@ -34,6 +34,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useAdminBookSuggestions, BookSuggestion } from "@/hooks/useBookSuggestions";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
