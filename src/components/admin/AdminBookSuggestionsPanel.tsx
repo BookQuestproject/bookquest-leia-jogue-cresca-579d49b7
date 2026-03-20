@@ -276,6 +276,7 @@ export const AdminBookSuggestionsPanel = () => {
     setChaptersList("");
     setBookSummary("");
     setNarrativeContext("");
+    setCoverUrl("");
   };
 
   const openAction = (suggestion: BookSuggestion, type: "approve" | "reject") => {
