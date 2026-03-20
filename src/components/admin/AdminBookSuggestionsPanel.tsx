@@ -283,6 +283,13 @@ export const AdminBookSuggestionsPanel = () => {
     if (type === "approve") {
       setBookSummary(suggestion.book_summary || "");
       setNarrativeContext(suggestion.narrative_context || "");
+      // Pre-fill chapters from AI verification data
+      const aiData = parseAiData(suggestion);
+      if (aiData?.chapters && Array.isArray(aiData.chapters) && aiData.chapters.length > 0) {
+        setChaptersList(aiData.chapters.join("\n"));
+      } else {
+        setChaptersList("");
+      }
     }
   };
 
