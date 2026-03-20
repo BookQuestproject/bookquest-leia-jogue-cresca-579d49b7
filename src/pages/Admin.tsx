@@ -11,6 +11,7 @@ import { AdminTracksPanel } from "@/components/admin/AdminTracksPanel";
 import { AdminGroupSessionsPanel } from "@/components/admin/AdminGroupSessionsPanel";
 import { AdminBookSuggestionsPanel } from "@/components/admin/AdminBookSuggestionsPanel";
 import AdminNewsPanel from "@/components/admin/AdminNewsPanel";
+import AdminBooksPanel from "@/components/admin/AdminBooksPanel";
 
 const Admin = () => {
   const { user } = useAuth();
