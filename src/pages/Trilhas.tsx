@@ -4,6 +4,7 @@ import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookma
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useMyTrails } from "@/hooks/useMyTrails";
 import { useEnrichedChapters } from "@/hooks/useEnrichedChapters";
+import { useBookOverrides } from "@/hooks/useBookOverrides";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Layout from "@/components/layout/Layout";
@@ -644,6 +645,7 @@ const Trilhas = () => {
   const { activeTrail, setActiveTrail } = useActiveTrail();
   const { isInMyTrails, removeTrail } = useMyTrails();
   const { enrichments, getEnrichment } = useEnrichedChapters();
+  const { applyOverride } = useBookOverrides();
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -725,8 +727,11 @@ const Trilhas = () => {
   // Merge enriched chapters into static bookTrails
   const allTrails = useMemo(() => {
     const enrichedStatic = bookTrails.map(trail => {
+      // Apply admin overrides first
+      const overriddenTrail = applyOverride(trail, trail.id);
+      
       const enrichment = getEnrichment(trail.id);
-      if (!enrichment || enrichment.chapters.length === 0) return trail;
+      if (!enrichment || enrichment.chapters.length === 0) return overriddenTrail;
 
       // Merge: keep first few manually curated chapters' questions but use enriched titles
       const enrichedChapters: Chapter[] = enrichment.chapters.map((eCh, i) => {
@@ -743,14 +748,14 @@ const Trilhas = () => {
       });
 
       return {
-        ...trail,
+        ...overriddenTrail,
         totalChapters: enrichedChapters.length,
         chapters: enrichedChapters,
       };
     });
 
     return [...enrichedStatic, ...dynamicTrails];
-  }, [enrichments, dynamicTrails, getEnrichment]);
+  }, [enrichments, dynamicTrails, getEnrichment, applyOverride]);
 
   // Quiz recommendations (reactive via state)
   const [quizRecommendations, setQuizRecommendations] = useState<string[]>(() => {

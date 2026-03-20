@@ -257,6 +257,48 @@ export type Database = {
         }
         Relationships: []
       }
+      book_overrides: {
+        Row: {
+          author: string | null
+          book_id: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          detailed_description: string | null
+          genre: string | null
+          id: string
+          title: string | null
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          author?: string | null
+          book_id: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          detailed_description?: string | null
+          genre?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          author?: string | null
+          book_id?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          detailed_description?: string | null
+          genre?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: []
+      }
       book_reviews: {
         Row: {
           book_id: string

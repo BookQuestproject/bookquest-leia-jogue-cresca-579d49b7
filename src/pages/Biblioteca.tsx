@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useBookOverrides } from "@/hooks/useBookOverrides";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Library, Search, Filter, Plus, Star, BookOpen, Check, Clock, AlertCircle, Sparkles, Award, MapPin } from "lucide-react";
 import {
@@ -113,6 +114,7 @@ const Biblioteca = () => {
   const { addBook } = useBookshelf();
   const { suggestions, createSuggestion } = useBookSuggestions();
   const { addTrail, removeTrail, isInMyTrails } = useMyTrails();
+  const { applyOverride } = useBookOverrides();
 
   const normaliseForTrail = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const hasTrail = (title: string) => bookTrails.some(b => normaliseForTrail(b.title) === normaliseForTrail(title));
@@ -174,7 +176,19 @@ const Biblioteca = () => {
     fetchApproved();
   }, [suggestions]); // refetch when user creates a new suggestion
 
-  const combinedBooks = useMemo(() => [...allBooks, ...approvedBooks], [approvedBooks]);
+  const combinedBooks = useMemo(() => {
+    const withOverrides = allBooks.map(b => {
+      // Match by book trail ID using title normalization
+      const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const trail = bookTrails.find(t => normalise(t.title) === normalise(b.title));
+      if (trail) {
+        const ov = applyOverride({ ...b, id: trail.id } as any, trail.id);
+        return { ...b, title: ov.title, author: ov.author, cover: (ov as any).coverImage || (ov as any).cover || b.cover, genre: (ov as any).genre || b.genre, description: (ov as any).description || b.description, detailedDescription: (ov as any).detailedDescription || b.detailedDescription };
+      }
+      return b;
+    });
+    return [...withOverrides, ...approvedBooks];
+  }, [approvedBooks, applyOverride]);
 
   const filteredBooks = combinedBooks
     .filter(book => {
