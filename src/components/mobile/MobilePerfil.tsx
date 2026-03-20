@@ -13,6 +13,7 @@ import { getStreakColor } from "@/components/StreakFlame";
 import FounderBadge from "@/components/FounderBadge";
 import { useUserBadges } from "@/hooks/useUserBadges";
 import ReferralCard from "@/components/ReferralCard";
+import AvatarCropModal from "@/components/AvatarCropModal";
 
 const MobilePerfil = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const MobilePerfil = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [cropImage, setCropImage] = useState<string | null>(null);
 
   const userName = profile?.full_name || "Você";
   const userEmail = profile?.email || "";
@@ -33,9 +35,10 @@ const MobilePerfil = () => {
   const streakInfo = getStreakColor(0);
   const { activeTitle, isFounder } = useUserBadges();
 
-  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
+
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       toast({ title: "Formato inválido", description: "Use JPG, PNG ou WebP.", variant: "destructive" });
@@ -45,17 +48,29 @@ const MobilePerfil = () => {
       toast({ title: "Arquivo muito grande", description: "Máximo de 5MB.", variant: "destructive" });
       return;
     }
+
+    const reader = new FileReader();
+    reader.onload = () => setCropImage(reader.result as string);
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  };
+
+  const handleCroppedUpload = async (blob: Blob) => {
+    if (!user) return;
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true });
+      const filePath = `${user.id}/avatar.jpg`;
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, blob, { upsert: true, contentType: 'image/jpeg' });
       if (uploadError) throw uploadError;
+
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
-      const avatarUrl = publicUrl;
-      const { error: updateError } = await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', user.id);
+      const { error: updateError } = await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
       if (updateError) throw updateError;
+
       await refreshProfile();
+      setCropImage(null);
       toast({ title: "Foto atualizada!" });
     } catch (error: any) {
       toast({ title: "Erro ao enviar foto", description: error.message, variant: "destructive" });
@@ -76,7 +91,7 @@ const MobilePerfil = () => {
               {userName.substring(0, 2).toUpperCase()}
             </div>
           )}
-          <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/jpeg,image/png,image/webp" className="hidden" />
+          <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/jpeg,image/png,image/webp" className="hidden" />
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
@@ -169,7 +184,6 @@ const MobilePerfil = () => {
         </div>
       </div>
 
-      {/* Referral System */}
       <ReferralCard />
 
       {/* Reading Stats */}
@@ -220,6 +234,16 @@ const MobilePerfil = () => {
           </button>
         )}
       </div>
+
+      {cropImage && (
+        <AvatarCropModal
+          open={!!cropImage}
+          imageSrc={cropImage}
+          onClose={() => setCropImage(null)}
+          onConfirm={handleCroppedUpload}
+          loading={uploading}
+        />
+      )}
     </div>
   );
 };
