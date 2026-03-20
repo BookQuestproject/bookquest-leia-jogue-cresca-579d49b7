@@ -17,6 +17,7 @@ import MobilePerfil from "@/components/mobile/MobilePerfil";
 import FounderBadge from "@/components/FounderBadge";
 import { useUserBadges } from "@/hooks/useUserBadges";
 import ReferralCard from "@/components/ReferralCard";
+import AvatarCropModal from "@/components/AvatarCropModal";
 
 const readingHistory = [
   { id: 1, title: "Harry Potter e a Pedra Filosofal", author: "J.K. Rowling", completedAt: "Dez 2023", pages: 208 },
@@ -33,6 +34,7 @@ const Perfil = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const { activeTitle, isFounder } = useUserBadges();
+  const [cropImage, setCropImage] = useState<string | null>(null);
 
   const userName = profile?.full_name || "Você";
   const userEmail = profile?.email || "usuario@email.com";
@@ -40,54 +42,49 @@ const Perfil = () => {
   const literaryGenre = literaryProfile?.genre || "Não definido";
 
   const booksRead = stats.booksCompleted || 0;
-  // Points based on engagement: chapters completed * 10 + reading time bonus
   const userPoints = (stats.completedChapters * 10) + Math.floor(stats.totalReadingTime / 60);
   const currentTier = getTierFromPoints(userPoints);
   const nextTier = getNextTierInfo(currentTier);
 
-  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       toast({ title: "Formato inválido", description: "Use JPG, PNG ou WebP.", variant: "destructive" });
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       toast({ title: "Arquivo muito grande", description: "Máximo de 5MB.", variant: "destructive" });
       return;
     }
 
+    const reader = new FileReader();
+    reader.onload = () => setCropImage(reader.result as string);
+    reader.readAsDataURL(file);
+    // Reset input so same file can be re-selected
+    event.target.value = "";
+  };
+
+  const handleCroppedUpload = async (blob: Blob) => {
+    if (!user) return;
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
-
+      const filePath = `${user.id}/avatar.jpg`;
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true });
-
+        .upload(filePath, blob, { upsert: true, contentType: 'image/jpeg' });
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      const avatarUrl = publicUrl;
-
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: avatarUrl })
-        .eq('id', user.id);
-
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const { error: updateError } = await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
       if (updateError) throw updateError;
 
       await refreshProfile();
+      setCropImage(null);
       toast({ title: "Foto atualizada!", description: "Sua foto de perfil foi salva." });
     } catch (error: any) {
-      console.error('Upload error:', error);
       toast({ title: "Erro ao enviar foto", description: error.message, variant: "destructive" });
     } finally {
       setUploading(false);
@@ -112,23 +109,13 @@ const Perfil = () => {
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               <div className="relative">
                 {profile?.avatar_url ? (
-                  <img
-                    src={profile.avatar_url}
-                    alt="Avatar"
-                    className="w-24 h-24 rounded-full object-cover border-2 border-primary/20"
-                  />
+                  <img src={profile.avatar_url} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-2 border-primary/20" />
                 ) : (
                   <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-3xl font-bold text-primary-foreground">
                     {userName.substring(0, 2).toUpperCase()}
                   </div>
                 )}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleAvatarUpload}
-                  accept="image/jpeg,image/png,image/webp"
-                  className="hidden"
-                />
+                <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/jpeg,image/png,image/webp" className="hidden" />
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
@@ -163,31 +150,21 @@ const Perfil = () => {
                 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center p-3 rounded-xl bg-muted">
-                    {statsLoading ? (
-                      <Skeleton className="h-6 w-8 mx-auto mb-1" />
-                    ) : (
-                      <div className="text-xl font-bold text-primary">{booksRead}</div>
-                    )}
+                    {statsLoading ? <Skeleton className="h-6 w-8 mx-auto mb-1" /> : <div className="text-xl font-bold text-primary">{booksRead}</div>}
                     <div className="text-xs text-muted-foreground">Livros</div>
                   </div>
                   <div className="text-center p-3 rounded-xl bg-muted">
-                    {statsLoading ? (
-                      <Skeleton className="h-6 w-8 mx-auto mb-1" />
-                    ) : (
+                    {statsLoading ? <Skeleton className="h-6 w-8 mx-auto mb-1" /> : (
                       <div className="text-xl font-bold text-accent flex items-center justify-center gap-1">
-                        <CheckCircle className="w-4 h-4" />
-                        {stats.completedChapters}
+                        <CheckCircle className="w-4 h-4" />{stats.completedChapters}
                       </div>
                     )}
                     <div className="text-xs text-muted-foreground">Capítulos</div>
                   </div>
                   <div className="text-center p-3 rounded-xl bg-muted">
-                    {statsLoading ? (
-                      <Skeleton className="h-6 w-12 mx-auto mb-1" />
-                    ) : (
+                    {statsLoading ? <Skeleton className="h-6 w-12 mx-auto mb-1" /> : (
                       <div className="text-xl font-bold text-info flex items-center justify-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {formatTime(stats.totalReadingTime)}
+                        <Clock className="w-4 h-4" />{formatTime(stats.totalReadingTime)}
                       </div>
                     )}
                     <div className="text-xs text-muted-foreground">Tempo</div>
@@ -200,16 +177,13 @@ const Perfil = () => {
               </Button>
             </div>
 
-            {/* Progress to next tier */}
             {nextTier && (
               <div className="mt-6 pt-6 border-t border-border">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">
                     Próximo nível: <span className="text-foreground font-medium">{nextTier.label}</span>
                   </span>
-                  <span className="text-sm font-bold text-primary">
-                    {userPoints} / {nextTier.pointsNeeded} ✦
-                  </span>
+                  <span className="text-sm font-bold text-primary">{userPoints} / {nextTier.pointsNeeded} ✦</span>
                 </div>
                 <ProgressBar value={userPoints} max={nextTier.pointsNeeded} />
               </div>
@@ -223,7 +197,6 @@ const Perfil = () => {
                 <Clock className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-sm text-muted-foreground mb-1">Estatísticas de Leitura</h3>
-              
               {statsLoading ? (
                 <div className="space-y-3 mt-4">
                   <Skeleton className="h-4 w-full" />
@@ -259,31 +232,17 @@ const Perfil = () => {
             <div className="flex-1">
               <h3 className="text-sm text-muted-foreground mb-1">Seu gênero literário</h3>
               <p className="text-2xl font-bold text-primary mb-1">{literaryGenre}</p>
-              <p className="text-sm text-muted-foreground">
-                Identificado pelo quiz literário
-              </p>
+              <p className="text-sm text-muted-foreground">Identificado pelo quiz literário</p>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => navigate("/premium")}
-              className="gap-1"
-            >
+            <Button variant="outline" size="sm" onClick={() => navigate("/premium")} className="gap-1">
               <Crown className="w-3.5 h-3.5 text-accent" />
               Refazer quiz
             </Button>
           </div>
         </div>
 
-        {/* Referral Card */}
-        <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.18s" }}>
-          <ReferralCard />
-        </div>
-
-        {/* Achievements Section - Dynamic */}
-        <div className="mb-8 animate-fade-in" data-tutorial="perfil-achievements" style={{ animationDelay: "0.2s" }}>
-          <AchievementsSection />
-        </div>
+        <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.18s" }}><ReferralCard /></div>
+        <div className="mb-8 animate-fade-in" data-tutorial="perfil-achievements" style={{ animationDelay: "0.2s" }}><AchievementsSection /></div>
 
         {/* Reading History */}
         <div className="glass-card rounded-2xl p-6 animate-fade-in" style={{ animationDelay: "0.3s" }}>
@@ -293,10 +252,7 @@ const Perfil = () => {
           </h2>
           <div className="space-y-4">
             {readingHistory.map((book) => (
-              <div
-                key={book.id}
-                className="flex items-center gap-4 p-4 rounded-xl bg-muted"
-              >
+              <div key={book.id} className="flex items-center gap-4 p-4 rounded-xl bg-muted">
                 <div className="w-12 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
                   <BookOpen className="w-6 h-6 text-primary" />
                 </div>
@@ -311,11 +267,19 @@ const Perfil = () => {
               </div>
             ))}
           </div>
-          <Button variant="outline" className="w-full mt-4">
-            Adicionar livro lido
-          </Button>
+          <Button variant="outline" className="w-full mt-4">Adicionar livro lido</Button>
         </div>
       </div>
+
+      {cropImage && (
+        <AvatarCropModal
+          open={!!cropImage}
+          imageSrc={cropImage}
+          onClose={() => setCropImage(null)}
+          onConfirm={handleCroppedUpload}
+          loading={uploading}
+        />
+      )}
     </Layout>
   );
 };
