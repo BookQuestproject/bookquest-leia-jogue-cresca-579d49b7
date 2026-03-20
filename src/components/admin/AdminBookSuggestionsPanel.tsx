@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   BookOpen,
   Check,
@@ -34,6 +34,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useAdminBookSuggestions, BookSuggestion } from "@/hooks/useBookSuggestions";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -262,6 +264,8 @@ export const AdminBookSuggestionsPanel = () => {
   const [chaptersList, setChaptersList] = useState("");
   const [bookSummary, setBookSummary] = useState("");
   const [narrativeContext, setNarrativeContext] = useState("");
+  const [coverUrl, setCoverUrl] = useState("");
+  const [enrichingId, setEnrichingId] = useState<string | null>(null);
 
   const pendingSuggestions = suggestions.filter((s) => s.status === "pending");
   const approvedSuggestions = suggestions.filter((s) => s.status === "approved");
@@ -274,22 +278,47 @@ export const AdminBookSuggestionsPanel = () => {
     setChaptersList("");
     setBookSummary("");
     setNarrativeContext("");
+    setCoverUrl("");
   };
 
   const openAction = (suggestion: BookSuggestion, type: "approve" | "reject") => {
     setSelectedSuggestion(suggestion);
     setActionType(type);
-    // Pre-fill with AI data if available
     if (type === "approve") {
       setBookSummary(suggestion.book_summary || "");
       setNarrativeContext(suggestion.narrative_context || "");
-      // Pre-fill chapters from AI verification data
       const aiData = parseAiData(suggestion);
+      setCoverUrl(suggestion.cover_url || aiData?.cover_url || "");
       if (aiData?.chapters && Array.isArray(aiData.chapters) && aiData.chapters.length > 0) {
         setChaptersList(aiData.chapters.join("\n"));
       } else {
         setChaptersList("");
       }
+    }
+  };
+
+  const enrichChaptersForSuggestion = async (suggestion: BookSuggestion) => {
+    setEnrichingId(suggestion.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("enrich-book-chapters", {
+        body: {
+          books: [{
+            id: suggestion.id,
+            title: suggestion.title,
+            author: suggestion.author || "Desconhecido",
+            totalChapters: 20,
+            genre: suggestion.genre || "Ficção",
+          }],
+        },
+      });
+      if (error) throw error;
+      toast.success(`Capítulos enriquecidos para "${suggestion.title}"`);
+      await refetch();
+    } catch (err: any) {
+      console.error("Enrichment error:", err);
+      toast.error("Erro ao enriquecer capítulos");
+    } finally {
+      setEnrichingId(null);
     }
   };
 
@@ -311,6 +340,7 @@ export const AdminBookSuggestionsPanel = () => {
             chapters_list: chapters.length > 0 ? chapters : undefined,
             book_summary: bookSummary || undefined,
             narrative_context: narrativeContext || undefined,
+            cover_url: coverUrl.trim() || undefined,
           }
         : undefined
     );
@@ -451,6 +481,26 @@ export const AdminBookSuggestionsPanel = () => {
 
                   <div>
                     <label className="text-sm font-medium mb-1 block flex items-center gap-1">
+                      <Image className="w-4 h-4" /> URL da Capa
+                    </label>
+                    <div className="flex gap-3 items-start">
+                      {coverUrl && (
+                        <div className="w-16 h-22 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-border">
+                          <img src={coverUrl} alt="Preview" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                        </div>
+                      )}
+                      <input
+                        type="text"
+                        value={coverUrl}
+                        onChange={(e) => setCoverUrl(e.target.value)}
+                        placeholder="https://exemplo.com/capa.jpg"
+                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-1 block flex items-center gap-1">
                       <List className="w-4 h-4" /> Lista de Capítulos (um por linha)
                     </label>
                     <Textarea
@@ -459,6 +509,18 @@ export const AdminBookSuggestionsPanel = () => {
                       placeholder="Capítulo 1 - Título&#10;Capítulo 2 - Título&#10;..."
                       rows={5}
                     />
+                    {!chaptersList.trim() && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2 gap-1.5"
+                        disabled={enrichingId === selectedSuggestion.id}
+                        onClick={() => enrichChaptersForSuggestion(selectedSuggestion)}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        {enrichingId === selectedSuggestion.id ? "Enriquecendo..." : "Gerar capítulos com IA"}
+                      </Button>
+                    )}
                   </div>
 
                   <div>

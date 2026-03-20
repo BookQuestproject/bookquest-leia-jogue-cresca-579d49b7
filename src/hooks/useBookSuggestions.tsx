@@ -131,6 +131,7 @@ export const useAdminBookSuggestions = () => {
       chapters_list?: string[];
       book_summary?: string;
       narrative_context?: string;
+      cover_url?: string;
     }
   ) => {
     try {
@@ -143,6 +144,9 @@ export const useAdminBookSuggestions = () => {
         updateData.chapters_list = detailedInfo.chapters_list || null;
         updateData.book_summary = detailedInfo.book_summary || null;
         updateData.narrative_context = detailedInfo.narrative_context || null;
+        if (detailedInfo.cover_url) {
+          updateData.cover_url = detailedInfo.cover_url;
+        }
         updateData.approved_at = new Date().toISOString();
       }
 
