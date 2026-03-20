@@ -91,10 +91,14 @@ const Admin = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="suggestions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
+          <TabsList className="grid w-full grid-cols-6 max-w-4xl">
             <TabsTrigger value="suggestions" className="gap-2">
               <BookOpen className="w-4 h-4" />
               <span className="hidden sm:inline">Sugestões</span>
+            </TabsTrigger>
+            <TabsTrigger value="books" className="gap-2">
+              <Library className="w-4 h-4" />
+              <span className="hidden sm:inline">Livros</span>
             </TabsTrigger>
             <TabsTrigger value="tracks" className="gap-2">
               <Target className="w-4 h-4" />
@@ -116,6 +120,10 @@ const Admin = () => {
 
           <TabsContent value="suggestions" data-tutorial="admin-suggestions">
             <AdminBookSuggestionsPanel />
+          </TabsContent>
+
+          <TabsContent value="books">
+            <AdminBooksPanel />
           </TabsContent>
 
           <TabsContent value="tracks" data-tutorial="admin-tracks">
