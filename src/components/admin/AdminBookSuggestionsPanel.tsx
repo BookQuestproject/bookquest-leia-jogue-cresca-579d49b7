@@ -340,6 +340,7 @@ export const AdminBookSuggestionsPanel = () => {
             chapters_list: chapters.length > 0 ? chapters : undefined,
             book_summary: bookSummary || undefined,
             narrative_context: narrativeContext || undefined,
+            cover_url: coverUrl.trim() || undefined,
           }
         : undefined
     );
