@@ -262,6 +262,8 @@ export const AdminBookSuggestionsPanel = () => {
   const [chaptersList, setChaptersList] = useState("");
   const [bookSummary, setBookSummary] = useState("");
   const [narrativeContext, setNarrativeContext] = useState("");
+  const [coverUrl, setCoverUrl] = useState("");
+  const [enrichingId, setEnrichingId] = useState<string | null>(null);
 
   const pendingSuggestions = suggestions.filter((s) => s.status === "pending");
   const approvedSuggestions = suggestions.filter((s) => s.status === "approved");
