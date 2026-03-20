@@ -4,6 +4,7 @@ import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookma
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useMyTrails } from "@/hooks/useMyTrails";
 import { useEnrichedChapters } from "@/hooks/useEnrichedChapters";
+import { useBookOverrides } from "@/hooks/useBookOverrides";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Layout from "@/components/layout/Layout";
