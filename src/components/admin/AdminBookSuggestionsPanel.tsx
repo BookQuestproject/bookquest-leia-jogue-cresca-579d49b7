@@ -481,6 +481,26 @@ export const AdminBookSuggestionsPanel = () => {
 
                   <div>
                     <label className="text-sm font-medium mb-1 block flex items-center gap-1">
+                      <Image className="w-4 h-4" /> URL da Capa
+                    </label>
+                    <div className="flex gap-3 items-start">
+                      {coverUrl && (
+                        <div className="w-16 h-22 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-border">
+                          <img src={coverUrl} alt="Preview" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                        </div>
+                      )}
+                      <input
+                        type="text"
+                        value={coverUrl}
+                        onChange={(e) => setCoverUrl(e.target.value)}
+                        placeholder="https://exemplo.com/capa.jpg"
+                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-1 block flex items-center gap-1">
                       <List className="w-4 h-4" /> Lista de Capítulos (um por linha)
                     </label>
                     <Textarea
@@ -489,6 +509,18 @@ export const AdminBookSuggestionsPanel = () => {
                       placeholder="Capítulo 1 - Título&#10;Capítulo 2 - Título&#10;..."
                       rows={5}
                     />
+                    {!chaptersList.trim() && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2 gap-1.5"
+                        disabled={enrichingId === selectedSuggestion.id}
+                        onClick={() => enrichChaptersForSuggestion(selectedSuggestion)}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        {enrichingId === selectedSuggestion.id ? "Enriquecendo..." : "Gerar capítulos com IA"}
+                      </Button>
+                    )}
                   </div>
 
                   <div>
