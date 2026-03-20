@@ -727,8 +727,11 @@ const Trilhas = () => {
   // Merge enriched chapters into static bookTrails
   const allTrails = useMemo(() => {
     const enrichedStatic = bookTrails.map(trail => {
+      // Apply admin overrides first
+      const overriddenTrail = applyOverride(trail, trail.id);
+      
       const enrichment = getEnrichment(trail.id);
-      if (!enrichment || enrichment.chapters.length === 0) return trail;
+      if (!enrichment || enrichment.chapters.length === 0) return overriddenTrail;
 
       // Merge: keep first few manually curated chapters' questions but use enriched titles
       const enrichedChapters: Chapter[] = enrichment.chapters.map((eCh, i) => {
@@ -745,14 +748,14 @@ const Trilhas = () => {
       });
 
       return {
-        ...trail,
+        ...overriddenTrail,
         totalChapters: enrichedChapters.length,
         chapters: enrichedChapters,
       };
     });
 
     return [...enrichedStatic, ...dynamicTrails];
-  }, [enrichments, dynamicTrails, getEnrichment]);
+  }, [enrichments, dynamicTrails, getEnrichment, applyOverride]);
 
   // Quiz recommendations (reactive via state)
   const [quizRecommendations, setQuizRecommendations] = useState<string[]>(() => {
