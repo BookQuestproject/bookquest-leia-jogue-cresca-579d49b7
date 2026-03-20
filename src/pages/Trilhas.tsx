@@ -645,6 +645,7 @@ const Trilhas = () => {
   const { activeTrail, setActiveTrail } = useActiveTrail();
   const { isInMyTrails, removeTrail } = useMyTrails();
   const { enrichments, getEnrichment } = useEnrichedChapters();
+  const { applyOverride } = useBookOverrides();
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
