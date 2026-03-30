@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { BookMarked, Plus, Star, Check } from "lucide-react";
+import { BookMarked, Plus, Star, Check, CalendarDays, HelpCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useBookshelf, type ShelfCategory } from "@/hooks/useBookshelf";
 
 const categories = [
@@ -20,6 +21,8 @@ const categories = [
   { id: "abandonado", label: "Abandonado" },
   { id: "favoritos", label: "Favoritos" },
 ];
+
+const DATE_CATEGORIES: ShelfCategory[] = ["lendo", "reelendo", "lido", "favoritos"];
 
 const Estante = () => {
   const navigate = useNavigate();
@@ -33,20 +36,52 @@ const Estante = () => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
 
+  // Date fields
+  const [startedAt, setStartedAt] = useState("");
+  const [finishedAt, setFinishedAt] = useState("");
+  const [startedApprox, setStartedApprox] = useState("");
+  const [finishedApprox, setFinishedApprox] = useState("");
+  const [startApproxMode, setStartApproxMode] = useState(false);
+  const [finishApproxMode, setFinishApproxMode] = useState(false);
+
   const filteredBooks = books.filter(book => book.category === selectedCategory);
+
+  const showDates = DATE_CATEGORIES.includes(selectedBook?.category as ShelfCategory);
 
   const handleOpenBook = (book: typeof books[0]) => {
     setSelectedBook(book);
     setRating(book.rating || 0);
     setReview(book.review || "");
+    setStartedAt(book.startedAt || "");
+    setFinishedAt(book.finishedAt || "");
+    setStartedApprox(book.startedApprox || "");
+    setFinishedApprox(book.finishedApprox || "");
+    setStartApproxMode(!!book.startedApprox);
+    setFinishApproxMode(!!book.finishedApprox);
     setIsModalOpen(true);
   };
 
   const handleSaveReview = () => {
     if (selectedBook) {
-      updateBook(selectedBook.id, { rating, review });
+      updateBook(selectedBook.id, {
+        rating,
+        review,
+        startedAt: startApproxMode ? undefined : startedAt || undefined,
+        finishedAt: finishApproxMode ? undefined : finishedAt || undefined,
+        startedApprox: startApproxMode ? startedApprox || undefined : undefined,
+        finishedApprox: finishApproxMode ? finishedApprox || undefined : undefined,
+      });
       setIsModalOpen(false);
     }
+  };
+
+  const formatDisplayDate = (exact?: string, approx?: string) => {
+    if (exact) {
+      const [y, m, d] = exact.split("-");
+      return `${d}/${m}/${y}`;
+    }
+    if (approx) return `~${approx}`;
+    return null;
   };
 
   return (
@@ -102,57 +137,73 @@ const Estante = () => {
             </span>
           </div>
 
-          {filteredBooks.map((book, index) => (
-            <div 
-              key={book.id} 
-              className="glass-card rounded-xl overflow-hidden card-hover cursor-pointer animate-fade-in"
-              style={{ animationDelay: `${(index + 1) * 0.05}s` }}
-              onClick={() => handleOpenBook(book)}
-            >
-              <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
-                <img 
-                  src={book.cover} 
-                  alt={`Capa de ${book.title}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-3">
-                <h3 className="font-bold text-sm truncate">{book.title}</h3>
-                <p className="text-xs text-muted-foreground truncate">{book.author}</p>
-                
-                {book.progress !== undefined && (
-                  <div className="mt-2">
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-muted-foreground">Progresso</span>
-                      <span className="font-bold">{book.progress}%</span>
+          {filteredBooks.map((book, index) => {
+            const startDisplay = formatDisplayDate(book.startedAt, book.startedApprox);
+            const endDisplay = formatDisplayDate(book.finishedAt, book.finishedApprox);
+
+            return (
+              <div 
+                key={book.id} 
+                className="glass-card rounded-xl overflow-hidden card-hover cursor-pointer animate-fade-in"
+                style={{ animationDelay: `${(index + 1) * 0.05}s` }}
+                onClick={() => handleOpenBook(book)}
+              >
+                <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={book.cover} 
+                    alt={`Capa de ${book.title}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-3">
+                  <h3 className="font-bold text-sm truncate">{book.title}</h3>
+                  <p className="text-xs text-muted-foreground truncate">{book.author}</p>
+                  
+                  {book.progress !== undefined && (
+                    <div className="mt-2">
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-muted-foreground">Progresso</span>
+                        <span className="font-bold">{book.progress}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary rounded-full"
+                          style={{ width: `${book.progress}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary rounded-full"
-                        style={{ width: `${book.progress}%` }}
-                      />
+                  )}
+
+                  {(startDisplay || endDisplay) && (
+                    <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
+                      <CalendarDays className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">
+                        {startDisplay && `Início: ${startDisplay}`}
+                        {startDisplay && endDisplay && " · "}
+                        {endDisplay && `Fim: ${endDisplay}`}
+                      </span>
                     </div>
-                  </div>
-                )}
-                
-                {book.rating && (
-                  <div className="flex items-center gap-1 mt-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-3 h-3 ${i < book.rating! ? "text-accent fill-accent" : "text-muted"}`}
-                      />
-                    ))}
-                  </div>
-                )}
+                  )}
+                  
+                  {book.rating && (
+                    <div className="flex items-center gap-1 mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`w-3 h-3 ${i < book.rating! ? "text-accent fill-accent" : "text-muted"}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Book Detail Modal */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-3">
                 <div className="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0">
@@ -170,6 +221,98 @@ const Estante = () => {
             </DialogHeader>
 
             <div className="space-y-6 py-4">
+              {/* Dates Section */}
+              {showDates && (
+                <div className="space-y-4 p-4 rounded-xl bg-muted/50 border border-border">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <CalendarDays className="w-4 h-4 text-primary" />
+                    Datas de leitura
+                  </div>
+
+                  {/* Start Date */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm text-muted-foreground">Data de início</label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStartApproxMode(!startApproxMode);
+                          if (!startApproxMode) setStartedAt("");
+                          else setStartedApprox("");
+                        }}
+                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                          startApproxMode
+                            ? "bg-primary/10 text-primary"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        }`}
+                      >
+                        <HelpCircle className="w-3 h-3" />
+                        Não lembro a data exata
+                      </button>
+                    </div>
+                    {startApproxMode ? (
+                      <Input
+                        type="number"
+                        placeholder="Ex: 2024"
+                        min={1900}
+                        max={new Date().getFullYear()}
+                        value={startedApprox}
+                        onChange={(e) => setStartedApprox(e.target.value)}
+                        className="bg-background"
+                      />
+                    ) : (
+                      <Input
+                        type="date"
+                        value={startedAt}
+                        onChange={(e) => setStartedAt(e.target.value)}
+                        className="bg-background"
+                      />
+                    )}
+                  </div>
+
+                  {/* Finish Date */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm text-muted-foreground">Data de término</label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFinishApproxMode(!finishApproxMode);
+                          if (!finishApproxMode) setFinishedAt("");
+                          else setFinishedApprox("");
+                        }}
+                        className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                          finishApproxMode
+                            ? "bg-primary/10 text-primary"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        }`}
+                      >
+                        <HelpCircle className="w-3 h-3" />
+                        Não lembro a data exata
+                      </button>
+                    </div>
+                    {finishApproxMode ? (
+                      <Input
+                        type="number"
+                        placeholder="Ex: 2023"
+                        min={1900}
+                        max={new Date().getFullYear()}
+                        value={finishedApprox}
+                        onChange={(e) => setFinishedApprox(e.target.value)}
+                        className="bg-background"
+                      />
+                    ) : (
+                      <Input
+                        type="date"
+                        value={finishedAt}
+                        onChange={(e) => setFinishedAt(e.target.value)}
+                        className="bg-background"
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="text-sm font-medium mb-2 block">Sua avaliação</label>
                 <div className="flex gap-2">

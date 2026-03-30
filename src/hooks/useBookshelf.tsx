@@ -11,6 +11,10 @@ export interface ShelfBook {
   progress?: number;
   rating?: number;
   review?: string;
+  startedAt?: string;
+  finishedAt?: string;
+  startedApprox?: string;
+  finishedApprox?: string;
 }
 
 const STORAGE_KEY = "bookquest-shelf";
