@@ -48,15 +48,15 @@ export const useRanking = () => {
 
       const rankingUsers: RankingUser[] = (data as any[]).map((d: any) => {
         const profile = profileMap.get(d.user_id);
-        const name = profile?.full_name || 'Usuário';
-        const initials = name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
-        // Use assigned_tier if available, otherwise fall back to XP-based tier
+        const displayName = profile?.username ? `@${profile.username}` : (profile?.full_name || 'Usuário');
+        const initials = (profile?.full_name || 'U').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
         const tier = d.assigned_tier && d.assigned_tier !== 'bronze' 
           ? d.assigned_tier as RankingTier 
           : getTierFromEssencia(d.xp || 0);
         return {
           id: d.user_id,
-          name,
+          name: displayName,
+          username: profile?.username || null,
           avatar: initials,
           essencia: d.xp || 0,
           xp: d.xp || 0,
