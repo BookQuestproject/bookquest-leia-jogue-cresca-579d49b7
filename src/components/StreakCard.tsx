@@ -1,7 +1,14 @@
-import { Flame } from "lucide-react";
+import { useState } from "react";
+import { Flame, ChevronRight } from "lucide-react";
 import { useUserStats } from "@/hooks/useUserStats";
 import EssenciaIcon from "@/components/EssenciaIcon";
-import { getStreakColor } from "@/components/StreakFlame";
+import { getStreakColor, streakLevels } from "@/components/StreakFlame";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const STREAK_REWARDS = [
   { days: 3, bonus: 15, label: "3 dias" },
