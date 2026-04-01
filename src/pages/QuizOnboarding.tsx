@@ -509,14 +509,7 @@ const QuizOnboarding = () => {
           <p className="text-xs text-muted-foreground/60 mt-1">Letras minúsculas, números, pontos e underlines. Único para você.</p>
         </div>
 
-        <div className="flex items-center justify-between pt-2">
-          <button
-            onClick={handleSkipQuiz}
-            disabled={isSaving}
-            className="text-sm text-muted-foreground/60 underline hover:text-muted-foreground transition-colors"
-          >
-            Pular quiz
-          </button>
+        <div className="flex items-center justify-end pt-2">
           <Button
             className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
             onClick={handleNameNext}
