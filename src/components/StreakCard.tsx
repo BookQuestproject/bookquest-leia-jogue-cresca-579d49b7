@@ -131,6 +131,59 @@ const StreakCard = ({ compact = false }: StreakCardProps) => {
           </div>
         ))}
       </div>
+
+      {/* View all levels button */}
+      <button
+        onClick={() => setShowLevels(true)}
+        className="flex items-center justify-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors pt-2 w-full"
+      >
+        Ver todas as cores do fogo
+        <ChevronRight className="w-3 h-3" />
+      </button>
+
+      {/* Levels modal */}
+      <Dialog open={showLevels} onOpenChange={setShowLevels}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-base flex items-center gap-2">
+              <Flame className="w-4 h-4 text-accent" />
+              Ordem da Chama
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-xs text-muted-foreground -mt-2">
+            Complete atividades diárias para evoluir sua chama.
+          </p>
+          <div className="space-y-0.5 mt-2">
+            {[...streakLevels].sort((a, b) => a.min - b.min).map((level) => {
+              const isCurrent = streakInfo.label === level.label && streak > 0;
+              return (
+                <div
+                  key={level.min}
+                  className={`flex items-center justify-between px-2.5 py-2 rounded-md text-xs transition-colors ${isCurrent ? "bg-muted" : ""}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Flame
+                      className="w-3 h-3 flex-shrink-0"
+                      style={{
+                        color: level.color,
+                        opacity: isCurrent ? 1 : 0.5,
+                        filter: level.glow ? `drop-shadow(0 0 3px ${level.color})` : undefined,
+                      }}
+                    />
+                    <span className="font-medium" style={{ color: level.color, opacity: isCurrent ? 1 : 0.65 }}>
+                      {level.label}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-muted-foreground">{level.description}</span>
+                    {isCurrent && <ChevronRight className="w-3 h-3 text-foreground" />}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
