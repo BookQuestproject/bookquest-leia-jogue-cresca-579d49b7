@@ -12,7 +12,7 @@ export interface BookReview {
   comment: string | null;
   created_at: string;
   updated_at: string;
-  profile?: { full_name: string | null; avatar_url: string | null };
+  profile?: { full_name: string | null; avatar_url: string | null; username: string | null };
 }
 
 export const useBookReviews = (bookId?: string) => {
