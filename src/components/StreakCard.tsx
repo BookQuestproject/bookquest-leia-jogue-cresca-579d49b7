@@ -26,6 +26,7 @@ const StreakCard = ({ compact = false }: StreakCardProps) => {
   const streakInfo = getStreakColor(streak);
   const nextReward = STREAK_REWARDS.find(r => r.days > streak);
   const daysToReward = nextReward ? nextReward.days - streak : 0;
+  const [showLevels, setShowLevels] = useState(false);
 
   const getMessage = () => {
     if (streak === 0) return "Leia hoje para iniciar sua sequência! 🔥";
