@@ -64,6 +64,7 @@ const App = () => (
               <SpotlightOverlay />
               <CategoryIntro />
               <QuizGate>
+              <UsernameGate>
                 <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/home" element={<Index />} />
