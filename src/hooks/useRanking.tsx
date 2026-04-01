@@ -41,7 +41,7 @@ export const useRanking = () => {
 
       const { data: profiles } = await supabase
         .from('profiles_public' as any)
-        .select('id, full_name, avatar_url')
+        .select('id, full_name, avatar_url, username')
         .in('id', userIds);
 
       const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));
