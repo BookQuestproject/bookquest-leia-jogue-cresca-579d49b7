@@ -24,7 +24,7 @@ export interface CommunityPost {
   likes_count: number;
   reposts_count: number;
   created_at: string;
-  profile?: { full_name: string | null; avatar_url: string | null };
+  profile?: { full_name: string | null; avatar_url: string | null; username: string | null };
   comments: CommunityComment[];
   liked: boolean;
   bookmarked: boolean;
