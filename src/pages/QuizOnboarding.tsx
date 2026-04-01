@@ -248,8 +248,15 @@ const ageRangeToMaxAge = (range: string): number => {
 
 const QuizOnboarding = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { updateQuizCompleted } = useProfile();
+  const { user, loading: authLoading } = useAuth();
+  const { updateQuizCompleted, quizCompleted, loading: profileLoading } = useProfile();
+
+  // Auto-redirect if quiz already completed
+  useEffect(() => {
+    if (!authLoading && !profileLoading && user && quizCompleted) {
+      navigate('/home', { replace: true });
+    }
+  }, [authLoading, profileLoading, user, quizCompleted, navigate]);
   const { addBook } = useBookshelf();
   
   const [step, setStep] = useState<QuizStep>("name");
