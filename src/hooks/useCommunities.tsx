@@ -37,7 +37,7 @@ export interface CommunityComment {
   content: string;
   sticker: string | null;
   created_at: string;
-  profile?: { full_name: string | null; avatar_url: string | null };
+  profile?: { full_name: string | null; avatar_url: string | null; username: string | null };
 }
 
 export const useCommunities = () => {
