@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Lightbulb, BookOpen } from "lucide-react";
@@ -248,8 +248,15 @@ const ageRangeToMaxAge = (range: string): number => {
 
 const QuizOnboarding = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { updateQuizCompleted } = useProfile();
+  const { user, loading: authLoading } = useAuth();
+  const { updateQuizCompleted, quizCompleted, loading: profileLoading } = useProfile();
+
+  // Auto-redirect if quiz already completed
+  useEffect(() => {
+    if (!authLoading && !profileLoading && user && quizCompleted) {
+      navigate('/home', { replace: true });
+    }
+  }, [authLoading, profileLoading, user, quizCompleted, navigate]);
   const { addBook } = useBookshelf();
   
   const [step, setStep] = useState<QuizStep>("name");
@@ -502,14 +509,7 @@ const QuizOnboarding = () => {
           <p className="text-xs text-muted-foreground/60 mt-1">Letras minúsculas, números, pontos e underlines. Único para você.</p>
         </div>
 
-        <div className="flex items-center justify-between pt-2">
-          <button
-            onClick={handleSkipQuiz}
-            disabled={isSaving}
-            className="text-sm text-muted-foreground/60 underline hover:text-muted-foreground transition-colors"
-          >
-            Pular quiz
-          </button>
+        <div className="flex items-center justify-end pt-2">
           <Button
             className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold gap-2"
             onClick={handleNameNext}
