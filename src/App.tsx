@@ -102,6 +102,7 @@ const App = () => (
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
+              </UsernameGate>
               </QuizGate>
             </TutorialProvider>
           </BrowserRouter>
