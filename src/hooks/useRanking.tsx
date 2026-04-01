@@ -6,6 +6,7 @@ import { getTierFromEssencia, RankingTier } from '@/components/RankingBadge';
 export interface RankingUser {
   id: string;
   name: string;
+  username: string | null;
   avatar: string;
   essencia: number;
   /** @deprecated use essencia */
