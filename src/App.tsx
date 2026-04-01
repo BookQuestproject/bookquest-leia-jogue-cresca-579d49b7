@@ -13,6 +13,7 @@ import { TutorialProvider } from "@/contexts/TutorialContext";
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
+import UsernameGate from "@/components/UsernameGate";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
