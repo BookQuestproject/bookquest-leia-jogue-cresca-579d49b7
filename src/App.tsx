@@ -13,6 +13,7 @@ import { TutorialProvider } from "@/contexts/TutorialContext";
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
+import UsernameGate from "@/components/UsernameGate";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
@@ -63,6 +64,7 @@ const App = () => (
               <SpotlightOverlay />
               <CategoryIntro />
               <QuizGate>
+              <UsernameGate>
                 <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/home" element={<Index />} />
@@ -100,6 +102,7 @@ const App = () => (
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
+              </UsernameGate>
               </QuizGate>
             </TutorialProvider>
           </BrowserRouter>

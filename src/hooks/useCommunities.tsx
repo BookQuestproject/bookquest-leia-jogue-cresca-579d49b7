@@ -24,7 +24,7 @@ export interface CommunityPost {
   likes_count: number;
   reposts_count: number;
   created_at: string;
-  profile?: { full_name: string | null; avatar_url: string | null };
+  profile?: { full_name: string | null; avatar_url: string | null; username: string | null };
   comments: CommunityComment[];
   liked: boolean;
   bookmarked: boolean;
@@ -37,7 +37,7 @@ export interface CommunityComment {
   content: string;
   sticker: string | null;
   created_at: string;
-  profile?: { full_name: string | null; avatar_url: string | null };
+  profile?: { full_name: string | null; avatar_url: string | null; username: string | null };
 }
 
 export const useCommunities = () => {
@@ -133,7 +133,7 @@ export const useCommunityDetail = (communityId: string | null) => {
 
       // Fetch profiles
       const { data: profiles } = allUserIds.length > 0
-        ? await supabase.from('profiles_public' as any).select('id, full_name, avatar_url').in('id', allUserIds)
+        ? await supabase.from('profiles_public' as any).select('id, full_name, avatar_url, username').in('id', allUserIds)
         : { data: [] };
 
       const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));

@@ -12,7 +12,7 @@ export interface BookReview {
   comment: string | null;
   created_at: string;
   updated_at: string;
-  profile?: { full_name: string | null; avatar_url: string | null };
+  profile?: { full_name: string | null; avatar_url: string | null; username: string | null };
 }
 
 export const useBookReviews = (bookId?: string) => {
@@ -41,7 +41,7 @@ export const useBookReviews = (bookId?: string) => {
       const userIds = [...new Set((data || []).map(r => r.user_id))];
       const { data: profiles } = await supabase
         .from('profiles_public' as any)
-        .select('id, full_name, avatar_url')
+        .select('id, full_name, avatar_url, username')
         .in('id', userIds);
 
       const profileMap = new Map(((profiles as any[]) || []).map((p: any) => [p.id, p]));

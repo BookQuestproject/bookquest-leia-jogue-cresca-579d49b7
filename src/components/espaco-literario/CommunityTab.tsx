@@ -194,7 +194,7 @@ const CommunityDetailView = ({ community, onBack, onMembershipChange }: {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <span className="text-sm font-medium text-foreground">{post.profile?.full_name || "Leitor"}</span>
+                  <span className="text-sm font-medium text-foreground">{post.profile?.username ? `@${post.profile.username}` : (post.profile?.full_name || "Leitor")}</span>
                   <span className="text-xs text-muted-foreground ml-2">{formatTime(post.created_at)}</span>
                 </div>
               </div>
@@ -235,7 +235,7 @@ const CommunityDetailView = ({ community, onBack, onMembershipChange }: {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <span className="text-xs font-medium text-foreground">{comment.profile?.full_name || "Leitor"}</span>
+                        <span className="text-xs font-medium text-foreground">{comment.profile?.username ? `@${comment.profile.username}` : (comment.profile?.full_name || "Leitor")}</span>
                         <span className="text-[10px] text-muted-foreground ml-1">{formatTime(comment.created_at)}</span>
                         <p className="text-xs text-muted-foreground">{comment.content}</p>
                         {comment.sticker && <span className="text-lg">{comment.sticker}</span>}

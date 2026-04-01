@@ -178,7 +178,7 @@ const ReviewsTab = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-sm font-medium text-foreground">
-                            {review.profile?.full_name || "Leitor"}
+                            {review.profile?.username ? `@${review.profile.username}` : (review.profile?.full_name || "Leitor")}
                           </span>
                           <StarRating rating={review.rating} size="w-3 h-3" />
                           <span className="text-xs text-muted-foreground ml-auto">
