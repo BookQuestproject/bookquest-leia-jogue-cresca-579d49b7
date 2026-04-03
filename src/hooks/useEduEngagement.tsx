@@ -51,7 +51,7 @@ export const useEduEngagement = (classId?: string) => {
       .select('*')
       .eq('class_id', id)
       .order('created_at', { ascending: false });
-    setChallenges((data as EduChallenge[]) ?? []);
+    setChallenges((data as unknown as EduChallenge[]) ?? []);
   }, [classId]);
 
   const fetchAchievements = useCallback(async (cId?: string) => {
