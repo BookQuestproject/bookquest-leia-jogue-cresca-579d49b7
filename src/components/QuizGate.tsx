@@ -17,7 +17,7 @@ const QuizGate = ({ children }: QuizGateProps) => {
   const location = useLocation();
 
   // Don't gate these routes
-  const exemptPaths = ["/", "/auth", "/quiz-literario", "/configuracoes", "/edu", "/auth/callback"];
+  const exemptPaths = ["/", "/auth", "/quiz-literario", "/configuracoes", "/edu", "/auth/callback", "/politica-de-privacidade", "/termos-de-servico"];
   if (exemptPaths.some(p => location.pathname.startsWith(p))) {
     return <>{children}</>;
   }
