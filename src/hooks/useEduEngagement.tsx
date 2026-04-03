@@ -62,7 +62,7 @@ export const useEduEngagement = (classId?: string) => {
       .select('*')
       .eq('class_id', id)
       .order('awarded_at', { ascending: false });
-    setAchievements((data as EduAchievement[]) ?? []);
+    setAchievements((data as unknown as EduAchievement[]) ?? []);
   }, [classId]);
 
   const fetchAnnouncements = useCallback(async (cId?: string) => {
