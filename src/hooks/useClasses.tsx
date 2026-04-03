@@ -44,9 +44,11 @@ export const useClasses = () => {
     if (!user) return;
     setLoading(true);
     try {
+      // Fetch classes where user is teacher (RLS handles the filtering)
       const { data, error } = await supabase
         .from('classes')
         .select('*')
+        .eq('teacher_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
       setClasses((data as ClassData[]) ?? []);
