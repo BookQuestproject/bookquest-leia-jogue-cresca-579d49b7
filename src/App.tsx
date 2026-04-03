@@ -96,7 +96,9 @@ const App = () => (
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
-                <Route path="/edu" element={<EduDashboard />} />
+                <Route path="/edu" element={<EduEntry />} />
+                <Route path="/edu/aluno" element={<EduAluno />} />
+                <Route path="/edu/professor" element={<EduProfessor />} />
                 <Route path="/edu/turmas" element={<EduTurmas />} />
                 <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
                 <Route path="/edu/relatorios" element={<EduRelatorios />} />
