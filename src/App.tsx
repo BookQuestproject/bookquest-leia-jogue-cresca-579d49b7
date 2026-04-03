@@ -40,11 +40,13 @@ import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
 import AdminFounderPreview from "./pages/AdminFounderPreview";
 import AuthCallback from "./pages/AuthCallback";
-import EduDashboard from "./pages/edu/EduDashboard";
+import EduEntry from "./pages/edu/EduEntry";
+import EduProfessor from "./pages/edu/EduProfessor";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
+import EduAluno from "./pages/edu/EduAluno";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
 

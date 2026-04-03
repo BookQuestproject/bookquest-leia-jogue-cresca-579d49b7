@@ -1,7 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAdmin } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
+import { useEduRole } from "@/hooks/useEduRole";
 import {
   GraduationCap, LayoutDashboard, Users, BarChart3, LogOut, BookOpen,
 } from "lucide-react";
@@ -14,26 +14,28 @@ interface EduLayoutProps {
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/edu" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/edu/professor" },
   { icon: Users, label: "Turmas", path: "/edu/turmas" },
   { icon: BarChart3, label: "Relatórios", path: "/edu/relatorios" },
 ];
 
 const EduLayout = ({ children }: EduLayoutProps) => {
   const { user, loading: authLoading } = useAuth();
-  const { isAdmin, loading: adminLoading } = useAdmin();
+  const { isTeacher, loading: roleLoading } = useEduRole();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (!authLoading && !adminLoading) {
-      if (!user || !isAdmin) {
-        navigate("/", { replace: true });
+    if (!authLoading && !roleLoading) {
+      if (!user) {
+        navigate("/edu", { replace: true });
+      } else if (!isTeacher) {
+        navigate("/edu", { replace: true });
       }
     }
-  }, [user, isAdmin, authLoading, adminLoading, navigate]);
+  }, [user, isTeacher, authLoading, roleLoading, navigate]);
 
-  if (authLoading || adminLoading) {
+  if (authLoading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Carregando...</div>
@@ -41,10 +43,10 @@ const EduLayout = ({ children }: EduLayoutProps) => {
     );
   }
 
-  if (!user || !isAdmin) return null;
+  if (!user || !isTeacher) return null;
 
   const isActive = (path: string) =>
-    path === "/edu" ? location.pathname === "/edu" : location.pathname.startsWith(path);
+    path === "/edu/professor" ? location.pathname === "/edu/professor" : location.pathname.startsWith(path);
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -76,18 +78,11 @@ const EduLayout = ({ children }: EduLayoutProps) => {
         </nav>
 
         <div className="p-3 border-t border-border space-y-2">
-          <Link
-            to="/home"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          >
-            <BookOpen className="h-4 w-4" />
-            Voltar ao BookQuest
-          </Link>
           <Button
             variant="ghost"
             size="sm"
             className="w-full justify-start text-muted-foreground"
-            onClick={() => supabase.auth.signOut().then(() => navigate("/"))}
+            onClick={() => supabase.auth.signOut().then(() => navigate("/edu"))}
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sair
