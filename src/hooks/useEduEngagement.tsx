@@ -73,7 +73,7 @@ export const useEduEngagement = (classId?: string) => {
       .select('*')
       .eq('class_id', id)
       .order('created_at', { ascending: false });
-    setAnnouncements((data as EduAnnouncement[]) ?? []);
+    setAnnouncements((data as unknown as EduAnnouncement[]) ?? []);
   }, [classId]);
 
   const fetchAll = useCallback(async () => {
