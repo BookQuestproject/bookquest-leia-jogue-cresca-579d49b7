@@ -853,6 +853,27 @@ export type Database = {
           },
         ]
       }
+      edu_teachers: {
+        Row: {
+          activated_at: string
+          activation_code: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string
+          activation_code: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          activated_at?: string
+          activation_code?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       founder_subscriptions: {
         Row: {
           id: string

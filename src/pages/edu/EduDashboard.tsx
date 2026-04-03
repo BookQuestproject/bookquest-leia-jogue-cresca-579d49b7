@@ -9,19 +9,18 @@ const EduDashboard = () => {
   const { classes, loading } = useClasses();
   const navigate = useNavigate();
 
-  const activeClasses = classes.filter((c) => c.is_active);
+  const activeClasses = classes.filter((c) => c.is_active && !c.is_archived);
   const totalClasses = activeClasses.length;
 
   const stats = [
-    { label: "Turmas Ativas", value: totalClasses, icon: Users, color: "text-blue-400" },
-    { label: "Livros Atribuídos", value: activeClasses.filter((c) => c.book_title).length, icon: BookOpen, color: "text-green-400" },
+    { label: "Turmas Ativas", value: totalClasses, icon: Users, color: "text-primary" },
+    { label: "Livros Atribuídos", value: activeClasses.filter((c) => c.book_title).length, icon: BookOpen, color: "text-accent" },
     { label: "Com Prazo Definido", value: activeClasses.filter((c) => c.reading_deadline).length, icon: TrendingUp, color: "text-accent" },
   ];
 
   return (
     <EduLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
@@ -29,7 +28,7 @@ const EduDashboard = () => {
               BookQuest EDU
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Painel educacional para acompanhamento de turmas
+              Painel do professor — acompanhe suas turmas
             </p>
           </div>
           <Button onClick={() => navigate("/edu/turmas")} className="bg-primary hover:bg-primary/80">
@@ -38,7 +37,6 @@ const EduDashboard = () => {
           </Button>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {stats.map((s) => (
             <Card key={s.label} className="bg-card border-border">
@@ -55,7 +53,6 @@ const EduDashboard = () => {
           ))}
         </div>
 
-        {/* Recent Classes */}
         <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle className="text-lg text-foreground">Turmas Recentes</CardTitle>

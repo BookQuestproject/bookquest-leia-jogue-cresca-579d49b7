@@ -40,11 +40,13 @@ import ChapterReading from "./pages/ChapterReading";
 import Admin from "./pages/Admin";
 import AdminFounderPreview from "./pages/AdminFounderPreview";
 import AuthCallback from "./pages/AuthCallback";
-import EduDashboard from "./pages/edu/EduDashboard";
+import EduEntry from "./pages/edu/EduEntry";
+import EduProfessor from "./pages/edu/EduProfessor";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
+import EduAluno from "./pages/edu/EduAluno";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
 
@@ -94,7 +96,9 @@ const App = () => (
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
-                <Route path="/edu" element={<EduDashboard />} />
+                <Route path="/edu" element={<EduEntry />} />
+                <Route path="/edu/aluno" element={<EduAluno />} />
+                <Route path="/edu/professor" element={<EduProfessor />} />
                 <Route path="/edu/turmas" element={<EduTurmas />} />
                 <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
                 <Route path="/edu/relatorios" element={<EduRelatorios />} />
