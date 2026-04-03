@@ -853,6 +853,126 @@ export type Database = {
           },
         ]
       }
+      edu_class_announcements: {
+        Row: {
+          class_id: string
+          content: string
+          created_at: string
+          id: string
+          teacher_id: string
+        }
+        Insert: {
+          class_id: string
+          content: string
+          created_at?: string
+          id?: string
+          teacher_id: string
+        }
+        Update: {
+          class_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_class_announcements_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edu_class_challenges: {
+        Row: {
+          challenge_type: string
+          class_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string
+          goal_value: number
+          id: string
+          is_active: boolean
+          start_date: string
+          title: string
+        }
+        Insert: {
+          challenge_type?: string
+          class_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date?: string
+          goal_value?: number
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          title: string
+        }
+        Update: {
+          challenge_type?: string
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string
+          goal_value?: number
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_class_challenges_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edu_student_achievements: {
+        Row: {
+          achievement_label: string
+          achievement_type: string
+          awarded_at: string
+          class_id: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          achievement_label: string
+          achievement_type: string
+          awarded_at?: string
+          class_id: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          achievement_label?: string
+          achievement_type?: string
+          awarded_at?: string
+          class_id?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_student_achievements_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       edu_teachers: {
         Row: {
           activated_at: string
