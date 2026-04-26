@@ -280,11 +280,29 @@ const Biblioteca = () => {
 
         if (!error && data?.success && data.book?.exists) {
           setVerificationResult({ exists: true, book: data.book });
-          toast.success("Livro verificado com sucesso!", {
-            description: `"${data.book.correct_title}" foi analisado e está aguardando aprovação.`,
-            icon: <Check className="w-4 h-4 text-green-500" />,
-            duration: 5000,
-          });
+          const finalTitle = data.book.correct_title || newBook.title;
+
+          if (data.book.auto_approved) {
+            // Add to suggester's personal trails immediately
+            addTrail(finalTitle);
+
+            toast.success("📚 Livro publicado!", {
+              description: `"${finalTitle}" já está disponível na Biblioteca e nas suas Trilhas.`,
+              icon: <Check className="w-4 h-4 text-green-500" />,
+              duration: 6000,
+              action: {
+                label: "Ver na trilha",
+                onClick: () => navigate("/trilhas"),
+              },
+            });
+          } else {
+            toast.success("Livro verificado com sucesso!", {
+              description: `"${finalTitle}" foi analisado e está aguardando revisão final.`,
+              icon: <Check className="w-4 h-4 text-green-500" />,
+              duration: 5000,
+            });
+          }
+
           toast(`+15 Essência 🎉`, {
             description: "Recompensa por sugerir um livro válido!",
             icon: <EssenciaIcon size="sm" className="text-accent" />,
