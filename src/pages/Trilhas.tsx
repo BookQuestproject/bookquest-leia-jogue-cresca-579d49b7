@@ -1,6 +1,6 @@
 import { useState, useMemo, memo, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin, Award, X } from "lucide-react";
+import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin, Award, X, Sparkles } from "lucide-react";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useMyTrails } from "@/hooks/useMyTrails";
 import { useEnrichedChapters } from "@/hooks/useEnrichedChapters";
