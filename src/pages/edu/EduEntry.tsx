@@ -137,7 +137,13 @@ const EduEntry = () => {
             </Card>
           </div>
 
-          {/* Features */}
+          {/* Demo CTA */}
+          <div className="flex flex-col items-center gap-2 pt-2">
+            <DemoButton size="lg" label="Explorar BookQuest EDU em modo demonstração" />
+            <p className="text-xs text-muted-foreground">Sem cadastro. Acesso instantâneo com dados fictícios.</p>
+          </div>
+
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
               { icon: "📖", label: "Trilhas de Leitura" },
