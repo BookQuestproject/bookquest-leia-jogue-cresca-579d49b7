@@ -172,11 +172,20 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
       );
     }
 
-    // If book exists and is appropriate, update suggestion with AI data (but keep as pending for moderation)
+    // AUTO-APPROVE if AI verified the book with sufficient data
+    // Criteria: exists + appropriate + has cover + has genre
+    const hasMinimumData =
+      bookInfo.exists &&
+      bookInfo.is_appropriate !== false &&
+      !!bookInfo.cover_url &&
+      !!bookInfo.genre &&
+      !!bookInfo.correct_title;
+
     if (bookInfo.exists && suggestion_id) {
       const updateData: Record<string, unknown> = {
-        // Keep status as 'pending' - admin must approve
-        status: 'pending',
+        // Auto-approve when IA validated with confidence; otherwise keep pending for manual review
+        status: hasMinimumData ? 'approved' : 'pending',
+        approved_at: hasMinimumData ? new Date().toISOString() : null,
         book_summary: bookInfo.book_summary || bookInfo.description,
         narrative_context: bookInfo.narrative_context || null,
         cover_url: bookInfo.cover_url || null,
