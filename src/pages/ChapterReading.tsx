@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStats } from "@/hooks/useUserStats";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 // This would ideally come from a shared data source
@@ -461,7 +462,84 @@ const ChapterReading = () => {
   const [earnedXp, setEarnedXp] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const book = bookId ? bookData[bookId] : null;
+  const [dynamicBook, setDynamicBook] = useState<typeof bookData[string] | null>(null);
+  const [dynamicLoading, setDynamicLoading] = useState(false);
+
+  const staticBook = bookId ? bookData[bookId] : null;
+
+  // Fallback: load chapters from book_suggestions for community-suggested books
+  useEffect(() => {
+    if (!bookId || staticBook) return;
+    let cancelled = false;
+    setDynamicLoading(true);
+
+    const normalise = (s: string) =>
+      s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const slug = bookId.replace(/^suggestion-/, "");
+
+    (async () => {
+      const { data } = await supabase
+        .from("book_suggestions")
+        .select("title, author, cover_url, genre, chapters_list, ai_verification_data")
+        .eq("status", "approved");
+
+      if (cancelled || !data) {
+        setDynamicLoading(false);
+        return;
+      }
+
+      const match = data.find((s: any) => {
+        const sSlug = normalise(s.title).replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+        return sSlug === slug || normalise(s.title) === normalise(bookId);
+      });
+
+      if (!match) {
+        setDynamicLoading(false);
+        return;
+      }
+
+      let chaptersData: any[] = [];
+      let meta: any = {};
+      try {
+        const raw = typeof match.chapters_list === "string" ? JSON.parse(match.chapters_list) : match.chapters_list;
+        if (raw?.chapters) chaptersData = raw.chapters;
+        meta = raw || {};
+      } catch {}
+      if (chaptersData.length === 0) {
+        try {
+          const aiData = typeof match.ai_verification_data === "string" ? JSON.parse(match.ai_verification_data) : match.ai_verification_data;
+          if (aiData?.chapters) chaptersData = aiData.chapters;
+        } catch {}
+      }
+
+      const totalPages = meta.pages || 200;
+      const icons = ["📖", "📝", "🔍", "💡", "🌟", "📚", "🎯", "🏆", "🔑", "🌙", "⚡", "🎭", "🗺️", "💎", "🌊"];
+      const numChapters = chaptersData.length > 0 ? chaptersData.length : Math.max(8, Math.min(20, Math.ceil(totalPages / 25)));
+      const pagesPer = Math.max(1, Math.ceil(totalPages / numChapters));
+
+      const chapters = Array.from({ length: numChapters }, (_, i) => {
+        const ch = chaptersData[i];
+        const title = typeof ch === "string" ? ch : (ch?.title || `Capítulo ${i + 1}`);
+        return {
+          id: i + 1,
+          title,
+          icon: icons[i % icons.length],
+          totalPages: pagesPer,
+        };
+      });
+
+      setDynamicBook({
+        title: meta.correct_title || match.title,
+        themeColor: "200 40% 35%",
+        chapters,
+      });
+      setDynamicLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [bookId, staticBook]);
+
+  const book = staticBook || dynamicBook;
   const chapter = book?.chapters.find(c => c.id === Number(chapterId));
   const themeColor = book?.themeColor || "350 45% 32%";
 
@@ -650,6 +728,19 @@ const ChapterReading = () => {
     setShowExitConfirm(false);
     navigate(`/trilhas/${bookId}`);
   };
+
+  if (dynamicLoading && !staticBook) {
+    return (
+      <Layout>
+        <div className="max-w-2xl mx-auto py-8 text-center">
+          <div className="animate-pulse">
+            <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-4" />
+            <div className="h-6 bg-muted rounded w-48 mx-auto" />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!book || !chapter) {
     return (
