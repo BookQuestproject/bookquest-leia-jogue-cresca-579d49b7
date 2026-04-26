@@ -729,6 +729,19 @@ const ChapterReading = () => {
     navigate(`/trilhas/${bookId}`);
   };
 
+  if (dynamicLoading && !staticBook) {
+    return (
+      <Layout>
+        <div className="max-w-2xl mx-auto py-8 text-center">
+          <div className="animate-pulse">
+            <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-4" />
+            <div className="h-6 bg-muted rounded w-48 mx-auto" />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   if (!book || !chapter) {
     return (
       <Layout>
