@@ -827,6 +827,23 @@ const ChapterReading = () => {
               <p className="text-white/60 text-sm">{chapter.totalPages} páginas</p>
             </div>
 
+            {/* Banner: contribuir com títulos quando placeholder genérico */}
+            {book && /^Capítulo \d+$/i.test(chapter.title) && (
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 flex items-start gap-3 animate-fade-in">
+                <BookOpen className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium mb-1">Tem o livro em mãos?</p>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Os títulos exibidos são genéricos. Ajude a comunidade enviando os reais e ganhe
+                    <strong> +50 ✦ Essência</strong> + badge <strong>Curador</strong>.
+                  </p>
+                  <Button size="sm" variant="outline" onClick={() => setContribOpen(true)}>
+                    Contribuir com capítulos reais
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* How it works */}
             <div className="bg-card rounded-xl p-6 border border-border">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
