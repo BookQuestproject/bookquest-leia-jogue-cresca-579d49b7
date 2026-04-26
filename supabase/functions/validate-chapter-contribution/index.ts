@@ -231,7 +231,8 @@ Responda SOMENTE em JSON válido com este formato:
   }
 });
 
-async function rewardContributor(admin: ReturnType<typeof createClient>, userId: string, bookTitle: string) {
+// deno-lint-ignore no-explicit-any
+async function rewardContributor(admin: any, userId: string, bookTitle: string) {
   // +50 ✦ Essência
   const { data: xpRow } = await admin
     .from("user_xp")
@@ -240,9 +241,11 @@ async function rewardContributor(admin: ReturnType<typeof createClient>, userId:
     .maybeSingle();
 
   if (xpRow) {
+    const currentXp = Number(xpRow.xp) || 0;
+    const currentWeek = Number(xpRow.week_xp) || 0;
     await admin
       .from("user_xp")
-      .update({ xp: (xpRow.xp || 0) + 50, week_xp: (xpRow.week_xp || 0) + 50 })
+      .update({ xp: currentXp + 50, week_xp: currentWeek + 50 })
       .eq("user_id", userId);
   } else {
     await admin.from("user_xp").insert({ user_id: userId, xp: 50, week_xp: 50 });
