@@ -218,7 +218,9 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
           detailed_description: bookInfo.detailed_description,
           chapters: bookInfo.chapters || [],
         }),
-        admin_notes: `✅ Verificado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'} | Capítulos: ${(bookInfo.chapters || []).length}`,
+        admin_notes: hasMinimumData
+          ? `✅ Auto-aprovado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'} | Capítulos: ${(bookInfo.chapters || []).length}`
+          : `⚠️ Verificado por IA mas faltam dados (capa/gênero) - revisão manual necessária | Gênero: ${bookInfo.genre || 'N/A'} | Capa: ${bookInfo.cover_url ? 'sim' : 'NÃO'}`,
       };
 
       // Update title and author with corrected versions
@@ -228,10 +230,14 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
       // If content is inappropriate, auto-reject
       if (bookInfo.is_appropriate === false) {
         updateData.status = 'rejected';
+        updateData.approved_at = null;
         updateData.admin_notes = 'Rejeitado automaticamente: conteúdo impróprio para a plataforma.';
       }
 
       await updateSuggestion(suggestion_id, updateData);
+
+      // Surface auto-approval status to the client
+      bookInfo.auto_approved = updateData.status === 'approved';
     }
 
     return new Response(
