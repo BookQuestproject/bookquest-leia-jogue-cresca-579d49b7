@@ -35,6 +35,7 @@ import { useChapterProgress } from "@/hooks/useChapterProgress";
 import { usePageBookmark } from "@/hooks/usePageBookmark";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import CompletedChapterModal from "@/components/CompletedChapterModal";
+import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
 
 interface Chapter {
   id: number;
@@ -653,6 +654,7 @@ const Trilhas = () => {
   const [showCompletedModal, setShowCompletedModal] = useState(false);
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const [trailToRemove, setTrailToRemove] = useState<{ title: string; isQuiz: boolean } | null>(null);
+  const [contribOpen, setContribOpen] = useState(false);
   const [dynamicTrails, setDynamicTrails] = useState<BookTrail[]>([]);
   const isPremium = false;
 
@@ -912,6 +914,24 @@ const Trilhas = () => {
               </Button>
             </div>
           )}
+
+          {/* Botão de contribuição quando capítulos estão genéricos */}
+          {book.chapters?.some((c: any) => /^Capítulo \d+$/i.test(c.title)) && (
+            <div className="flex justify-center mb-6">
+              <Button variant="outline" size="sm" onClick={() => setContribOpen(true)} className="gap-2">
+                <Sparkles className="w-4 h-4" />
+                Sugerir títulos reais dos capítulos
+              </Button>
+            </div>
+          )}
+
+          <ChapterContributionDialog
+            open={contribOpen}
+            onOpenChange={setContribOpen}
+            bookId={String(book.id ?? bookId ?? "")}
+            bookTitle={book.title}
+            initialChapterCount={book.chapters?.length || 10}
+          />
 
           <div className="space-y-4 animate-fade-in" style={{ animationDelay: "0.2s" }}>
             {book.chapters.map((chapter, index) => {
