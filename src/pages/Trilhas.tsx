@@ -1356,6 +1356,71 @@ const Trilhas = () => {
             );
           })}
         </div>
+
+        {/* Discover community trails (auto-approved suggestions) */}
+        {(() => {
+          const communityTrails = dynamicTrails.filter(b => !isInMyTrails(b.title));
+          if (communityTrails.length === 0) return null;
+
+          return (
+            <section className="mt-16 animate-fade-in">
+              <div className="mb-6">
+                <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Descobrir</p>
+                <h2 className="text-2xl font-serif font-semibold mb-1">Trilhas da Comunidade</h2>
+                <p className="text-muted-foreground text-sm">
+                  Livros sugeridos e validados por outros leitores. Adicione às suas trilhas para começar.
+                </p>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {communityTrails.map((book, index) => {
+                  const themeColor = book.themeColor;
+                  return (
+                    <div
+                      key={book.id}
+                      className="editorial-card overflow-hidden card-hover animate-fade-in"
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
+                      <div
+                        className="h-44 flex items-center justify-center relative overflow-hidden"
+                        style={{ background: `linear-gradient(135deg, hsl(${themeColor} / 0.15), hsl(${themeColor} / 0.05))` }}
+                      >
+                        {book.coverImage ? (
+                          <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <span className="text-5xl">{book.cover}</span>
+                        )}
+                        <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded bg-primary/90 text-xs font-semibold text-primary-foreground">
+                          <Sparkles className="w-3 h-3" />
+                          Comunidade
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <p className="text-xs uppercase tracking-wider font-medium mb-1" style={{ color: `hsl(${themeColor})` }}>
+                          {book.genre}
+                        </p>
+                        <h3 className="font-serif text-lg font-semibold mb-1">{book.title}</h3>
+                        <p className="text-sm text-muted-foreground mb-4">{book.author}</p>
+                        <button
+                          onClick={() => {
+                            addTrail(book.title);
+                            toast.success(`"${book.title}" adicionado às suas trilhas!`);
+                          }}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-all"
+                          style={{
+                            background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
+                          }}
+                        >
+                          <Plus className="w-4 h-4" />
+                          Adicionar à minha trilha
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })()}
       </div>
       {/* Confirm remove trail dialog */}
       <AlertDialog open={!!trailToRemove} onOpenChange={(open) => { if (!open) setTrailToRemove(null); }}>
