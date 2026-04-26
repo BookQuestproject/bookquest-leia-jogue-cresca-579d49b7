@@ -787,6 +787,7 @@ const Trilhas = () => {
       title: book.title,
       author: book.author,
       cover: book.cover,
+      coverImage: book.coverImage,
       genre: book.genre,
       themeColor: book.themeColor,
       totalChapters: book.totalChapters,

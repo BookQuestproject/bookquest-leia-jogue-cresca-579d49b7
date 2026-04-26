@@ -223,7 +223,25 @@ const Index = () => {
                       border: `1px solid hsl(${themeColor} / 0.25)`,
                     }}
                   >
-                    <span className="text-4xl">{activeTrail?.cover || '📖'}</span>
+                    {activeTrail?.coverImage ? (
+                      <img
+                        src={activeTrail.coverImage}
+                        alt={`Capa de ${activeTrail.title}`}
+                        className="w-full h-full object-cover rounded-2xl"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback = target.nextElementSibling as HTMLElement | null;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <span
+                      className="text-4xl items-center justify-center w-full h-full"
+                      style={{ display: activeTrail?.coverImage ? 'none' : 'flex' }}
+                    >
+                      {activeTrail?.cover || '📖'}
+                    </span>
                   </div>
 
                   <div className="flex-1 min-w-0">

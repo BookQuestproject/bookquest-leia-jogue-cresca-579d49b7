@@ -5,6 +5,7 @@ export interface ActiveTrailData {
   title: string;
   author: string;
   cover: string;
+  coverImage?: string;
   genre: string;
   themeColor: string;
   totalChapters: number;

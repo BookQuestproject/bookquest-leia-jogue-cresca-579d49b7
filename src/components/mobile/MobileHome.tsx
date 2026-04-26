@@ -80,10 +80,28 @@ const MobileHome = () => {
         >
           <div className="flex items-center gap-4">
             <div
-              className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0"
+              className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
               style={{ background: `hsl(0 0% 100% / 0.15)` }}
             >
-              <span className="text-3xl">{activeTrail?.cover || "📖"}</span>
+              {activeTrail?.coverImage ? (
+                <img
+                  src={activeTrail.coverImage}
+                  alt={`Capa de ${activeTrail.title}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    target.style.display = 'none';
+                    const fallback = target.nextElementSibling as HTMLElement | null;
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <span
+                className="text-3xl items-center justify-center w-full h-full"
+                style={{ display: activeTrail?.coverImage ? 'none' : 'flex' }}
+              >
+                {activeTrail?.cover || "📖"}
+              </span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white/70 text-[11px] font-semibold uppercase tracking-wider mb-0.5">

@@ -153,7 +153,7 @@ const Biblioteca = () => {
             id: 1000 + idx, // offset to avoid collision with static IDs
             title: meta.correct_title || s.title,
             author: meta.correct_author || s.author || "Autor desconhecido",
-            cover: meta.cover_url || `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(s.title.slice(0, 20))}`,
+            cover: s.cover_url || meta.cover_url || `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(s.title.slice(0, 20))}`,
             genre: meta.genre || "Outros",
             pages: meta.pages || 200,
             rating: meta.rating || 4.0,
