@@ -1074,6 +1074,16 @@ const ChapterReading = () => {
           </div>
         )}
       </div>
+
+      {book && (
+        <ChapterContributionDialog
+          open={contribOpen}
+          onOpenChange={setContribOpen}
+          bookId={bookId || ""}
+          bookTitle={book.title}
+          initialChapterCount={book.chapters?.length || 10}
+        />
+      )}
     </Layout>
   );
 };
