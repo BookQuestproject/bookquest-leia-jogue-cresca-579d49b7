@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import logoCrown from "@/assets/logo-crown-transparent.png";
+import DemoButton from "@/components/demo/DemoButton";
 
 const EduEntry = () => {
   const navigate = useNavigate();
@@ -136,7 +137,13 @@ const EduEntry = () => {
             </Card>
           </div>
 
-          {/* Features */}
+          {/* Demo CTA */}
+          <div className="flex flex-col items-center gap-2 pt-2">
+            <DemoButton size="lg" label="Explorar BookQuest EDU em modo demonstração" />
+            <p className="text-xs text-muted-foreground">Sem cadastro. Acesso instantâneo com dados fictícios.</p>
+          </div>
+
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
               { icon: "📖", label: "Trilhas de Leitura" },

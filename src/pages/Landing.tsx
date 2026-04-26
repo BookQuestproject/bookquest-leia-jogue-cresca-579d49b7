@@ -6,6 +6,7 @@ import logoCrown from "@/assets/logo-crown-transparent.png";
 import premiacaoImg from "@/assets/batalha-pitch-premiacao.jpeg";
 import equipeApresentacaoImg from "@/assets/equipe-apresentacao.jpeg";
 import { useEffect, useRef, useState } from "react";
+import DemoButton from "@/components/demo/DemoButton";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -104,6 +105,7 @@ const Landing = () => {
             <p className="text-xs text-muted-foreground/60">
               Leva menos de 1 minuto para começar.
             </p>
+            <DemoButton size="default" label="Explorar BookQuest EDU em modo demo" />
           </div>
 
 
