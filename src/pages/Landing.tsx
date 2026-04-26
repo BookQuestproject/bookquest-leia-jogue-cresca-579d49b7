@@ -6,6 +6,7 @@ import logoCrown from "@/assets/logo-crown-transparent.png";
 import premiacaoImg from "@/assets/batalha-pitch-premiacao.jpeg";
 import equipeApresentacaoImg from "@/assets/equipe-apresentacao.jpeg";
 import { useEffect, useRef, useState } from "react";
+import DemoButton from "@/components/demo/DemoButton";
 
 const Landing = () => {
   const navigate = useNavigate();

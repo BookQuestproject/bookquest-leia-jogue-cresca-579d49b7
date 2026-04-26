@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import logoCrown from "@/assets/logo-crown-transparent.png";
+import DemoButton from "@/components/demo/DemoButton";
 
 const EduEntry = () => {
   const navigate = useNavigate();
