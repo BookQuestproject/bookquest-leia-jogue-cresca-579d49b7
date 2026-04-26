@@ -172,11 +172,20 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
       );
     }
 
-    // If book exists and is appropriate, update suggestion with AI data (but keep as pending for moderation)
+    // AUTO-APPROVE if AI verified the book with sufficient data
+    // Criteria: exists + appropriate + has cover + has genre
+    const hasMinimumData =
+      bookInfo.exists &&
+      bookInfo.is_appropriate !== false &&
+      !!bookInfo.cover_url &&
+      !!bookInfo.genre &&
+      !!bookInfo.correct_title;
+
     if (bookInfo.exists && suggestion_id) {
       const updateData: Record<string, unknown> = {
-        // Keep status as 'pending' - admin must approve
-        status: 'pending',
+        // Auto-approve when IA validated with confidence; otherwise keep pending for manual review
+        status: hasMinimumData ? 'approved' : 'pending',
+        approved_at: hasMinimumData ? new Date().toISOString() : null,
         book_summary: bookInfo.book_summary || bookInfo.description,
         narrative_context: bookInfo.narrative_context || null,
         cover_url: bookInfo.cover_url || null,
@@ -209,7 +218,9 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
           detailed_description: bookInfo.detailed_description,
           chapters: bookInfo.chapters || [],
         }),
-        admin_notes: `✅ Verificado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'} | Capítulos: ${(bookInfo.chapters || []).length}`,
+        admin_notes: hasMinimumData
+          ? `✅ Auto-aprovado por IA | Gênero: ${bookInfo.genre || 'N/A'} | Ano: ${bookInfo.publication_year || 'N/A'} | Páginas: ${bookInfo.pages || 'N/A'} | Capítulos: ${(bookInfo.chapters || []).length}`
+          : `⚠️ Verificado por IA mas faltam dados (capa/gênero) - revisão manual necessária | Gênero: ${bookInfo.genre || 'N/A'} | Capa: ${bookInfo.cover_url ? 'sim' : 'NÃO'}`,
       };
 
       // Update title and author with corrected versions
@@ -219,10 +230,14 @@ Respond ONLY with valid JSON, no markdown or extra text.`;
       // If content is inappropriate, auto-reject
       if (bookInfo.is_appropriate === false) {
         updateData.status = 'rejected';
+        updateData.approved_at = null;
         updateData.admin_notes = 'Rejeitado automaticamente: conteúdo impróprio para a plataforma.';
       }
 
       await updateSuggestion(suggestion_id, updateData);
+
+      // Surface auto-approval status to the client
+      bookInfo.auto_approved = updateData.status === 'approved';
     }
 
     return new Response(
