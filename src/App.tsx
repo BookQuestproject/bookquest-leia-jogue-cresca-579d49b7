@@ -42,6 +42,8 @@ import AdminFounderPreview from "./pages/AdminFounderPreview";
 import AuthCallback from "./pages/AuthCallback";
 import EduEntry from "./pages/edu/EduEntry";
 import EduProfessor from "./pages/edu/EduProfessor";
+import DemoEduProfessor from "./pages/edu/DemoEduProfessor";
+import DemoEduAluno from "./pages/edu/DemoEduAluno";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
@@ -97,6 +99,8 @@ const App = () => (
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
                 <Route path="/edu" element={<EduEntry />} />
+                <Route path="/edu/demo/professor" element={<DemoEduProfessor />} />
+                <Route path="/edu/demo/aluno" element={<DemoEduAluno />} />
                 <Route path="/edu/aluno" element={<EduAluno />} />
                 <Route path="/edu/professor" element={<EduProfessor />} />
                 <Route path="/edu/turmas" element={<EduTurmas />} />
