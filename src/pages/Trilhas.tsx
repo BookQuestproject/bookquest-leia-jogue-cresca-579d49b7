@@ -643,7 +643,7 @@ const Trilhas = () => {
   const { bookId } = useParams();
   const navigate = useNavigate();
   const { activeTrail, setActiveTrail } = useActiveTrail();
-  const { isInMyTrails, removeTrail } = useMyTrails();
+  const { isInMyTrails, removeTrail, addTrail } = useMyTrails();
   const { enrichments, getEnrichment } = useEnrichedChapters();
   const { applyOverride } = useBookOverrides();
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
