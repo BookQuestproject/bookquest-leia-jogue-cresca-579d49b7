@@ -446,6 +446,60 @@ export type Database = {
         }
         Relationships: []
       }
+      chapter_contributions: {
+        Row: {
+          admin_notes: string | null
+          ai_confidence: number | null
+          ai_notes: string | null
+          ai_verified: boolean | null
+          book_author: string | null
+          book_id: string
+          book_title: string
+          chapters: Json
+          created_at: string
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          ai_confidence?: number | null
+          ai_notes?: string | null
+          ai_verified?: boolean | null
+          book_author?: string | null
+          book_id: string
+          book_title: string
+          chapters?: Json
+          created_at?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          ai_confidence?: number | null
+          ai_notes?: string | null
+          ai_verified?: boolean | null
+          book_author?: string | null
+          book_id?: string
+          book_title?: string
+          chapters?: Json
+          created_at?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       class_chapter_discussions: {
         Row: {
           chapter_number: number

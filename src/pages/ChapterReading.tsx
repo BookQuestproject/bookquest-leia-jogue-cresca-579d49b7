@@ -14,6 +14,7 @@ import {
 import PostChapterReflection from "@/components/PostChapterReflection";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStats } from "@/hooks/useUserStats";
@@ -460,6 +461,7 @@ const ChapterReading = () => {
   const [isTimerError, setIsTimerError] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
+  const [contribOpen, setContribOpen] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [dynamicBook, setDynamicBook] = useState<typeof bookData[string] | null>(null);
@@ -825,6 +827,23 @@ const ChapterReading = () => {
               <p className="text-white/60 text-sm">{chapter.totalPages} páginas</p>
             </div>
 
+            {/* Banner: contribuir com títulos quando placeholder genérico */}
+            {book && /^Capítulo \d+$/i.test(chapter.title) && (
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 flex items-start gap-3 animate-fade-in">
+                <BookOpen className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium mb-1">Tem o livro em mãos?</p>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Os títulos exibidos são genéricos. Ajude a comunidade enviando os reais e ganhe
+                    <strong> +50 ✦ Essência</strong> + badge <strong>Curador</strong>.
+                  </p>
+                  <Button size="sm" variant="outline" onClick={() => setContribOpen(true)}>
+                    Contribuir com capítulos reais
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* How it works */}
             <div className="bg-card rounded-xl p-6 border border-border">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -1055,6 +1074,16 @@ const ChapterReading = () => {
           </div>
         )}
       </div>
+
+      {book && (
+        <ChapterContributionDialog
+          open={contribOpen}
+          onOpenChange={setContribOpen}
+          bookId={bookId || ""}
+          bookTitle={book.title}
+          initialChapterCount={book.chapters?.length || 10}
+        />
+      )}
     </Layout>
   );
 };
