@@ -105,6 +105,7 @@ const Landing = () => {
             <p className="text-xs text-muted-foreground/60">
               Leva menos de 1 minuto para começar.
             </p>
+            <DemoButton size="default" label="Explorar BookQuest EDU em modo demo" />
           </div>
 
 
