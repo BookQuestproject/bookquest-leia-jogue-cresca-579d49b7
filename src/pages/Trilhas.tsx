@@ -915,15 +915,20 @@ const Trilhas = () => {
             </div>
           )}
 
-          {/* Botão de contribuição quando capítulos estão genéricos */}
-          {book.chapters?.some((c: any) => /^Capítulo \d+$/i.test(c.title)) && (
-            <div className="flex justify-center mb-6">
-              <Button variant="outline" size="sm" onClick={() => setContribOpen(true)} className="gap-2">
-                <Sparkles className="w-4 h-4" />
-                Sugerir títulos reais dos capítulos
-              </Button>
-            </div>
-          )}
+          {/* Botão de contribuição — sempre visível para a comunidade enriquecer/corrigir */}
+          <div className="flex justify-center mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setContribOpen(true)}
+              className="gap-2 border-primary/30 hover:bg-primary/5"
+            >
+              <Sparkles className="w-4 h-4 text-primary" />
+              {book.chapters?.some((c: any) => /^Capítulo \d+$/i.test(c.title))
+                ? "Tem o livro? Contribua com os títulos reais (+50 ✦)"
+                : "Sugerir correção dos títulos dos capítulos"}
+            </Button>
+          </div>
 
           <ChapterContributionDialog
             open={contribOpen}
