@@ -14,6 +14,7 @@ import {
 import PostChapterReflection from "@/components/PostChapterReflection";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStats } from "@/hooks/useUserStats";
@@ -460,6 +461,7 @@ const ChapterReading = () => {
   const [isTimerError, setIsTimerError] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
+  const [contribOpen, setContribOpen] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [dynamicBook, setDynamicBook] = useState<typeof bookData[string] | null>(null);
