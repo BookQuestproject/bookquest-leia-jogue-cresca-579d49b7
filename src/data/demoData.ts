@@ -181,6 +181,95 @@ export const DEMO_CHALLENGES = [
   },
 ];
 
+// ===== Atividades da turma (Demo) =====
+export type DemoActivityResponseType = "text" | "multiple_choice" | "file" | "open";
+
+export interface DemoActivityResponse {
+  studentId: string;
+  studentName: string;
+  studentAvatar: string;
+  responseText: string;
+  submittedAt: string; // ISO
+  reviewed: boolean;
+  feedback?: string;
+}
+
+export interface DemoActivity {
+  id: string;
+  title: string;
+  description: string;
+  bookTitle?: string;
+  chapter?: string;
+  responseType: DemoActivityResponseType;
+  deadline: string | null; // ISO date or null
+  createdAt: string; // ISO
+  closedManually?: boolean;
+  responses: DemoActivityResponse[];
+}
+
+// Helpers para o seed
+const today = new Date();
+const addDays = (d: number) => {
+  const x = new Date(today);
+  x.setDate(x.getDate() + d);
+  return x.toISOString();
+};
+const subDays = (d: number) => addDays(-d);
+
+const seedResponses = (count: number): DemoActivityResponse[] =>
+  DEMO_STUDENTS.slice(0, count).map((s, i) => ({
+    studentId: s.id,
+    studentName: s.name,
+    studentAvatar: s.avatar,
+    responseText:
+      i % 3 === 0
+        ? "A raposa ensina ao Pequeno Príncipe que o essencial é invisível aos olhos. Achei muito tocante a forma como ela explica o cativar."
+        : i % 3 === 1
+        ? "O capítulo me marcou pela simplicidade da mensagem. O autor mostra que os adultos esquecem do que realmente importa."
+        : "A relação entre o Pequeno Príncipe e a rosa mostra como o amor envolve responsabilidade. Foi minha parte favorita até agora.",
+    submittedAt: subDays(Math.floor(i / 3)),
+    reviewed: i < 2,
+    feedback: i < 2 ? "Ótima reflexão, continue assim!" : undefined,
+  }));
+
+export const DEMO_INITIAL_ACTIVITIES: DemoActivity[] = [
+  {
+    id: "act-seed-1",
+    title: "Reflexão sobre a Raposa",
+    description:
+      "Releia o capítulo 10 (A raposa) e escreva, em pelo menos 5 linhas, o que você entendeu sobre a frase 'tu te tornas eternamente responsável por aquilo que cativas'.",
+    bookTitle: DEMO_CLASS.book_title,
+    chapter: "Cap. 10 — A raposa",
+    responseType: "text",
+    deadline: addDays(3),
+    createdAt: subDays(2),
+    responses: seedResponses(12),
+  },
+  {
+    id: "act-seed-2",
+    title: "Quiz: Asteróide B-612",
+    description:
+      "Responda quem é o astrônomo turco que descobriu o asteróide do Pequeno Príncipe e por que ninguém acreditou nele inicialmente.",
+    bookTitle: DEMO_CLASS.book_title,
+    chapter: "Cap. 4 — O asteróide B-612",
+    responseType: "open",
+    deadline: subDays(1), // já encerrada
+    createdAt: subDays(7),
+    responses: seedResponses(22),
+  },
+  {
+    id: "act-seed-3",
+    title: "Diário de leitura — capítulo livre",
+    description:
+      "Escolha qualquer capítulo já lido e escreva um diário de leitura registrando suas impressões. Não há prazo: entregue quando se sentir pronto.",
+    bookTitle: DEMO_CLASS.book_title,
+    responseType: "open",
+    deadline: null,
+    createdAt: subDays(5),
+    responses: seedResponses(8),
+  },
+];
+
 export const DEMO_REPORTS = {
   total_students: 28,
   active_today: 21,

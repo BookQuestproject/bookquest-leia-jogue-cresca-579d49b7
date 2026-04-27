@@ -13,7 +13,9 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DemoBanner from "@/components/demo/DemoBanner";
+import ActivitiesSection from "@/components/demo/ActivitiesSection";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import { useDemoActivities } from "@/hooks/useDemoActivities";
 import {
   DEMO_TEACHER, DEMO_CLASS, DEMO_STUDENTS,
   DEMO_RECENT_ACTIVITIES, DEMO_PENDING_REVIEWS, DEMO_REPORTS, DEMO_ANNOUNCEMENTS,
@@ -46,6 +48,11 @@ const DemoEduProfessor = () => {
   const tabFromUrl = new URLSearchParams(location.search).get("tab") || "overview";
   const [activeTab, setActiveTab] = useState(tabFromUrl);
   const [search, setSearch] = useState("");
+  const activitiesAll = useDemoActivities();
+  const pendingReviewCount = activitiesAll.reduce(
+    (acc, a) => acc + a.responses.filter((r) => !r.reviewed).length,
+    0,
+  );
 
   if (!isDemo) {
     navigate("/edu", { replace: true });
@@ -178,7 +185,7 @@ const DemoEduProfessor = () => {
                   <StatCard icon={Users} label="Alunos" value={DEMO_CLASS.members_count} color="text-primary" />
                   <StatCard icon={TrendingUp} label="Progresso médio" value={`${DEMO_CLASS.avg_progress}%`} color="text-accent" />
                   <StatCard icon={Clock} label="Ativos hoje" value={DEMO_REPORTS.active_today} color="text-success" />
-                  <StatCard icon={FileCheck} label="A corrigir" value={DEMO_PENDING_REVIEWS.length} color="text-destructive" />
+                  <StatCard icon={FileCheck} label="A corrigir" value={pendingReviewCount} color="text-destructive" />
                 </div>
 
                 {/* Book + class progress */}
@@ -343,39 +350,9 @@ const DemoEduProfessor = () => {
                 </Card>
               </TabsContent>
 
-              {/* Reviews */}
+              {/* Reviews / Atividades */}
               <TabsContent value="reviews" className="space-y-4 mt-6">
-                <Card className="bg-card border-border">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <FileCheck className="h-4 w-4 text-destructive" />
-                      Entregas e correções pendentes
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {DEMO_PENDING_REVIEWS.map((r) => (
-                      <div key={r.id} className="p-4 rounded-lg border border-border bg-muted/30 space-y-2">
-                        <div className="flex items-start justify-between gap-3 flex-wrap">
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">{r.student}</p>
-                            <p className="text-xs text-muted-foreground">{r.chapter} · {r.type}</p>
-                          </div>
-                          <span className="text-xs text-muted-foreground">{r.submitted}</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" onClick={() => handleApprove(r.student)}>
-                            <CheckCircle2 className="h-3 w-3 mr-1" />
-                            Aprovar
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => toast({ title: "Devolvido (demo)", description: "Aluno seria notificado para refazer." })}>
-                            Devolver
-                          </Button>
-                          <Button size="sm" variant="ghost">Ver entrega</Button>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
+                <ActivitiesSection />
               </TabsContent>
 
               {/* Reports */}
