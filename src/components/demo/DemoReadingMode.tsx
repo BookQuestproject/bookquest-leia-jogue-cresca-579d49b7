@@ -1,260 +1,357 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  Play, Pause, Square, BookOpen, X, Loader2, Plus, Trash2,
-  BookMarked, Sparkles, ArrowLeft, CheckCircle2, Volume2,
+  Play, Pause, ArrowLeft, BookOpen, Clock, CheckCircle, Sparkles,
+  Timer, HelpCircle, BookMarked, Plus, Loader2, X, Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import ReadingCountdown from "@/components/ReadingCountdown";
+import PostChapterReflection from "@/components/PostChapterReflection";
 import { demoReadingPrepStore, useDemoReadingPrep, type VocabularyEntry } from "@/hooks/useDemoReadingPrep";
+import { AlertTriangle } from "lucide-react";
 
 interface Props {
   bookTitle: string;
   chapterNumber: number;
   chapterTitle: string;
   pages: number;
-  /** ms mínimos para liberar “Finalizar” (default 30s — alinhado ao BookQuest principal) */
+  /** Tema visual (HSL string sem 'hsl()'). Default = O Pequeno Príncipe. */
+  themeColor?: string;
+  /** Total de capítulos do livro (para PostChapterReflection). */
+  totalChapters?: number;
+  /** ms mínimos para liberar "Concluído" (default 30s — alinhado ao BookQuest principal) */
   minReadingMs?: number;
+  /** ícone do capítulo (emoji), default 📖 */
+  icon?: string;
   onExit: () => void;
-  /** Chamado depois da reflexão. */
   onComplete: (essenciaEarned: number) => void;
 }
 
-const REFLECTION_QUESTIONS = [
-  { id: "q1", label: "O que aconteceu neste capítulo?" },
-  { id: "q2", label: "Qual foi a parte mais interessante?" },
-  { id: "q3", label: "Algo te confundiu? Comente brevemente." },
-];
+type ReadingState = "intro" | "countdown" | "reading" | "reflection" | "completed";
+
+const formatTime = (ms: number) => {
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+};
+
+const formatTimeReadable = (ms: number) => {
+  const minutes = Math.floor(ms / 60000);
+  if (minutes > 0) return `${minutes}min`;
+  return `${Math.floor(ms / 1000)}s`;
+};
 
 export default function DemoReadingMode({
   bookTitle,
   chapterNumber,
   chapterTitle,
   pages,
+  themeColor = "40 65% 45%",
+  totalChapters = 14,
   minReadingMs = 30_000,
+  icon = "📖",
   onExit,
   onComplete,
 }: Props) {
   const { toast } = useToast();
-  const prep = useDemoReadingPrep();
 
-  const [phase, setPhase] = useState<"reading" | "reflection" | "done">("reading");
+  const [state, setState] = useState<ReadingState>("intro");
   const [elapsed, setElapsed] = useState(0); // ms
-  const [running, setRunning] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isTimerError, setIsTimerError] = useState(false);
   const [showWords, setShowWords] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [earnedEss, setEarnedEss] = useState(0);
+
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Reflection
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-
+  // Cronômetro
   useEffect(() => {
-    if (!running || phase !== "reading") return;
+    if (state !== "reading" || isPaused) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
     intervalRef.current = setInterval(() => setElapsed((p) => p + 1000), 1000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [running, phase]);
+  }, [state, isPaused]);
 
-  const minutes = Math.floor(elapsed / 60000);
-  const seconds = Math.floor((elapsed % 60000) / 1000);
-  const formatted = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  const minProgress = Math.min(100, (elapsed / minReadingMs) * 100);
-  const canFinish = elapsed >= minReadingMs;
+  const handleStartReading = () => setState("countdown");
+  const handleCountdownComplete = () => {
+    setElapsed(0);
+    setIsPaused(false);
+    setState("reading");
+  };
+  const handlePauseResume = () => setIsPaused((p) => !p);
 
-  const handleFinish = () => {
-    if (!canFinish) {
+  const handleChapterComplete = () => {
+    if (elapsed < minReadingMs) {
+      setIsTimerError(true);
       toast({
         title: "Leia um pouco mais",
         description: `Mínimo de ${Math.round(minReadingMs / 1000)}s antes de finalizar.`,
         variant: "destructive",
       });
+      setTimeout(() => setIsTimerError(false), 600);
       return;
     }
-    setRunning(false);
-    setPhase("reflection");
+    setState("reflection");
   };
 
-  const handleSubmitReflection = () => {
-    const filled = REFLECTION_QUESTIONS.filter((q) => (answers[q.id] || "").trim().length >= 10);
-    if (filled.length < 2) {
-      toast({
-        title: "Responda pelo menos 2 perguntas",
-        description: "Mínimo 10 caracteres por resposta.",
-        variant: "destructive",
-      });
+  // PostChapterReflection devolve o XP da reflexão; somamos +10 base do capítulo
+  const handleReflectionComplete = (reflectionXp: number) => {
+    const total = 10 + reflectionXp;
+    setEarnedEss(total);
+    setState("completed");
+  };
+
+  const handleBack = () => {
+    if (state === "reflection") {
+      setShowExitConfirm(true);
       return;
     }
-    // Recompensa simples no demo
-    const baseEss = 10;
-    const bonus = filled.length === 3 ? 8 : 4;
-    const minutesBonus = Math.min(8, Math.floor(elapsed / 60000));
-    const total = baseEss + bonus + minutesBonus;
-    setPhase("done");
-    setTimeout(() => onComplete(total), 800);
+    onExit();
   };
+
+  const handleConfirmExit = () => {
+    setShowExitConfirm(false);
+    onExit();
+  };
+
+  const gradient = `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(
+    /\d+%$/,
+    (m) => parseInt(m) + 10 + "%"
+  )}))`;
 
   return (
     <div className="fixed inset-0 z-[55] bg-background overflow-y-auto">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-card border-b border-border">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <Button variant="ghost" size="sm" onClick={onExit}>
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Sair
-          </Button>
-          <div className="text-center">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{bookTitle}</p>
-            <p className="text-sm font-bold text-foreground">
-              Cap. {chapterNumber} — {chapterTitle}
-            </p>
+      <div className="max-w-2xl mx-auto py-8 px-4">
+        {/* Back */}
+        <button
+          onClick={handleBack}
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Voltar para {bookTitle}
+        </button>
+
+        {/* Exit confirm during reflection */}
+        <AlertDialog open={showExitConfirm} onOpenChange={setShowExitConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-destructive" />
+                </div>
+                <AlertDialogTitle>Sair da reflexão?</AlertDialogTitle>
+              </div>
+              <AlertDialogDescription className="text-sm leading-relaxed">
+                Se você sair agora, <strong>todo o progresso deste capítulo será perdido</strong> e ele
+                <strong> não será concluído</strong>. Você precisará ler novamente para desbloqueá-lo.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Continuar respondendo</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmExit}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Sair e perder progresso
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* INTRO */}
+        {state === "intro" && (
+          <div className="animate-fade-in space-y-8">
+            <div className="rounded-xl p-6 text-center" style={{ background: gradient }}>
+              <span className="text-5xl mb-4 block">{icon}</span>
+              <p className="text-white/70 text-sm mb-1">Capítulo {chapterNumber}</p>
+              <h1 className="text-2xl font-serif font-semibold text-white mb-2">{chapterTitle}</h1>
+              <p className="text-white/60 text-sm">{pages} páginas</p>
+            </div>
+
+            <div className="bg-card rounded-xl p-6 border border-border">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Sparkles className="w-5 h-5" style={{ color: `hsl(${themeColor})` }} />
+                Como funciona a trilha
+              </h2>
+              <div className="space-y-4">
+                {[
+                  { Icon: Timer, title: "Acompanhamos sua leitura", desc: "Um cronômetro registra o tempo do capítulo. Acompanhe seu ritmo." },
+                  { Icon: Pause, title: "Pause quando precisar", desc: "Pause e retome sem perder o progresso." },
+                  { Icon: BookMarked, title: "Palavras difíceis com IA", desc: "Adicione palavras durante a leitura e a IA explica em segundos." },
+                  { Icon: HelpCircle, title: "Reflexão ao final", desc: "Responda perguntas sobre o capítulo e ganhe Essência." },
+                ].map(({ Icon, title, desc }) => (
+                  <div key={title} className="flex gap-4">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: `hsl(${themeColor} / 0.15)` }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: `hsl(${themeColor})` }} />
+                    </div>
+                    <div>
+                      <h3 className="font-medium mb-1">{title}</h3>
+                      <p className="text-sm text-muted-foreground">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Button size="lg" className="w-full gap-3" onClick={handleStartReading} style={{ background: gradient }}>
+              <Play className="w-6 h-6" />
+              Iniciar Leitura
+            </Button>
           </div>
-          <div className="w-[60px]" />
-        </div>
-      </div>
-
-      {/* Conteúdo */}
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6 pb-24">
-        {phase === "reading" && (
-          <>
-            {/* Cronômetro */}
-            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-              <CardContent className="p-6 text-center space-y-4">
-                <BookOpen className="h-10 w-10 mx-auto text-primary" />
-                <div>
-                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider">
-                    Tempo de leitura
-                  </p>
-                  <p className="text-5xl lg:text-6xl font-mono font-bold tabular-nums text-primary mt-2">
-                    {formatted}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <Progress value={minProgress} className="h-1.5" />
-                  <p className="text-[11px] text-muted-foreground">
-                    {canFinish
-                      ? "✓ Tempo mínimo atingido — pode finalizar"
-                      : `Mínimo ${Math.round(minReadingMs / 1000)}s para finalizar`}
-                  </p>
-                </div>
-
-                <div className="flex justify-center gap-2 pt-2">
-                  {running ? (
-                    <Button variant="outline" size="lg" onClick={() => setRunning(false)}>
-                      <Pause className="h-4 w-4 mr-1" />
-                      Pausar
-                    </Button>
-                  ) : (
-                    <Button variant="outline" size="lg" onClick={() => setRunning(true)}>
-                      <Play className="h-4 w-4 mr-1" />
-                      Continuar
-                    </Button>
-                  )}
-                  <Button size="lg" onClick={handleFinish} disabled={!canFinish}>
-                    <Square className="h-4 w-4 mr-1" />
-                    Finalizar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Instruções */}
-            <Card className="bg-muted/30 border-border">
-              <CardContent className="p-4 space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Como aproveitar este capítulo
-                </p>
-                <ul className="text-sm text-foreground space-y-1.5">
-                  <li>📖 Pegue seu livro físico ou digital de "{bookTitle}".</li>
-                  <li>⏱️ O cronômetro registra seu tempo — você pode pausar a qualquer momento.</li>
-                  <li>📝 Anote palavras difíceis no botão flutuante — a IA explica em segundos.</li>
-                  <li>🎯 Ao finalizar, você fará uma reflexão rápida sobre o capítulo.</li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* Vocabulário desta sessão */}
-            {prep.vocabulary.length > 0 && (
-              <Card className="bg-card border-border">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                      <BookMarked className="h-3.5 w-3.5" />
-                      Seu vocabulário
-                    </p>
-                    <Badge variant="secondary">{prep.vocabulary.length}</Badge>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {prep.vocabulary.slice(0, 10).map((v) => (
-                      <button
-                        key={v.word}
-                        onClick={() => setShowWords(true)}
-                        className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-md hover:bg-accent/20"
-                      >
-                        {v.word}
-                      </button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </>
         )}
 
-        {phase === "reflection" && (
-          <Card className="border-primary/20">
-            <CardContent className="p-6 space-y-5">
-              <div className="text-center space-y-1">
-                <Sparkles className="h-8 w-8 mx-auto text-accent" />
-                <h2 className="text-xl font-bold text-foreground">Reflexão pós-capítulo</h2>
-                <p className="text-xs text-muted-foreground">
-                  Responda pelo menos 2 perguntas (mín. 10 caracteres cada).
-                </p>
-              </div>
-
-              {REFLECTION_QUESTIONS.map((q) => (
-                <div key={q.id} className="space-y-1.5">
-                  <label className="text-sm font-semibold text-foreground">{q.label}</label>
-                  <textarea
-                    value={answers[q.id] || ""}
-                    onChange={(e) => setAnswers((p) => ({ ...p, [q.id]: e.target.value }))}
-                    rows={3}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    placeholder="Sua resposta..."
-                  />
-                </div>
-              ))}
-
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setPhase("reading")}>
-                  Voltar à leitura
-                </Button>
-                <Button onClick={handleSubmitReflection}>
-                  <CheckCircle2 className="h-4 w-4 mr-1" />
-                  Concluir capítulo
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        {/* COUNTDOWN */}
+        {state === "countdown" && (
+          <ReadingCountdown
+            onComplete={handleCountdownComplete}
+            themeColor={themeColor}
+            chapterTitle={chapterTitle}
+          />
         )}
 
-        {phase === "done" && (
-          <Card className="border-success/30 bg-success/5">
-            <CardContent className="p-8 text-center space-y-3">
-              <CheckCircle2 className="h-12 w-12 text-success mx-auto" />
-              <h2 className="text-xl font-bold text-foreground">Capítulo concluído!</h2>
-              <p className="text-sm text-muted-foreground">Suas Essências foram registradas.</p>
-            </CardContent>
-          </Card>
+        {/* READING */}
+        {state === "reading" && (
+          <div className="animate-fade-in space-y-8">
+            <div className="text-center mb-4">
+              <span className="text-4xl mb-2 block">{icon}</span>
+              <p className="text-sm text-muted-foreground">Capítulo {chapterNumber}</p>
+              <h1 className="text-xl font-serif font-semibold">{chapterTitle}</h1>
+            </div>
+
+            <div
+              className={`rounded-2xl p-8 text-center transition-all duration-200 ${
+                isTimerError ? "animate-[shake_0.5s_ease-in-out]" : ""
+              }`}
+              style={{
+                background: isTimerError
+                  ? "linear-gradient(135deg, hsl(0 65% 45%), hsl(0 65% 35%))"
+                  : gradient,
+              }}
+            >
+              <div className="flex items-center justify-center gap-2 text-white/70 text-sm mb-3">
+                <Clock className="w-4 h-4" />
+                {isPaused ? "Leitura pausada" : "Tempo de leitura"}
+              </div>
+              <div
+                className={`text-6xl lg:text-7xl font-mono font-bold text-white mb-4 tracking-wider ${
+                  isPaused ? "animate-pulse" : ""
+                }`}
+              >
+                {formatTime(elapsed)}
+              </div>
+              <p className="text-white/60 text-sm">
+                {pages} páginas • {bookTitle}
+              </p>
+            </div>
+
+            <div className="bg-muted/50 rounded-xl p-4 text-center">
+              <BookOpen className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">
+                Abra seu livro e leia o capítulo. Quando terminar, clique em "Concluído".
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Button variant="outline" size="lg" className="gap-2" onClick={handlePauseResume}>
+                {isPaused ? (
+                  <>
+                    <Play className="w-5 h-5" />
+                    Continuar
+                  </>
+                ) : (
+                  <>
+                    <Pause className="w-5 h-5" />
+                    Pausar
+                  </>
+                )}
+              </Button>
+              <Button size="lg" className="gap-2" onClick={handleChapterComplete} style={{ background: gradient }}>
+                <CheckCircle className="w-5 h-5" />
+                Concluído
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* REFLECTION — reuso integral do componente do BookQuest principal */}
+        {state === "reflection" && (
+          <PostChapterReflection
+            bookTitle={bookTitle}
+            chapterTitle={chapterTitle}
+            chapterId={chapterNumber}
+            totalChapters={totalChapters}
+            themeColor={themeColor}
+            readingTime={Math.floor(elapsed / 1000)}
+            onComplete={handleReflectionComplete}
+          />
+        )}
+
+        {/* COMPLETED */}
+        {state === "completed" && (
+          <div className="animate-fade-in text-center space-y-8">
+            <div
+              className="w-24 h-24 rounded-full flex items-center justify-center mx-auto"
+              style={{ background: `hsl(${themeColor} / 0.15)` }}
+            >
+              <CheckCircle className="w-12 h-12" style={{ color: `hsl(${themeColor})` }} />
+            </div>
+            <div>
+              <h2 className="text-2xl font-serif font-semibold mb-2">Capítulo Concluído!</h2>
+              <p className="text-muted-foreground">Você completou "{chapterTitle}"</p>
+            </div>
+
+            <div className="bg-card rounded-xl p-6 border border-border inline-block">
+              <div className="flex items-center gap-6 justify-center">
+                <div className="text-center">
+                  <p className="text-3xl font-bold" style={{ color: `hsl(${themeColor})` }}>
+                    +{earnedEss}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Essência ganha</p>
+                </div>
+                <div className="w-px h-10 bg-border" />
+                <div className="text-center">
+                  <div className="flex items-center gap-1.5 justify-center mb-1">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">tempo de leitura</p>
+                  </div>
+                  <p className="text-3xl font-bold" style={{ color: `hsl(${themeColor})` }}>
+                    {formatTimeReadable(elapsed)}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <Button size="lg" onClick={() => onComplete(earnedEss)} style={{ background: gradient }}>
+                Voltar para Trilha
+              </Button>
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Botão flutuante: Palavras Difíceis */}
-      {phase === "reading" && (
+      {/* Botão flutuante: Palavras Difíceis (somente durante a leitura) */}
+      {state === "reading" && (
         <button
           onClick={() => setShowWords(true)}
           className="fixed bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-accent px-4 py-3 text-accent-foreground shadow-lg hover:bg-accent/90 transition-transform hover:scale-105"
@@ -265,7 +362,7 @@ export default function DemoReadingMode({
         </button>
       )}
 
-      {/* Sheet de palavras difíceis */}
+      {/* Sheet de palavras difíceis (com IA) */}
       <DifficultWordsSheet
         open={showWords}
         onOpenChange={setShowWords}
@@ -275,7 +372,7 @@ export default function DemoReadingMode({
   );
 }
 
-/* ========================= Palavras Difíceis ========================= */
+/* ========================= Palavras Difíceis (IA) ========================= */
 
 interface SheetProps {
   open: boolean;
@@ -317,7 +414,6 @@ function DifficultWordsSheet({ open, onOpenChange, chapterContext }: SheetProps)
         example: data.example,
       };
       setActive({ word, result });
-      // Salva automaticamente no vocabulário
       demoReadingPrepStore.saveWord({
         word,
         meaning: result.meaning,
@@ -379,7 +475,6 @@ function DifficultWordsSheet({ open, onOpenChange, chapterContext }: SheetProps)
           </div>
         </div>
 
-        {/* Card de explicação ativa */}
         {active && (
           <div className="p-4 border-b border-border bg-accent/5">
             <div className="flex items-center justify-between mb-2">
@@ -414,7 +509,7 @@ function DifficultWordsSheet({ open, onOpenChange, chapterContext }: SheetProps)
                   </p>
                 )}
                 <p className="text-[11px] text-success flex items-center gap-1 pt-1">
-                  <CheckCircle2 className="h-3 w-3" />
+                  <CheckCircle className="h-3 w-3" />
                   Salva no seu vocabulário
                 </p>
               </div>
@@ -422,7 +517,6 @@ function DifficultWordsSheet({ open, onOpenChange, chapterContext }: SheetProps)
           </div>
         )}
 
-        {/* Lista de palavras salvas */}
         <div className="flex-1 overflow-y-auto p-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
             Vocabulário salvo ({prep.vocabulary.length})
@@ -438,10 +532,7 @@ function DifficultWordsSheet({ open, onOpenChange, chapterContext }: SheetProps)
                   key={v.word}
                   className="flex items-center gap-2 p-2 rounded-md bg-muted/40 hover:bg-muted/70 transition"
                 >
-                  <button
-                    onClick={() => handleViewSaved(v)}
-                    className="flex-1 text-left min-w-0"
-                  >
+                  <button onClick={() => handleViewSaved(v)} className="flex-1 text-left min-w-0">
                     <p className="text-sm font-semibold text-foreground truncate">{v.word}</p>
                     {v.meaning && (
                       <p className="text-[11px] text-muted-foreground truncate">{v.meaning}</p>
@@ -450,10 +541,10 @@ function DifficultWordsSheet({ open, onOpenChange, chapterContext }: SheetProps)
                   <Button
                     variant="ghost"
                     size="icon"
+                    className="h-7 w-7"
                     onClick={() => demoReadingPrepStore.removeWord(v.word)}
-                    aria-label={`Remover ${v.word}`}
                   >
-                    <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
                   </Button>
                 </li>
               ))}

@@ -43,6 +43,10 @@ const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "guide", label: "Guia de Leitura", icon: Compass },
 ];
 
+// Tema visual do livro da turma — alinhado ao BookQuest principal (O Pequeno Príncipe)
+const BOOK_THEME_COLOR = "40 65% 45%";
+const CHAPTER_ICONS = ["⭐", "🌍", "🌹", "🦊", "🌵", "🌌", "🪐", "🦁", "👑", "🚀", "🌙", "🔑", "🎩", "🌻"];
+
 // Atividades pendentes simuladas
 const PENDING_ACTIVITIES = [
   {
@@ -100,7 +104,7 @@ const DemoEduAluno = () => {
     );
   }
 
-  // Modo leitura com cronômetro + palavras difíceis
+  // Modo leitura com cronômetro + palavras difíceis (mesmo fluxo da trilha do BookQuest principal)
   if (readingChapter) {
     return (
       <DemoReadingMode
@@ -108,6 +112,9 @@ const DemoEduAluno = () => {
         chapterNumber={readingChapter.number}
         chapterTitle={readingChapter.title}
         pages={readingChapter.pages}
+        themeColor={BOOK_THEME_COLOR}
+        totalChapters={DEMO_CHAPTERS.length}
+        icon={CHAPTER_ICONS[(readingChapter.number - 1) % CHAPTER_ICONS.length]}
         onExit={() => setReadingChapter(null)}
         onComplete={(ess) => {
           toast({ title: `🎉 +${ess} ✦ Essência`, description: "Capítulo concluído no demo." });
@@ -617,41 +624,192 @@ const TrailSection = ({
 }: {
   onContinue: (ch: typeof DEMO_CHAPTERS[0]) => void;
   onHowItWorks: () => void;
-}) => (
-  <div className="space-y-4">
-    <div className="flex items-center justify-between flex-wrap gap-2">
-      <SectionHeader title="Trilha Literária" subtitle="Capítulos do livro da turma" icon={ScrollText} />
-      <Button variant="outline" size="sm" onClick={onHowItWorks}>
-        <HelpCircle className="h-4 w-4 mr-1" />
-        Como funciona
-      </Button>
-    </div>
-    <div className="grid gap-2">
-      {DEMO_CHAPTERS.map((ch) => (
-        <Card key={ch.number} className={ch.status === "current" ? "border-accent/50" : ""}>
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${
-              ch.status === "done" ? "bg-success/15 text-success" :
-              ch.status === "current" ? "bg-accent/15 text-accent" :
-              "bg-muted text-muted-foreground"
-            }`}>
-              {ch.status === "locked" ? <Lock className="h-5 w-5" /> : ch.number}
+}) => {
+  const themeColor = BOOK_THEME_COLOR;
+  const completedCount = DEMO_CHAPTERS.filter((c) => c.status === "done").length;
+  const currentChapter = DEMO_CHAPTERS.find((c) => c.status === "current");
+  const gradient = `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(
+    /\d+%$/,
+    (m) => parseInt(m) + 8 + "%"
+  )}))`;
+  const ctaGradient = `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(
+    /\d+%$/,
+    (m) => parseInt(m) + 10 + "%"
+  )}))`;
+
+  return (
+    <div className="max-w-4xl mx-auto animate-fade-in">
+      {/* Header gradiente — idêntico ao Trilhas.tsx */}
+      <header className="rounded-xl p-6 mb-8" style={{ background: gradient }}>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
+              <BookOpen className="w-4 h-4" />
+              Livro da turma
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-foreground">{ch.title}</p>
-              <p className="text-xs text-muted-foreground">{ch.pages} páginas</p>
-            </div>
-            {ch.status === "done" && (
-              <Button size="sm" variant="ghost" onClick={() => onContinue(ch)}>Reler</Button>
-            )}
-            {ch.status === "current" && <Button size="sm" onClick={() => onContinue(ch)}>Continuar</Button>}
-            {ch.status === "locked" && <span className="text-xs text-muted-foreground">Bloqueado</span>}
-          </CardContent>
-        </Card>
-      ))}
+            <h1 className="text-2xl lg:text-3xl font-serif font-semibold text-white mb-1">
+              {DEMO_CLASS.book_title}
+            </h1>
+            <p className="text-white/70">
+              Capítulo {currentChapter?.number || 1} de {DEMO_CHAPTERS.length}
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onHowItWorks}
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+          >
+            <HelpCircle className="w-4 h-4 mr-2" />
+            Como funciona
+          </Button>
+        </div>
+      </header>
+
+      {currentChapter && (
+        <div className="flex justify-center mb-8">
+          <Button
+            size="lg"
+            onClick={() => onContinue(currentChapter)}
+            className="gap-2 px-8 text-white"
+            style={{ background: ctaGradient }}
+          >
+            <PlayCircle className="w-5 h-5" />
+            Continuar Leitura
+          </Button>
+        </div>
+      )}
+
+      {/* Capítulos — visual idêntico ao Trilhas.tsx */}
+      <div className="space-y-4">
+        {DEMO_CHAPTERS.map((ch, index) => {
+          const isCompleted = ch.status === "done";
+          const isCurrent = ch.status === "current";
+          const isLocked = ch.status === "locked";
+          const isOpenBook = !isLocked;
+          const icon = CHAPTER_ICONS[index % CHAPTER_ICONS.length];
+
+          return (
+            <button
+              key={ch.number}
+              onClick={() => !isLocked && onContinue(ch)}
+              disabled={isLocked}
+              className={`relative w-full rounded-lg overflow-hidden transition-all duration-300 text-left ${
+                isLocked ? "cursor-not-allowed" : "cursor-pointer hover:-translate-y-1"
+              }`}
+              style={{
+                background: isOpenBook
+                  ? `linear-gradient(145deg, hsl(43 30% 94%), hsl(35 25% 88%))`
+                  : `linear-gradient(145deg, hsl(${themeColor} / 0.12), hsl(${themeColor} / 0.06))`,
+                border: isCurrent
+                  ? `2px solid hsl(${themeColor})`
+                  : `1px solid hsl(${themeColor} / ${isOpenBook ? "0.35" : "0.2"})`,
+                minHeight: "100px",
+                boxShadow: isCurrent
+                  ? `0 8px 32px hsl(${themeColor} / 0.25)`
+                  : isOpenBook
+                  ? `0 4px 16px hsl(${themeColor} / 0.1)`
+                  : "none",
+              }}
+            >
+              {isOpenBook && (
+                <div
+                  className="absolute inset-0 opacity-20 pointer-events-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                  }}
+                />
+              )}
+              {isOpenBook && (
+                <div
+                  className="absolute left-0 top-0 bottom-0 w-3 pointer-events-none"
+                  style={{
+                    background: `linear-gradient(90deg, hsl(${themeColor} / 0.25), transparent)`,
+                  }}
+                />
+              )}
+
+              <div className="relative p-4 flex items-center gap-4">
+                <div
+                  className="w-20 h-24 rounded flex-shrink-0 flex items-center justify-center overflow-hidden"
+                  style={{
+                    background: `linear-gradient(135deg, hsl(${themeColor} / ${isOpenBook ? "0.2" : "0.15"}), hsl(${themeColor} / 0.08))`,
+                    border: `1px solid hsl(${themeColor} / 0.25)`,
+                  }}
+                >
+                  <span className={`text-3xl ${isLocked ? "opacity-50" : ""}`}>{icon}</span>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p
+                    className="text-xs font-medium mb-1"
+                    style={{ color: `hsl(${themeColor})`, opacity: isLocked ? 0.6 : 1 }}
+                  >
+                    Capítulo {ch.number}
+                  </p>
+                  <p
+                    className={`font-serif text-sm font-semibold line-clamp-2 mb-1 ${
+                      isLocked ? "text-foreground/60" : "text-foreground"
+                    }`}
+                  >
+                    {ch.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Capítulo {ch.number} de {DEMO_CHAPTERS.length}
+                  </p>
+                  {isCompleted && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <CheckCircle2 className="w-3 h-3 text-success" />
+                      <span className="text-xs text-success font-medium">Concluído</span>
+                    </div>
+                  )}
+                </div>
+
+                {isLocked ? (
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: `hsl(${themeColor} / 0.1)`,
+                      border: `1px solid hsl(${themeColor} / 0.2)`,
+                    }}
+                  >
+                    <Lock className="w-4 h-4 text-muted-foreground/50" />
+                  </div>
+                ) : (
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: `hsl(${themeColor} / 0.15)`,
+                      border: `1px solid hsl(${themeColor} / 0.3)`,
+                    }}
+                    aria-label={`${ch.pages} páginas`}
+                  >
+                    <span className="text-xs font-bold" style={{ color: `hsl(${themeColor})` }}>
+                      {ch.pages}p
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {isCurrent && (
+                <div
+                  className="absolute bottom-0 left-0 right-0 h-1 pointer-events-none"
+                  style={{
+                    background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor} / 0.6))`,
+                  }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 text-center text-xs text-muted-foreground">
+        {completedCount} de {DEMO_CHAPTERS.length} capítulos concluídos
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ActivitiesSection = ({ onOpen }: { onOpen: (a: typeof PENDING_ACTIVITIES[0]) => void }) => (
   <div className="space-y-6">
