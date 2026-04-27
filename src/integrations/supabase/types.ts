@@ -299,6 +299,54 @@ export type Database = {
         }
         Relationships: []
       }
+      book_requests: {
+        Row: {
+          admin_notes: string | null
+          author: string
+          class_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          requested_by: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          school_name: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          author: string
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          requested_by: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          school_name?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          author?: string
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          requested_by?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          school_name?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       book_reviews: {
         Row: {
           book_id: string
@@ -500,6 +548,51 @@ export type Database = {
         }
         Relationships: []
       }
+      class_book_history: {
+        Row: {
+          author: string | null
+          avg_progress: number | null
+          book_id: string | null
+          book_title: string
+          class_id: string
+          created_at: string
+          ended_at: string
+          ended_by: string
+          id: string
+          members_count: number | null
+          started_at: string
+          total_pages: number | null
+        }
+        Insert: {
+          author?: string | null
+          avg_progress?: number | null
+          book_id?: string | null
+          book_title: string
+          class_id: string
+          created_at?: string
+          ended_at?: string
+          ended_by: string
+          id?: string
+          members_count?: number | null
+          started_at: string
+          total_pages?: number | null
+        }
+        Update: {
+          author?: string | null
+          avg_progress?: number | null
+          book_id?: string | null
+          book_title?: string
+          class_id?: string
+          created_at?: string
+          ended_at?: string
+          ended_by?: string
+          id?: string
+          members_count?: number | null
+          started_at?: string
+          total_pages?: number | null
+        }
+        Relationships: []
+      }
       class_chapter_discussions: {
         Row: {
           chapter_number: number
@@ -569,6 +662,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      class_next_book: {
+        Row: {
+          author: string | null
+          book_id: string | null
+          book_title: string
+          class_id: string
+          created_at: string
+          created_by: string
+          id: string
+          scheduled_start_date: string
+          total_pages: number | null
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          book_id?: string | null
+          book_title: string
+          class_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          scheduled_start_date: string
+          total_pages?: number | null
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          book_id?: string | null
+          book_title?: string
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          scheduled_start_date?: string
+          total_pages?: number | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       class_question_responses: {
         Row: {
