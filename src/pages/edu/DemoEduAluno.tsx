@@ -282,12 +282,17 @@ const DemoEduAluno = () => {
                   weeklyGoal={weeklyGoal}
                   weeklyPct={weeklyPct}
                   onGo={setSection}
-                  onContinueChapter={() => toast({ title: "Modo demo", description: "A leitura completa está disponível na versão final." })}
+                  onContinueChapter={() => currentChapter && setReadingChapter(currentChapter)}
                 />
               )}
 
               {section === "book" && <BookSection />}
-              {section === "trail" && <TrailSection onContinue={() => toast({ title: "Modo demo", description: "A leitura completa está disponível na versão final." })} />}
+              {section === "trail" && (
+                <TrailSection
+                  onContinue={(ch) => setReadingChapter(ch)}
+                  onHowItWorks={() => setShowHowTo(true)}
+                />
+              )}
 
               {section === "activities" && (
                 <ActivitiesSection
@@ -300,6 +305,23 @@ const DemoEduAluno = () => {
               {section === "missions" && <MissionsSection />}
 
               {section === "achievements" && <AchievementsSection />}
+
+              {section === "guide" && (
+                <div className="space-y-4">
+                  <SectionHeader title="Guia de Leitura" subtitle="Revise as etapas de preparação a qualquer momento" icon={Compass} />
+                  <Card>
+                    <CardContent className="p-6 space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        Você já concluiu o guia. Quer revisar as 4 etapas de preparação?
+                      </p>
+                      <Button onClick={() => setForceShowGuide(true)}>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Abrir guia novamente
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
 
               {section === "stats" && (
                 <StatsSection
