@@ -39,11 +39,8 @@ const READING_RULES = [
 ];
 
 interface Props {
-  /** Quando o aluno conclui o guia. */
   onFinish: () => void;
-  /** Permite fechar sem concluir (apenas quando exibido pelo menu, não no primeiro acesso). */
   onClose?: () => void;
-  /** Reinicia ao abrir (revisita pelo menu). */
   reviewMode?: boolean;
 }
 
@@ -80,15 +77,17 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
   };
 
   return (
-    <div className="fixed inset-0 z-[60] bg-gradient-to-br from-primary via-primary/95 to-accent/40 overflow-y-auto">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
+    <div className="fixed inset-0 z-[60] bg-background overflow-y-auto">
+      {/* Header — fundo claro, alto contraste */}
+      <div className="sticky top-0 z-10 bg-card border-b border-border shadow-sm">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-accent" />
-            <div>
-              <p className="text-sm font-bold text-foreground leading-tight">Preparação para Leitura</p>
-              <p className="text-[11px] text-muted-foreground leading-tight">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-foreground leading-tight truncate">Preparação para Leitura</p>
+              <p className="text-[11px] text-muted-foreground leading-tight truncate">
                 Etapa {step} de {STEPS.length} · {STEPS[step - 1].label}
               </p>
             </div>
@@ -102,7 +101,7 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
         <Progress value={progress} className="h-1 rounded-none" />
       </div>
 
-      {/* Conteúdo */}
+      {/* Conteúdo — fundo neutro, texto foreground */}
       <div className="max-w-3xl mx-auto px-4 py-8 lg:py-12">
         <AnimatePresence mode="wait">
           <motion.div
@@ -115,17 +114,17 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
             {step === 1 && (
               <div className="space-y-6">
                 <header className="text-center space-y-2">
-                  <h1 className="text-2xl lg:text-3xl font-bold text-background tracking-tight">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
                     Antes de começar o livro da sua turma…
                   </h1>
-                  <p className="text-background/80 text-sm lg:text-base">
+                  <p className="text-muted-foreground text-sm lg:text-base">
                     Vamos te ajudar a criar seu hábito de leitura. Leva menos de 5 minutos.
                   </p>
                 </header>
 
                 <div className="grid sm:grid-cols-2 gap-3">
                   {FEAR_CARDS.map((c) => (
-                    <Card key={c.title} className="bg-background/95 backdrop-blur border-border">
+                    <Card key={c.title} className="border-border hover:border-primary/30 transition-colors">
                       <CardContent className="p-4 space-y-1">
                         <div className="text-2xl">{c.emoji}</div>
                         <p className="text-sm font-bold text-foreground">{c.title}</p>
@@ -140,12 +139,14 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
             {step === 2 && (
               <div className="space-y-6">
                 <header className="text-center space-y-2">
-                  <Clock className="h-10 w-10 mx-auto text-accent" />
-                  <h1 className="text-2xl lg:text-3xl font-bold text-background tracking-tight">
+                  <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Clock className="h-6 w-6 text-primary" />
+                  </div>
+                  <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
                     Quando a leitura cabe melhor no seu dia?
                   </h1>
-                  <p className="text-background/80 text-sm">
-                    Escolha um horário fixo — leitores consistentes lêem no mesmo momento.
+                  <p className="text-muted-foreground text-sm">
+                    Escolha um horário fixo — leitores consistentes leem no mesmo momento.
                   </p>
                 </header>
 
@@ -159,8 +160,8 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
                         onClick={() => setSelectedMoment(m.id)}
                         className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                           active
-                            ? "bg-accent text-accent-foreground border-accent shadow-lg scale-[1.02]"
-                            : "bg-background/95 border-border hover:border-accent/60"
+                            ? "bg-primary text-primary-foreground border-primary shadow-md"
+                            : "bg-card border-border text-foreground hover:border-primary/50 hover:bg-muted/40"
                         }`}
                       >
                         <Icon className="h-5 w-5 flex-shrink-0" />
@@ -176,11 +177,13 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
             {step === 3 && (
               <div className="space-y-6">
                 <header className="text-center space-y-2">
-                  <BookOpen className="h-10 w-10 mx-auto text-accent" />
-                  <h1 className="text-2xl lg:text-3xl font-bold text-background tracking-tight">
+                  <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                  </div>
+                  <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
                     Como ler sem travar
                   </h1>
-                  <p className="text-background/80 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     Marque cada regra abaixo para entender — você pode revisar depois.
                   </p>
                 </header>
@@ -194,13 +197,13 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
                         onClick={() => setChecked((p) => ({ ...p, [r.id]: !p[r.id] }))}
                         className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                           c
-                            ? "bg-success/15 border-success text-foreground"
-                            : "bg-background/95 border-border hover:border-accent/60"
+                            ? "bg-success/10 border-success text-foreground"
+                            : "bg-card border-border text-foreground hover:border-primary/50"
                         }`}
                       >
                         <div
                           className={`h-5 w-5 rounded-md flex items-center justify-center border-2 flex-shrink-0 ${
-                            c ? "bg-success border-success text-background" : "border-border"
+                            c ? "bg-success border-success text-background" : "border-border bg-background"
                           }`}
                         >
                           {c && <CheckCircle2 className="h-3.5 w-3.5" />}
@@ -211,7 +214,7 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
                   })}
                 </div>
 
-                <Card className="bg-background/95 border-accent/30">
+                <Card className="bg-accent/5 border-accent/30">
                   <CardContent className="p-4 text-center">
                     <p className="text-sm font-serif italic text-foreground">
                       "Leitores não são perfeitos. Eles são consistentes."
@@ -223,19 +226,19 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
 
             {step === 4 && (
               <div className="space-y-6 text-center">
-                <div className="mx-auto h-20 w-20 rounded-full bg-accent/20 flex items-center justify-center">
+                <div className="mx-auto h-20 w-20 rounded-full bg-accent/15 flex items-center justify-center">
                   <Target className="h-10 w-10 text-accent" />
                 </div>
                 <header className="space-y-2">
-                  <h1 className="text-2xl lg:text-3xl font-bold text-background tracking-tight">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
                     Sua primeira missão
                   </h1>
-                  <p className="text-background/80 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     Antes de entrar no painel, vamos definir seu primeiro objetivo.
                   </p>
                 </header>
 
-                <Card className="bg-background/95 border-accent/40 max-w-md mx-auto">
+                <Card className="border-accent/40 max-w-md mx-auto">
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-center justify-center gap-2 text-accent">
                       <Sparkles className="h-5 w-5" />
@@ -272,7 +275,7 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
       </div>
 
       {/* Footer com navegação */}
-      <div className="sticky bottom-0 bg-background/95 backdrop-blur border-t border-border">
+      <div className="sticky bottom-0 bg-card border-t border-border">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <Button variant="ghost" size="sm" onClick={goPrev} disabled={step === 1}>
             <ArrowLeft className="h-4 w-4 mr-1" />
@@ -283,7 +286,7 @@ export default function ReadingPrepGuide({ onFinish, onClose, reviewMode }: Prop
               <span
                 key={s.id}
                 className={`h-1.5 w-6 rounded-full transition-colors ${
-                  s.id <= step ? "bg-accent" : "bg-border"
+                  s.id <= step ? "bg-primary" : "bg-border"
                 }`}
               />
             ))}
