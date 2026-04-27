@@ -573,9 +573,21 @@ const BookSection = () => (
   </div>
 );
 
-const TrailSection = ({ onContinue }: { onContinue: () => void }) => (
+const TrailSection = ({
+  onContinue,
+  onHowItWorks,
+}: {
+  onContinue: (ch: typeof DEMO_CHAPTERS[0]) => void;
+  onHowItWorks: () => void;
+}) => (
   <div className="space-y-4">
-    <SectionHeader title="Trilha Literária" subtitle="Capítulos do livro da turma" icon={ScrollText} />
+    <div className="flex items-center justify-between flex-wrap gap-2">
+      <SectionHeader title="Trilha Literária" subtitle="Capítulos do livro da turma" icon={ScrollText} />
+      <Button variant="outline" size="sm" onClick={onHowItWorks}>
+        <HelpCircle className="h-4 w-4 mr-1" />
+        Como funciona
+      </Button>
+    </div>
     <div className="grid gap-2">
       {DEMO_CHAPTERS.map((ch) => (
         <Card key={ch.number} className={ch.status === "current" ? "border-accent/50" : ""}>
@@ -591,8 +603,10 @@ const TrailSection = ({ onContinue }: { onContinue: () => void }) => (
               <p className="font-semibold text-foreground">{ch.title}</p>
               <p className="text-xs text-muted-foreground">{ch.pages} páginas</p>
             </div>
-            {ch.status === "done" && <Badge variant="outline" className="text-success border-success/40">Concluído</Badge>}
-            {ch.status === "current" && <Button size="sm" onClick={onContinue}>Continuar</Button>}
+            {ch.status === "done" && (
+              <Button size="sm" variant="ghost" onClick={() => onContinue(ch)}>Reler</Button>
+            )}
+            {ch.status === "current" && <Button size="sm" onClick={() => onContinue(ch)}>Continuar</Button>}
             {ch.status === "locked" && <span className="text-xs text-muted-foreground">Bloqueado</span>}
           </CardContent>
         </Card>
