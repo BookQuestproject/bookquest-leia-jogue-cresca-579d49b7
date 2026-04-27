@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import ClassBooksManager from "@/components/edu/ClassBooksManager";
 
 const EduTurmaDetail = () => {
   const { classId } = useParams<{ classId: string }>();
