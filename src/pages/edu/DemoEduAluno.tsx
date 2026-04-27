@@ -78,10 +78,43 @@ const DemoEduAluno = () => {
   const [pageInput, setPageInput] = useState("");
   const [activeActivity, setActiveActivity] = useState<typeof PENDING_ACTIVITIES[0] | null>(null);
   const [response, setResponse] = useState("");
+  const [readingChapter, setReadingChapter] = useState<typeof DEMO_CHAPTERS[0] | null>(null);
+  const [showHowTo, setShowHowTo] = useState(false);
+  const prep = useDemoReadingPrep();
+  const [forceShowGuide, setForceShowGuide] = useState(false);
 
   if (!isDemo) {
     navigate("/edu", { replace: true });
     return null;
+  }
+
+  // Gate inicial obrigatório: Guia de Preparação no primeiro acesso
+  const showGuide = forceShowGuide || (!prep.completed && section !== "guide");
+  if (showGuide) {
+    return (
+      <ReadingPrepGuide
+        onFinish={() => { setForceShowGuide(false); setSection("dashboard"); }}
+        onClose={forceShowGuide ? () => setForceShowGuide(false) : undefined}
+        reviewMode={forceShowGuide}
+      />
+    );
+  }
+
+  // Modo leitura com cronômetro + palavras difíceis
+  if (readingChapter) {
+    return (
+      <DemoReadingMode
+        bookTitle={DEMO_CLASS.book_title}
+        chapterNumber={readingChapter.number}
+        chapterTitle={readingChapter.title}
+        pages={readingChapter.pages}
+        onExit={() => setReadingChapter(null)}
+        onComplete={(ess) => {
+          toast({ title: `🎉 +${ess} ✦ Essência`, description: "Capítulo concluído no demo." });
+          setReadingChapter(null);
+        }}
+      />
+    );
   }
 
   const totalPages = DEMO_CLASS.total_pages;
