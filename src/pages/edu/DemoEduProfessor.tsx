@@ -185,7 +185,7 @@ const DemoEduProfessor = () => {
                   <StatCard icon={Users} label="Alunos" value={DEMO_CLASS.members_count} color="text-primary" />
                   <StatCard icon={TrendingUp} label="Progresso médio" value={`${DEMO_CLASS.avg_progress}%`} color="text-accent" />
                   <StatCard icon={Clock} label="Ativos hoje" value={DEMO_REPORTS.active_today} color="text-success" />
-                  <StatCard icon={FileCheck} label="A corrigir" value={DEMO_PENDING_REVIEWS.length} color="text-destructive" />
+                  <StatCard icon={FileCheck} label="A corrigir" value={pendingReviewCount} color="text-destructive" />
                 </div>
 
                 {/* Book + class progress */}
