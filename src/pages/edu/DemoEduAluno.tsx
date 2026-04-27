@@ -43,6 +43,10 @@ const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "guide", label: "Guia de Leitura", icon: Compass },
 ];
 
+// Tema visual do livro da turma — alinhado ao BookQuest principal (O Pequeno Príncipe)
+const BOOK_THEME_COLOR = "40 65% 45%";
+const CHAPTER_ICONS = ["⭐", "🌍", "🌹", "🦊", "🌵", "🌌", "🪐", "🦁", "👑", "🚀", "🌙", "🔑", "🎩", "🌻"];
+
 // Atividades pendentes simuladas
 const PENDING_ACTIVITIES = [
   {
