@@ -263,9 +263,9 @@ const DemoEduAluno = () => {
 
         {/* ===== Conteúdo principal + painel direito ===== */}
         <div className="flex-1 lg:ml-60 min-h-screen pt-14 lg:pt-0 pb-20 lg:pb-0">
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-0 min-h-screen">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px] gap-0 min-h-screen">
             {/* Área central */}
-            <main className="px-4 lg:px-8 py-6 max-w-5xl w-full mx-auto xl:mx-0">
+            <main className="px-4 lg:px-8 py-6 w-full min-w-0">
               {section === "dashboard" && (
                 <DashboardSection
                   studentName={DEMO_STUDENT.name}
@@ -337,8 +337,8 @@ const DemoEduAluno = () => {
               )}
             </main>
 
-            {/* Painel direito */}
-            <aside className="hidden xl:block border-l border-border bg-muted/20 px-5 py-6 space-y-5 sticky top-[40px] h-[calc(100vh-40px)] overflow-y-auto">
+            {/* Painel direito — sempre visível em desktop (lg+) */}
+            <aside className="hidden lg:block border-l border-border bg-muted/20 px-5 py-6 space-y-5 sticky top-[40px] h-[calc(100vh-40px)] overflow-y-auto">
               <RightPanel
                 onOpenActivity={(a) => setActiveActivity(a)}
                 onGo={setSection}
