@@ -4,7 +4,7 @@ import {
   BookOpen, Trophy, Target, Medal, Megaphone, LogOut, CheckCircle2,
   Flame, Sparkles, Lock, Send, LayoutDashboard, ScrollText, ClipboardList,
   BarChart3, Bell, Clock, ChevronRight, TrendingUp, Calendar, Award,
-  PlayCircle, BookMarked, Star,
+  PlayCircle, BookMarked, Star, HelpCircle, Compass,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import DemoBanner from "@/components/demo/DemoBanner";
+import ReadingPrepGuide from "@/components/demo/ReadingPrepGuide";
+import DemoReadingMode from "@/components/demo/DemoReadingMode";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import { useDemoReadingPrep } from "@/hooks/useDemoReadingPrep";
 import {
   DEMO_STUDENT, DEMO_CLASS, DEMO_STUDENTS, DEMO_LUCAS_PROGRESS,
   DEMO_CHAPTERS, DEMO_MISSIONS, DEMO_ACHIEVEMENTS_STUDENT,
@@ -26,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type Section =
   | "dashboard" | "book" | "trail" | "activities" | "ranking"
-  | "missions" | "achievements" | "stats";
+  | "missions" | "achievements" | "stats" | "guide";
 
 const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "dashboard", label: "Início", icon: LayoutDashboard },
@@ -37,6 +40,7 @@ const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "missions", label: "Missões", icon: Target },
   { id: "achievements", label: "Conquistas", icon: Medal },
   { id: "stats", label: "Progresso", icon: BarChart3 },
+  { id: "guide", label: "Guia de Leitura", icon: Compass },
 ];
 
 // Atividades pendentes simuladas
