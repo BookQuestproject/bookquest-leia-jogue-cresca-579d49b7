@@ -20,7 +20,7 @@ const STEPS = [
 const FEAR_CARDS = [
   { emoji: "⏱️", title: "Ler 10 minutos já conta", text: "Pequenos passos fazem toda a diferença." },
   { emoji: "🤷", title: "Você não precisa entender tudo", text: "É normal não captar 100% — siga em frente." },
-  { emoji: "🛑", title: "Parar com vontade de continuar é ótimo", text: "Significa que o livro te conquistou." },
+  { emoji: "🛑", title: "Parar querendo continuar é ótimo sinal", text: "Significa que você está envolvido com a história." },
   { emoji: "🏋️", title: "Ler é treino, não prova", text: "Quanto mais você lê, mais fácil fica." },
 ];
 
@@ -34,7 +34,7 @@ const MOMENT_OPTIONS = [
 
 const READING_RULES = [
   { id: "rule1", text: "Se não entender → continue lendo." },
-  { id: "rule2", text: "Se tiver palavra difícil → ignore (você pode anotar depois)." },
+  { id: "rule2", text: "Se aparecer palavra difícil → use o botão de dicionário com IA no canto inferior direito durante a leitura para ver significados e sinônimos sem sair do capítulo." },
   { id: "rule3", text: "Se o capítulo for longo → divida em partes menores." },
 ];
 
