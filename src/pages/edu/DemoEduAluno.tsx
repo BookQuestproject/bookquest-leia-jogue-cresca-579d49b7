@@ -680,128 +680,162 @@ const TrailSection = ({
         </div>
       )}
 
-      {/* Capítulos — visual idêntico ao Trilhas.tsx */}
-      <div className="space-y-4">
+      {/* Mapa do tesouro — capítulos como livros conectados verticalmente */}
+      <div className="relative max-w-md mx-auto py-4">
         {DEMO_CHAPTERS.map((ch, index) => {
           const isCompleted = ch.status === "done";
           const isCurrent = ch.status === "current";
           const isLocked = ch.status === "locked";
-          const isOpenBook = !isLocked;
-          const icon = CHAPTER_ICONS[index % CHAPTER_ICONS.length];
+          const isLast = index === DEMO_CHAPTERS.length - 1;
+          // Zigue-zague: alterna esquerda / centro / direita
+          const positions = ["justify-start", "justify-center", "justify-end", "justify-center"];
+          const align = positions[index % positions.length];
+          const nextAlign = positions[(index + 1) % positions.length];
 
           return (
-            <button
-              key={ch.number}
-              onClick={() => !isLocked && onContinue(ch)}
-              disabled={isLocked}
-              className={`relative w-full rounded-lg overflow-hidden transition-all duration-300 text-left ${
-                isLocked ? "cursor-not-allowed" : "cursor-pointer hover:-translate-y-1"
-              }`}
-              style={{
-                background: isOpenBook
-                  ? `linear-gradient(145deg, hsl(43 30% 94%), hsl(35 25% 88%))`
-                  : `linear-gradient(145deg, hsl(${themeColor} / 0.12), hsl(${themeColor} / 0.06))`,
-                border: isCurrent
-                  ? `2px solid hsl(${themeColor})`
-                  : `1px solid hsl(${themeColor} / ${isOpenBook ? "0.35" : "0.2"})`,
-                minHeight: "100px",
-                boxShadow: isCurrent
-                  ? `0 8px 32px hsl(${themeColor} / 0.25)`
-                  : isOpenBook
-                  ? `0 4px 16px hsl(${themeColor} / 0.1)`
-                  : "none",
-              }}
-            >
-              {isOpenBook && (
-                <div
-                  className="absolute inset-0 opacity-20 pointer-events-none"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                  }}
-                />
-              )}
-              {isOpenBook && (
-                <div
-                  className="absolute left-0 top-0 bottom-0 w-3 pointer-events-none"
-                  style={{
-                    background: `linear-gradient(90deg, hsl(${themeColor} / 0.25), transparent)`,
-                  }}
-                />
-              )}
-
-              <div className="relative p-4 flex items-center gap-4">
-                <div
-                  className="w-20 h-24 rounded flex-shrink-0 flex items-center justify-center overflow-hidden"
-                  style={{
-                    background: `linear-gradient(135deg, hsl(${themeColor} / ${isOpenBook ? "0.2" : "0.15"}), hsl(${themeColor} / 0.08))`,
-                    border: `1px solid hsl(${themeColor} / 0.25)`,
-                  }}
+            <div key={ch.number} className="relative">
+              <div className={`flex ${align}`}>
+                <button
+                  onClick={() => !isLocked && onContinue(ch)}
+                  disabled={isLocked}
+                  className={`group relative flex flex-col items-center gap-2 transition-all duration-300 ${
+                    isLocked ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:-translate-y-1"
+                  }`}
+                  aria-label={`Capítulo ${ch.number}: ${ch.title}`}
                 >
-                  <span className={`text-3xl ${isLocked ? "opacity-50" : ""}`}>{icon}</span>
-                </div>
+                  {/* Livro */}
+                  <div
+                    className="relative w-24 h-32 rounded-md flex items-center justify-center shadow-lg transition-transform"
+                    style={{
+                      background: isLocked
+                        ? `linear-gradient(135deg, hsl(${themeColor} / 0.25), hsl(${themeColor} / 0.15))`
+                        : isCompleted
+                        ? `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor} / 0.75))`
+                        : `linear-gradient(135deg, hsl(${themeColor} / 0.95), hsl(${themeColor} / 0.7))`,
+                      border: isCurrent
+                        ? `3px solid hsl(45 95% 60%)`
+                        : `2px solid hsl(${themeColor} / 0.6)`,
+                      boxShadow: isCurrent
+                        ? `0 0 0 4px hsl(45 95% 60% / 0.25), 0 10px 30px hsl(${themeColor} / 0.4)`
+                        : isCompleted
+                        ? `0 8px 22px hsl(${themeColor} / 0.35)`
+                        : `0 6px 16px hsl(${themeColor} / 0.2)`,
+                    }}
+                  >
+                    {/* Lombada do livro */}
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-2 rounded-l-md"
+                      style={{ background: `hsl(${themeColor} / 0.5)` }}
+                    />
+                    {/* Linhas decorativas (capa) */}
+                    <div className="absolute inset-2 border border-white/20 rounded-sm pointer-events-none" />
 
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="text-xs font-medium mb-1"
-                    style={{ color: `hsl(${themeColor})`, opacity: isLocked ? 0.6 : 1 }}
-                  >
-                    Capítulo {ch.number}
-                  </p>
-                  <p
-                    className={`font-serif text-sm font-semibold line-clamp-2 mb-1 ${
-                      isLocked ? "text-foreground/60" : "text-foreground"
-                    }`}
-                  >
-                    {ch.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Capítulo {ch.number} de {DEMO_CHAPTERS.length}
-                  </p>
-                  {isCompleted && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <CheckCircle2 className="w-3 h-3 text-success" />
-                      <span className="text-xs text-success font-medium">Concluído</span>
+                    {/* Conteúdo central: cadeado, check ou ícone */}
+                    {isLocked ? (
+                      <Lock className="w-8 h-8 text-white/80" strokeWidth={2.5} />
+                    ) : isCompleted ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-3xl drop-shadow">{CHAPTER_ICONS[index % CHAPTER_ICONS.length]}</span>
+                        <CheckCircle2 className="w-4 h-4 text-white drop-shadow" />
+                      </div>
+                    ) : (
+                      <span className="text-4xl drop-shadow-md">{CHAPTER_ICONS[index % CHAPTER_ICONS.length]}</span>
+                    )}
+
+                    {/* Marcador de capítulo atual */}
+                    {isCurrent && (
+                      <div
+                        className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap shadow-md"
+                        style={{
+                          background: `hsl(45 95% 60%)`,
+                          color: `hsl(${themeColor})`,
+                        }}
+                      >
+                        Você está aqui
+                      </div>
+                    )}
+
+                    {/* Número do capítulo */}
+                    <div
+                      className="absolute -bottom-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md border-2 border-white"
+                      style={{
+                        background: isLocked ? `hsl(${themeColor} / 0.4)` : `hsl(${themeColor})`,
+                        color: "white",
+                      }}
+                    >
+                      {ch.number}
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                {isLocked ? (
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{
-                      background: `hsl(${themeColor} / 0.1)`,
-                      border: `1px solid hsl(${themeColor} / 0.2)`,
-                    }}
-                  >
-                    <Lock className="w-4 h-4 text-muted-foreground/50" />
+                  {/* Título do capítulo */}
+                  <div className="text-center max-w-[140px]">
+                    <p
+                      className={`text-xs font-serif font-semibold leading-tight ${
+                        isLocked ? "text-muted-foreground" : "text-foreground"
+                      }`}
+                    >
+                      {ch.title}
+                    </p>
+                    {isCurrent && (
+                      <p className="text-[10px] mt-0.5 font-medium" style={{ color: `hsl(${themeColor})` }}>
+                        {ch.pages} páginas
+                      </p>
+                    )}
                   </div>
-                ) : (
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{
-                      background: `hsl(${themeColor} / 0.15)`,
-                      border: `1px solid hsl(${themeColor} / 0.3)`,
-                    }}
-                    aria-label={`${ch.pages} páginas`}
-                  >
-                    <span className="text-xs font-bold" style={{ color: `hsl(${themeColor})` }}>
-                      {ch.pages}p
-                    </span>
-                  </div>
-                )}
+                </button>
               </div>
 
-              {isCurrent && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-1 pointer-events-none"
-                  style={{
-                    background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor} / 0.6))`,
-                  }}
-                />
+              {/* Linha tracejada conectando ao próximo capítulo */}
+              {!isLast && (
+                <div className="relative h-16 w-full pointer-events-none" aria-hidden="true">
+                  <svg
+                    className="absolute inset-0 w-full h-full"
+                    viewBox="0 0 400 64"
+                    preserveAspectRatio="none"
+                  >
+                    {(() => {
+                      // Pontos x baseados no alinhamento (start=80, center=200, end=320)
+                      const xMap: Record<string, number> = {
+                        "justify-start": 80,
+                        "justify-center": 200,
+                        "justify-end": 320,
+                      };
+                      const x1 = xMap[align];
+                      const x2 = xMap[nextAlign];
+                      const cx1 = x1;
+                      const cy1 = 32;
+                      const cx2 = x2;
+                      const cy2 = 32;
+                      return (
+                        <path
+                          d={`M ${x1} 0 C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} 64`}
+                          fill="none"
+                          stroke={`hsl(${themeColor} / ${isCompleted ? "0.7" : "0.35"})`}
+                          strokeWidth="3"
+                          strokeDasharray="6 8"
+                          strokeLinecap="round"
+                        />
+                      );
+                    })()}
+                  </svg>
+                </div>
               )}
-            </button>
+            </div>
           );
         })}
+
+        {/* Marca de "fim da trilha" */}
+        <div className="flex justify-center mt-4">
+          <div
+            className="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow"
+            style={{
+              background: `linear-gradient(135deg, hsl(45 95% 60%), hsl(40 90% 50%))`,
+              color: `hsl(${themeColor})`,
+            }}
+          >
+            🏁 Fim da Jornada
+          </div>
+        </div>
       </div>
 
       <div className="mt-6 text-center text-xs text-muted-foreground">
