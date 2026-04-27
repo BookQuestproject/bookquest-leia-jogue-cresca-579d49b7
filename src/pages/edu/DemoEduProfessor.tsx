@@ -47,6 +47,11 @@ const DemoEduProfessor = () => {
   const tabFromUrl = new URLSearchParams(location.search).get("tab") || "overview";
   const [activeTab, setActiveTab] = useState(tabFromUrl);
   const [search, setSearch] = useState("");
+  const activitiesAll = useDemoActivities();
+  const pendingReviewCount = activitiesAll.reduce(
+    (acc, a) => acc + a.responses.filter((r) => !r.reviewed).length,
+    0,
+  );
 
   if (!isDemo) {
     navigate("/edu", { replace: true });
