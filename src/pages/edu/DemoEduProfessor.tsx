@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DemoBanner from "@/components/demo/DemoBanner";
+import ActivitiesSection from "@/components/demo/ActivitiesSection";
 import { useDemoMode } from "@/hooks/useDemoMode";
 import {
   DEMO_TEACHER, DEMO_CLASS, DEMO_STUDENTS,
