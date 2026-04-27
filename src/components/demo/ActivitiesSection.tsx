@@ -38,12 +38,29 @@ const statusBadgeMap = {
   no_deadline: { label: "Sem prazo", className: "bg-primary/10 text-primary" },
 };
 
+type FilterKey = "all" | "active" | "closed" | "no_deadline";
+
 export default function ActivitiesSection() {
   const activities = useDemoActivities();
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FilterKey>("all");
 
   const selected = selectedId ? activities.find((a) => a.id === selectedId) : null;
+
+  const counts = useMemo(() => {
+    const c = { all: activities.length, active: 0, closed: 0, no_deadline: 0 };
+    activities.forEach((a) => {
+      const s = activityStatusLabel(a);
+      c[s]++;
+    });
+    return c;
+  }, [activities]);
+
+  const filtered = useMemo(() => {
+    if (filter === "all") return activities;
+    return activities.filter((a) => activityStatusLabel(a) === filter);
+  }, [activities, filter]);
 
   if (selected) {
     return <ActivityDetail activity={selected} onBack={() => setSelectedId(null)} />;
@@ -67,13 +84,26 @@ export default function ActivitiesSection() {
         </Button>
       </div>
 
-      {activities.length === 0 ? (
+      <Tabs value={filter} onValueChange={(v) => setFilter(v as FilterKey)}>
+        <TabsList className="grid grid-cols-4 w-full sm:w-auto">
+          <TabsTrigger value="all">Todas <span className="ml-1.5 text-[10px] opacity-70">({counts.all})</span></TabsTrigger>
+          <TabsTrigger value="active">Ativas <span className="ml-1.5 text-[10px] opacity-70">({counts.active})</span></TabsTrigger>
+          <TabsTrigger value="closed">Encerradas <span className="ml-1.5 text-[10px] opacity-70">({counts.closed})</span></TabsTrigger>
+          <TabsTrigger value="no_deadline">Sem prazo <span className="ml-1.5 text-[10px] opacity-70">({counts.no_deadline})</span></TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {filtered.length === 0 ? (
         <Card className="bg-card border-border border-dashed">
           <CardContent className="p-10 text-center">
             <FileText className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-            <p className="text-sm font-medium text-foreground">Nenhuma atividade ainda</p>
+            <p className="text-sm font-medium text-foreground">
+              {activities.length === 0 ? "Nenhuma atividade ainda" : "Nenhuma atividade neste filtro"}
+            </p>
             <p className="text-xs text-muted-foreground mb-4">
-              Crie sua primeira atividade para a turma.
+              {activities.length === 0
+                ? "Crie sua primeira atividade para a turma."
+                : "Tente outro filtro acima ou crie uma nova atividade."}
             </p>
             <Button onClick={() => setCreateOpen(true)}>
               <Plus className="h-4 w-4 mr-1" />
@@ -83,7 +113,7 @@ export default function ActivitiesSection() {
         </Card>
       ) : (
         <div className="grid sm:grid-cols-2 gap-3">
-          {activities.map((a) => (
+          {filtered.map((a) => (
             <ActivityCard key={a.id} activity={a} onOpen={() => setSelectedId(a.id)} />
           ))}
         </div>
