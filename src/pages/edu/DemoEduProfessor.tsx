@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DemoBanner from "@/components/demo/DemoBanner";
 import ActivitiesSection from "@/components/demo/ActivitiesSection";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import { useDemoActivities } from "@/hooks/useDemoActivities";
 import {
   DEMO_TEACHER, DEMO_CLASS, DEMO_STUDENTS,
   DEMO_RECENT_ACTIVITIES, DEMO_PENDING_REVIEWS, DEMO_REPORTS, DEMO_ANNOUNCEMENTS,
