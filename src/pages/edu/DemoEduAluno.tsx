@@ -100,7 +100,7 @@ const DemoEduAluno = () => {
     );
   }
 
-  // Modo leitura com cronômetro + palavras difíceis
+  // Modo leitura com cronômetro + palavras difíceis (mesmo fluxo da trilha do BookQuest principal)
   if (readingChapter) {
     return (
       <DemoReadingMode
@@ -108,6 +108,9 @@ const DemoEduAluno = () => {
         chapterNumber={readingChapter.number}
         chapterTitle={readingChapter.title}
         pages={readingChapter.pages}
+        themeColor={BOOK_THEME_COLOR}
+        totalChapters={DEMO_CHAPTERS.length}
+        icon={CHAPTER_ICONS[(readingChapter.number - 1) % CHAPTER_ICONS.length]}
         onExit={() => setReadingChapter(null)}
         onComplete={(ess) => {
           toast({ title: `🎉 +${ess} ✦ Essência`, description: "Capítulo concluído no demo." });
