@@ -270,9 +270,9 @@ const DemoEduAluno = () => {
 
         {/* ===== Conteúdo principal + painel direito ===== */}
         <div className="flex-1 lg:ml-60 min-h-screen pt-14 lg:pt-0 pb-20 lg:pb-0">
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px] gap-0 min-h-screen">
-            {/* Área central */}
-            <main className="px-4 lg:px-8 py-6 w-full min-w-0">
+          <div className="min-h-screen">
+            {/* Área central — sem aside lateral, ocupa toda largura */}
+            <main className="px-4 lg:px-8 py-6 w-full min-w-0 max-w-6xl mx-auto">
               {section === "dashboard" && (
                 <DashboardSection
                   studentName={DEMO_STUDENT.name}
@@ -290,6 +290,7 @@ const DemoEduAluno = () => {
                   weeklyPct={weeklyPct}
                   onGo={setSection}
                   onContinueChapter={() => currentChapter && setReadingChapter(currentChapter)}
+                  onOpenChapter={(ch: typeof DEMO_CHAPTERS[0]) => setReadingChapter(ch)}
                 />
               )}
 
@@ -343,14 +344,6 @@ const DemoEduAluno = () => {
                 />
               )}
             </main>
-
-            {/* Painel direito — sempre visível em desktop (lg+) */}
-            <aside className="hidden lg:block border-l border-border bg-muted/20 px-5 py-6 space-y-5 sticky top-[40px] h-[calc(100vh-40px)] overflow-y-auto">
-              <RightPanel
-                onOpenActivity={(a) => setActiveActivity(a)}
-                onGo={setSection}
-              />
-            </aside>
           </div>
         </div>
       </div>
