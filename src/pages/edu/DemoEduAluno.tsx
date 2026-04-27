@@ -4,7 +4,7 @@ import {
   BookOpen, Trophy, Target, Medal, Megaphone, LogOut, CheckCircle2,
   Flame, Sparkles, Lock, Send, LayoutDashboard, ScrollText, ClipboardList,
   BarChart3, Bell, Clock, ChevronRight, TrendingUp, Calendar, Award,
-  PlayCircle, BookMarked, Star,
+  PlayCircle, BookMarked, Star, HelpCircle, Compass,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import DemoBanner from "@/components/demo/DemoBanner";
+import ReadingPrepGuide from "@/components/demo/ReadingPrepGuide";
+import DemoReadingMode from "@/components/demo/DemoReadingMode";
 import { useDemoMode } from "@/hooks/useDemoMode";
+import { useDemoReadingPrep } from "@/hooks/useDemoReadingPrep";
 import {
   DEMO_STUDENT, DEMO_CLASS, DEMO_STUDENTS, DEMO_LUCAS_PROGRESS,
   DEMO_CHAPTERS, DEMO_MISSIONS, DEMO_ACHIEVEMENTS_STUDENT,
@@ -26,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type Section =
   | "dashboard" | "book" | "trail" | "activities" | "ranking"
-  | "missions" | "achievements" | "stats";
+  | "missions" | "achievements" | "stats" | "guide";
 
 const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "dashboard", label: "Início", icon: LayoutDashboard },
@@ -37,6 +40,7 @@ const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "missions", label: "Missões", icon: Target },
   { id: "achievements", label: "Conquistas", icon: Medal },
   { id: "stats", label: "Progresso", icon: BarChart3 },
+  { id: "guide", label: "Guia de Leitura", icon: Compass },
 ];
 
 // Atividades pendentes simuladas
@@ -74,10 +78,43 @@ const DemoEduAluno = () => {
   const [pageInput, setPageInput] = useState("");
   const [activeActivity, setActiveActivity] = useState<typeof PENDING_ACTIVITIES[0] | null>(null);
   const [response, setResponse] = useState("");
+  const [readingChapter, setReadingChapter] = useState<typeof DEMO_CHAPTERS[0] | null>(null);
+  const [showHowTo, setShowHowTo] = useState(false);
+  const prep = useDemoReadingPrep();
+  const [forceShowGuide, setForceShowGuide] = useState(false);
 
   if (!isDemo) {
     navigate("/edu", { replace: true });
     return null;
+  }
+
+  // Gate inicial obrigatório: Guia de Preparação no primeiro acesso
+  const showGuide = forceShowGuide || (!prep.completed && section !== "guide");
+  if (showGuide) {
+    return (
+      <ReadingPrepGuide
+        onFinish={() => { setForceShowGuide(false); setSection("dashboard"); }}
+        onClose={forceShowGuide ? () => setForceShowGuide(false) : undefined}
+        reviewMode={forceShowGuide}
+      />
+    );
+  }
+
+  // Modo leitura com cronômetro + palavras difíceis
+  if (readingChapter) {
+    return (
+      <DemoReadingMode
+        bookTitle={DEMO_CLASS.book_title}
+        chapterNumber={readingChapter.number}
+        chapterTitle={readingChapter.title}
+        pages={readingChapter.pages}
+        onExit={() => setReadingChapter(null)}
+        onComplete={(ess) => {
+          toast({ title: `🎉 +${ess} ✦ Essência`, description: "Capítulo concluído no demo." });
+          setReadingChapter(null);
+        }}
+      />
+    );
   }
 
   const totalPages = DEMO_CLASS.total_pages;
@@ -245,12 +282,17 @@ const DemoEduAluno = () => {
                   weeklyGoal={weeklyGoal}
                   weeklyPct={weeklyPct}
                   onGo={setSection}
-                  onContinueChapter={() => toast({ title: "Modo demo", description: "A leitura completa está disponível na versão final." })}
+                  onContinueChapter={() => currentChapter && setReadingChapter(currentChapter)}
                 />
               )}
 
               {section === "book" && <BookSection />}
-              {section === "trail" && <TrailSection onContinue={() => toast({ title: "Modo demo", description: "A leitura completa está disponível na versão final." })} />}
+              {section === "trail" && (
+                <TrailSection
+                  onContinue={(ch) => setReadingChapter(ch)}
+                  onHowItWorks={() => setShowHowTo(true)}
+                />
+              )}
 
               {section === "activities" && (
                 <ActivitiesSection
@@ -263,6 +305,23 @@ const DemoEduAluno = () => {
               {section === "missions" && <MissionsSection />}
 
               {section === "achievements" && <AchievementsSection />}
+
+              {section === "guide" && (
+                <div className="space-y-4">
+                  <SectionHeader title="Guia de Leitura" subtitle="Revise as etapas de preparação a qualquer momento" icon={Compass} />
+                  <Card>
+                    <CardContent className="p-6 space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        Você já concluiu o guia. Quer revisar as 4 etapas de preparação?
+                      </p>
+                      <Button onClick={() => setForceShowGuide(true)}>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Abrir guia novamente
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
 
               {section === "stats" && (
                 <StatsSection
@@ -514,9 +573,21 @@ const BookSection = () => (
   </div>
 );
 
-const TrailSection = ({ onContinue }: { onContinue: () => void }) => (
+const TrailSection = ({
+  onContinue,
+  onHowItWorks,
+}: {
+  onContinue: (ch: typeof DEMO_CHAPTERS[0]) => void;
+  onHowItWorks: () => void;
+}) => (
   <div className="space-y-4">
-    <SectionHeader title="Trilha Literária" subtitle="Capítulos do livro da turma" icon={ScrollText} />
+    <div className="flex items-center justify-between flex-wrap gap-2">
+      <SectionHeader title="Trilha Literária" subtitle="Capítulos do livro da turma" icon={ScrollText} />
+      <Button variant="outline" size="sm" onClick={onHowItWorks}>
+        <HelpCircle className="h-4 w-4 mr-1" />
+        Como funciona
+      </Button>
+    </div>
     <div className="grid gap-2">
       {DEMO_CHAPTERS.map((ch) => (
         <Card key={ch.number} className={ch.status === "current" ? "border-accent/50" : ""}>
@@ -532,8 +603,10 @@ const TrailSection = ({ onContinue }: { onContinue: () => void }) => (
               <p className="font-semibold text-foreground">{ch.title}</p>
               <p className="text-xs text-muted-foreground">{ch.pages} páginas</p>
             </div>
-            {ch.status === "done" && <Badge variant="outline" className="text-success border-success/40">Concluído</Badge>}
-            {ch.status === "current" && <Button size="sm" onClick={onContinue}>Continuar</Button>}
+            {ch.status === "done" && (
+              <Button size="sm" variant="ghost" onClick={() => onContinue(ch)}>Reler</Button>
+            )}
+            {ch.status === "current" && <Button size="sm" onClick={() => onContinue(ch)}>Continuar</Button>}
             {ch.status === "locked" && <span className="text-xs text-muted-foreground">Bloqueado</span>}
           </CardContent>
         </Card>
