@@ -48,6 +48,7 @@ import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
+import EduLivros from "./pages/edu/EduLivros";
 import EduAluno from "./pages/edu/EduAluno";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
@@ -106,6 +107,7 @@ const App = () => (
                 <Route path="/edu/turmas" element={<EduTurmas />} />
                 <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
                 <Route path="/edu/relatorios" element={<EduRelatorios />} />
+                <Route path="/edu/livros" element={<EduLivros />} />
                 <Route path="/politica-de-privacidade" element={<PoliticaDePrivacidade />} />
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
                 <Route path="*" element={<NotFound />} />
