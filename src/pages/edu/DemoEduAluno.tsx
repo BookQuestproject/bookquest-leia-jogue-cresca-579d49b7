@@ -270,9 +270,9 @@ const DemoEduAluno = () => {
 
         {/* ===== Conteúdo principal + painel direito ===== */}
         <div className="flex-1 lg:ml-60 min-h-screen pt-14 lg:pt-0 pb-20 lg:pb-0">
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px] gap-0 min-h-screen">
-            {/* Área central */}
-            <main className="px-4 lg:px-8 py-6 w-full min-w-0">
+          <div className="min-h-screen">
+            {/* Área central — sem aside lateral, ocupa toda largura */}
+            <main className="px-4 lg:px-8 py-6 w-full min-w-0 max-w-6xl mx-auto">
               {section === "dashboard" && (
                 <DashboardSection
                   studentName={DEMO_STUDENT.name}
@@ -290,6 +290,7 @@ const DemoEduAluno = () => {
                   weeklyPct={weeklyPct}
                   onGo={setSection}
                   onContinueChapter={() => currentChapter && setReadingChapter(currentChapter)}
+                  onOpenChapter={(ch: typeof DEMO_CHAPTERS[0]) => setReadingChapter(ch)}
                 />
               )}
 
@@ -343,14 +344,6 @@ const DemoEduAluno = () => {
                 />
               )}
             </main>
-
-            {/* Painel direito — sempre visível em desktop (lg+) */}
-            <aside className="hidden lg:block border-l border-border bg-muted/20 px-5 py-6 space-y-5 sticky top-[40px] h-[calc(100vh-40px)] overflow-y-auto">
-              <RightPanel
-                onOpenActivity={(a) => setActiveActivity(a)}
-                onGo={setSection}
-              />
-            </aside>
           </div>
         </div>
       </div>
@@ -400,10 +393,15 @@ const DemoEduAluno = () => {
 const DashboardSection = ({
   studentName, className_, school, currentPage, totalPages, progressPercent,
   myRank, earnedMedals, currentChapter, lastDoneChapter, weeklyMinutes, weeklyGoal,
-  weeklyPct, onGo, onContinueChapter,
-}: any) => (
+  weeklyPct, onGo, onContinueChapter, onOpenChapter,
+}: any) => {
+  const themeColor = BOOK_THEME_COLOR;
+  const completedCount = DEMO_CHAPTERS.filter((c: any) => c.status === "done").length;
+  const activeMissions = DEMO_MISSIONS.filter((m: any) => !m.completed).length;
+
+  return (
   <div className="space-y-6">
-    {/* ===== HEADER REFINADO ===== */}
+    {/* ===== HEADER ===== */}
     <div className="flex items-start justify-between gap-4 flex-wrap">
       <div>
         <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
@@ -421,7 +419,7 @@ const DashboardSection = ({
       </div>
     </div>
 
-    {/* ===== TRILHA LITERÁRIA — DOMINANTE (estilo BookQuest principal) ===== */}
+    {/* ===== TRILHA LITERÁRIA — MAPA DO TESOURO (estilo da seção Trilha) ===== */}
     <Card className="border-2 border-primary/20 overflow-hidden">
       <div className="bg-gradient-to-br from-primary/10 via-card to-accent/5 p-5 lg:p-6 border-b border-border">
         <div className="flex items-start gap-4 flex-wrap">
@@ -449,48 +447,137 @@ const DashboardSection = ({
         </div>
       </div>
 
-      {/* Capítulos numerados — mesmo estilo do BookQuest principal (cards de capítulo do ChapterReading) */}
-      <div className="p-5 lg:p-6 space-y-4">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="text-sm font-bold text-foreground">Capítulos</h3>
+      {/* Mapa do tesouro vertical */}
+      <div className="p-5 lg:p-6">
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <h3 className="text-sm font-bold text-foreground">Mapa da Jornada</h3>
           <Button variant="ghost" size="sm" onClick={() => onGo("trail")} className="h-8 text-xs">
             Ver trilha completa
             <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
-          {DEMO_CHAPTERS.slice(0, 8).map((ch) => {
-            const tone =
-              ch.status === "done" ? "bg-success/10 border-success/40 hover:border-success" :
-              ch.status === "current" ? "bg-accent/15 border-accent ring-2 ring-accent/20 hover:bg-accent/20" :
-              "bg-muted/40 border-border opacity-60";
-            const interactive = ch.status !== "locked";
+        <div className="relative max-w-md mx-auto py-2">
+          {DEMO_CHAPTERS.map((ch: any, index: number) => {
+            const isCompleted = ch.status === "done";
+            const isCurrent = ch.status === "current";
+            const isLocked = ch.status === "locked";
+            const isLast = index === DEMO_CHAPTERS.length - 1;
+            const positions = ["justify-start", "justify-center", "justify-end", "justify-center"];
+            const align = positions[index % positions.length];
+            const nextAlign = positions[(index + 1) % positions.length];
+
             return (
-              <button
-                key={ch.number}
-                disabled={!interactive}
-                onClick={() => interactive && onContinueChapter()}
-                className={`group relative p-3 rounded-lg border-2 text-left transition-all ${tone} ${interactive ? "cursor-pointer hover:scale-[1.02]" : "cursor-not-allowed"}`}
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
-                    Cap. {ch.number}
-                  </span>
-                  {ch.status === "done" && <CheckCircle2 className="h-3.5 w-3.5 text-success" />}
-                  {ch.status === "current" && <PlayCircle className="h-3.5 w-3.5 text-accent" />}
-                  {ch.status === "locked" && <Lock className="h-3.5 w-3.5 text-muted-foreground" />}
+              <div key={ch.number} className="relative">
+                <div className={`flex ${align}`}>
+                  <button
+                    onClick={() => !isLocked && onOpenChapter(ch)}
+                    disabled={isLocked}
+                    className={`group relative flex flex-col items-center gap-2 transition-all duration-300 ${
+                      isLocked ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:-translate-y-1"
+                    }`}
+                    aria-label={`Capítulo ${ch.number}: ${ch.title}`}
+                  >
+                    <div
+                      className="relative w-20 h-26 rounded-md flex items-center justify-center shadow-lg transition-transform"
+                      style={{
+                        width: "5rem",
+                        height: "6.5rem",
+                        background: isLocked
+                          ? `linear-gradient(135deg, hsl(${themeColor} / 0.25), hsl(${themeColor} / 0.15))`
+                          : isCompleted
+                          ? `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor} / 0.75))`
+                          : `linear-gradient(135deg, hsl(${themeColor} / 0.95), hsl(${themeColor} / 0.7))`,
+                        border: isCurrent
+                          ? `3px solid hsl(45 95% 60%)`
+                          : `2px solid hsl(${themeColor} / 0.6)`,
+                        boxShadow: isCurrent
+                          ? `0 0 0 4px hsl(45 95% 60% / 0.25), 0 10px 30px hsl(${themeColor} / 0.4)`
+                          : isCompleted
+                          ? `0 8px 22px hsl(${themeColor} / 0.35)`
+                          : `0 6px 16px hsl(${themeColor} / 0.2)`,
+                      }}
+                    >
+                      <div
+                        className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-md"
+                        style={{ background: `hsl(${themeColor} / 0.5)` }}
+                      />
+                      <div className="absolute inset-1.5 border border-white/20 rounded-sm pointer-events-none" />
+
+                      {isLocked ? (
+                        <Lock className="w-7 h-7 text-white/80" strokeWidth={2.5} />
+                      ) : isCompleted ? (
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span className="text-2xl drop-shadow">{CHAPTER_ICONS[index % CHAPTER_ICONS.length]}</span>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-white drop-shadow" />
+                        </div>
+                      ) : (
+                        <span className="text-3xl drop-shadow-md">{CHAPTER_ICONS[index % CHAPTER_ICONS.length]}</span>
+                      )}
+
+                      {isCurrent && (
+                        <div
+                          className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap shadow-md"
+                          style={{ background: `hsl(45 95% 60%)`, color: `hsl(${themeColor})` }}
+                        >
+                          Você está aqui
+                        </div>
+                      )}
+
+                      <div
+                        className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shadow-md border-2 border-white"
+                        style={{
+                          background: isLocked ? `hsl(${themeColor} / 0.4)` : `hsl(${themeColor})`,
+                          color: "white",
+                        }}
+                      >
+                        {ch.number}
+                      </div>
+                    </div>
+
+                    <div className="text-center max-w-[120px]">
+                      <p
+                        className={`text-[11px] font-serif font-semibold leading-tight line-clamp-2 ${
+                          isLocked ? "text-muted-foreground" : "text-foreground"
+                        }`}
+                      >
+                        {ch.title}
+                      </p>
+                    </div>
+                  </button>
                 </div>
-                <p className="text-xs font-semibold text-foreground line-clamp-2 leading-snug">
-                  {ch.title}
-                </p>
-                <p className="text-[10px] text-muted-foreground mt-1">{ch.pages} páginas</p>
-              </button>
+
+                {!isLast && (
+                  <div className="relative h-12 w-full pointer-events-none" aria-hidden="true">
+                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 48" preserveAspectRatio="none">
+                      {(() => {
+                        const xMap: Record<string, number> = {
+                          "justify-start": 80,
+                          "justify-center": 200,
+                          "justify-end": 320,
+                        };
+                        const x1 = xMap[align];
+                        const x2 = xMap[nextAlign];
+                        return (
+                          <path
+                            d={`M ${x1} 0 C ${x1} 24, ${x2} 24, ${x2} 48`}
+                            fill="none"
+                            stroke={`hsl(${themeColor} / ${isCompleted ? "0.7" : "0.35"})`}
+                            strokeWidth="3"
+                            strokeDasharray="6 8"
+                            strokeLinecap="round"
+                          />
+                        );
+                      })()}
+                    </svg>
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
 
-        <div className="flex items-center justify-between gap-3 pt-2 flex-wrap">
+        <div className="flex items-center justify-between gap-3 pt-4 mt-2 border-t border-border flex-wrap">
           <div className="text-xs text-muted-foreground">
             Capítulo atual: <strong className="text-foreground">Cap. {currentChapter?.number} — {currentChapter?.title}</strong>
           </div>
@@ -501,6 +588,77 @@ const DashboardSection = ({
         </div>
       </div>
     </Card>
+
+    {/* ===== QUADRADOS INFORMATIVOS (substituem o painel lateral) ===== */}
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <InfoSquare
+        icon={Flame}
+        title="Sequência"
+        value={`${DEMO_STUDENT.streak} dias`}
+        subtitle="lendo seguidos"
+        tone="destructive"
+        onClick={() => onGo("stats")}
+      />
+      <InfoSquare
+        icon={ClipboardList}
+        title="Atividades"
+        value={`${PENDING_ACTIVITIES.length}`}
+        subtitle="pendentes"
+        tone="accent"
+        onClick={() => onGo("activities")}
+      />
+      <InfoSquare
+        icon={Target}
+        title="Missões"
+        value={`${activeMissions}`}
+        subtitle="ativas hoje"
+        tone="primary"
+        onClick={() => onGo("missions")}
+      />
+      <InfoSquare
+        icon={Trophy}
+        title="Ranking"
+        value={`#${myRank}`}
+        subtitle="na turma"
+        tone="accent"
+        onClick={() => onGo("ranking")}
+      />
+      <InfoSquare
+        icon={BookMarked}
+        title="Capítulos"
+        value={`${completedCount}/${DEMO_CHAPTERS.length}`}
+        subtitle="concluídos"
+        tone="primary"
+        onClick={() => onGo("trail")}
+      />
+      <InfoSquare
+        icon={Clock}
+        title="Leitura semanal"
+        value={`${weeklyMinutes}m`}
+        subtitle={`meta ${weeklyGoal}m`}
+        tone="primary"
+        onClick={() => onGo("stats")}
+      />
+      <InfoSquare
+        icon={Medal}
+        title="Medalhas"
+        value={`${earnedMedals}`}
+        subtitle="conquistadas"
+        tone="accent"
+        onClick={() => onGo("achievements")}
+      />
+      <InfoSquare
+        icon={Megaphone}
+        title="Avisos"
+        value={`${DEMO_ANNOUNCEMENTS.length}`}
+        subtitle="do professor"
+        tone="primary"
+        onClick={() => {
+          const el = document.getElementById("avisos-prof");
+          el?.scrollIntoView({ behavior: "smooth" });
+        }}
+      />
+    </div>
 
     {/* ===== ATIVIDADES DA TURMA ===== */}
     <div>
@@ -514,7 +672,7 @@ const DashboardSection = ({
           <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {PENDING_ACTIVITIES.map((a) => (
           <Card key={a.id} className="border-accent/30 hover:border-accent/60 transition-colors">
             <CardContent className="p-4 space-y-2">
@@ -545,7 +703,7 @@ const DashboardSection = ({
     </div>
 
     {/* ===== AVISOS DO PROFESSOR ===== */}
-    <div>
+    <div id="avisos-prof">
       <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-3">
         <Megaphone className="h-4 w-4 text-primary" />
         Avisos do professor
@@ -569,7 +727,35 @@ const DashboardSection = ({
       </div>
     </div>
   </div>
-);
+  );
+};
+
+const InfoSquare = ({
+  icon: Icon, title, value, subtitle, tone, onClick,
+}: {
+  icon: any; title: string; value: string | number; subtitle: string;
+  tone: "primary" | "accent" | "destructive"; onClick?: () => void;
+}) => {
+  const colorMap = {
+    primary: "text-primary bg-primary/10 border-primary/20 hover:border-primary/40",
+    accent: "text-accent bg-accent/10 border-accent/20 hover:border-accent/40",
+    destructive: "text-destructive bg-destructive/10 border-destructive/20 hover:border-destructive/40",
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group text-left rounded-lg border-2 bg-card p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md ${colorMap[tone]}`}
+    >
+      <div className={`h-9 w-9 rounded-md flex items-center justify-center mb-2 ${colorMap[tone]}`}>
+        <Icon className="h-4.5 w-4.5" />
+      </div>
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{title}</p>
+      <p className="text-xl font-bold text-foreground mt-0.5 leading-none">{value}</p>
+      <p className="text-[11px] text-muted-foreground mt-1">{subtitle}</p>
+    </button>
+  );
+};
 
 const MiniStat = ({ icon: Icon, value, label, tone }: { icon: any; value: string | number; label: string; tone: "primary" | "accent" | "destructive" }) => {
   const colorMap = {
