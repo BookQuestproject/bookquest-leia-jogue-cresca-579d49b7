@@ -3,6 +3,7 @@ import {
   FileText, Plus, Calendar, Clock, CheckCircle2, AlertCircle,
   Lock, Unlock, Eye, Trash2, ArrowLeft, MessageSquare,
 } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
