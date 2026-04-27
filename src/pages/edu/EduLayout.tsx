@@ -16,6 +16,7 @@ interface EduLayoutProps {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/edu/professor" },
   { icon: Users, label: "Turmas", path: "/edu/turmas" },
+  { icon: BookOpen, label: "Livros", path: "/edu/livros" },
   { icon: BarChart3, label: "Relatórios", path: "/edu/relatorios" },
 ];
 

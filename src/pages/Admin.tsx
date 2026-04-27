@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Shield, BookOpen, Calendar, Target, Users, RefreshCw, Newspaper, Library } from "lucide-react";
+import { Shield, BookOpen, Calendar, Target, Users, RefreshCw, Newspaper, Library, GraduationCap } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -10,6 +10,7 @@ import { useAdminGroupSessions, useAdminTracks } from "@/hooks/useAdminGroupMent
 import { AdminTracksPanel } from "@/components/admin/AdminTracksPanel";
 import { AdminGroupSessionsPanel } from "@/components/admin/AdminGroupSessionsPanel";
 import { AdminBookSuggestionsPanel } from "@/components/admin/AdminBookSuggestionsPanel";
+import { AdminBookRequestsPanel } from "@/components/admin/AdminBookRequestsPanel";
 import AdminNewsPanel from "@/components/admin/AdminNewsPanel";
 import AdminBooksPanel from "@/components/admin/AdminBooksPanel";
 
@@ -91,10 +92,14 @@ const Admin = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="suggestions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 max-w-4xl">
+          <TabsList className="grid w-full grid-cols-7 max-w-4xl">
             <TabsTrigger value="suggestions" className="gap-2">
               <BookOpen className="w-4 h-4" />
               <span className="hidden sm:inline">Sugestões</span>
+            </TabsTrigger>
+            <TabsTrigger value="edu-requests" className="gap-2">
+              <GraduationCap className="w-4 h-4" />
+              <span className="hidden sm:inline">EDU</span>
             </TabsTrigger>
             <TabsTrigger value="books" className="gap-2">
               <Library className="w-4 h-4" />
@@ -120,6 +125,10 @@ const Admin = () => {
 
           <TabsContent value="suggestions" data-tutorial="admin-suggestions">
             <AdminBookSuggestionsPanel />
+          </TabsContent>
+
+          <TabsContent value="edu-requests">
+            <AdminBookRequestsPanel />
           </TabsContent>
 
           <TabsContent value="books">
