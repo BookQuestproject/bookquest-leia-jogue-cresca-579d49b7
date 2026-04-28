@@ -18,14 +18,11 @@ export const useFounderStatus = (): FounderInfo => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        // Count total founders
-        const { count } = await supabase
-          .from("founder_subscriptions" as any)
-          .select("*", { count: "exact", head: true });
+        // Count total founders via secure RPC (no row data exposed)
+        const { data: countData } = await supabase.rpc("get_founder_count" as any);
+        setTotalFounders(typeof countData === "number" ? countData : 0);
 
-        setTotalFounders(count ?? 0);
-
-        // Check if current user is founder
+        // Check if current user is founder (RLS allows reading own row only)
         if (user) {
           const { data } = await supabase
             .from("founder_subscriptions" as any)
