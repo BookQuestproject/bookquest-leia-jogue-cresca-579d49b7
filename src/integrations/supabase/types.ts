@@ -1935,6 +1935,7 @@ export type Database = {
       find_user_by_email: { Args: { _email: string }; Returns: string }
       generate_class_code: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
+      get_founder_count: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
