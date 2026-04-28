@@ -322,96 +322,142 @@ const Index = () => {
                     <BookOpen className="w-3.5 h-3.5" />
                     Trilha Literária
                   </h2>
-                  <div className="space-y-2.5" data-tutorial="chapter-list">
-                    {chapters.map((chapter) => {
+                  {/* Mapa do tesouro — capítulos como livros conectados verticalmente */}
+                  <div className="relative max-w-md mx-auto py-4" data-tutorial="chapter-list">
+                    {chapters.map((chapter, index) => {
                       const isLocked = chapter.status === "locked";
                       const isCurrent = chapter.status === "current";
                       const isCompleted = chapter.status === "completed";
+                      const isLast = index === chapters.length - 1;
 
-                      const handlePageUpdate = (page: number) => {
-                        setPageBookmark(chapter.id, page);
-                      };
-                      const savedPage = getPageBookmark(chapter.id);
+                      const positions = ["justify-start", "justify-center", "justify-end", "justify-center"];
+                      const align = positions[index % positions.length];
+                      const nextAlign = positions[(index + 1) % positions.length];
 
                       return (
-                        <div
-                          key={chapter.id}
-                          onClick={() => !isLocked && handleContinueReading(chapter.id)}
-                          className={`
-                            relative w-full rounded-xl overflow-hidden transition-all duration-300 text-left group
-                            ${isLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/5'}
-                          `}
-                          style={{
-                            background: isCurrent
-                              ? undefined
-                              : undefined,
-                            border: isCurrent
-                              ? `2px solid hsl(var(--accent) / 0.5)`
-                              : `1px solid hsl(var(--border) / 0.5)`,
-                            boxShadow: isCurrent
-                              ? `0 0 24px hsl(var(--accent) / 0.1)`
-                              : 'none',
-                          }}
-                        >
-                          {/* Card bg */}
-                          <div className={`absolute inset-0 ${isCurrent ? 'bg-accent/5' : 'bg-card'}`} />
-
-                          {/* Left accent bar */}
-                          <div
-                            className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
-                            style={{
-                              background: isCompleted
-                                ? `hsl(var(--accent))`
-                                : isCurrent
-                                ? `linear-gradient(180deg, hsl(var(--accent)), hsl(var(--accent) / 0.4))`
-                                : `hsl(var(--border) / 0.3)`,
-                            }}
-                          />
-
-                          <div className="relative p-4 flex items-center gap-4">
-                            {/* Chapter badge */}
-                            <div
-                              className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-sm font-bold ${
-                                isCompleted
-                                  ? 'bg-accent/15 text-accent border border-accent/25'
-                                  : isCurrent
-                                  ? 'bg-accent/20 text-accent border border-accent/30'
-                                  : 'bg-muted/30 text-muted-foreground border border-border/30'
+                        <div key={chapter.id} className="relative">
+                          <div className={`flex ${align}`}>
+                            <button
+                              onClick={() => !isLocked && handleContinueReading(chapter.id)}
+                              disabled={isLocked}
+                              className={`group relative flex flex-col items-center gap-2 transition-all duration-300 ${
+                                isLocked ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:-translate-y-1"
                               }`}
+                              aria-label={`Capítulo ${chapter.id}: ${chapter.title}`}
                             >
-                              {isCompleted ? (
-                                <CheckCircle className="w-5 h-5" />
-                              ) : (
-                                chapter.id
-                              )}
-                            </div>
+                              {/* Livro */}
+                              <div
+                                className="relative w-24 h-32 rounded-md flex items-center justify-center shadow-lg transition-transform"
+                                style={{
+                                  background: isLocked
+                                    ? `linear-gradient(135deg, hsl(${themeColor} / 0.25), hsl(${themeColor} / 0.15))`
+                                    : isCompleted
+                                    ? `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor} / 0.75))`
+                                    : `linear-gradient(135deg, hsl(${themeColor} / 0.95), hsl(${themeColor} / 0.7))`,
+                                  border: isCurrent
+                                    ? `3px solid hsl(45 95% 60%)`
+                                    : `2px solid hsl(${themeColor} / 0.6)`,
+                                  boxShadow: isCurrent
+                                    ? `0 0 0 4px hsl(45 95% 60% / 0.25), 0 10px 30px hsl(${themeColor} / 0.4)`
+                                    : isCompleted
+                                    ? `0 8px 22px hsl(${themeColor} / 0.35)`
+                                    : `0 6px 16px hsl(${themeColor} / 0.2)`,
+                                }}
+                              >
+                                <div
+                                  className="absolute left-0 top-0 bottom-0 w-2 rounded-l-md"
+                                  style={{ background: `hsl(${themeColor} / 0.5)` }}
+                                />
+                                <div className="absolute inset-2 border border-white/20 rounded-sm pointer-events-none" />
 
-                            <div className="flex-1 min-w-0">
-                              <p className={`font-serif text-sm font-semibold line-clamp-1 mb-0.5 ${isLocked ? 'text-foreground/40' : 'text-foreground'}`}>
-                                {chapter.title}
-                              </p>
-                              <p className="text-[11px] text-muted-foreground">
-                                {chapter.totalPages} páginas
-                              </p>
-                            </div>
+                                {isLocked ? (
+                                  <Lock className="w-8 h-8 text-white/80" strokeWidth={2.5} />
+                                ) : isCompleted ? (
+                                  <div className="flex flex-col items-center gap-1">
+                                    <span className="text-3xl drop-shadow">{(chapter as any).icon || "📖"}</span>
+                                    <CheckCircle className="w-4 h-4 text-white drop-shadow" />
+                                  </div>
+                                ) : (
+                                  <span className="text-4xl drop-shadow-md">{(chapter as any).icon || "📖"}</span>
+                                )}
 
-                            {isLocked ? (
-                              <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 bg-muted/20 border border-border/20">
-                                <Lock className="w-3.5 h-3.5 text-muted-foreground/30" />
+                                {isCurrent && (
+                                  <div
+                                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap shadow-md"
+                                    style={{ background: `hsl(45 95% 60%)`, color: `hsl(${themeColor})` }}
+                                  >
+                                    Você está aqui
+                                  </div>
+                                )}
+
+                                <div
+                                  className="absolute -bottom-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md border-2 border-white"
+                                  style={{
+                                    background: isLocked ? `hsl(${themeColor} / 0.4)` : `hsl(${themeColor})`,
+                                    color: "white",
+                                  }}
+                                >
+                                  {chapter.id}
+                                </div>
                               </div>
-                            ) : (
-                              <BookmarkMarker
-                                themeColor={themeColor}
-                                currentPage={savedPage ?? chapter.currentPage}
-                                totalPages={chapter.totalPages}
-                                isCompleted={isCompleted}
-                                onPageUpdate={handlePageUpdate}
-                              />
-                            )}
+
+                              <div className="text-center max-w-[140px]">
+                                <p
+                                  className={`text-xs font-serif font-semibold leading-tight ${
+                                    isLocked ? "text-muted-foreground" : "text-foreground"
+                                  }`}
+                                >
+                                  {chapter.title}
+                                </p>
+                                {isCurrent && chapter.totalPages && (
+                                  <p className="text-[10px] mt-0.5 font-medium" style={{ color: `hsl(${themeColor})` }}>
+                                    {chapter.totalPages} páginas
+                                  </p>
+                                )}
+                              </div>
+                            </button>
                           </div>
+
+                          {!isLast && (
+                            <div className="relative h-16 w-full pointer-events-none" aria-hidden="true">
+                              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 64" preserveAspectRatio="none">
+                                {(() => {
+                                  const xMap: Record<string, number> = {
+                                    "justify-start": 80,
+                                    "justify-center": 200,
+                                    "justify-end": 320,
+                                  };
+                                  const x1 = xMap[align];
+                                  const x2 = xMap[nextAlign];
+                                  return (
+                                    <path
+                                      d={`M ${x1} 0 C ${x1} 32, ${x2} 32, ${x2} 64`}
+                                      fill="none"
+                                      stroke={`hsl(${themeColor} / ${isCompleted ? "0.7" : "0.35"})`}
+                                      strokeWidth="3"
+                                      strokeDasharray="6 8"
+                                      strokeLinecap="round"
+                                    />
+                                  );
+                                })()}
+                              </svg>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
+
+                    <div className="flex justify-center mt-4">
+                      <div
+                        className="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow"
+                        style={{
+                          background: `linear-gradient(135deg, hsl(45 95% 60%), hsl(40 90% 50%))`,
+                          color: `hsl(${themeColor})`,
+                        }}
+                      >
+                        🏁 Fim da Jornada
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>
