@@ -36,6 +36,8 @@ import { usePageBookmark } from "@/hooks/usePageBookmark";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import CompletedChapterModal from "@/components/CompletedChapterModal";
 import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
+import BookStructureDialog from "@/components/reading/BookStructureDialog";
+import { useBookStructure } from "@/hooks/useBookStructure";
 
 interface Chapter {
   id: number;
@@ -673,6 +675,7 @@ const Trilhas = () => {
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const [trailToRemove, setTrailToRemove] = useState<{ title: string; isQuiz: boolean } | null>(null);
   const [contribOpen, setContribOpen] = useState(false);
+  const [structureOpen, setStructureOpen] = useState(false);
   const [dynamicTrails, setDynamicTrails] = useState<BookTrail[]>([]);
   const isPremium = false;
 
@@ -837,9 +840,10 @@ const Trilhas = () => {
 
   // Book detail view
   if (bookId) {
-    const book = allTrails.find(b => b.id === bookId);
-    
-    if (!book) {
+    const baseBook = allTrails.find(b => b.id === bookId);
+    const { structure, saveStructure } = useBookStructure(bookId);
+
+    if (!baseBook) {
       return (
         <Layout>
           <div className="py-8 text-center">
@@ -851,6 +855,20 @@ const Trilhas = () => {
         </Layout>
       );
     }
+
+    // Apply user's customized book structure (chapters or pages mode)
+    const isPagesMode = structure?.mode === "pages" && structure.total_pages;
+    const customTotal = isPagesMode
+      ? Math.ceil((structure.total_pages || 0) / (structure.session_size || 10))
+      : structure?.total_chapters;
+
+    const book = customTotal && customTotal !== baseBook.totalChapters
+      ? {
+          ...baseBook,
+          totalChapters: customTotal,
+          chapters: expandChapters(baseBook.chapters, customTotal, isPagesMode ? (structure?.session_size || 10) : 18),
+        }
+      : baseBook;
 
     const themeColor = book.themeColor;
     const completedChapters = book.chapters.filter(c => c.status === "completed").length;
@@ -947,8 +965,21 @@ const Trilhas = () => {
             </div>
           )}
 
-          {/* Botão de contribuição — sempre visível para a comunidade enriquecer/corrigir */}
-          <div className="flex justify-center mb-6">
+          {/* Ações: ajustar estrutura + contribuir */}
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStructureOpen(true)}
+              className="gap-2 border-primary/30 hover:bg-primary/5"
+            >
+              <BookOpen className="w-4 h-4 text-primary" />
+              {structure
+                ? structure.mode === "pages"
+                  ? `Modo páginas (${structure.total_pages}p)`
+                  : `${structure.total_chapters} capítulos (sua edição)`
+                : "Ajustar estrutura do livro"}
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -957,8 +988,8 @@ const Trilhas = () => {
             >
               <Sparkles className="w-4 h-4 text-primary" />
               {book.chapters?.some((c: any) => /^Capítulo \d+$/i.test(c.title))
-                ? "Tem o livro? Contribua com os títulos reais (+50 ✦)"
-                : "Sugerir correção dos títulos dos capítulos"}
+                ? "Tem o livro? Contribua (+50 ✦)"
+                : "Sugerir correção dos títulos"}
             </Button>
           </div>
 
@@ -968,6 +999,16 @@ const Trilhas = () => {
             bookId={String(book.id ?? bookId ?? "")}
             bookTitle={book.title}
             initialChapterCount={book.chapters?.length || 10}
+          />
+
+          <BookStructureDialog
+            open={structureOpen}
+            onOpenChange={setStructureOpen}
+            initial={structure}
+            onSave={(s) => {
+              saveStructure(s);
+              toast.success("Estrutura do livro atualizada!");
+            }}
           />
 
           {/* Mapa do tesouro — capítulos como livros conectados verticalmente */}
