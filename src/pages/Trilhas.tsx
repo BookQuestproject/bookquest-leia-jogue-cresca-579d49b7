@@ -840,9 +840,10 @@ const Trilhas = () => {
 
   // Book detail view
   if (bookId) {
-    const book = allTrails.find(b => b.id === bookId);
-    
-    if (!book) {
+    const baseBook = allTrails.find(b => b.id === bookId);
+    const { structure, saveStructure } = useBookStructure(bookId);
+
+    if (!baseBook) {
       return (
         <Layout>
           <div className="py-8 text-center">
@@ -854,6 +855,20 @@ const Trilhas = () => {
         </Layout>
       );
     }
+
+    // Apply user's customized book structure (chapters or pages mode)
+    const isPagesMode = structure?.mode === "pages" && structure.total_pages;
+    const customTotal = isPagesMode
+      ? Math.ceil((structure.total_pages || 0) / (structure.session_size || 10))
+      : structure?.total_chapters;
+
+    const book = customTotal && customTotal !== baseBook.totalChapters
+      ? {
+          ...baseBook,
+          totalChapters: customTotal,
+          chapters: expandChapters(baseBook.chapters, customTotal, isPagesMode ? (structure?.session_size || 10) : 18),
+        }
+      : baseBook;
 
     const themeColor = book.themeColor;
     const completedChapters = book.chapters.filter(c => c.status === "completed").length;
