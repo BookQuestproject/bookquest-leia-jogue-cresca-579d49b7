@@ -1119,6 +1119,14 @@ const ChapterReading = () => {
           initialChapterCount={book.chapters?.length || 10}
         />
       )}
+
+      <FinishReadingDialog
+        open={showFinishDialog}
+        onOpenChange={setShowFinishDialog}
+        onFinishedFully={handleFinishedFully}
+        onPartial={handleReadAPartial}
+        themeColor={themeColor}
+      />
     </Layout>
   );
 };
