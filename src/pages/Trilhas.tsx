@@ -965,8 +965,21 @@ const Trilhas = () => {
             </div>
           )}
 
-          {/* Botão de contribuição — sempre visível para a comunidade enriquecer/corrigir */}
-          <div className="flex justify-center mb-6">
+          {/* Ações: ajustar estrutura + contribuir */}
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStructureOpen(true)}
+              className="gap-2 border-primary/30 hover:bg-primary/5"
+            >
+              <BookOpen className="w-4 h-4 text-primary" />
+              {structure
+                ? structure.mode === "pages"
+                  ? `Modo páginas (${structure.total_pages}p)`
+                  : `${structure.total_chapters} capítulos (sua edição)`
+                : "Ajustar estrutura do livro"}
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -975,8 +988,8 @@ const Trilhas = () => {
             >
               <Sparkles className="w-4 h-4 text-primary" />
               {book.chapters?.some((c: any) => /^Capítulo \d+$/i.test(c.title))
-                ? "Tem o livro? Contribua com os títulos reais (+50 ✦)"
-                : "Sugerir correção dos títulos dos capítulos"}
+                ? "Tem o livro? Contribua (+50 ✦)"
+                : "Sugerir correção dos títulos"}
             </Button>
           </div>
 
@@ -986,6 +999,16 @@ const Trilhas = () => {
             bookId={String(book.id ?? bookId ?? "")}
             bookTitle={book.title}
             initialChapterCount={book.chapters?.length || 10}
+          />
+
+          <BookStructureDialog
+            open={structureOpen}
+            onOpenChange={setStructureOpen}
+            initial={structure}
+            onSave={(s) => {
+              saveStructure(s);
+              toast.success("Estrutura do livro atualizada!");
+            }}
           />
 
           {/* Mapa do tesouro — capítulos como livros conectados verticalmente */}
