@@ -15,6 +15,8 @@ import PostChapterReflection from "@/components/PostChapterReflection";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
+import FinishReadingDialog from "@/components/reading/FinishReadingDialog";
+import VocabularyButton from "@/components/reading/VocabularyButton";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStats } from "@/hooks/useUserStats";
@@ -462,6 +464,7 @@ const ChapterReading = () => {
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
   const [contribOpen, setContribOpen] = useState(false);
+  const [showFinishDialog, setShowFinishDialog] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [dynamicBook, setDynamicBook] = useState<typeof bookData[string] | null>(null);
@@ -684,18 +687,45 @@ const ChapterReading = () => {
       setTimeout(() => setIsTimerError(false), 600);
       return;
     }
+    // Open dialog asking if they finished or only read a bit
+    setShowFinishDialog(true);
+  };
 
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-    
-    // Mark as completed (keeps the record for showing in trail)
+  const handleFinishedFully = async () => {
+    setShowFinishDialog(false);
+    if (timerRef.current) clearInterval(timerRef.current);
     if (user) {
       await markAsCompleted(elapsedTime);
     }
-    
-    // Always go to reflection (AI-generated questions)
     setReadingState("reflection");
+  };
+
+  const handleReadAPartial = async () => {
+    setShowFinishDialog(false);
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (user && bookId && chapterId) {
+      // Salva sessão parcial sem avançar capítulo
+      await supabase.from("reading_progress").upsert(
+        {
+          user_id: user.id,
+          book_id: bookId,
+          chapter_id: chapterId,
+          elapsed_time: elapsedTime,
+          is_paused: true,
+          is_completed: false,
+          session_type: "partial",
+          is_partial: true,
+        } as any,
+        { onConflict: "user_id,book_id,chapter_id" }
+      );
+      await addEssencia(5);
+      toast.success("+5 ✦ pela sessão parcial", {
+        description: "Tempo registrado. Continue depois para completar o capítulo.",
+      });
+    }
+    setReadingState("intro");
+    setElapsedTime(0);
+    setHasRestoredProgress(false);
   };
 
   const handleReflectionComplete = async (xp: number) => {
