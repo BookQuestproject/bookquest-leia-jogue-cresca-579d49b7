@@ -65,18 +65,36 @@ interface BookTrail {
   themeColor: string;
 }
 
+const CHAPTER_ICONS = ["📖", "📝", "🔍", "💡", "🌟", "📚", "🎯", "🏆", "🔑", "🌙", "⚡", "🎭", "🗺️", "💎", "🌊", "🔥", "🎪", "🏰", "⭐", "🎨", "🌈", "🪶", "🧩", "🎶", "🌿"];
+
 // Generate chapters automatically from page count
 const generateChapters = (totalPages: number, chaptersCount?: number): Chapter[] => {
   const numChapters = chaptersCount || Math.max(5, Math.min(25, Math.ceil(totalPages / 20)));
   const pagesPerChapter = Math.ceil(totalPages / numChapters);
-  const icons = ["📖", "📝", "🔍", "💡", "🌟", "📚", "🎯", "🏆", "🔑", "🌙", "⚡", "🎭", "🗺️", "💎", "🌊", "🔥", "🎪", "🏰", "⭐", "🎨", "🌈", "🪶", "🧩", "🎶", "🌿"];
   return Array.from({ length: numChapters }, (_, i) => ({
     id: i + 1,
     title: `Capítulo ${i + 1}`,
     status: (i === 0 ? "current" : "locked") as "completed" | "current" | "locked",
-    icon: icons[i % icons.length],
+    icon: CHAPTER_ICONS[i % CHAPTER_ICONS.length],
     totalPages: i === numChapters - 1 ? totalPages - pagesPerChapter * i : pagesPerChapter,
   }));
+};
+
+// Expand a curated chapter list to match totalChapters by appending placeholders.
+// Preserves all curated chapters (titles, questions, status) and only adds the missing ones.
+const expandChapters = (chapters: Chapter[], totalChapters: number, defaultPagesPerChapter = 18): Chapter[] => {
+  if (!totalChapters || chapters.length >= totalChapters) return chapters;
+  const filled: Chapter[] = [...chapters];
+  for (let i = chapters.length; i < totalChapters; i++) {
+    filled.push({
+      id: i + 1,
+      title: `Capítulo ${i + 1}`,
+      status: "locked",
+      icon: CHAPTER_ICONS[i % CHAPTER_ICONS.length],
+      totalPages: defaultPagesPerChapter,
+    });
+  }
+  return filled;
 };
 
 const bookTrails: BookTrail[] = [
