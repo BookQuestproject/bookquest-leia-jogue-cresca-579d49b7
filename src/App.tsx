@@ -33,6 +33,7 @@ import Enem from "./pages/Enem";
 import RepertoireDetail from "./pages/RepertoireDetail";
 import Configuracoes from "./pages/Configuracoes";
 import Noticias from "./pages/Noticias";
+import MeuVocabulario from "./pages/MeuVocabulario";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -96,6 +97,7 @@ const App = () => (
                 <Route path="/enem/repertorio/:id" element={<RepertoireDetail />} />
                 <Route path="/configuracoes" element={<Configuracoes />} />
                 <Route path="/noticias" element={<Noticias />} />
+                <Route path="/vocabulario" element={<MeuVocabulario />} />
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
