@@ -65,18 +65,36 @@ interface BookTrail {
   themeColor: string;
 }
 
+const CHAPTER_ICONS = ["📖", "📝", "🔍", "💡", "🌟", "📚", "🎯", "🏆", "🔑", "🌙", "⚡", "🎭", "🗺️", "💎", "🌊", "🔥", "🎪", "🏰", "⭐", "🎨", "🌈", "🪶", "🧩", "🎶", "🌿"];
+
 // Generate chapters automatically from page count
 const generateChapters = (totalPages: number, chaptersCount?: number): Chapter[] => {
   const numChapters = chaptersCount || Math.max(5, Math.min(25, Math.ceil(totalPages / 20)));
   const pagesPerChapter = Math.ceil(totalPages / numChapters);
-  const icons = ["📖", "📝", "🔍", "💡", "🌟", "📚", "🎯", "🏆", "🔑", "🌙", "⚡", "🎭", "🗺️", "💎", "🌊", "🔥", "🎪", "🏰", "⭐", "🎨", "🌈", "🪶", "🧩", "🎶", "🌿"];
   return Array.from({ length: numChapters }, (_, i) => ({
     id: i + 1,
     title: `Capítulo ${i + 1}`,
     status: (i === 0 ? "current" : "locked") as "completed" | "current" | "locked",
-    icon: icons[i % icons.length],
+    icon: CHAPTER_ICONS[i % CHAPTER_ICONS.length],
     totalPages: i === numChapters - 1 ? totalPages - pagesPerChapter * i : pagesPerChapter,
   }));
+};
+
+// Expand a curated chapter list to match totalChapters by appending placeholders.
+// Preserves all curated chapters (titles, questions, status) and only adds the missing ones.
+const expandChapters = (chapters: Chapter[], totalChapters: number, defaultPagesPerChapter = 18): Chapter[] => {
+  if (!totalChapters || chapters.length >= totalChapters) return chapters;
+  const filled: Chapter[] = [...chapters];
+  for (let i = chapters.length; i < totalChapters; i++) {
+    filled.push({
+      id: i + 1,
+      title: `Capítulo ${i + 1}`,
+      status: "locked",
+      icon: CHAPTER_ICONS[i % CHAPTER_ICONS.length],
+      totalPages: defaultPagesPerChapter,
+    });
+  }
+  return filled;
 };
 
 const bookTrails: BookTrail[] = [
@@ -733,7 +751,11 @@ const Trilhas = () => {
       const overriddenTrail = applyOverride(trail, trail.id);
       
       const enrichment = getEnrichment(trail.id);
-      if (!enrichment || enrichment.chapters.length === 0) return overriddenTrail;
+      if (!enrichment || enrichment.chapters.length === 0) {
+        // No enrichment: still expand curated chapters up to totalChapters
+        const expanded = expandChapters(overriddenTrail.chapters, overriddenTrail.totalChapters);
+        return { ...overriddenTrail, chapters: expanded };
+      }
 
       // Merge: keep first few manually curated chapters' questions but use enriched titles
       const enrichedChapters: Chapter[] = enrichment.chapters.map((eCh, i) => {
@@ -749,14 +771,24 @@ const Trilhas = () => {
         };
       });
 
+      // Final total = max(enrichment count, original totalChapters) — never lose chapters
+      const finalTotal = Math.max(enrichedChapters.length, overriddenTrail.totalChapters);
+      const finalChapters = expandChapters(enrichedChapters, finalTotal);
+
       return {
         ...overriddenTrail,
-        totalChapters: enrichedChapters.length,
-        chapters: enrichedChapters,
+        totalChapters: finalTotal,
+        chapters: finalChapters,
       };
     });
 
-    return [...enrichedStatic, ...dynamicTrails];
+    // Also expand any dynamic trails that have fewer chapters than totalChapters
+    const expandedDynamic = dynamicTrails.map(trail => ({
+      ...trail,
+      chapters: expandChapters(trail.chapters, trail.totalChapters),
+    }));
+
+    return [...enrichedStatic, ...expandedDynamic];
   }, [enrichments, dynamicTrails, getEnrichment, applyOverride]);
 
   // Quiz recommendations (reactive via state)
