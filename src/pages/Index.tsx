@@ -57,7 +57,23 @@ const Index = () => {
   const currentTier = getTierFromPoints(userStats.points);
   const nextTier = getNextTierInfo(currentTier);
 
-  const chapters = activeTrail?.chapters || [];
+  // Expand chapters to match totalChapters (handles legacy trails saved with only 3 chapters)
+  const CHAPTER_ICONS_HOME = ["📖", "📝", "🔍", "💡", "🌟", "📚", "🎯", "🏆", "🔑", "🌙", "⚡", "🎭", "🗺️", "💎", "🌊", "🔥", "🎪", "🏰", "⭐", "🎨", "🌈", "🪶", "🧩", "🎶", "🌿"];
+  const rawChapters = activeTrail?.chapters || [];
+  const total = activeTrail?.totalChapters || rawChapters.length;
+  const chapters = rawChapters.length >= total ? rawChapters : [
+    ...rawChapters,
+    ...Array.from({ length: total - rawChapters.length }, (_, idx) => {
+      const i = rawChapters.length + idx;
+      return {
+        id: i + 1,
+        title: `Capítulo ${i + 1}`,
+        status: "locked" as const,
+        icon: CHAPTER_ICONS_HOME[i % CHAPTER_ICONS_HOME.length],
+        totalPages: 18,
+      };
+    }),
+  ];
 
   const currentChapterQuestion = currentChapter?.question || {
     text: "",
