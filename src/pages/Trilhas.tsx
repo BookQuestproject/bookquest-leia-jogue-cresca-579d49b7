@@ -36,6 +36,8 @@ import { usePageBookmark } from "@/hooks/usePageBookmark";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import CompletedChapterModal from "@/components/CompletedChapterModal";
 import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
+import BookStructureDialog from "@/components/reading/BookStructureDialog";
+import { useBookStructure } from "@/hooks/useBookStructure";
 
 interface Chapter {
   id: number;
@@ -673,6 +675,7 @@ const Trilhas = () => {
   const [completedChapterForModal, setCompletedChapterForModal] = useState<Chapter | null>(null);
   const [trailToRemove, setTrailToRemove] = useState<{ title: string; isQuiz: boolean } | null>(null);
   const [contribOpen, setContribOpen] = useState(false);
+  const [structureOpen, setStructureOpen] = useState(false);
   const [dynamicTrails, setDynamicTrails] = useState<BookTrail[]>([]);
   const isPremium = false;
 
