@@ -49,6 +49,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
   const secondaryItems = [
     { icon: BookOpen, label: "Espaço Literário", path: "/espaco-literario" },
     { icon: Swords, label: "Desafios", path: "/desafios" },
+    { icon: BookMarked, label: "Meu Vocabulário", path: "/vocabulario" },
     { icon: Newspaper, label: "Notícias", path: "/noticias" },
   ];
 
