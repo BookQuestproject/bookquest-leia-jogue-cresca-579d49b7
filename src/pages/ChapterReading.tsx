@@ -1003,6 +1003,11 @@ const ChapterReading = () => {
               </p>
             </div>
 
+            {/* Vocabulary helper */}
+            <div className="flex justify-center">
+              <VocabularyButton bookId={bookId} bookTitle={book.title} />
+            </div>
+
             {/* Action Buttons */}
             <div className="grid grid-cols-2 gap-4">
               <Button 
@@ -1033,7 +1038,7 @@ const ChapterReading = () => {
                 }}
               >
                 <CheckCircle className="w-5 h-5" />
-                Concluído
+                Finalizar leitura
               </Button>
             </div>
           </div>
