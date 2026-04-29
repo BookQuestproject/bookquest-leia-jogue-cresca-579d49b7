@@ -751,7 +751,11 @@ const Trilhas = () => {
       const overriddenTrail = applyOverride(trail, trail.id);
       
       const enrichment = getEnrichment(trail.id);
-      if (!enrichment || enrichment.chapters.length === 0) return overriddenTrail;
+      if (!enrichment || enrichment.chapters.length === 0) {
+        // No enrichment: still expand curated chapters up to totalChapters
+        const expanded = expandChapters(overriddenTrail.chapters, overriddenTrail.totalChapters);
+        return { ...overriddenTrail, chapters: expanded };
+      }
 
       // Merge: keep first few manually curated chapters' questions but use enriched titles
       const enrichedChapters: Chapter[] = enrichment.chapters.map((eCh, i) => {
@@ -767,14 +771,24 @@ const Trilhas = () => {
         };
       });
 
+      // Final total = max(enrichment count, original totalChapters) — never lose chapters
+      const finalTotal = Math.max(enrichedChapters.length, overriddenTrail.totalChapters);
+      const finalChapters = expandChapters(enrichedChapters, finalTotal);
+
       return {
         ...overriddenTrail,
-        totalChapters: enrichedChapters.length,
-        chapters: enrichedChapters,
+        totalChapters: finalTotal,
+        chapters: finalChapters,
       };
     });
 
-    return [...enrichedStatic, ...dynamicTrails];
+    // Also expand any dynamic trails that have fewer chapters than totalChapters
+    const expandedDynamic = dynamicTrails.map(trail => ({
+      ...trail,
+      chapters: expandChapters(trail.chapters, trail.totalChapters),
+    }));
+
+    return [...enrichedStatic, ...expandedDynamic];
   }, [enrichments, dynamicTrails, getEnrichment, applyOverride]);
 
   // Quiz recommendations (reactive via state)
