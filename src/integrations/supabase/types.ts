@@ -1643,8 +1643,10 @@ export type Database = {
           elapsed_time: number
           id: string
           is_completed: boolean
+          is_partial: boolean
           is_paused: boolean
           notes: string | null
+          session_type: string
           updated_at: string
           user_id: string
         }
@@ -1656,8 +1658,10 @@ export type Database = {
           elapsed_time?: number
           id?: string
           is_completed?: boolean
+          is_partial?: boolean
           is_paused?: boolean
           notes?: string | null
+          session_type?: string
           updated_at?: string
           user_id: string
         }
@@ -1669,8 +1673,10 @@ export type Database = {
           elapsed_time?: number
           id?: string
           is_completed?: boolean
+          is_partial?: boolean
           is_paused?: boolean
           notes?: string | null
+          session_type?: string
           updated_at?: string
           user_id?: string
         }
@@ -1817,6 +1823,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_book_structure: {
+        Row: {
+          book_id: string
+          created_at: string
+          id: string
+          mode: string
+          session_size: number | null
+          total_chapters: number | null
+          total_pages: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          id?: string
+          mode?: string
+          session_size?: number | null
+          total_chapters?: number | null
+          total_pages?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          id?: string
+          mode?: string
+          session_size?: number | null
+          total_chapters?: number | null
+          total_pages?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1859,6 +1901,42 @@ export type Database = {
           is_active?: boolean
           title?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_vocabulary: {
+        Row: {
+          book_id: string | null
+          book_title: string | null
+          created_at: string
+          definition: string
+          example: string | null
+          id: string
+          synonyms: string[] | null
+          user_id: string
+          word: string
+        }
+        Insert: {
+          book_id?: string | null
+          book_title?: string | null
+          created_at?: string
+          definition: string
+          example?: string | null
+          id?: string
+          synonyms?: string[] | null
+          user_id: string
+          word: string
+        }
+        Update: {
+          book_id?: string | null
+          book_title?: string | null
+          created_at?: string
+          definition?: string
+          example?: string | null
+          id?: string
+          synonyms?: string[] | null
+          user_id?: string
+          word?: string
         }
         Relationships: []
       }
