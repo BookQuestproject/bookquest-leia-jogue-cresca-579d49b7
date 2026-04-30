@@ -72,13 +72,12 @@ const VocabularyButton = ({ bookId, bookTitle }: Props) => {
   return (
     <>
       <Button
-        variant="outline"
         size="sm"
-        className="gap-2 border-primary/30 text-primary hover:bg-primary/10"
+        className="gap-2 bg-[hsl(48_96%_53%)] text-[hsl(222_47%_11%)] hover:bg-[hsl(48_96%_48%)] shadow-md shadow-[hsl(48_96%_53%)]/30 font-semibold"
         onClick={() => setOpen(true)}
       >
         <BookMarked className="w-4 h-4" />
-        Palavra difícil
+        Dicionário
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
