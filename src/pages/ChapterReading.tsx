@@ -1003,8 +1003,8 @@ const ChapterReading = () => {
               </p>
             </div>
 
-            {/* Vocabulary helper */}
-            <div className="flex justify-center">
+            {/* Vocabulary helper - fixed top right */}
+            <div className="fixed top-4 right-4 z-40">
               <VocabularyButton bookId={bookId} bookTitle={book.title} />
             </div>
 
