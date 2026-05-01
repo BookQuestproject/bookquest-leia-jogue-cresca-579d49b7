@@ -83,7 +83,7 @@ const FocusReadingMode = ({
         <button
           onClick={onExit}
           aria-label="Sair do modo leitura"
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-foreground/5 hover:bg-foreground/10 text-foreground/70 transition-colors backdrop-blur-sm"
+          className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white/80 transition-colors backdrop-blur-sm"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -93,7 +93,7 @@ const FocusReadingMode = ({
           <button
             onClick={() => setMusicOpen(true)}
             aria-label="Ouvir música"
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-foreground/5 hover:bg-foreground/10 text-foreground/70 transition-colors backdrop-blur-sm"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white/80 transition-colors backdrop-blur-sm"
           >
             <Headphones className="w-5 h-5" />
           </button>
