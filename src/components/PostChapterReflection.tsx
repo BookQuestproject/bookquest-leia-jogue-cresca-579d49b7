@@ -408,101 +408,168 @@ const PostChapterReflection = ({
 
   const finalXp = detectDuplication() ? Math.max(10, Math.floor(totalXp * 0.5)) : totalXp;
 
+  // ─── Fullscreen cozy wrapper (matches FocusReadingMode aesthetic) ──
+  const FullscreenWrapper = ({ children }: { children: React.ReactNode }) => (
+    <div
+      className="fixed inset-0 z-[70] overflow-y-auto text-white animate-fade-in"
+      style={{
+        background:
+          "linear-gradient(180deg, #052a6b 0%, #021f53 55%, #01153b 100%)",
+      }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.25) 100%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-50 pointer-events-none animate-focus-breathe"
+        style={{
+          background:
+            "radial-gradient(circle at 75% 80%, hsl(40 65% 60% / 0.14) 0%, transparent 60%), radial-gradient(circle at 20% 25%, hsl(215 55% 65% / 0.18) 0%, transparent 60%)",
+        }}
+      />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 30 }).map((_, i) => {
+          const phi = 0.6180339887;
+          const rx = ((i * phi) % 1) * 100;
+          const ry = ((i * phi * 2.3) % 1) * 100;
+          const sizeRand = (i * 17) % 10;
+          const size = 1.5 + (sizeRand / 10) * 3.5;
+          const opacity = 0.1 + ((i * 7) % 26) / 100;
+          const isGold = i % 3 !== 0;
+          const blurAmount = sizeRand > 6 ? "blur-[2px]" : sizeRand > 3 ? "blur-sm" : "blur-[1px]";
+          const driftAnim = i % 3 === 0 ? "animate-focus-drift-a" : i % 3 === 1 ? "animate-focus-drift-b" : "animate-focus-drift-c";
+          const duration = 35 + ((i * 11) % 30);
+          const delay = -((i * 2.7) % 40);
+          return (
+            <span
+              key={i}
+              className={`absolute rounded-full ${blurAmount} ${driftAnim}`}
+              style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                left: `${rx}%`,
+                top: `${ry}%`,
+                background: isGold
+                  ? `hsl(45 90% 75% / ${opacity})`
+                  : `hsl(210 90% 88% / ${opacity * 0.8})`,
+                animationDuration: `${duration}s`,
+                animationDelay: `${delay}s`,
+              }}
+            />
+          );
+        })}
+      </div>
+      <div className="relative z-10 max-w-2xl mx-auto px-6 py-10 min-h-full flex flex-col justify-center">
+        {children}
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="animate-fade-in space-y-6 text-center py-12">
-        <div
-          className="w-20 h-20 rounded-full flex items-center justify-center mx-auto"
-          style={{ background: `hsl(${themeColor} / 0.15)` }}
-        >
-          <Loader2 className="w-10 h-10 animate-spin" style={{ color: `hsl(${themeColor})` }} />
+      <FullscreenWrapper>
+        <div className="animate-fade-in space-y-6 text-center py-12">
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center mx-auto"
+            style={{ background: `hsl(${themeColor} / 0.2)` }}
+          >
+            <Loader2 className="w-10 h-10 animate-spin" style={{ color: `hsl(${themeColor})` }} />
+          </div>
+          <div>
+            <h2 className="text-xl font-serif font-semibold mb-2 text-white">Preparando reflexão...</h2>
+            <p className="text-sm text-white/60">Gerando perguntas personalizadas sobre o capítulo</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-serif font-semibold mb-2">Preparando reflexão...</h2>
-          <p className="text-sm text-muted-foreground">Gerando perguntas personalizadas sobre o capítulo</p>
-        </div>
-      </div>
+      </FullscreenWrapper>
     );
   }
 
   if (error) {
     return (
-      <div className="animate-fade-in space-y-6 text-center py-12">
-        <p className="text-muted-foreground">{error}</p>
-        <Button variant="outline" onClick={() => onComplete(10)}>
-          Pular reflexão (+10 Essência base)
-        </Button>
-      </div>
+      <FullscreenWrapper>
+        <div className="animate-fade-in space-y-6 text-center py-12">
+          <p className="text-white/70">{error}</p>
+          <Button variant="outline" onClick={() => onComplete(10)}>
+            Pular reflexão (+10 Essência base)
+          </Button>
+        </div>
+      </FullscreenWrapper>
     );
   }
 
   // ─── Finished screen ──────────────────────────────────────────
   if (finished) {
     return (
-      <div className="animate-fade-in space-y-8 text-center">
-        <div
-          className="w-24 h-24 rounded-full flex items-center justify-center mx-auto"
-          style={{ background: `hsl(${themeColor} / 0.15)` }}
-        >
-          <CheckCircle className="w-12 h-12" style={{ color: `hsl(${themeColor})` }} />
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-serif font-semibold mb-2">Reflexão Concluída!</h2>
-          <p className="text-muted-foreground">
-            Você completou "{chapterTitle}"
-          </p>
-        </div>
-
-        {/* XP Breakdown */}
-        <div className="bg-card rounded-xl p-6 border border-border max-w-sm mx-auto space-y-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Leitura do capítulo</span>
-            <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 ✦</span>
+      <FullscreenWrapper>
+        <div className="animate-fade-in space-y-8 text-center">
+          <div
+            className="w-24 h-24 rounded-full flex items-center justify-center mx-auto"
+            style={{ background: `hsl(${themeColor} / 0.2)` }}
+          >
+            <CheckCircle className="w-12 h-12" style={{ color: `hsl(${themeColor})` }} />
           </div>
-          {xpPerQuestion.map((xp, i) => (
-            <div key={i} className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground flex items-center gap-2">
-                {typeIcons[questions[i]?.type] || <Star className="w-4 h-4" />}
-                {typeLabels[questions[i]?.type] || "Pergunta"}
-              </span>
-              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} ✦</span>
+
+          <div>
+            <h2 className="text-2xl font-serif font-semibold mb-2 text-white">Reflexão Concluída!</h2>
+            <p className="text-white/60">
+              Você completou "{chapterTitle}"
+            </p>
+          </div>
+
+          {/* XP Breakdown */}
+          <div className="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 max-w-sm mx-auto space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/60">Leitura do capítulo</span>
+              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 ✦</span>
             </div>
-          ))}
-          <div className="border-t border-border pt-3 flex items-center justify-between">
-            <span className="font-semibold flex items-center gap-2">
-              <EssenciaIcon size="md" className="text-accent" />
-              Total
-            </span>
-            <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>
-              +{finalXp} ✦
-            </span>
+            {xpPerQuestion.map((xp, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <span className="text-white/60 flex items-center gap-2">
+                  {typeIcons[questions[i]?.type] || <Star className="w-4 h-4" />}
+                  {typeLabels[questions[i]?.type] || "Pergunta"}
+                </span>
+                <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} ✦</span>
+              </div>
+            ))}
+            <div className="border-t border-white/10 pt-3 flex items-center justify-between">
+              <span className="font-semibold flex items-center gap-2 text-white">
+                <EssenciaIcon size="md" className="text-accent" />
+                Total
+              </span>
+              <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>
+                +{finalXp} ✦
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* XP Bar animation */}
-        <div className="max-w-sm mx-auto">
-          <div className="h-3 bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-1000 ease-out"
-              style={{
-                width: `${Math.min(100, (finalXp / 30) * 100)}%`,
-                background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 15 + '%')}))`,
-              }}
-            />
+          {/* XP Bar animation */}
+          <div className="max-w-sm mx-auto">
+            <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-1000 ease-out"
+                style={{
+                  width: `${Math.min(100, (finalXp / 30) * 100)}%`,
+                  background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 15 + '%')}))`,
+                }}
+              />
+            </div>
           </div>
-        </div>
 
-        <Button
-          size="lg"
-          onClick={() => onComplete(finalXp)}
-          style={{
-            background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 10 + '%')}))`,
-          }}
-        >
-          Continuar
-        </Button>
-      </div>
+          <Button
+            size="lg"
+            onClick={() => onComplete(finalXp)}
+            style={{
+              background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 10 + '%')}))`,
+            }}
+          >
+            Continuar
+          </Button>
+        </div>
+      </FullscreenWrapper>
     );
   }
 
@@ -518,17 +585,18 @@ const PostChapterReflection = ({
   })();
 
   return (
-    <div className="animate-fade-in space-y-6">
+    <FullscreenWrapper>
+      <div className="animate-fade-in space-y-6">
       {/* Progress bar */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-xs text-white/60">
           <span className="flex items-center gap-1.5">
             {typeIcons[currentQ?.type]}
             {typeLabels[currentQ?.type] || "Pergunta"}
           </span>
           <span>{currentIdx + 1} de {questions.length}</span>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
@@ -540,8 +608,8 @@ const PostChapterReflection = ({
       </div>
 
       {/* Question card */}
-      <div className="bg-card rounded-xl p-6 border border-border space-y-5">
-        <p className="text-lg font-medium leading-relaxed select-none" style={{ WebkitUserSelect: "none", userSelect: "none" }}>{currentQ?.question}</p>
+      <div className="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 space-y-5 text-white">
+        <p className="text-lg font-medium leading-relaxed select-none text-white" style={{ WebkitUserSelect: "none", userSelect: "none" }}>{currentQ?.question}</p>
 
         {/* ─── Renderers per type ─── */}
         {currentQ?.type === "open" && (
@@ -887,7 +955,8 @@ const PostChapterReflection = ({
           )}
         </Button>
       )}
-    </div>
+      </div>
+    </FullscreenWrapper>
   );
 };
 
