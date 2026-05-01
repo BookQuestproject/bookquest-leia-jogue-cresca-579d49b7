@@ -63,7 +63,9 @@ const Constellation = ({
       style={{
         position: "absolute",
         pointerEvents: "none",
-        zIndex: 0,
+        // Sit BEHIND sibling content within the (relative) parent so the
+        // constellation never visually overlaps buttons or text.
+        zIndex: -1,
         opacity,
         ...POSITION_STYLES[position],
       }}
