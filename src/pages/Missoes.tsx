@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import Layout from "@/components/layout/Layout";
@@ -23,6 +23,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
 import Constellation from "@/components/visual/Constellation";
+import { useStreakTick } from "@/hooks/useStreakTick";
 
 const MILESTONE_TITLES: Record<string, string> = {
   "milestone-streak": "Leitor Persistente",
@@ -33,9 +34,83 @@ const MILESTONE_TITLES: Record<string, string> = {
 const Missoes = () => {
   const isMobile = useIsMobile();
   const { profile } = useProfile();
+  const { tick } = useStreakTick();
   const readerLevel = useMemo(() => getReaderLevel(profile?.literary_profile), [profile?.literary_profile]);
   const levelMissions = useMemo(() => getMissionsForLevel(readerLevel), [readerLevel]);
-  const [missions, setMissions] = useState<Mission[]>(levelMissions.all);
+
+  // ── Período-based reset keys ──
+  // Hábitos resetam a cada dia, Desafios a cada semana ISO, Marcos a cada mês.
+  const periodKeys = useMemo(() => {
+    const now = new Date();
+    const day = now.toISOString().slice(0, 10);            // YYYY-MM-DD
+    const month = now.toISOString().slice(0, 7);           // YYYY-MM
+    const tmp = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+    const dayNum = (tmp.getUTCDay() + 6) % 7;
+    tmp.setUTCDate(tmp.getUTCDate() - dayNum + 3);
+    const firstThursday = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 4));
+    const week = `${tmp.getUTCFullYear()}-W${String(
+      1 + Math.round(((tmp.getTime() - firstThursday.getTime()) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7)
+    ).padStart(2, '0')}`;
+    return { day, week, month };
+  }, []);
+
+  const loadCompletedSet = (key: string, currentPeriod: string): Set<string> => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return new Set();
+      const { period, ids } = JSON.parse(raw);
+      if (period !== currentPeriod) {
+        localStorage.removeItem(key);
+        return new Set();
+      }
+      return new Set(ids);
+    } catch {
+      return new Set();
+    }
+  };
+
+  const persistCompleted = (category: MissionCategory, missionId: string) => {
+    const key =
+      category === 'habit'     ? 'missoes:habit:done'     :
+      category === 'challenge' ? 'missoes:challenge:done' :
+                                 'missoes:milestone:done';
+    const period =
+      category === 'habit'     ? periodKeys.day  :
+      category === 'challenge' ? periodKeys.week :
+                                 periodKeys.month;
+    const existing = loadCompletedSet(key, period);
+    existing.add(missionId);
+    localStorage.setItem(key, JSON.stringify({ period, ids: Array.from(existing) }));
+  };
+
+  const [missions, setMissions] = useState<Mission[]>(() => {
+    const habitDone = loadCompletedSet('missoes:habit:done', periodKeys.day);
+    const challDone = loadCompletedSet('missoes:challenge:done', periodKeys.week);
+    const mileDone  = loadCompletedSet('missoes:milestone:done', periodKeys.month);
+    return levelMissions.all.map(m => {
+      const done =
+        (m.category === 'habit'     && habitDone.has(m.id)) ||
+        (m.category === 'challenge' && challDone.has(m.id)) ||
+        (m.category === 'milestone' && mileDone.has(m.id));
+      return done ? { ...m, completed: true, progress: m.goal } : m;
+    });
+  });
+
+  // Quando o período muda (aba aberta virando o dia/semana/mês), zera as completas.
+  useEffect(() => {
+    setMissions(levelMissions.all.map(m => {
+      const habitDone = loadCompletedSet('missoes:habit:done', periodKeys.day);
+      const challDone = loadCompletedSet('missoes:challenge:done', periodKeys.week);
+      const mileDone  = loadCompletedSet('missoes:milestone:done', periodKeys.month);
+      const done =
+        (m.category === 'habit'     && habitDone.has(m.id)) ||
+        (m.category === 'challenge' && challDone.has(m.id)) ||
+        (m.category === 'milestone' && mileDone.has(m.id));
+      return done ? { ...m, completed: true, progress: m.goal } : { ...m, completed: false, progress: 0 };
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [periodKeys.day, periodKeys.week, periodKeys.month, levelMissions]);
+
   const [totalXp, setTotalXp] = useState(35);
 
   // Notification states
@@ -54,6 +129,10 @@ const Missoes = () => {
 
     setMissions(prev => prev.map(m => m.id === missionId ? { ...m, completed: true, progress: m.goal } : m));
     setTotalXp(prev => prev + mission.essenciaValue);
+    persistCompleted(mission.category, mission.id);
+
+    // Concluir missão acende a tocha do dia (idempotente no servidor)
+    tick();
 
     switch (mission.category) {
       case "habit":
@@ -70,7 +149,8 @@ const Missoes = () => {
         });
         break;
     }
-  }, [missions]);
+  }, [missions, tick, periodKeys]);
+
 
   const level = getLevel(totalXp);
 
