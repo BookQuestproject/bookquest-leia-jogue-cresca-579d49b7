@@ -122,7 +122,6 @@ const FocusReadingMode = ({
         </button>
 
         <div className="flex items-center gap-2">
-          {vocabularySlot}
           <button
             onClick={() => setMusicOpen(true)}
             aria-label="Ouvir música"
@@ -130,6 +129,7 @@ const FocusReadingMode = ({
           >
             <Headphones className="w-5 h-5" />
           </button>
+          {vocabularySlot}
         </div>
       </div>
 
