@@ -40,6 +40,15 @@ const FocusReadingMode = ({
 }: FocusReadingModeProps) => {
   const [musicOpen, setMusicOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const { isAdmin } = useAdmin();
+
+  const handleReplayTutorial = () => {
+    try {
+      localStorage.removeItem(TUTORIAL_KEY);
+    } catch {}
+    setShowTutorial(true);
+    onTutorialActiveChange?.(true);
+  };
 
   useEffect(() => {
     try {
