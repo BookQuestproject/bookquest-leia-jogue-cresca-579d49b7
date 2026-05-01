@@ -175,13 +175,43 @@ const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
     return { top, left, width: CARD_WIDTH };
   })();
 
+  const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 768;
+
+  // Spotlight geometry (circle around target)
+  const spot = rect
+    ? {
+        cx: rect.left + rect.width / 2,
+        cy: rect.top + rect.height / 2,
+        r: Math.max(rect.width, rect.height) / 2 + 14,
+      }
+    : null;
+
   return (
     <div className="fixed inset-0 z-[70] pointer-events-none">
-      {/* Soft dark overlay */}
-      <div
-        className="absolute inset-0 bg-black/55 backdrop-blur-[2px] pointer-events-auto transition-opacity duration-300"
+      {/* Overlay with a transparent hole over the target (SVG mask) */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-auto"
         onClick={handleNext}
-      />
+        style={{ display: "block" }}
+      >
+        <defs>
+          <mask id="focus-tutorial-mask">
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            {spot && (
+              <circle cx={spot.cx} cy={spot.cy} r={spot.r} fill="black" />
+            )}
+          </mask>
+        </defs>
+        <rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          fill="rgba(0,0,0,0.55)"
+          mask="url(#focus-tutorial-mask)"
+        />
+      </svg>
 
       {/* Spotlight ring around the actual target element */}
       {rect && (
