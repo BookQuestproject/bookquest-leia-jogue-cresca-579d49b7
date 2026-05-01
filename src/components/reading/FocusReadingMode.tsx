@@ -158,7 +158,7 @@ const FocusReadingMode = ({
             data-tutorial="music"
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/85 transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-white/10"
           >
-            <SpotifyIcon size={20} />
+            <SpotifyIcon size={28} />
           </button>
           {vocabularySlot}
         </div>
