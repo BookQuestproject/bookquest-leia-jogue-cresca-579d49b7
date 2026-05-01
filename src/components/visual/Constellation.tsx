@@ -37,11 +37,14 @@ const PATHS: Record<Variant, { points: [number, number][]; lines: [number, numbe
   },
 };
 
+// Top placements are pushed well below the page header zone (where buttons
+// like Settings, Essência counter, etc. live) so the constellation never
+// visually overlaps interactive controls.
 const POSITION_STYLES: Record<NonNullable<ConstellationProps["position"]>, React.CSSProperties> = {
-  "top-left":     { top: 16,    left: 16  },
-  "top-right":    { top: 16,    right: 16 },
-  "bottom-left":  { bottom: 16, left: 16  },
-  "bottom-right": { bottom: 16, right: 16 },
+  "top-left":     { top: 140, left: 16  },
+  "top-right":    { top: 140, right: 16 },
+  "bottom-left":  { bottom: 24, left: 16 },
+  "bottom-right": { bottom: 24, right: 16 },
 };
 
 const Constellation = ({

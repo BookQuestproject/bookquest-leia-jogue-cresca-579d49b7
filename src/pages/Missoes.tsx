@@ -22,7 +22,6 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
-import Constellation from "@/components/visual/Constellation";
 import { useStreakTick } from "@/hooks/useStreakTick";
 
 const MILESTONE_TITLES: Record<string, string> = {
@@ -165,8 +164,8 @@ const Missoes = () => {
   return (
     <Layout>
       <div className="relative max-w-4xl mx-auto py-8 section-bg-missions">
-        <Constellation variant="ursa" position="top-right" size={180} opacity={0.14} />
-        <Constellation variant="triangle" position="bottom-left" size={140} opacity={0.10} />
+        {/* Constellations removed to avoid overlapping cards/buttons; body starfield remains. */}
+
         {/* Header */}
         <header className="mb-10 animate-fade-in" data-tutorial="missoes-header">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
