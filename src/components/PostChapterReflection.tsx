@@ -585,17 +585,18 @@ const PostChapterReflection = ({
   })();
 
   return (
-    <div className="animate-fade-in space-y-6">
+    <FullscreenWrapper>
+      <div className="animate-fade-in space-y-6">
       {/* Progress bar */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-xs text-white/60">
           <span className="flex items-center gap-1.5">
             {typeIcons[currentQ?.type]}
             {typeLabels[currentQ?.type] || "Pergunta"}
           </span>
           <span>{currentIdx + 1} de {questions.length}</span>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
@@ -607,8 +608,8 @@ const PostChapterReflection = ({
       </div>
 
       {/* Question card */}
-      <div className="bg-card rounded-xl p-6 border border-border space-y-5">
-        <p className="text-lg font-medium leading-relaxed select-none" style={{ WebkitUserSelect: "none", userSelect: "none" }}>{currentQ?.question}</p>
+      <div className="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 space-y-5 text-white">
+        <p className="text-lg font-medium leading-relaxed select-none text-white" style={{ WebkitUserSelect: "none", userSelect: "none" }}>{currentQ?.question}</p>
 
         {/* ─── Renderers per type ─── */}
         {currentQ?.type === "open" && (
