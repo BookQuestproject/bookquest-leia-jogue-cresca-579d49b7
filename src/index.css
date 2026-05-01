@@ -167,21 +167,15 @@
     50%      { opacity: 0.35; }
   }
 
-  /* Deep space gradient — same palette family as FocusReadingMode */
+  /* Solid deep-navy base — matches the brand royal blue */
   html,
   html body {
-    background:
-      radial-gradient(
-        ellipse 120% 90% at 50% 30%,
-        #082f74 0%,
-        #052866 35%,
-        #021f53 65%,
-        #01153b 100%
-      ) !important;
+    background: #021f53 !important;
     background-attachment: fixed !important;
   }
 
-  /* Layer 1: faint star field + soft warm glow (animated breathing) */
+  /* Layer 1: evenly-distributed star field (tiled, never clusters)
+     Two tiles at different sizes/offsets for a natural, non-repetitive feel. */
   body::before {
     content: '';
     position: fixed;
@@ -189,42 +183,42 @@
     pointer-events: none;
     z-index: 0;
     background-image:
-      /* warm gold ambient (bottom right) */
-      radial-gradient(circle at 78% 82%, hsl(40 65% 60% / 0.10) 0%, transparent 55%),
-      /* cool blue ambient (top left) */
-      radial-gradient(circle at 18% 22%, hsl(215 60% 65% / 0.14) 0%, transparent 55%),
-      /* tiny stars (gold) */
-      radial-gradient(1.5px 1.5px at 12% 18%, hsl(45 90% 80% / 0.45), transparent 60%),
-      radial-gradient(1px 1px   at 28% 64%, hsl(45 90% 80% / 0.40), transparent 60%),
-      radial-gradient(1.2px 1.2px at 47% 32%, hsl(45 90% 80% / 0.35), transparent 60%),
-      radial-gradient(1px 1px   at 71% 76%, hsl(45 90% 80% / 0.40), transparent 60%),
-      radial-gradient(1.4px 1.4px at 86% 22%, hsl(45 90% 80% / 0.45), transparent 60%),
-      /* tiny stars (blue-white) */
-      radial-gradient(1px 1px   at 8%  78%, hsl(210 90% 92% / 0.35), transparent 60%),
-      radial-gradient(1.2px 1.2px at 35% 12%, hsl(210 90% 92% / 0.40), transparent 60%),
-      radial-gradient(1px 1px   at 58% 88%, hsl(210 90% 92% / 0.35), transparent 60%),
-      radial-gradient(1.5px 1.5px at 82% 48%, hsl(210 90% 92% / 0.45), transparent 60%),
-      radial-gradient(1px 1px   at 92% 68%, hsl(210 90% 92% / 0.35), transparent 60%);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+      /* Star tile A — small white-blue stars */
+      radial-gradient(1.2px 1.2px at 18px  22px,  hsl(210 90% 92% / 0.55), transparent 60%),
+      radial-gradient(1px   1px   at 78px  46px,  hsl(210 90% 92% / 0.40), transparent 60%),
+      radial-gradient(1.5px 1.5px at 132px 90px,  hsl(45 90% 82% / 0.50), transparent 60%),
+      radial-gradient(1px   1px   at 54px  126px, hsl(210 90% 92% / 0.45), transparent 60%),
+      radial-gradient(1.3px 1.3px at 168px 168px, hsl(210 90% 92% / 0.50), transparent 60%),
+      radial-gradient(1px   1px   at 12px  186px, hsl(45 90% 82% / 0.40), transparent 60%),
+      /* Star tile B — slightly bigger, sparser */
+      radial-gradient(1.6px 1.6px at 60px  40px,  hsl(45 90% 82% / 0.45), transparent 60%),
+      radial-gradient(1.2px 1.2px at 220px 110px, hsl(210 90% 92% / 0.40), transparent 60%),
+      radial-gradient(1.4px 1.4px at 320px 230px, hsl(210 90% 92% / 0.45), transparent 60%);
+    background-repeat: repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+    background-size:
+      220px 220px, 220px 220px, 220px 220px, 220px 220px, 220px 220px, 220px 220px,
+      400px 320px, 400px 320px, 400px 320px;
     animation: cosmos-breathe 22s ease-in-out infinite;
-    will-change: opacity, transform;
+    will-change: opacity;
   }
 
-  /* Layer 2: edge vignette + ultra-subtle grain (static, no animation) */
+  /* Layer 2: ultra-subtle grain only (no vignette — keeps the field uniform) */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    background:
-      radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.35) 100%),
-      url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 100% 100%, 160px 160px;
-    background-repeat: no-repeat, repeat;
-    mix-blend-mode: normal;
-    opacity: 1;
+    background-image:
+      url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    background-repeat: repeat;
+  }
+
+  /* Soften the breathing pulse so stars don't strobe */
+  @keyframes cosmos-breathe {
+    0%, 100% { opacity: 0.85; }
+    50%      { opacity: 1; }
   }
 
   /* Reduced motion — keep the look, drop the animation */
@@ -324,19 +318,94 @@
 }
 
 @layer components {
-  /* Card Styles */
-  .editorial-card {
-    @apply bg-card border border-border/60 rounded-md shadow-sm;
-    @apply transition-all duration-300;
+  /* ===== Holographic panel (cards floating in space) =====
+     Applied globally to shadcn <Card> via .bg-card override below, and
+     available as a utility class for new components. */
+  .glass-panel {
+    background: linear-gradient(
+      155deg,
+      hsl(220 70% 22% / 0.55) 0%,
+      hsl(225 65% 16% / 0.55) 100%
+    );
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    border: 1px solid hsl(210 90% 92% / 0.10);
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.06) inset,        /* top inner light */
+      0 0 0 1px hsl(220 70% 35% / 0.15) inset,        /* faint inner ring */
+      0 10px 30px -12px rgba(0, 0, 0, 0.55),          /* outer drop */
+      0 2px 8px -2px rgba(0, 0, 0, 0.35);
+    border-radius: 14px;
   }
 
-  .editorial-card:hover {
-    @apply shadow-md border-border;
+  .glass-panel-hover {
+    @apply transition-all duration-300;
+  }
+  .glass-panel-hover:hover {
+    border-color: hsl(45 90% 70% / 0.25);
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.10) inset,
+      0 0 0 1px hsl(45 90% 60% / 0.18) inset,
+      0 14px 36px -10px rgba(0, 0, 0, 0.6),
+      0 0 24px -6px hsl(45 90% 60% / 0.18);
+    transform: translateY(-2px);
+  }
+
+  /* Card Styles — make every shadcn Card a holographic panel automatically */
+  .editorial-card,
+  [class*="bg-card"]:not(.no-holo):not(.bg-card-solid) {
+    background: linear-gradient(
+      155deg,
+      hsl(220 70% 22% / 0.55) 0%,
+      hsl(225 65% 16% / 0.55) 100%
+    ) !important;
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    border: 1px solid hsl(210 90% 92% / 0.10) !important;
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.06) inset,
+      0 0 0 1px hsl(220 70% 35% / 0.15) inset,
+      0 10px 30px -12px rgba(0, 0, 0, 0.55),
+      0 2px 8px -2px rgba(0, 0, 0, 0.35);
+    border-radius: 14px;
+    transition: transform 200ms ease, box-shadow 250ms ease, border-color 250ms ease;
+  }
+
+  .editorial-card:hover,
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: hsl(45 90% 70% / 0.25) !important;
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.10) inset,
+      0 0 0 1px hsl(45 90% 60% / 0.18) inset,
+      0 14px 36px -10px rgba(0, 0, 0, 0.6),
+      0 0 24px -6px hsl(45 90% 60% / 0.18);
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5;
+    @apply transition-all duration-300;
   }
+
+  /* ===== Page enter animation — soft fade + lift =====
+     Use forwards (not "both") so elements never sit invisible at frame 0
+     during HMR/remount, and only target direct children of the inner wrapper
+     so deeply nested transitions aren't affected. */
+  @keyframes page-enter {
+    from { opacity: 0.001; transform: translateY(6px); }
+    to   { opacity: 1;     transform: translateY(0); }
+  }
+  main#main-content > div > * {
+    animation: page-enter 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    main#main-content > div > * { animation: none !important; }
+  }
+
+  /* ===== Editorial typography polish ===== */
+  h1, h2, h3 {
+    letter-spacing: -0.01em;
+  }
+  h1 { letter-spacing: -0.015em; }
 
   /* Journey card with active glow */
   .journey-card {
@@ -1335,14 +1404,4 @@
   right: auto !important;
 }
 
-/* ============ Cards: solid surface above the cosmic background ============ */
-/* Most pages use shadcn <Card> with bg-card; the new translucent space backdrop
-   makes solid cards look harsh. Soften them slightly so they read as "panels
-   floating in space" without becoming a full glassmorphism redesign yet
-   (that comes in Phase 2). */
-@layer components {
-  .bg-card,
-  [class*="bg-card"] {
-    backdrop-filter: saturate(1.05);
-  }
-}
+/* (Cards holográficos definidos em @layer components mais acima) */
