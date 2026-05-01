@@ -11,6 +11,7 @@ import { TutorialProvider } from "@/contexts/TutorialContext";
 
 
 import SpotlightOverlay from "@/components/tutorial/SpotlightOverlay";
+import RouteTransition from "@/components/visual/RouteTransition";
 import CategoryIntro from "@/components/tutorial/CategoryIntro";
 import QuizGate from "@/components/QuizGate";
 import UsernameGate from "@/components/UsernameGate";
@@ -71,6 +72,7 @@ const App = () => (
               <CategoryIntro />
               <QuizGate>
               <UsernameGate>
+                <RouteTransition>
                 <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/home" element={<Index />} />
@@ -114,6 +116,7 @@ const App = () => (
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
+                </RouteTransition>
               </UsernameGate>
               </QuizGate>
             </TutorialProvider>
