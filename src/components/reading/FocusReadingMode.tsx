@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Play, Pause, Headphones, ArrowLeft, CheckCircle } from "lucide-react";
 import MusicPickerDialog from "./MusicPickerDialog";
+import FocusModeTutorial from "./FocusModeTutorial";
+
+const TUTORIAL_KEY = "focus-mode-tutorial-seen-v1";
 
 interface FocusReadingModeProps {
   elapsedTime: number;
@@ -31,6 +34,24 @@ const FocusReadingMode = ({
   vocabularySlot,
 }: FocusReadingModeProps) => {
   const [musicOpen, setMusicOpen] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(TUTORIAL_KEY)) {
+        // Small delay so the mode finishes its fade-in before the tutorial appears
+        const t = setTimeout(() => setShowTutorial(true), 400);
+        return () => clearTimeout(t);
+      }
+    } catch {}
+  }, []);
+
+  const handleTutorialComplete = () => {
+    try {
+      localStorage.setItem(TUTORIAL_KEY, "1");
+    } catch {}
+    setShowTutorial(false);
+  };
 
   // Ring progress
   const radius = 140;
