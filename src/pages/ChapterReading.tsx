@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
 import FinishReadingDialog from "@/components/reading/FinishReadingDialog";
 import VocabularyButton from "@/components/reading/VocabularyButton";
+import FocusReadingMode from "@/components/reading/FocusReadingMode";
 import { useReadingProgress } from "@/hooks/useReadingProgress";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStats } from "@/hooks/useUserStats";
