@@ -15,6 +15,8 @@ interface FocusReadingModeProps {
   /** Optional progress 0-1 to show as ring around timer (e.g., session target) */
   progress?: number;
   vocabularySlot?: React.ReactNode;
+  /** Notifies parent when the first-time tutorial is active so timer can be paused */
+  onTutorialActiveChange?: (active: boolean) => void;
 }
 
 const formatTime = (seconds: number) => {
@@ -32,6 +34,7 @@ const FocusReadingMode = ({
   isTimerError,
   progress,
   vocabularySlot,
+  onTutorialActiveChange,
 }: FocusReadingModeProps) => {
   const [musicOpen, setMusicOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -40,17 +43,21 @@ const FocusReadingMode = ({
     try {
       if (!localStorage.getItem(TUTORIAL_KEY)) {
         // Small delay so the mode finishes its fade-in before the tutorial appears
-        const t = setTimeout(() => setShowTutorial(true), 400);
+        const t = setTimeout(() => {
+          setShowTutorial(true);
+          onTutorialActiveChange?.(true);
+        }, 400);
         return () => clearTimeout(t);
       }
     } catch {}
-  }, []);
+  }, [onTutorialActiveChange]);
 
   const handleTutorialComplete = () => {
     try {
       localStorage.setItem(TUTORIAL_KEY, "1");
     } catch {}
     setShowTutorial(false);
+    onTutorialActiveChange?.(false);
   };
 
   // Ring progress
