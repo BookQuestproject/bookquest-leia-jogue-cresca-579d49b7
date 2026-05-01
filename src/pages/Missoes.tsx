@@ -23,6 +23,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
 import Constellation from "@/components/visual/Constellation";
+import { useStreakTick } from "@/hooks/useStreakTick";
+import { supabase } from "@/integrations/supabase/client";
 
 const MILESTONE_TITLES: Record<string, string> = {
   "milestone-streak": "Leitor Persistente",
