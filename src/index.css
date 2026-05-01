@@ -318,19 +318,91 @@
 }
 
 @layer components {
-  /* Card Styles */
-  .editorial-card {
-    @apply bg-card border border-border/60 rounded-md shadow-sm;
-    @apply transition-all duration-300;
+  /* ===== Holographic panel (cards floating in space) =====
+     Applied globally to shadcn <Card> via .bg-card override below, and
+     available as a utility class for new components. */
+  .glass-panel {
+    background: linear-gradient(
+      155deg,
+      hsl(220 70% 22% / 0.55) 0%,
+      hsl(225 65% 16% / 0.55) 100%
+    );
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    border: 1px solid hsl(210 90% 92% / 0.10);
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.06) inset,        /* top inner light */
+      0 0 0 1px hsl(220 70% 35% / 0.15) inset,        /* faint inner ring */
+      0 10px 30px -12px rgba(0, 0, 0, 0.55),          /* outer drop */
+      0 2px 8px -2px rgba(0, 0, 0, 0.35);
+    border-radius: 14px;
   }
 
-  .editorial-card:hover {
-    @apply shadow-md border-border;
+  .glass-panel-hover {
+    @apply transition-all duration-300;
+  }
+  .glass-panel-hover:hover {
+    border-color: hsl(45 90% 70% / 0.25);
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.10) inset,
+      0 0 0 1px hsl(45 90% 60% / 0.18) inset,
+      0 14px 36px -10px rgba(0, 0, 0, 0.6),
+      0 0 24px -6px hsl(45 90% 60% / 0.18);
+    transform: translateY(-2px);
+  }
+
+  /* Card Styles — make every shadcn Card a holographic panel automatically */
+  .editorial-card,
+  [class*="bg-card"]:not(.no-holo):not(.bg-card-solid) {
+    background: linear-gradient(
+      155deg,
+      hsl(220 70% 22% / 0.55) 0%,
+      hsl(225 65% 16% / 0.55) 100%
+    ) !important;
+    backdrop-filter: blur(14px) saturate(1.15);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    border: 1px solid hsl(210 90% 92% / 0.10) !important;
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.06) inset,
+      0 0 0 1px hsl(220 70% 35% / 0.15) inset,
+      0 10px 30px -12px rgba(0, 0, 0, 0.55),
+      0 2px 8px -2px rgba(0, 0, 0, 0.35);
+    border-radius: 14px;
+    transition: transform 200ms ease, box-shadow 250ms ease, border-color 250ms ease;
+  }
+
+  .editorial-card:hover,
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: hsl(45 90% 70% / 0.25) !important;
+    box-shadow:
+      0 1px 0 0 hsl(210 90% 92% / 0.10) inset,
+      0 0 0 1px hsl(45 90% 60% / 0.18) inset,
+      0 14px 36px -10px rgba(0, 0, 0, 0.6),
+      0 0 24px -6px hsl(45 90% 60% / 0.18);
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5;
+    @apply transition-all duration-300;
   }
+
+  /* ===== Page enter animation — soft fade + lift ===== */
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  main#main-content > * {
+    animation: page-enter 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    main#main-content > * { animation: none !important; }
+  }
+
+  /* ===== Editorial typography polish ===== */
+  h1, h2, h3 {
+    letter-spacing: -0.01em;
+  }
+  h1 { letter-spacing: -0.015em; }
 
   /* Journey card with active glow */
   .journey-card {
