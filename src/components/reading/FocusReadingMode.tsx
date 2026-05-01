@@ -40,19 +40,28 @@ const FocusReadingMode = ({
 
   return (
     <div
-      className="fixed inset-0 z-[60] overflow-hidden text-white"
+      className="fixed inset-0 z-[60] overflow-hidden text-white animate-fade-in"
       style={{
-        // Royal blue base — matches site brand (#021f53)
+        // Warmer, softer royal blue — less saturated, more comfortable
         background:
-          "linear-gradient(180deg, #052a6b 0%, #021f53 55%, #01153b 100%)",
+          "linear-gradient(180deg, #1a2f5c 0%, #14264d 50%, #0d1c3d 100%)",
       }}
     >
-      {/* Animated ambient glow — subtle gold + blue breathing */}
+      {/* Soft warm vignette to reduce edge contrast */}
       <div
-        className="absolute inset-0 opacity-60 pointer-events-none animate-focus-breathe"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 75% 80%, hsl(45 80% 55% / 0.18) 0%, transparent 55%), radial-gradient(circle at 20% 25%, hsl(220 70% 60% / 0.25) 0%, transparent 55%)",
+            "radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.25) 100%)",
+        }}
+      />
+
+      {/* Animated ambient glow — warm gold + soft blue breathing */}
+      <div
+        className="absolute inset-0 opacity-50 pointer-events-none animate-focus-breathe"
+        style={{
+          background:
+            "radial-gradient(circle at 75% 80%, hsl(40 65% 60% / 0.14) 0%, transparent 60%), radial-gradient(circle at 20% 25%, hsl(215 55% 65% / 0.18) 0%, transparent 60%)",
         }}
       />
 
