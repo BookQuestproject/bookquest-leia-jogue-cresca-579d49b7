@@ -203,6 +203,7 @@ const FocusReadingMode = ({
         {/* Single primary action */}
         <button
           onClick={onPauseResume}
+          data-tutorial="play"
           className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all duration-300 ease-out hover:scale-[1.06] active:scale-[0.94] shadow-lg shadow-[#D4AF37]/20"
           aria-label={isPaused ? "Continuar leitura" : "Pausar leitura"}
         >
@@ -216,6 +217,7 @@ const FocusReadingMode = ({
         {/* Subtle finish link */}
         <button
           onClick={onFinish}
+          data-tutorial="finish"
           className="mt-8 text-sm text-white/60 hover:text-white/90 transition-all duration-200 flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97]"
         >
           <CheckCircle className="w-4 h-4" />
