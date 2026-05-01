@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Sparkles, Repeat, Zap, Clock, Flame, Settings } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import Constellation from "@/components/visual/Constellation";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";
@@ -122,6 +123,9 @@ const Index = () => {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto py-6 lg:py-10 relative">
+        {/* Decorative constellations — discovered, not seen */}
+        <Constellation variant="ursa" position="top-right" size={160} opacity={0.14} />
+        <Constellation variant="kite" position="bottom-left" size={120} opacity={0.10} />
 
         {/* Top Bar: Essência + Settings */}
         <div className="flex items-center justify-end gap-2 mb-4 animate-fade-in">
