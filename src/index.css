@@ -1319,3 +1319,30 @@
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+/* ============ UserWay accessibility widget — force bottom-left ============ */
+/* Prevents overlap with the floating "Dicionário" button on the reading screen.
+   UserWay injects its trigger as #userwayAccessibilityIcon / .uwy. */
+.uwy.userway_p5,
+.uwy {
+  left: 16px !important;
+  right: auto !important;
+  bottom: 16px !important;
+}
+.uwy .uai,
+#userwayAccessibilityIcon {
+  left: 16px !important;
+  right: auto !important;
+}
+
+/* ============ Cards: solid surface above the cosmic background ============ */
+/* Most pages use shadcn <Card> with bg-card; the new translucent space backdrop
+   makes solid cards look harsh. Soften them slightly so they read as "panels
+   floating in space" without becoming a full glassmorphism redesign yet
+   (that comes in Phase 2). */
+@layer components {
+  .bg-card,
+  [class*="bg-card"] {
+    backdrop-filter: saturate(1.05);
+  }
+}
