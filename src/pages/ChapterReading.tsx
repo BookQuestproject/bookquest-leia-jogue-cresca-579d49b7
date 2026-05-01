@@ -966,7 +966,7 @@ const ChapterReading = () => {
             onFinish={handleChapterComplete}
             onExit={() => {
               if (user && elapsedTime > 0) {
-                saveProgress(elapsedTime);
+                saveProgress(elapsedTime, true, false);
               }
               setReadingState("intro");
             }}
