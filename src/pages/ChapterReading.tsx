@@ -985,18 +985,7 @@ const ChapterReading = () => {
           />
         )}
 
-        {/* Reflection State - AI-powered post-chapter questions */}
-        {readingState === "reflection" && (
-          <PostChapterReflection
-            bookTitle={book.title}
-            chapterTitle={chapter.title}
-            chapterId={chapter.id}
-            totalChapters={book.chapters.length}
-            themeColor={themeColor}
-            readingTime={elapsedTime}
-            onComplete={handleReflectionComplete}
-          />
-        )}
+        {/* Reflection State - rendered fullscreen below, outside the layout column */}
 
         {/* Completed State */}
         {readingState === "completed" && (
