@@ -68,7 +68,7 @@ const steps: Step[] = [
     icon: <Sparkles className="w-5 h-5" />,
     title: "Que sua jornada seja luminosa",
     description:
-      "Abra o livro com calma, deixe que cada página revele um novo mundo. Quando estiver pronto, toque em iniciar e mergulhe na história. Boa leitura, aventureiro. ✦",
+      "Abra o livro com calma, deixe que cada página revele um novo mundo. Quando estiver pronto, toque em iniciar e mergulhe na história. Boa leitura, aventureiro!",
     target: null,
     cardSide: "center",
   },
