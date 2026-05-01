@@ -658,13 +658,11 @@ const ChapterReading = () => {
   };
 
   const handleStartReading = () => {
-    if (hasRestoredProgress) {
-      // Resuming - skip countdown
-      setReadingState("reading");
-      setIsPaused(false);
-    } else {
-      setReadingState("countdown");
+    if (!hasRestoredProgress) {
+      setElapsedTime(0);
     }
+    setReadingState("reading");
+    setIsPaused(false);
   };
 
   const handleCountdownComplete = () => {

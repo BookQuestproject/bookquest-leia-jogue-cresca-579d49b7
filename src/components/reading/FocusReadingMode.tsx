@@ -173,11 +173,7 @@ const FocusReadingMode = ({
         {/* Single primary action */}
         <button
           onClick={onPauseResume}
-          className={`mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all duration-300 ease-out hover:scale-[1.06] active:scale-[0.94] shadow-xl ${
-            isPaused
-              ? "shadow-[#D4AF37]/20"
-              : "shadow-[#D4AF37]/40 animate-focus-button-glow"
-          }`}
+          className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all duration-300 ease-out hover:scale-[1.06] active:scale-[0.94] shadow-lg shadow-[#D4AF37]/20"
           aria-label={isPaused ? "Continuar leitura" : "Pausar leitura"}
         >
           {isPaused ? (
