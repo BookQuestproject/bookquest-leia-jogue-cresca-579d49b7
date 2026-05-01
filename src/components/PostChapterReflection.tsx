@@ -504,70 +504,72 @@ const PostChapterReflection = ({
   // ─── Finished screen ──────────────────────────────────────────
   if (finished) {
     return (
-      <div className="animate-fade-in space-y-8 text-center">
-        <div
-          className="w-24 h-24 rounded-full flex items-center justify-center mx-auto"
-          style={{ background: `hsl(${themeColor} / 0.15)` }}
-        >
-          <CheckCircle className="w-12 h-12" style={{ color: `hsl(${themeColor})` }} />
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-serif font-semibold mb-2">Reflexão Concluída!</h2>
-          <p className="text-muted-foreground">
-            Você completou "{chapterTitle}"
-          </p>
-        </div>
-
-        {/* XP Breakdown */}
-        <div className="bg-card rounded-xl p-6 border border-border max-w-sm mx-auto space-y-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Leitura do capítulo</span>
-            <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 ✦</span>
+      <FullscreenWrapper>
+        <div className="animate-fade-in space-y-8 text-center">
+          <div
+            className="w-24 h-24 rounded-full flex items-center justify-center mx-auto"
+            style={{ background: `hsl(${themeColor} / 0.2)` }}
+          >
+            <CheckCircle className="w-12 h-12" style={{ color: `hsl(${themeColor})` }} />
           </div>
-          {xpPerQuestion.map((xp, i) => (
-            <div key={i} className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground flex items-center gap-2">
-                {typeIcons[questions[i]?.type] || <Star className="w-4 h-4" />}
-                {typeLabels[questions[i]?.type] || "Pergunta"}
-              </span>
-              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} ✦</span>
+
+          <div>
+            <h2 className="text-2xl font-serif font-semibold mb-2 text-white">Reflexão Concluída!</h2>
+            <p className="text-white/60">
+              Você completou "{chapterTitle}"
+            </p>
+          </div>
+
+          {/* XP Breakdown */}
+          <div className="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 max-w-sm mx-auto space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/60">Leitura do capítulo</span>
+              <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+10 ✦</span>
             </div>
-          ))}
-          <div className="border-t border-border pt-3 flex items-center justify-between">
-            <span className="font-semibold flex items-center gap-2">
-              <EssenciaIcon size="md" className="text-accent" />
-              Total
-            </span>
-            <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>
-              +{finalXp} ✦
-            </span>
+            {xpPerQuestion.map((xp, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <span className="text-white/60 flex items-center gap-2">
+                  {typeIcons[questions[i]?.type] || <Star className="w-4 h-4" />}
+                  {typeLabels[questions[i]?.type] || "Pergunta"}
+                </span>
+                <span className="font-bold" style={{ color: `hsl(${themeColor})` }}>+{xp} ✦</span>
+              </div>
+            ))}
+            <div className="border-t border-white/10 pt-3 flex items-center justify-between">
+              <span className="font-semibold flex items-center gap-2 text-white">
+                <EssenciaIcon size="md" className="text-accent" />
+                Total
+              </span>
+              <span className="text-2xl font-bold" style={{ color: `hsl(${themeColor})` }}>
+                +{finalXp} ✦
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* XP Bar animation */}
-        <div className="max-w-sm mx-auto">
-          <div className="h-3 bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-1000 ease-out"
-              style={{
-                width: `${Math.min(100, (finalXp / 30) * 100)}%`,
-                background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 15 + '%')}))`,
-              }}
-            />
+          {/* XP Bar animation */}
+          <div className="max-w-sm mx-auto">
+            <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-1000 ease-out"
+                style={{
+                  width: `${Math.min(100, (finalXp / 30) * 100)}%`,
+                  background: `linear-gradient(90deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 15 + '%')}))`,
+                }}
+              />
+            </div>
           </div>
-        </div>
 
-        <Button
-          size="lg"
-          onClick={() => onComplete(finalXp)}
-          style={{
-            background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 10 + '%')}))`,
-          }}
-        >
-          Continuar
-        </Button>
-      </div>
+          <Button
+            size="lg"
+            onClick={() => onComplete(finalXp)}
+            style={{
+              background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, m => parseInt(m) + 10 + '%')}))`,
+            }}
+          >
+            Continuar
+          </Button>
+        </div>
+      </FullscreenWrapper>
     );
   }
 
