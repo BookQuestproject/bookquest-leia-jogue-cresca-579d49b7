@@ -40,34 +40,37 @@ const FocusReadingMode = ({
 
   return (
     <div
-      className="fixed inset-0 z-[60] overflow-hidden"
+      className="fixed inset-0 z-[60] overflow-hidden text-white"
       style={{
-        // Warm "paper" base — Kindle-like, low visual fatigue.
-        // Top slightly lighter, bottom slightly warmer.
+        // Royal blue base — matches site brand (#021f53)
         background:
-          "linear-gradient(180deg, hsl(40 35% 94%) 0%, hsl(38 38% 91%) 50%, hsl(32 40% 88%) 100%)",
+          "linear-gradient(180deg, #052a6b 0%, #021f53 55%, #01153b 100%)",
       }}
     >
-      {/* Animated ambient warmth — very subtle */}
+      {/* Animated ambient glow — subtle gold + blue breathing */}
       <div
-        className="absolute inset-0 opacity-70 pointer-events-none animate-focus-breathe"
+        className="absolute inset-0 opacity-60 pointer-events-none animate-focus-breathe"
         style={{
           background:
-            "radial-gradient(circle at 70% 85%, hsl(28 45% 86% / 0.6) 0%, transparent 55%), radial-gradient(circle at 15% 20%, hsl(45 50% 93% / 0.7) 0%, transparent 50%)",
+            "radial-gradient(circle at 75% 80%, hsl(45 80% 55% / 0.18) 0%, transparent 55%), radial-gradient(circle at 20% 25%, hsl(220 70% 60% / 0.25) 0%, transparent 55%)",
         }}
       />
 
-      {/* Floating dust particles */}
+      {/* Floating dust particles — soft golden specks */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 14 }).map((_, i) => (
+        {Array.from({ length: 18 }).map((_, i) => (
           <span
             key={i}
-            className="absolute rounded-full bg-foreground/10 blur-sm animate-focus-drift"
+            className="absolute rounded-full blur-sm animate-focus-drift"
             style={{
-              width: `${4 + (i % 4) * 2}px`,
-              height: `${4 + (i % 4) * 2}px`,
+              width: `${3 + (i % 4) * 2}px`,
+              height: `${3 + (i % 4) * 2}px`,
               left: `${(i * 73) % 100}%`,
               top: `${(i * 47) % 100}%`,
+              background:
+                i % 3 === 0
+                  ? "hsl(45 90% 70% / 0.5)"
+                  : "hsl(210 90% 85% / 0.35)",
               animationDelay: `${i * 1.3}s`,
               animationDuration: `${22 + (i % 5) * 6}s`,
             }}
@@ -80,7 +83,7 @@ const FocusReadingMode = ({
         <button
           onClick={onExit}
           aria-label="Sair do modo leitura"
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-foreground/5 hover:bg-foreground/10 text-foreground/70 transition-colors backdrop-blur-sm"
+          className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white/80 transition-colors backdrop-blur-sm"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -90,7 +93,7 @@ const FocusReadingMode = ({
           <button
             onClick={() => setMusicOpen(true)}
             aria-label="Ouvir música"
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-foreground/5 hover:bg-foreground/10 text-foreground/70 transition-colors backdrop-blur-sm"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white/80 transition-colors backdrop-blur-sm"
           >
             <Headphones className="w-5 h-5" />
           </button>
@@ -112,7 +115,7 @@ const FocusReadingMode = ({
               cy={radius + 20}
               r={radius}
               fill="none"
-              stroke="hsl(var(--foreground) / 0.06)"
+              stroke="hsl(0 0% 100% / 0.1)"
               strokeWidth={2}
             />
             <circle
@@ -120,7 +123,7 @@ const FocusReadingMode = ({
               cy={radius + 20}
               r={radius}
               fill="none"
-              stroke="hsl(var(--foreground) / 0.35)"
+              stroke="hsl(45 90% 65% / 0.7)"
               strokeWidth={2}
               strokeLinecap="round"
               strokeDasharray={circumference}
@@ -131,13 +134,13 @@ const FocusReadingMode = ({
 
           {/* Time */}
           <div
-            className={`relative w-[${radius * 2 + 40}px] h-[${radius * 2 + 40}px] flex items-center justify-center ${
+            className={`relative flex items-center justify-center ${
               isTimerError ? "animate-[shake_0.5s_ease-in-out]" : ""
             }`}
             style={{ width: radius * 2 + 40, height: radius * 2 + 40 }}
           >
             <span
-              className={`font-mono font-light tracking-widest text-foreground/85 select-none ${
+              className={`font-mono font-light tracking-widest text-white/95 select-none drop-shadow-[0_2px_12px_rgba(212,175,55,0.25)] ${
                 isPaused ? "opacity-60" : ""
               }`}
               style={{ fontSize: "clamp(3.5rem, 12vw, 6.5rem)" }}
@@ -150,7 +153,7 @@ const FocusReadingMode = ({
         {/* Single primary action */}
         <button
           onClick={onPauseResume}
-          className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-foreground/85 text-background hover:bg-foreground transition-all hover:scale-105 active:scale-95 shadow-xl shadow-foreground/10"
+          className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-[#D4AF37]/30"
           aria-label={isPaused ? "Continuar leitura" : "Pausar leitura"}
         >
           {isPaused ? (
@@ -163,7 +166,7 @@ const FocusReadingMode = ({
         {/* Subtle finish link */}
         <button
           onClick={onFinish}
-          className="mt-8 text-sm text-foreground/50 hover:text-foreground/80 transition-colors flex items-center gap-2"
+          className="mt-8 text-sm text-white/60 hover:text-white/90 transition-colors flex items-center gap-2"
         >
           <CheckCircle className="w-4 h-4" />
           Finalizar leitura
