@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { BookOpen, Clock, Flame, Trophy, Target, Star, Award, Crown, Info, CheckCircle } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import Layout from "@/components/layout/Layout";
