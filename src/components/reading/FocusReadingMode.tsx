@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Play, Pause, Headphones, ArrowLeft, CheckCircle } from "lucide-react";
+import { Play, Pause, ArrowLeft, CheckCircle } from "lucide-react";
+import SpotifyIcon from "@/components/icons/SpotifyIcon";
 import MusicPickerDialog from "./MusicPickerDialog";
 import FocusModeTutorial from "./FocusModeTutorial";
 
@@ -153,11 +154,11 @@ const FocusReadingMode = ({
         <div className="flex items-center gap-2" data-tutorial="tools">
           <button
             onClick={() => setMusicOpen(true)}
-            aria-label="Ouvir música"
+            aria-label="Música ambiente (Spotify)"
             data-tutorial="music"
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/85 transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-white/10"
           >
-            <Headphones className="w-5 h-5" />
+            <SpotifyIcon size={20} />
           </button>
           {vocabularySlot}
         </div>

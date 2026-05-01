@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { ArrowLeft, Headphones, Pause, CheckCircle, Sparkles, Feather } from "lucide-react";
+import { ArrowLeft, Pause, CheckCircle, Sparkles, Feather } from "lucide-react";
+import SpotifyIcon from "@/components/icons/SpotifyIcon";
 
 interface FocusModeTutorialProps {
   onComplete: () => void;
@@ -33,7 +34,7 @@ const steps: Step[] = [
     cardSide: "below",
   },
   {
-    icon: <Headphones className="w-5 h-5" />,
+    icon: <SpotifyIcon size={20} />,
     title: "Música ambiente",
     description:
       "Abra playlists tranquilas para acompanhar sua leitura.",
@@ -68,7 +69,7 @@ const steps: Step[] = [
     icon: <Sparkles className="w-5 h-5" />,
     title: "Que sua jornada seja luminosa",
     description:
-      "Abra o livro com calma, deixe que cada página revele um novo mundo. Quando estiver pronto, toque em iniciar e mergulhe na história. Boa leitura, aventureiro. ✦",
+      "Abra o livro com calma, deixe que cada página revele um novo mundo. Quando estiver pronto, toque em iniciar e mergulhe na história. Boa leitura, aventureiro!",
     target: null,
     cardSide: "center",
   },
@@ -213,23 +214,8 @@ const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
         />
       </svg>
 
-      {/* Spotlight ring around the actual target element */}
-      {rect && (
-        <div
-          className="absolute pointer-events-none transition-all duration-500 ease-out"
-          style={{
-            top: rect.top - 6,
-            left: rect.left - 6,
-            width: rect.width + 12,
-            height: rect.height + 12,
-            borderRadius: 9999,
-            border: "2px solid #D4AF37",
-            boxShadow:
-              "0 0 0 4px rgba(212,175,55,0.18), 0 0 30px rgba(212,175,55,0.5)",
-            animation: "pulse 1.8s ease-in-out infinite",
-          }}
-        />
-      )}
+      {/* Spotlight ring removed — the mask hole alone already highlights the target */}
+
 
       {/* Tutorial card */}
       <div
