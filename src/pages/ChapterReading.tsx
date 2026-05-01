@@ -739,8 +739,9 @@ const ChapterReading = () => {
     const totalReward = 10 + xp;
     await addEssencia(totalReward);
 
-    // Update streak (increment by 1)
-    await updateStreak(streak + 1);
+    // Acende a tocha do dia via RPC server-side (idempotente: só conta uma vez por dia,
+    // incrementa se foi creditado ontem, reinicia se passou >1 dia).
+    await supabase.rpc('tick_user_streak' as any, { _user_id: (await supabase.auth.getUser()).data.user?.id });
 
     toast.success(`+${totalReward} Essência ganha!`, {
       description: "Capítulo concluído com sucesso.",
