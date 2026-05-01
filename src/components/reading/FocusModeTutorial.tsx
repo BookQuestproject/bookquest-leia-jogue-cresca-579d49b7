@@ -34,7 +34,7 @@ const steps: Step[] = [
     cardSide: "below",
   },
   {
-    icon: <Headphones className="w-5 h-5" />,
+    icon: <SpotifyIcon size={20} />,
     title: "Música ambiente",
     description:
       "Abra playlists tranquilas para acompanhar sua leitura.",
