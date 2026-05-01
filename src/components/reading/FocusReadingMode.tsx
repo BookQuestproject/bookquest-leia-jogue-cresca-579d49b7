@@ -115,7 +115,7 @@ const FocusReadingMode = ({
               cy={radius + 20}
               r={radius}
               fill="none"
-              stroke="hsl(var(--foreground) / 0.06)"
+              stroke="hsl(0 0% 100% / 0.1)"
               strokeWidth={2}
             />
             <circle
@@ -123,7 +123,7 @@ const FocusReadingMode = ({
               cy={radius + 20}
               r={radius}
               fill="none"
-              stroke="hsl(var(--foreground) / 0.35)"
+              stroke="hsl(45 90% 65% / 0.7)"
               strokeWidth={2}
               strokeLinecap="round"
               strokeDasharray={circumference}
@@ -134,13 +134,13 @@ const FocusReadingMode = ({
 
           {/* Time */}
           <div
-            className={`relative w-[${radius * 2 + 40}px] h-[${radius * 2 + 40}px] flex items-center justify-center ${
+            className={`relative flex items-center justify-center ${
               isTimerError ? "animate-[shake_0.5s_ease-in-out]" : ""
             }`}
             style={{ width: radius * 2 + 40, height: radius * 2 + 40 }}
           >
             <span
-              className={`font-mono font-light tracking-widest text-foreground/85 select-none ${
+              className={`font-mono font-light tracking-widest text-white/95 select-none drop-shadow-[0_2px_12px_rgba(212,175,55,0.25)] ${
                 isPaused ? "opacity-60" : ""
               }`}
               style={{ fontSize: "clamp(3.5rem, 12vw, 6.5rem)" }}
@@ -153,7 +153,7 @@ const FocusReadingMode = ({
         {/* Single primary action */}
         <button
           onClick={onPauseResume}
-          className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-foreground/85 text-background hover:bg-foreground transition-all hover:scale-105 active:scale-95 shadow-xl shadow-foreground/10"
+          className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-[#D4AF37]/30"
           aria-label={isPaused ? "Continuar leitura" : "Pausar leitura"}
         >
           {isPaused ? (
@@ -166,7 +166,7 @@ const FocusReadingMode = ({
         {/* Subtle finish link */}
         <button
           onClick={onFinish}
-          className="mt-8 text-sm text-foreground/50 hover:text-foreground/80 transition-colors flex items-center gap-2"
+          className="mt-8 text-sm text-white/60 hover:text-white/90 transition-colors flex items-center gap-2"
         >
           <CheckCircle className="w-4 h-4" />
           Finalizar leitura
