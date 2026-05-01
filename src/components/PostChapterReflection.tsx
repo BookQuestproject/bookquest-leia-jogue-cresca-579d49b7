@@ -955,7 +955,8 @@ const PostChapterReflection = ({
           )}
         </Button>
       )}
-    </div>
+      </div>
+    </FullscreenWrapper>
   );
 };
 
