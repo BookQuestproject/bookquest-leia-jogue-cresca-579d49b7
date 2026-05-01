@@ -143,6 +143,10 @@ export default {
           "0%, 100%": { boxShadow: "0 10px 30px -5px rgba(212, 175, 55, 0.35), 0 0 0 0 rgba(212, 175, 55, 0.0)" },
           "50%": { boxShadow: "0 10px 35px -5px rgba(212, 175, 55, 0.5), 0 0 0 8px rgba(212, 175, 55, 0.06)" },
         },
+        "tutorial-card": {
+          "0%": { opacity: "0", transform: "translateY(8px) scale(0.96)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -159,6 +163,7 @@ export default {
         "focus-twinkle": "focus-twinkle 10s ease-in-out infinite",
         "focus-glow-pulse": "focus-glow-pulse 4s ease-in-out infinite",
         "focus-button-glow": "focus-button-glow 3s ease-in-out infinite",
+        "tutorial-card": "tutorial-card 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
     },
   },
