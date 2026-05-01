@@ -56,26 +56,50 @@ const FocusReadingMode = ({
         }}
       />
 
-      {/* Floating dust particles — soft golden specks */}
+      {/* Floating dust particles — fireflies / illuminated dust */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 18 }).map((_, i) => (
-          <span
-            key={i}
-            className="absolute rounded-full blur-sm animate-focus-drift"
-            style={{
-              width: `${3 + (i % 4) * 2}px`,
-              height: `${3 + (i % 4) * 2}px`,
-              left: `${(i * 73) % 100}%`,
-              top: `${(i * 47) % 100}%`,
-              background:
-                i % 3 === 0
-                  ? "hsl(45 90% 70% / 0.5)"
-                  : "hsl(210 90% 85% / 0.35)",
-              animationDelay: `${i * 1.3}s`,
-              animationDuration: `${22 + (i % 5) * 6}s`,
-            }}
-          />
-        ))}
+        {Array.from({ length: 45 }).map((_, i) => {
+          // Pseudo-random but stable distribution using golden ratio
+          const phi = 0.6180339887;
+          const rx = ((i * phi) % 1) * 100;
+          const ry = ((i * phi * 2.3) % 1) * 100;
+          const sizeRand = (i * 17) % 10;
+          const size = 1.5 + (sizeRand / 10) * 3.5; // 1.5px – 5px
+          const opacity = 0.1 + ((i * 7) % 26) / 100; // 0.10 – 0.35
+          const isGold = i % 3 !== 0;
+          const blurAmount = sizeRand > 6 ? "blur-[2px]" : sizeRand > 3 ? "blur-sm" : "blur-[1px]";
+          const driftAnim = i % 3 === 0 ? "animate-focus-drift-a" : i % 3 === 1 ? "animate-focus-drift-b" : "animate-focus-drift-c";
+          const duration = 35 + ((i * 11) % 30); // 35s – 65s
+          const delay = -((i * 2.7) % 40); // negative so they start mid-animation
+          const breatheDuration = 8 + ((i * 5) % 5); // 8s – 12s
+
+          return (
+            <span
+              key={i}
+              className={`absolute rounded-full ${blurAmount} ${driftAnim}`}
+              style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                left: `${rx}%`,
+                top: `${ry}%`,
+                background: isGold
+                  ? `hsl(45 90% 75% / ${opacity})`
+                  : `hsl(210 90% 88% / ${opacity * 0.8})`,
+                animationDuration: `${duration}s`,
+                animationDelay: `${delay}s`,
+              }}
+            >
+              <span
+                className="block w-full h-full rounded-full animate-focus-twinkle"
+                style={{
+                  background: "inherit",
+                  animationDuration: `${breatheDuration}s`,
+                  animationDelay: `${-((i * 1.9) % 10)}s`,
+                }}
+              />
+            </span>
+          );
+        })}
       </div>
 
       {/* Top bar — minimalist */}
