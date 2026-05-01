@@ -853,14 +853,24 @@ const QuizOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden text-foreground">
-      {/* Background gradients - same as Landing */}
+    <div
+      className="min-h-screen relative overflow-x-hidden text-foreground"
+      style={{ backgroundColor: "#021f53" }}
+    >
+      {/* Subtle accent gradients layered over the deep navy base */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] via-transparent to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-accent/[0.03] blur-[150px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.06] via-transparent to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-accent/[0.04] blur-[150px]" />
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        {renderStep()}
+        {/* Animated step transition: re-mounts on `step` change so fade-in + scale-in plays */}
+        <div
+          key={step}
+          className="w-full flex justify-center animate-fade-in"
+          style={{ animation: "fade-in 0.35s ease-out, scale-in 0.25s ease-out" }}
+        >
+          {renderStep()}
+        </div>
       </div>
     </div>
   );
