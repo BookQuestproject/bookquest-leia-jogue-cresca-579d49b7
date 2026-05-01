@@ -1057,6 +1057,19 @@ const ChapterReading = () => {
         onPartial={handleReadAPartial}
         themeColor={themeColor}
       />
+
+      {/* Fullscreen reflection — covers sidebar, cozy aesthetic matching FocusReadingMode */}
+      {readingState === "reflection" && (
+        <PostChapterReflection
+          bookTitle={book.title}
+          chapterTitle={chapter.title}
+          chapterId={chapter.id}
+          totalChapters={book.chapters.length}
+          themeColor={themeColor}
+          readingTime={elapsedTime}
+          onComplete={handleReflectionComplete}
+        />
+      )}
     </Layout>
   );
 };
