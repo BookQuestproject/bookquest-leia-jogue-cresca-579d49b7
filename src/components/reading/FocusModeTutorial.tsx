@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, Headphones, BookOpen, Pause, CheckCircle, Sparkles } from "lucide-react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { ArrowLeft, Headphones, Pause, CheckCircle, Sparkles, Feather } from "lucide-react";
 
 interface FocusModeTutorialProps {
   onComplete: () => void;
@@ -9,7 +9,10 @@ interface Step {
   icon: React.ReactNode;
   title: string;
   description: string;
-  position: "top-left" | "top-right" | "center" | "bottom";
+  /** data-tutorial selector to spotlight; null = centered */
+  target: string | null;
+  /** Where to anchor the card relative to the target */
+  cardSide?: "below" | "above" | "center";
 }
 
 const steps: Step[] = [
@@ -18,49 +21,114 @@ const steps: Step[] = [
     title: "Bem-vindo ao Modo Leitura",
     description:
       "Um ambiente silencioso para você se concentrar. Vamos passar pelos controles em poucos segundos.",
-    position: "center",
+    target: null,
+    cardSide: "center",
   },
   {
     icon: <ArrowLeft className="w-5 h-5" />,
     title: "Sair a qualquer momento",
     description:
       "Use a seta no canto superior esquerdo. Seu progresso é salvo automaticamente.",
-    position: "top-left",
+    target: "exit",
+    cardSide: "below",
   },
   {
     icon: <Headphones className="w-5 h-5" />,
-    title: "Música & Dicionário",
+    title: "Música ambiente",
     description:
-      "No canto superior direito você abre playlists ambiente e o dicionário do livro para palavras desconhecidas.",
-    position: "top-right",
+      "Abra playlists tranquilas para acompanhar sua leitura.",
+    target: "music",
+    cardSide: "below",
+  },
+  {
+    icon: <Feather className="w-5 h-5" />,
+    title: "Dicionário do livro",
+    description:
+      "Toque no ícone de pluma para anotar e entender palavras desconhecidas durante a leitura.",
+    target: "vocabulary",
+    cardSide: "below",
   },
   {
     icon: <Pause className="w-5 h-5" />,
     title: "Pausar quando precisar",
     description:
       "O botão dourado central pausa e retoma o cronômetro. Sem pressa — leia no seu ritmo.",
-    position: "bottom",
+    target: "play",
+    cardSide: "above",
   },
   {
     icon: <CheckCircle className="w-5 h-5" />,
     title: "Ao terminar o capítulo",
     description:
-      "Toque em \"Finalizar leitura\" abaixo do botão. Você fará uma reflexão curta e ganhará Essência ✦.",
-    position: "bottom",
+      "Toque em \"Finalizar leitura\". Você fará uma reflexão curta e ganhará Essência ✦.",
+    target: "finish",
+    cardSide: "above",
   },
   {
-    icon: <BookOpen className="w-5 h-5" />,
-    title: "Tudo pronto",
+    icon: <Sparkles className="w-5 h-5" />,
+    title: "Que sua jornada seja luminosa",
     description:
-      "Boa leitura. Lembre-se: no mínimo 30 segundos para o capítulo contar.",
-    position: "center",
+      "Abra o livro com calma, deixe que cada página revele um novo mundo. Quando estiver pronto, toque em iniciar e mergulhe na história. Boa leitura, viajante das letras. ✦",
+    target: null,
+    cardSide: "center",
   },
 ];
 
+interface Rect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
   const [stepIndex, setStepIndex] = useState(0);
+  const [rect, setRect] = useState<Rect | null>(null);
+  const [cardKey, setCardKey] = useState(0);
   const step = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
+  const isFirst = stepIndex === 0;
+
+  // Locate the target element and compute its rect
+  useLayoutEffect(() => {
+    if (!step.target) {
+      setRect(null);
+      setCardKey((k) => k + 1);
+      return;
+    }
+    // Vocabulary button is rendered by external slot — find by aria-label fallback
+    const selectors = [
+      `[data-tutorial="${step.target}"]`,
+      step.target === "vocabulary" ? '[aria-label*="ocabul"]' : null,
+    ].filter(Boolean) as string[];
+
+    let el: Element | null = null;
+    for (const sel of selectors) {
+      el = document.querySelector(sel);
+      if (el) break;
+    }
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+    } else {
+      setRect(null);
+    }
+    setCardKey((k) => k + 1);
+  }, [stepIndex, step.target]);
+
+  // Recompute on resize/scroll
+  useEffect(() => {
+    const onResize = () => {
+      if (!step.target) return;
+      const el = document.querySelector(`[data-tutorial="${step.target}"]`);
+      if (el) {
+        const r = el.getBoundingClientRect();
+        setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+      }
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [step.target]);
 
   const handleNext = () => {
     if (isLast) {
@@ -70,44 +138,74 @@ const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
     }
   };
 
-  // Spotlight position per step (relative to the mode UI)
-  const spotlightPos: Record<Step["position"], string> = {
-    "top-left": "top-3 left-3",
-    "top-right": "top-3 right-3",
-    center: "inset-0 m-auto",
-    bottom: "bottom-24 left-1/2 -translate-x-1/2",
-  };
+  // Compute card position based on rect and side
+  const cardStyle: React.CSSProperties = (() => {
+    const CARD_WIDTH = 320;
+    const CARD_HEIGHT_EST = 180;
+    const MARGIN = 16;
+    const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
+    const vh = typeof window !== "undefined" ? window.innerHeight : 768;
 
-  // Card position per step
-  const cardPos: Record<Step["position"], string> = {
-    "top-left": "top-24 left-6 sm:left-24",
-    "top-right": "top-24 right-6 sm:right-24",
-    center: "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-    bottom: "bottom-32 left-1/2 -translate-x-1/2",
-  };
+    if (!rect || step.cardSide === "center") {
+      return {
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      };
+    }
+
+    const targetCenterX = rect.left + rect.width / 2;
+    let left = targetCenterX - CARD_WIDTH / 2;
+    left = Math.max(MARGIN, Math.min(left, vw - CARD_WIDTH - MARGIN));
+
+    let top: number;
+    if (step.cardSide === "below") {
+      top = rect.top + rect.height + 24;
+      if (top + CARD_HEIGHT_EST > vh - MARGIN) {
+        top = rect.top - CARD_HEIGHT_EST - 24;
+      }
+    } else {
+      // above
+      top = rect.top - CARD_HEIGHT_EST - 24;
+      if (top < MARGIN) {
+        top = rect.top + rect.height + 24;
+      }
+    }
+
+    return { top, left, width: CARD_WIDTH };
+  })();
 
   return (
     <div className="fixed inset-0 z-[70] pointer-events-none">
-      {/* Soft dark overlay — lets the actual UI breathe through */}
+      {/* Soft dark overlay */}
       <div
-        className="absolute inset-0 bg-black/55 backdrop-blur-[2px] pointer-events-auto animate-fade-in"
+        className="absolute inset-0 bg-black/55 backdrop-blur-[2px] pointer-events-auto transition-opacity duration-300"
         onClick={handleNext}
       />
 
-      {/* Spotlight ring (decorative pointer) */}
-      {step.position !== "center" && (
+      {/* Spotlight ring around the actual target element */}
+      {rect && (
         <div
-          className={`absolute ${spotlightPos[step.position]} w-14 h-14 rounded-full border-2 border-[#D4AF37] animate-[pulse_1.6s_ease-in-out_infinite] pointer-events-none`}
+          className="absolute pointer-events-none transition-all duration-500 ease-out"
           style={{
+            top: rect.top - 6,
+            left: rect.left - 6,
+            width: rect.width + 12,
+            height: rect.height + 12,
+            borderRadius: 9999,
+            border: "2px solid #D4AF37",
             boxShadow:
-              "0 0 0 4px rgba(212,175,55,0.15), 0 0 30px rgba(212,175,55,0.4)",
+              "0 0 0 4px rgba(212,175,55,0.18), 0 0 30px rgba(212,175,55,0.5)",
+            animation: "pulse 1.8s ease-in-out infinite",
           }}
         />
       )}
 
       {/* Tutorial card */}
       <div
-        className={`absolute ${cardPos[step.position]} max-w-[320px] w-[88vw] sm:w-[320px] pointer-events-auto animate-fade-in`}
+        key={cardKey}
+        className="absolute pointer-events-auto animate-tutorial-card"
+        style={cardStyle}
       >
         <div className="rounded-2xl bg-[#021f53]/95 border border-[#D4AF37]/30 backdrop-blur-md p-5 shadow-2xl">
           <div className="flex items-center gap-2 mb-2">
@@ -124,11 +222,10 @@ const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
             </div>
           </div>
 
-          <p className="text-sm text-white/75 leading-relaxed mb-4">
+          <p className="text-sm text-white/75 leading-relaxed mb-4 font-serif">
             {step.description}
           </p>
 
-          {/* Progress dots */}
           <div className="flex items-center justify-between">
             <div className="flex gap-1.5">
               {steps.map((_, i) => (
@@ -146,7 +243,7 @@ const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
             </div>
 
             <div className="flex items-center gap-2">
-              {!isLast && (
+              {!isLast && !isFirst && (
                 <button
                   onClick={onComplete}
                   className="text-xs text-white/50 hover:text-white/80 transition-colors"
@@ -158,7 +255,7 @@ const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
                 onClick={handleNext}
                 className="px-4 py-1.5 rounded-full bg-[#D4AF37] text-[#021f53] text-sm font-medium hover:bg-[#e5c252] transition-all hover:scale-[1.03] active:scale-[0.97]"
               >
-                {isLast ? "Começar" : "Próximo"}
+                {isLast ? "Iniciar leitura" : "Próximo"}
               </button>
             </div>
           </div>

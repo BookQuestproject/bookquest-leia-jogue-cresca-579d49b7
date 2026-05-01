@@ -15,6 +15,8 @@ interface FocusReadingModeProps {
   /** Optional progress 0-1 to show as ring around timer (e.g., session target) */
   progress?: number;
   vocabularySlot?: React.ReactNode;
+  /** Notifies parent when the first-time tutorial is active so timer can be paused */
+  onTutorialActiveChange?: (active: boolean) => void;
 }
 
 const formatTime = (seconds: number) => {
@@ -32,6 +34,7 @@ const FocusReadingMode = ({
   isTimerError,
   progress,
   vocabularySlot,
+  onTutorialActiveChange,
 }: FocusReadingModeProps) => {
   const [musicOpen, setMusicOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -40,17 +43,21 @@ const FocusReadingMode = ({
     try {
       if (!localStorage.getItem(TUTORIAL_KEY)) {
         // Small delay so the mode finishes its fade-in before the tutorial appears
-        const t = setTimeout(() => setShowTutorial(true), 400);
+        const t = setTimeout(() => {
+          setShowTutorial(true);
+          onTutorialActiveChange?.(true);
+        }, 400);
         return () => clearTimeout(t);
       }
     } catch {}
-  }, []);
+  }, [onTutorialActiveChange]);
 
   const handleTutorialComplete = () => {
     try {
       localStorage.setItem(TUTORIAL_KEY, "1");
     } catch {}
     setShowTutorial(false);
+    onTutorialActiveChange?.(false);
   };
 
   // Ring progress
@@ -137,15 +144,17 @@ const FocusReadingMode = ({
         <button
           onClick={onExit}
           aria-label="Sair do modo leitura"
+          data-tutorial="exit"
           className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/85 transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-white/10"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" data-tutorial="tools">
           <button
             onClick={() => setMusicOpen(true)}
             aria-label="Ouvir música"
+            data-tutorial="music"
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/85 transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-white/10"
           >
             <Headphones className="w-5 h-5" />
@@ -194,6 +203,7 @@ const FocusReadingMode = ({
         {/* Single primary action */}
         <button
           onClick={onPauseResume}
+          data-tutorial="play"
           className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all duration-300 ease-out hover:scale-[1.06] active:scale-[0.94] shadow-lg shadow-[#D4AF37]/20"
           aria-label={isPaused ? "Continuar leitura" : "Pausar leitura"}
         >
@@ -207,6 +217,7 @@ const FocusReadingMode = ({
         {/* Subtle finish link */}
         <button
           onClick={onFinish}
+          data-tutorial="finish"
           className="mt-8 text-sm text-white/60 hover:text-white/90 transition-all duration-200 flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97]"
         >
           <CheckCircle className="w-4 h-4" />

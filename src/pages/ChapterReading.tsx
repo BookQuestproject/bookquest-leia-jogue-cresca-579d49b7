@@ -466,6 +466,7 @@ const ChapterReading = () => {
   const [earnedXp, setEarnedXp] = useState(0);
   const [contribOpen, setContribOpen] = useState(false);
   const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [tutorialActive, setTutorialActive] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [dynamicBook, setDynamicBook] = useState<typeof bookData[string] | null>(null);
@@ -579,9 +580,9 @@ const ChapterReading = () => {
     setRestoreDecided(true);
   }, [progress, progressLoading, restoreDecided]);
 
-  // Timer logic
+  // Timer logic — paused during first-time tutorial
   useEffect(() => {
-    if (readingState === "reading" && !isPaused) {
+    if (readingState === "reading" && !isPaused && !tutorialActive) {
       timerRef.current = setInterval(() => {
         setElapsedTime(prev => prev + 1);
       }, 1000);
@@ -592,7 +593,7 @@ const ChapterReading = () => {
         clearInterval(timerRef.current);
       }
     };
-  }, [readingState, isPaused]);
+  }, [readingState, isPaused, tutorialActive]);
 
   // Auto-save when paused
   useEffect(() => {
@@ -975,6 +976,7 @@ const ChapterReading = () => {
             vocabularySlot={
               <VocabularyButton bookId={bookId} bookTitle={book.title} />
             }
+            onTutorialActiveChange={setTutorialActive}
           />
         )}
 
