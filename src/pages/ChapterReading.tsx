@@ -964,7 +964,12 @@ const ChapterReading = () => {
             isPaused={isPaused}
             onPauseResume={handlePauseResume}
             onFinish={handleChapterComplete}
-            onExit={() => navigate(-1)}
+            onExit={() => {
+              if (user && elapsedTime > 0) {
+                saveProgress(elapsedTime);
+              }
+              setReadingState("intro");
+            }}
             isTimerError={isTimerError}
             vocabularySlot={
               <VocabularyButton bookId={bookId} bookTitle={book.title} />
