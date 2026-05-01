@@ -42,17 +42,18 @@ const FocusReadingMode = ({
     <div
       className="fixed inset-0 z-[60] overflow-hidden"
       style={{
-        // Soft warm beige base — comfortable for long reading
+        // Warm "paper" base — Kindle-like, low visual fatigue.
+        // Top slightly lighter, bottom slightly warmer.
         background:
-          "radial-gradient(circle at 30% 20%, hsl(35 35% 92%) 0%, hsl(35 30% 88%) 40%, hsl(200 25% 85%) 100%)",
+          "linear-gradient(180deg, hsl(40 35% 94%) 0%, hsl(38 38% 91%) 50%, hsl(32 40% 88%) 100%)",
       }}
     >
-      {/* Animated ambient gradient layer */}
+      {/* Animated ambient warmth — very subtle */}
       <div
-        className="absolute inset-0 opacity-60 pointer-events-none animate-focus-breathe"
+        className="absolute inset-0 opacity-70 pointer-events-none animate-focus-breathe"
         style={{
           background:
-            "radial-gradient(circle at 70% 80%, hsl(150 30% 85% / 0.7) 0%, transparent 60%), radial-gradient(circle at 20% 70%, hsl(210 40% 88% / 0.6) 0%, transparent 55%)",
+            "radial-gradient(circle at 70% 85%, hsl(28 45% 86% / 0.6) 0%, transparent 55%), radial-gradient(circle at 15% 20%, hsl(45 50% 93% / 0.7) 0%, transparent 50%)",
         }}
       />
 
