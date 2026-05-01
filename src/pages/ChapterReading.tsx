@@ -566,15 +566,18 @@ const ChapterReading = () => {
     return () => window.removeEventListener("popstate", handlePopState);
   }, [readingState]);
 
-  // Restore progress when loaded
+  // Restore progress when loaded (synchronously decide intro vs reading)
+  const [restoreDecided, setRestoreDecided] = useState(false);
   useEffect(() => {
-    if (!progressLoading && progress && !hasRestoredProgress && !progress.is_completed) {
+    if (progressLoading || restoreDecided) return;
+    if (progress && !progress.is_completed) {
       setElapsedTime(progress.elapsed_time);
       setIsPaused(true);
       setReadingState("reading");
       setHasRestoredProgress(true);
     }
-  }, [progress, progressLoading, hasRestoredProgress]);
+    setRestoreDecided(true);
+  }, [progress, progressLoading, restoreDecided]);
 
   // Timer logic
   useEffect(() => {
