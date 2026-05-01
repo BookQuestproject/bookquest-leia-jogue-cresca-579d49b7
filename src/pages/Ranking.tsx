@@ -141,8 +141,8 @@ const Ranking = () => {
   return (
     <Layout>
       <div className="relative max-w-6xl mx-auto py-8 section-bg-ranking">
-        <Constellation variant="triangle" position="top-right" size={160} opacity={0.13} />
-        <Constellation variant="ursa" position="bottom-left" size={200} opacity={0.10} />
+        {/* Constellations removed to avoid overlapping cards/buttons; body starfield remains. */}
+
         {/* Header compact */}
         <header className="mb-6 animate-fade-in" data-tutorial="ranking-header">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
