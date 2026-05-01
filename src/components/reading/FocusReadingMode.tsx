@@ -162,6 +162,16 @@ const FocusReadingMode = ({
         </button>
 
         <div className="flex items-center gap-2" data-tutorial="tools">
+          {isAdmin && (
+            <button
+              onClick={handleReplayTutorial}
+              aria-label="Rever tutorial (admin)"
+              title="Rever tutorial (admin)"
+              className="w-11 h-11 rounded-full flex items-center justify-center bg-[#D4AF37]/15 hover:bg-[#D4AF37]/25 active:bg-[#D4AF37]/30 text-[#D4AF37] transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-[#D4AF37]/30"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </button>
+          )}
           <button
             onClick={() => setMusicOpen(true)}
             aria-label="Música ambiente (Spotify)"
