@@ -73,6 +73,8 @@ const VocabularyButton = ({ bookId, bookTitle }: Props) => {
     <>
       <Button
         size="sm"
+        data-tutorial="vocabulary"
+        aria-label="Abrir dicionário do vocabulário"
         className="gap-2 bg-[hsl(48_96%_53%)] text-[hsl(222_47%_11%)] hover:bg-[hsl(48_96%_48%)] shadow-md shadow-[hsl(48_96%_53%)]/30 font-semibold"
         onClick={() => setOpen(true)}
       >
