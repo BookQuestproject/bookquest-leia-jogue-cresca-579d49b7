@@ -976,7 +976,12 @@ const ChapterReading = () => {
             vocabularySlot={
               <VocabularyButton bookId={bookId} bookTitle={book.title} />
             }
-            onTutorialActiveChange={setTutorialActive}
+            onTutorialActiveChange={(active) => {
+              setTutorialActive(active);
+              // When the tutorial closes, leave the timer paused so the user
+              // explicitly chooses to start by pressing Play.
+              if (!active) setIsPaused(true);
+            }}
           />
         )}
 
