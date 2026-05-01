@@ -109,6 +109,16 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
+        "focus-breathe": {
+          "0%, 100%": { transform: "scale(1) translate(0, 0)", opacity: "0.55" },
+          "50%": { transform: "scale(1.08) translate(2%, -1%)", opacity: "0.75" },
+        },
+        "focus-drift": {
+          "0%": { transform: "translate(0, 0)", opacity: "0" },
+          "10%": { opacity: "0.6" },
+          "90%": { opacity: "0.4" },
+          "100%": { transform: "translate(40px, -60px)", opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -118,6 +128,8 @@ export default {
         "scale-in": "scale-in 0.3s ease-out forwards",
         "bounce-gentle": "bounce-gentle 2s ease-in-out infinite",
         "pulse": "pulse 2s ease-in-out infinite",
+        "focus-breathe": "focus-breathe 18s ease-in-out infinite",
+        "focus-drift": "focus-drift 28s linear infinite",
       },
     },
   },
