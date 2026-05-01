@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { ArrowLeft, Headphones, Pause, CheckCircle, Sparkles, Feather } from "lucide-react";
+import { ArrowLeft, Pause, CheckCircle, Sparkles, Feather } from "lucide-react";
+import SpotifyIcon from "@/components/icons/SpotifyIcon";
 
 interface FocusModeTutorialProps {
   onComplete: () => void;
