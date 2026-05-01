@@ -42,9 +42,9 @@ const FocusReadingMode = ({
     <div
       className="fixed inset-0 z-[60] overflow-hidden text-white animate-fade-in"
       style={{
-        // Warmer, softer royal blue — less saturated, more comfortable
+        // Royal blue base — matches site brand (#021f53)
         background:
-          "linear-gradient(180deg, #1a2f5c 0%, #14264d 50%, #0d1c3d 100%)",
+          "linear-gradient(180deg, #052a6b 0%, #021f53 55%, #01153b 100%)",
       }}
     >
       {/* Soft warm vignette to reduce edge contrast */}
