@@ -34,7 +34,7 @@ const steps: Step[] = [
     cardSide: "below",
   },
   {
-    icon: <SpotifyIcon size={20} />,
+    icon: <SpotifyIcon size={26} />,
     title: "Música ambiente",
     description:
       "Abra playlists tranquilas para acompanhar sua leitura.",

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Play, Pause, ArrowLeft, CheckCircle } from "lucide-react";
+import { Play, Pause, ArrowLeft, CheckCircle, HelpCircle } from "lucide-react";
 import SpotifyIcon from "@/components/icons/SpotifyIcon";
 import MusicPickerDialog from "./MusicPickerDialog";
 import FocusModeTutorial from "./FocusModeTutorial";
+import { useAdmin } from "@/hooks/useAdmin";
 
 const TUTORIAL_KEY = "focus-mode-tutorial-seen-v1";
 
@@ -39,6 +40,15 @@ const FocusReadingMode = ({
 }: FocusReadingModeProps) => {
   const [musicOpen, setMusicOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const { isAdmin } = useAdmin();
+
+  const handleReplayTutorial = () => {
+    try {
+      localStorage.removeItem(TUTORIAL_KEY);
+    } catch {}
+    setShowTutorial(true);
+    onTutorialActiveChange?.(true);
+  };
 
   useEffect(() => {
     try {
@@ -152,13 +162,23 @@ const FocusReadingMode = ({
         </button>
 
         <div className="flex items-center gap-2" data-tutorial="tools">
+          {isAdmin && (
+            <button
+              onClick={handleReplayTutorial}
+              aria-label="Rever tutorial (admin)"
+              title="Rever tutorial (admin)"
+              className="w-11 h-11 rounded-full flex items-center justify-center bg-[#D4AF37]/15 hover:bg-[#D4AF37]/25 active:bg-[#D4AF37]/30 text-[#D4AF37] transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-[#D4AF37]/30"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </button>
+          )}
           <button
             onClick={() => setMusicOpen(true)}
             aria-label="Música ambiente (Spotify)"
             data-tutorial="music"
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/85 transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-white/10"
           >
-            <SpotifyIcon size={20} />
+            <SpotifyIcon size={28} />
           </button>
           {vocabularySlot}
         </div>
