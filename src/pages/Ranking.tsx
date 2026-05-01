@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileRanking from "@/components/mobile/MobileRanking";
 import { useRanking, RankingUser } from "@/hooks/useRanking";
+import Constellation from "@/components/visual/Constellation";
 
 const tierOrder: RankingTier[] = ["bronze", "silver", "gold", "sapphire", "emerald", "amethyst", "ruby", "quartz", "diamond", "legendary"];
 
@@ -139,7 +140,9 @@ const Ranking = () => {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto py-8 section-bg-ranking">
+      <div className="relative max-w-6xl mx-auto py-8 section-bg-ranking">
+        <Constellation variant="triangle" position="top-right" size={160} opacity={0.13} />
+        <Constellation variant="ursa" position="bottom-left" size={200} opacity={0.10} />
         {/* Header compact */}
         <header className="mb-6 animate-fade-in" data-tutorial="ranking-header">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

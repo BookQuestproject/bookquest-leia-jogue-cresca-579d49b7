@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import MobileNav from "./MobileNav";
 import FloatingAdminWidget from "../FloatingAdminWidget";
 import { useAdmin } from "@/hooks/useAdmin";
+import { useStreakTick } from "@/hooks/useStreakTick";
 
 interface LayoutProps {
   children: ReactNode;
@@ -11,6 +12,8 @@ interface LayoutProps {
 
 const Layout = ({ children, isPremium = false }: LayoutProps) => {
   const { isAdmin } = useAdmin();
+  // Acende a tocha do dia (uma vez por dia, idempotente no servidor)
+  useStreakTick();
 
   return (
     <div className="min-h-screen">

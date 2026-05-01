@@ -22,6 +22,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
+import Constellation from "@/components/visual/Constellation";
 
 const MILESTONE_TITLES: Record<string, string> = {
   "milestone-streak": "Leitor Persistente",
@@ -83,7 +84,9 @@ const Missoes = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto py-8 section-bg-missions">
+      <div className="relative max-w-4xl mx-auto py-8 section-bg-missions">
+        <Constellation variant="ursa" position="top-right" size={180} opacity={0.14} />
+        <Constellation variant="triangle" position="bottom-left" size={140} opacity={0.10} />
         {/* Header */}
         <header className="mb-10 animate-fade-in" data-tutorial="missoes-header">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">

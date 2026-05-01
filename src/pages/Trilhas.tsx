@@ -38,6 +38,7 @@ import CompletedChapterModal from "@/components/CompletedChapterModal";
 import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
 import BookStructureDialog from "@/components/reading/BookStructureDialog";
 import { useBookStructure } from "@/hooks/useBookStructure";
+import Constellation from "@/components/visual/Constellation";
 
 interface Chapter {
   id: number;
@@ -1286,7 +1287,9 @@ const Trilhas = () => {
   // Books listing view
   return (
     <Layout isPremium={isPremium}>
-      <div className="max-w-5xl mx-auto py-8 section-bg-challenges">
+      <div className="relative max-w-5xl mx-auto py-8 section-bg-challenges">
+        <Constellation variant="kite" position="top-right" size={170} opacity={0.13} />
+        <Constellation variant="arc" position="bottom-left" size={180} opacity={0.10} />
         {/* Header */}
         <header className="mb-10 animate-fade-in" data-tutorial="trilhas-header">
           <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">Biblioteca de Jornadas</p>

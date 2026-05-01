@@ -1945,6 +1945,7 @@ export type Database = {
           assigned_tier: string
           created_at: string
           id: string
+          last_streak_date: string | null
           last_week_reset: string | null
           streak: number
           updated_at: string
@@ -1956,6 +1957,7 @@ export type Database = {
           assigned_tier?: string
           created_at?: string
           id?: string
+          last_streak_date?: string | null
           last_week_reset?: string | null
           streak?: number
           updated_at?: string
@@ -1967,6 +1969,7 @@ export type Database = {
           assigned_tier?: string
           created_at?: string
           id?: string
+          last_streak_date?: string | null
           last_week_reset?: string | null
           streak?: number
           updated_at?: string
@@ -2020,6 +2023,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      tick_user_streak: {
+        Args: { _user_id: string }
+        Returns: {
+          streak: number
+          was_updated: boolean
+        }[]
       }
     }
     Enums: {
