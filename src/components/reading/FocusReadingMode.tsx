@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Play, Pause, ArrowLeft, CheckCircle } from "lucide-react";
+import { Play, Pause, ArrowLeft, CheckCircle, HelpCircle } from "lucide-react";
 import SpotifyIcon from "@/components/icons/SpotifyIcon";
 import MusicPickerDialog from "./MusicPickerDialog";
 import FocusModeTutorial from "./FocusModeTutorial";
+import { useAdmin } from "@/hooks/useAdmin";
 
 const TUTORIAL_KEY = "focus-mode-tutorial-seen-v1";
 
