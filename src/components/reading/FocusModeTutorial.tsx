@@ -213,23 +213,8 @@ const FocusModeTutorial = ({ onComplete }: FocusModeTutorialProps) => {
         />
       </svg>
 
-      {/* Spotlight ring around the actual target element */}
-      {rect && (
-        <div
-          className="absolute pointer-events-none transition-all duration-500 ease-out"
-          style={{
-            top: rect.top - 6,
-            left: rect.left - 6,
-            width: rect.width + 12,
-            height: rect.height + 12,
-            borderRadius: 9999,
-            border: "2px solid #D4AF37",
-            boxShadow:
-              "0 0 0 4px rgba(212,175,55,0.18), 0 0 30px rgba(212,175,55,0.5)",
-            animation: "pulse 1.8s ease-in-out infinite",
-          }}
-        />
-      )}
+      {/* Spotlight ring removed — the mask hole alone already highlights the target */}
+
 
       {/* Tutorial card */}
       <div
