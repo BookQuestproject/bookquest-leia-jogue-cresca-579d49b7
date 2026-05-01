@@ -789,8 +789,8 @@ const ChapterReading = () => {
     );
   }
 
-  // Show loading while checking for saved progress
-  if (progressLoading && user) {
+  // Show loading while checking for saved progress (prevents intro flicker)
+  if ((progressLoading || !restoreDecided) && user) {
     return (
       <Layout>
         <div className="max-w-2xl mx-auto py-8 text-center">
