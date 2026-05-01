@@ -215,6 +215,8 @@ const FocusReadingMode = ({
       </div>
 
       <MusicPickerDialog open={musicOpen} onOpenChange={setMusicOpen} />
+
+      {showTutorial && <FocusModeTutorial onComplete={handleTutorialComplete} />}
     </div>
   );
 };
