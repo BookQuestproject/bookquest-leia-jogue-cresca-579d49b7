@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileRanking from "@/components/mobile/MobileRanking";
 import { useRanking, RankingUser } from "@/hooks/useRanking";
-import Constellation from "@/components/visual/Constellation";
 
 const tierOrder: RankingTier[] = ["bronze", "silver", "gold", "sapphire", "emerald", "amethyst", "ruby", "quartz", "diamond", "legendary"];
 

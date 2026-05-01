@@ -38,7 +38,6 @@ import CompletedChapterModal from "@/components/CompletedChapterModal";
 import { ChapterContributionDialog } from "@/components/ChapterContributionDialog";
 import BookStructureDialog from "@/components/reading/BookStructureDialog";
 import { useBookStructure } from "@/hooks/useBookStructure";
-import Constellation from "@/components/visual/Constellation";
 
 interface Chapter {
   id: number;

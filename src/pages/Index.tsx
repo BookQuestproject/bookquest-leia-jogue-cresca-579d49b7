@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Sparkles, Repeat, Zap, Clock, Flame, Settings } from "lucide-react";
 import Layout from "@/components/layout/Layout";
-import Constellation from "@/components/visual/Constellation";
 import BookmarkMarker from "@/components/BookmarkMarker";
 import { useActiveTrail } from "@/hooks/useActiveTrail";
 import { useProfile } from "@/hooks/useProfile";

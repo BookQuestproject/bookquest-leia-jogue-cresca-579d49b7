@@ -22,7 +22,6 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useProfile } from "@/hooks/useProfile";
 import MobileMissoes from "@/components/mobile/MobileMissoes";
-import Constellation from "@/components/visual/Constellation";
 import { useStreakTick } from "@/hooks/useStreakTick";
 
 const MILESTONE_TITLES: Record<string, string> = {
