@@ -136,7 +136,7 @@ const FocusReadingMode = ({
       {/* Center — the timer is the protagonist */}
       <div className="relative h-full w-full flex flex-col items-center justify-center px-6">
         <div className="relative flex items-center justify-center">
-          {/* Soft active glow behind the ring */}
+          {/* Soft active glow behind the timer */}
           <div
             className={`absolute rounded-full pointer-events-none transition-opacity duration-700 ${
               isPaused ? "opacity-30" : "opacity-100 animate-focus-glow-pulse"
@@ -150,53 +150,6 @@ const FocusReadingMode = ({
             }}
           />
 
-          {/* Progress ring — refined, smartwatch-like */}
-          <svg
-            width={radius * 2 + 40}
-            height={radius * 2 + 40}
-            className="absolute inset-0 m-auto -rotate-90"
-            style={{ width: radius * 2 + 40, height: radius * 2 + 40 }}
-          >
-            <defs>
-              <linearGradient id="focusRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="hsl(45 95% 75%)" stopOpacity="0.95" />
-                <stop offset="50%" stopColor="hsl(42 90% 65%)" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="hsl(38 85% 55%)" stopOpacity="0.75" />
-              </linearGradient>
-              <filter id="focusRingGlow">
-                <feGaussianBlur stdDeviation="2.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-            <circle
-              cx={radius + 20}
-              cy={radius + 20}
-              r={radius}
-              fill="none"
-              stroke="hsl(0 0% 100% / 0.06)"
-              strokeWidth={1.5}
-            />
-            <circle
-              cx={radius + 20}
-              cy={radius + 20}
-              r={radius}
-              fill="none"
-              stroke="url(#focusRingGradient)"
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={dashOffset}
-              filter={isPaused ? undefined : "url(#focusRingGlow)"}
-              style={{
-                transition: "stroke-dashoffset 1s linear, opacity 500ms ease",
-                opacity: isPaused ? 0.5 : 1,
-              }}
-            />
-          </svg>
-
           {/* Time */}
           <div
             className={`relative flex items-center justify-center ${
@@ -205,12 +158,12 @@ const FocusReadingMode = ({
             style={{ width: radius * 2 + 40, height: radius * 2 + 40 }}
           >
             <span
-              className={`font-mono font-light tracking-widest text-white/95 select-none transition-all duration-500 ${
+              className={`font-serif font-medium tracking-wide text-white/95 select-none transition-all duration-500 ${
                 isPaused
                   ? "opacity-55 drop-shadow-[0_2px_8px_rgba(255,255,255,0.08)]"
                   : "drop-shadow-[0_2px_16px_rgba(212,175,55,0.35)]"
               }`}
-              style={{ fontSize: "clamp(3.5rem, 12vw, 6.5rem)" }}
+              style={{ fontSize: "clamp(4rem, 14vw, 7.5rem)" }}
             >
               {formatTime(elapsedTime)}
             </span>
