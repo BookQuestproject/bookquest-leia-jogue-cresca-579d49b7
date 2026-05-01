@@ -112,11 +112,11 @@ const FocusReadingMode = ({
       </div>
 
       {/* Top bar — minimalist */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-5 z-10">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-5 z-10 animate-fade-in">
         <button
           onClick={onExit}
           aria-label="Sair do modo leitura"
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white/80 transition-colors backdrop-blur-sm"
+          className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/85 transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-white/10"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -126,7 +126,7 @@ const FocusReadingMode = ({
           <button
             onClick={() => setMusicOpen(true)}
             aria-label="Ouvir música"
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white/80 transition-colors backdrop-blur-sm"
+            className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 text-white/85 transition-all duration-200 backdrop-blur-md hover:scale-[1.03] active:scale-[0.97] border border-white/10"
           >
             <Headphones className="w-5 h-5" />
           </button>
@@ -136,32 +136,64 @@ const FocusReadingMode = ({
       {/* Center — the timer is the protagonist */}
       <div className="relative h-full w-full flex flex-col items-center justify-center px-6">
         <div className="relative flex items-center justify-center">
-          {/* Progress ring */}
+          {/* Soft active glow behind the ring */}
+          <div
+            className={`absolute rounded-full pointer-events-none transition-opacity duration-700 ${
+              isPaused ? "opacity-30" : "opacity-100 animate-focus-glow-pulse"
+            }`}
+            style={{
+              width: radius * 2 + 80,
+              height: radius * 2 + 80,
+              background:
+                "radial-gradient(circle, hsl(45 80% 60% / 0.18) 0%, transparent 65%)",
+              filter: "blur(20px)",
+            }}
+          />
+
+          {/* Progress ring — refined, smartwatch-like */}
           <svg
             width={radius * 2 + 40}
             height={radius * 2 + 40}
             className="absolute inset-0 m-auto -rotate-90"
             style={{ width: radius * 2 + 40, height: radius * 2 + 40 }}
           >
+            <defs>
+              <linearGradient id="focusRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="hsl(45 95% 75%)" stopOpacity="0.95" />
+                <stop offset="50%" stopColor="hsl(42 90% 65%)" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="hsl(38 85% 55%)" stopOpacity="0.75" />
+              </linearGradient>
+              <filter id="focusRingGlow">
+                <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
             <circle
               cx={radius + 20}
               cy={radius + 20}
               r={radius}
               fill="none"
-              stroke="hsl(0 0% 100% / 0.1)"
-              strokeWidth={2}
+              stroke="hsl(0 0% 100% / 0.06)"
+              strokeWidth={1.5}
             />
             <circle
               cx={radius + 20}
               cy={radius + 20}
               r={radius}
               fill="none"
-              stroke="hsl(45 90% 65% / 0.7)"
-              strokeWidth={2}
+              stroke="url(#focusRingGradient)"
+              strokeWidth={1.5}
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={dashOffset}
-              style={{ transition: "stroke-dashoffset 1s linear" }}
+              filter={isPaused ? undefined : "url(#focusRingGlow)"}
+              style={{
+                transition: "stroke-dashoffset 1s linear, opacity 500ms ease",
+                opacity: isPaused ? 0.5 : 1,
+              }}
             />
           </svg>
 
@@ -173,8 +205,10 @@ const FocusReadingMode = ({
             style={{ width: radius * 2 + 40, height: radius * 2 + 40 }}
           >
             <span
-              className={`font-mono font-light tracking-widest text-white/95 select-none drop-shadow-[0_2px_12px_rgba(212,175,55,0.25)] ${
-                isPaused ? "opacity-60" : ""
+              className={`font-mono font-light tracking-widest text-white/95 select-none transition-all duration-500 ${
+                isPaused
+                  ? "opacity-55 drop-shadow-[0_2px_8px_rgba(255,255,255,0.08)]"
+                  : "drop-shadow-[0_2px_16px_rgba(212,175,55,0.35)]"
               }`}
               style={{ fontSize: "clamp(3.5rem, 12vw, 6.5rem)" }}
             >
@@ -186,7 +220,11 @@ const FocusReadingMode = ({
         {/* Single primary action */}
         <button
           onClick={onPauseResume}
-          className="mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-[#D4AF37]/30"
+          className={`mt-16 w-20 h-20 rounded-full flex items-center justify-center bg-[#D4AF37] text-[#021f53] hover:bg-[#e5c252] transition-all duration-300 ease-out hover:scale-[1.06] active:scale-[0.94] shadow-xl ${
+            isPaused
+              ? "shadow-[#D4AF37]/20"
+              : "shadow-[#D4AF37]/40 animate-focus-button-glow"
+          }`}
           aria-label={isPaused ? "Continuar leitura" : "Pausar leitura"}
         >
           {isPaused ? (
@@ -199,7 +237,7 @@ const FocusReadingMode = ({
         {/* Subtle finish link */}
         <button
           onClick={onFinish}
-          className="mt-8 text-sm text-white/60 hover:text-white/90 transition-colors flex items-center gap-2"
+          className="mt-8 text-sm text-white/60 hover:text-white/90 transition-all duration-200 flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97]"
         >
           <CheckCircle className="w-4 h-4" />
           Finalizar leitura
