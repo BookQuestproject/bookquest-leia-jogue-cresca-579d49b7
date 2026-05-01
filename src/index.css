@@ -1401,14 +1401,4 @@
   right: auto !important;
 }
 
-/* ============ Cards: solid surface above the cosmic background ============ */
-/* Most pages use shadcn <Card> with bg-card; the new translucent space backdrop
-   makes solid cards look harsh. Soften them slightly so they read as "panels
-   floating in space" without becoming a full glassmorphism redesign yet
-   (that comes in Phase 2). */
-@layer components {
-  .bg-card,
-  [class*="bg-card"] {
-    backdrop-filter: saturate(1.05);
-  }
-}
+/* (Cards holográficos definidos em @layer components mais acima) */
