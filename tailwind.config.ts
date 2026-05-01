@@ -135,6 +135,14 @@ export default {
           "0%, 100%": { opacity: "1", transform: "scale(1)" },
           "50%": { opacity: "0.35", transform: "scale(0.85)" },
         },
+        "focus-glow-pulse": {
+          "0%, 100%": { opacity: "0.85", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.04)" },
+        },
+        "focus-button-glow": {
+          "0%, 100%": { boxShadow: "0 10px 30px -5px rgba(212, 175, 55, 0.35), 0 0 0 0 rgba(212, 175, 55, 0.0)" },
+          "50%": { boxShadow: "0 10px 35px -5px rgba(212, 175, 55, 0.5), 0 0 0 8px rgba(212, 175, 55, 0.06)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -149,6 +157,8 @@ export default {
         "focus-drift-b": "focus-drift-b 60s ease-in-out infinite",
         "focus-drift-c": "focus-drift-c 70s ease-in-out infinite",
         "focus-twinkle": "focus-twinkle 10s ease-in-out infinite",
+        "focus-glow-pulse": "focus-glow-pulse 4s ease-in-out infinite",
+        "focus-button-glow": "focus-button-glow 3s ease-in-out infinite",
       },
     },
   },
