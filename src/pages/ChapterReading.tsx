@@ -956,92 +956,19 @@ const ChapterReading = () => {
           />
         )}
 
-        {/* Reading State - Timer Active */}
+        {/* Reading State - Focus Mode (immersive zen) */}
         {readingState === "reading" && (
-          <div className="animate-fade-in space-y-8">
-            {/* Chapter Info */}
-            <div className="text-center mb-4">
-              <span className="text-4xl mb-2 block">{chapter.icon}</span>
-              <p className="text-sm text-muted-foreground">Capítulo {chapter.id}</p>
-              <h1 className="text-xl font-serif font-semibold">{chapter.title}</h1>
-            </div>
-
-            {/* Timer Display */}
-            <div 
-              className={`rounded-2xl p-8 text-center transition-all duration-200 ${
-                isTimerError ? 'animate-[shake_0.5s_ease-in-out]' : ''
-              }`}
-              style={{
-                background: isTimerError 
-                  ? 'linear-gradient(135deg, hsl(0 65% 45%), hsl(0 65% 35%))'
-                  : `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
-              }}
-            >
-              <div className="flex items-center justify-center gap-2 text-white/70 text-sm mb-3">
-                <Clock className="w-4 h-4" />
-                {isPaused ? "Leitura pausada" : "Tempo de leitura"}
-              </div>
-              
-              <div 
-                className={`text-6xl lg:text-7xl font-mono font-bold text-white mb-4 tracking-wider ${
-                  isPaused ? 'animate-pulse' : ''
-                }`}
-              >
-                {formatTime(elapsedTime)}
-              </div>
-
-              <p className="text-white/60 text-sm">
-                {chapter.totalPages} páginas • {book.title}
-              </p>
-            </div>
-
-            {/* Reading Instructions */}
-            <div className="bg-muted/50 rounded-xl p-4 text-center">
-              <BookOpen className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                Abra seu livro e leia o capítulo. Quando terminar, clique em "Capítulo Concluído".
-              </p>
-            </div>
-
-            {/* Vocabulary helper - fixed top right */}
-            <div className="fixed top-4 right-4 z-40">
+          <FocusReadingMode
+            elapsedTime={elapsedTime}
+            isPaused={isPaused}
+            onPauseResume={handlePauseResume}
+            onFinish={handleChapterComplete}
+            onExit={() => navigate(-1)}
+            isTimerError={isTimerError}
+            vocabularySlot={
               <VocabularyButton bookId={bookId} bookTitle={book.title} />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="gap-2"
-                onClick={handlePauseResume}
-              >
-                {isPaused ? (
-                  <>
-                    <Play className="w-5 h-5" />
-                    Continuar
-                  </>
-                ) : (
-                  <>
-                    <Pause className="w-5 h-5" />
-                    Pausar
-                  </>
-                )}
-              </Button>
-              
-              <Button 
-                size="lg" 
-                className="gap-2"
-                onClick={handleChapterComplete}
-                style={{ 
-                  background: `linear-gradient(135deg, hsl(${themeColor}), hsl(${themeColor.replace(/\d+%$/, (m) => parseInt(m) + 10 + '%')}))`,
-                }}
-              >
-                <CheckCircle className="w-5 h-5" />
-                Finalizar leitura
-              </Button>
-            </div>
-          </div>
+            }
+          />
         )}
 
         {/* Reflection State - AI-powered post-chapter questions */}
