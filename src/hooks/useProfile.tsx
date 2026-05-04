@@ -119,6 +119,29 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     fetchProfile();
   }, [user]);
 
+  // After login, redeem any pending referral code captured during signup.
+  useEffect(() => {
+    if (!user) return;
+    let pending = "";
+    try { pending = localStorage.getItem("bookquest-pending-referral") || ""; } catch {}
+    if (!pending) return;
+
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("process-referral", {
+          body: { code: pending },
+        });
+        // Clear regardless of outcome to avoid loops; user can retry from profile if needed.
+        try { localStorage.removeItem("bookquest-pending-referral"); } catch {}
+        if (!error && (data as any)?.ok) {
+          await fetchProfile();
+        }
+      } catch (e) {
+        console.error("Referral processing failed:", e);
+      }
+    })();
+  }, [user]);
+
   useEffect(() => {
     if (session) {
       checkSubscription();
