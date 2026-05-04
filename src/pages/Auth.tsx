@@ -402,6 +402,28 @@ const Auth = () => {
               {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
             </div>
 
+            {/* Referral code (signup only) */}
+            {!isLogin && (
+              <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="referral" className="text-foreground/80 text-sm font-medium flex items-center justify-between">
+                  <span>Código de convite <span className="text-muted-foreground/60 font-normal">(opcional)</span></span>
+                  <span className="text-[10px] text-accent/80 font-semibold uppercase tracking-wider">+20 ✦</span>
+                </Label>
+                <Input
+                  id="referral"
+                  type="text"
+                  placeholder="Ex.: 8AD5A3"
+                  value={referralInput}
+                  onChange={(e) => setReferralInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12))}
+                  className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 focus:border-accent/60 focus:ring-accent/20 focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.08)] transition-all duration-200 font-mono tracking-widest"
+                  disabled={isLoading}
+                />
+                <p className="text-[11px] text-muted-foreground/70">
+                  Tem um código de um amigo? Insira aqui — vocês dois ganham Essência ✦.
+                </p>
+              </div>
+            )}
+
             {/* Submit */}
             <Button
               type="submit"
