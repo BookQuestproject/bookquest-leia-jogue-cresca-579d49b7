@@ -115,8 +115,62 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     await fetchProfile();
   };
 
+  // Reset all browser-local state (shelf, active trail, my trails, quiz reco)
+  // whenever the authenticated user changes. This guarantees a brand-new account
+  // starts with a 100% empty experience and never inherits the previous user's
+  // bookshelf / active reading trail on the same browser.
+  useEffect(() => {
+    const KEY = "bookquest-last-user-id";
+    let last = "";
+    try { last = localStorage.getItem(KEY) || ""; } catch {}
+    const current = user?.id || "";
+    if (current && current !== last) {
+      try {
+        localStorage.removeItem("bookquest-shelf");
+        localStorage.removeItem("bookquest-active-trail");
+        localStorage.removeItem("bookquest-my-trails");
+        localStorage.removeItem("bookquest-quiz-recommendations");
+        localStorage.setItem(KEY, current);
+        // Reload so all useSyncExternalStore stores re-init from empty storage.
+        if (last) window.location.reload();
+      } catch {}
+    } else if (!current && last) {
+      // User signed out — wipe and remember.
+      try {
+        localStorage.removeItem("bookquest-shelf");
+        localStorage.removeItem("bookquest-active-trail");
+        localStorage.removeItem("bookquest-my-trails");
+        localStorage.removeItem("bookquest-quiz-recommendations");
+        localStorage.removeItem(KEY);
+      } catch {}
+    }
+  }, [user?.id]);
+
   useEffect(() => {
     fetchProfile();
+  }, [user]);
+
+  // After login, redeem any pending referral code captured during signup.
+  useEffect(() => {
+    if (!user) return;
+    let pending = "";
+    try { pending = localStorage.getItem("bookquest-pending-referral") || ""; } catch {}
+    if (!pending) return;
+
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("process-referral", {
+          body: { code: pending },
+        });
+        // Clear regardless of outcome to avoid loops; user can retry from profile if needed.
+        try { localStorage.removeItem("bookquest-pending-referral"); } catch {}
+        if (!error && (data as any)?.ok) {
+          await fetchProfile();
+        }
+      } catch (e) {
+        console.error("Referral processing failed:", e);
+      }
+    })();
   }, [user]);
 
   useEffect(() => {

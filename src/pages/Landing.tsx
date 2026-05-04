@@ -52,7 +52,7 @@ const Landing = () => {
   ];
 
   return (
-    <main id="main-content" className="min-h-screen bg-background text-foreground overflow-hidden">
+    <main id="main-content" className="min-h-screen text-foreground overflow-hidden" style={{ backgroundColor: '#021f53' }}>
       {/* Background gradients */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] via-transparent to-transparent" />

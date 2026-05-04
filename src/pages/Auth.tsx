@@ -22,16 +22,34 @@ const Auth = () => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [referralInput, setReferralInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; referral?: string }>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
   const { signIn, signUp, user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Pre-fill referral code from URL (?ref=ABC123) and remember it across the session
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      const clean = ref.trim().toUpperCase().slice(0, 12);
+      setReferralInput(clean);
+      try { localStorage.setItem('bookquest-pending-referral', clean); } catch {}
+      setIsLogin(false); // jump straight to signup form
+    } else {
+      try {
+        const stored = localStorage.getItem('bookquest-pending-referral');
+        if (stored) setReferralInput(stored);
+      } catch {}
+    }
+  }, []);
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
@@ -143,6 +161,11 @@ const Auth = () => {
           }
           toast({ title: 'Erro no cadastro', description: message, variant: 'destructive' });
         } else {
+          // Persist the referral code so it can be processed once the new user
+          // confirms email and signs in for the first time.
+          if (referralInput.trim()) {
+            try { localStorage.setItem('bookquest-pending-referral', referralInput.trim().toUpperCase()); } catch {}
+          }
           toast({ title: 'Conta criada!', description: 'Verifique seu email para confirmar o cadastro.' });
         }
       }
@@ -206,7 +229,7 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative bg-background text-foreground overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative text-foreground overflow-hidden" style={{ backgroundColor: '#021f53' }}>
       {/* Background layers */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.05] via-transparent to-accent/[0.02]" />
@@ -378,6 +401,28 @@ const Auth = () => {
 
               {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
             </div>
+
+            {/* Referral code (signup only) */}
+            {!isLogin && (
+              <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="referral" className="text-foreground/80 text-sm font-medium flex items-center justify-between">
+                  <span>Código de convite <span className="text-muted-foreground/60 font-normal">(opcional)</span></span>
+                  <span className="text-[10px] text-accent/80 font-semibold uppercase tracking-wider">+20 ✦</span>
+                </Label>
+                <Input
+                  id="referral"
+                  type="text"
+                  placeholder="Ex.: 8AD5A3"
+                  value={referralInput}
+                  onChange={(e) => setReferralInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12))}
+                  className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 focus:border-accent/60 focus:ring-accent/20 focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.08)] transition-all duration-200 font-mono tracking-widest"
+                  disabled={isLoading}
+                />
+                <p className="text-[11px] text-muted-foreground/70">
+                  Tem um código de um amigo? Insira aqui — vocês dois ganham Essência ✦.
+                </p>
+              </div>
+            )}
 
             {/* Submit */}
             <Button
