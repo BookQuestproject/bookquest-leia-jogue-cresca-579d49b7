@@ -22,16 +22,34 @@ const Auth = () => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [referralInput, setReferralInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; referral?: string }>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
   const { signIn, signUp, user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Pre-fill referral code from URL (?ref=ABC123) and remember it across the session
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      const clean = ref.trim().toUpperCase().slice(0, 12);
+      setReferralInput(clean);
+      try { localStorage.setItem('bookquest-pending-referral', clean); } catch {}
+      setIsLogin(false); // jump straight to signup form
+    } else {
+      try {
+        const stored = localStorage.getItem('bookquest-pending-referral');
+        if (stored) setReferralInput(stored);
+      } catch {}
+    }
+  }, []);
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
