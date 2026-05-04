@@ -14,26 +14,41 @@ export const useReferral = () => {
     
     const fetchOrGenerateCode = async () => {
       try {
-        const { data: profile, error } = await supabase
+        // First try to read the existing referral code
+        const { data: profile } = await supabase
           .from('profiles')
           .select('referral_code')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
-
-        if (profile.referral_code) {
+        if (profile?.referral_code) {
           setReferralCode(profile.referral_code);
+          return;
+        }
+
+        // No code yet (or no profile row): ensure profile exists, then nudge an
+        // update so the BEFORE INSERT trigger fills referral_code, or generate one.
+        await supabase
+          .from('profiles')
+          .upsert(
+            { id: user.id, email: user.email ?? null, updated_at: new Date().toISOString() },
+            { onConflict: 'id' }
+          );
+
+        const { data: updated } = await supabase
+          .from('profiles')
+          .select('referral_code')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (updated?.referral_code) {
+          setReferralCode(updated.referral_code);
         } else {
-          const { data: updatedProfile, error: updateError } = await supabase
-            .from('profiles')
-            .update({ updated_at: new Date().toISOString() })
-            .eq('id', user.id)
-            .select('referral_code')
-            .single();
-            
-          if (!updateError && updatedProfile?.referral_code) {
-            setReferralCode(updatedProfile.referral_code);
+          // Last-resort: ask the DB to generate a code and persist it
+          const { data: gen } = await supabase.rpc('generate_referral_code');
+          if (gen) {
+            await supabase.from('profiles').update({ referral_code: gen }).eq('id', user.id);
+            setReferralCode(gen as string);
           }
         }
       } catch (err) {
