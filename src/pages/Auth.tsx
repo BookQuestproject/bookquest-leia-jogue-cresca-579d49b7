@@ -161,6 +161,11 @@ const Auth = () => {
           }
           toast({ title: 'Erro no cadastro', description: message, variant: 'destructive' });
         } else {
+          // Persist the referral code so it can be processed once the new user
+          // confirms email and signs in for the first time.
+          if (referralInput.trim()) {
+            try { localStorage.setItem('bookquest-pending-referral', referralInput.trim().toUpperCase()); } catch {}
+          }
           toast({ title: 'Conta criada!', description: 'Verifique seu email para confirmar o cadastro.' });
         }
       }
