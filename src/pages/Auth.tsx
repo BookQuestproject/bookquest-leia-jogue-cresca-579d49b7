@@ -229,7 +229,7 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative bg-background text-foreground overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative text-foreground overflow-hidden" style={{ backgroundColor: '#021f53' }}>
       {/* Background layers */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.05] via-transparent to-accent/[0.02]" />
