@@ -1,118 +1,82 @@
-## BookQuest EDU — Redesign Total (Professor)
+## Plano: Persistência real do BookQuest EDU + convites + PDF de relatórios
 
-Refatoração completa da experiência do professor: nova arquitetura de menu, novas telas, comunicação por turma, relatórios automáticos individuais e configurações próprias do EDU.
+Vou estruturar em 4 frentes. Confirme antes de eu executar (a parte 1 inclui migration de banco que precisa da sua aprovação).
 
-### 1. Nova arquitetura do menu lateral (`EduLayout.tsx`)
+### 1. Schema do banco (migration)
 
-Substituir os 9 itens atuais por 8 categorias focadas na rotina do professor:
+Criar tabelas que ainda não existem:
 
-```
-1. Dashboard              → /edu/professor
-2. Turmas                 → /edu/turmas
-3. Jornadas de leitura    → /edu/jornadas
-4. Perguntas de Reflexão  → /edu/perguntas
-5. Comunicação            → /edu/comunicacao
-6. Relatórios             → /edu/relatorios
-7. Biblioteca             → /edu/livros
-8. Configurações EDU      → /edu/configuracoes
-```
+- `edu_journeys` — jornadas de leitura
+  - title, book_id, book_title, author, total_pages, total_chapters, teacher_id, created_at/updated_at
+- `edu_journey_classes` — vínculo N:N jornada ⇄ turma (com `assigned_at`)
+- `edu_journey_chapter_questions` — perguntas por capítulo de uma jornada
+  - journey_id, chapter_number, question_text, created_by
+- `edu_reports` — histórico de relatórios gerados/enviados
+  - class_id, student_user_id, teacher_id, period_label, metrics (jsonb: progress, chapters, frequency, reflections), analysis_text, teacher_note, status ('rascunho'|'gerado'|'enviado'), sent_at, pdf_url (opcional)
+- `edu_teacher_settings` — preferências do professor (jsonb: school_name, signature, email_settings, notification_prefs)
 
-Remover: Atividades, Quizzes, Rankings, Agenda, Mensagens (substituídos pelas novas categorias). Garantir que **nenhum link** redireciona para o BookQuest normal — o EDU vira produto próprio.
+Já existem e serão reutilizadas: `classes`, `class_members`, `class_questions`, `class_reading_progress`, `class_question_responses`, `edu_class_announcements`, `edu_teachers`.
 
-### 2. Dashboard refeito (`EduDashboard.tsx`)
-- Topo: 3 botões rápidos — Nova turma, Nova jornada, Gerar relatórios
-- KPIs: Turmas ativas, Alunos ativos, Leituras em andamento, Progresso médio
-- 3 cards laterais: Últimas turmas criadas, Últimas jornadas aplicadas, Últimos relatórios enviados
-- Feed: Atividades recentes das turmas
+RLS: professores veem/editam apenas seus dados (via `teacher_id = auth.uid()`); alunos veem jornadas/perguntas das turmas em que são membros (via EXISTS em `class_members`).
 
-### 3. Turmas com sub-navegação interna (`EduTurmaDetail.tsx`)
+### 2. Convites e vínculo de alunos
 
-Refatorar a página de detalhe da turma com tabs internas:
-- **Visão geral** — progresso, ranking, atividade recente
-- **Alunos** — lista com progresso individual, última atividade, botão "ver perfil"
-- **Jornadas** — jornadas aplicadas + botões "Aplicar nova" e "Duplicar para outra turma"
-- **Comunicação** — mural + chat da turma + DM individual
-- **Relatórios** — lista de alunos com botão "Gerar relatório"
+- **Botão "Convidar alunos"** dentro de cada turma (`EduTurmaDetail`):
+  - Mostra o `access_code` da turma com botão copiar
+  - Gera link `/edu/entrar?code=ABC123`
+  - Botão WhatsApp/E-mail (mailto + wa.me) com mensagem pronta
+- **Tela do aluno** `/edu/entrar` (já parcialmente existe via `EduAluno`): formulário simples para inserir código → usa `find_class_by_code` (já existe) → insere em `class_members`. Se não logado, redireciona para `/auth?redirect=...`.
+- **Vínculo manual pelo professor**: na aba "Alunos" da turma, campo de busca por @username/email → cria `class_members` direto (precisa de uma RPC `teacher_add_student_to_class` security definer, pois RLS atual só permite o próprio user inserir).
 
-Lista de turmas (`EduTurmas.tsx`) já existe — ajustar cards: nome, alunos, jornada ativa, progresso médio.
+### 3. CRUD real (substituindo mocks)
 
-### 4. Jornadas de leitura (nova `EduJornadas.tsx`)
+- `EduJornadas.tsx` → usa `edu_journeys` + `edu_journey_classes` (criar/listar/duplicar/excluir)
+- `EduPerguntas.tsx` → usa `edu_journey_chapter_questions` (CRUD por capítulo)
+- `EduComunicacao.tsx` → usa `edu_class_announcements` (já existe tabela)
+- `EduRelatorios.tsx` → 
+  - Lista de alunos vem de `class_members` + `profiles` + `class_reading_progress`
+  - Métricas calculadas a partir de progresso real
+  - Salva em `edu_reports` ao gerar; muda status ao "enviar"
+- `EduConfiguracoes.tsx` → usa `edu_teacher_settings` (upsert)
+- `EduTurmaDetail.tsx` → aba Alunos lista `class_members` reais com progresso
 
-Substitui "Atividades". Fluxo de criação em wizard de 5 passos:
-1. Escolher livro (da biblioteca)
-2. Definir capítulos
-3. Associar perguntas por capítulo
-4. Publicar jornada
-5. Aplicar em uma ou várias turmas (multi-select)
+### 4. PDF do relatório
 
-Ações por jornada: Editar, Duplicar (com destaque visual forte), Aplicar em turmas.
+- Adicionar `jspdf` (já leve) via `bun add jspdf`
+- Função `generateReportPDF(report, student, classData, teacherSettings)`:
+  - Cabeçalho com nome da escola/professor, logo BookQuest EDU
+  - Bloco "Aluno": nome, turma, período
+  - Bloco "Métricas" em tabela: progresso %, capítulos lidos, frequência, reflexões
+  - Bloco "Análise pedagógica" (texto gerado)
+  - Bloco "Observação do professor" (campo livre)
+  - Rodapé com data e assinatura
+- Botões: **Baixar PDF** e **Enviar aos responsáveis** (apenas marca status — envio real por e-mail fica como Fase 2 com edge function + Resend)
 
-### 5. Perguntas de Reflexão (nova `EduPerguntas.tsx`)
+### Arquivos afetados
 
-Renomeia "Quizzes". Biblioteca de perguntas organizada por **Livro → Capítulo**. Tipos: Aberta, Múltipla escolha, Reflexiva. Ações: criar, editar, duplicar, reutilizar em outra jornada.
+**Migration:** 1 nova migration com 5 tabelas + RLS + 1 RPC `teacher_add_student_to_class`
 
-### 6. Comunicação (nova `EduComunicacao.tsx`)
-
-Substitui "Mensagens". Lista de turmas → ao selecionar uma turma:
-- Mural de avisos (posts fixados)
-- Mensagem para toda a turma
-- Lista de alunos para mensagem individual (DM)
-
-### 7. Relatórios automáticos (refazer `EduRelatorios.tsx`)
-
-Funcionalidade central. Fluxo:
-1. Selecionar turma
-2. Lista de alunos com botão "Gerar relatório"
-3. Modal/página com relatório auto-gerado:
-   - Dados: nome, turma, jornadas em andamento, % progresso, capítulos concluídos, frequência, participação em reflexões
-   - **Análise pedagógica automática** (texto gerado): engajamento, constância, participação, evolução — tom positivo
-   - Campo "Observação do professor"
-   - Botão **"Enviar para responsáveis"** (e-mail)
-   - Status: Enviado / Pendente / Não enviado
-   - Histórico por aluno + botão reenviar
-
-### 8. Biblioteca (`EduLivros.tsx`)
-Pequeno polish: pesquisa, favoritar, botão "Adicionar à jornada".
-
-### 9. Configurações EDU (nova `EduConfiguracoes.tsx`)
-
-Não redirecionar para `/configuracoes` do BookQuest. Seções:
-- Perfil do professor
-- Dados da escola
-- Configurações de envio de relatórios (e-mail remetente, assinatura, frequência automática)
-- Notificações
-- Preferências visuais
-
-### 10. Identidade visual
-
-- Manter fundo azul + estrelas + glassmorphism
-- Trocar o amarelo pastel atual por **#FACC15** (accent vibrante das brand guidelines)
-- Botões com hover mais saturado, micro-animações suaves
-- Tom: profissional, pedagógico, limpo (não infantil)
-
----
-
-### Detalhes técnicos
-
-**Arquivos novos:**
+**Editados:**
 - `src/pages/edu/EduJornadas.tsx`
 - `src/pages/edu/EduPerguntas.tsx`
+- `src/pages/edu/EduRelatorios.tsx`
 - `src/pages/edu/EduComunicacao.tsx`
 - `src/pages/edu/EduConfiguracoes.tsx`
+- `src/pages/edu/EduTurmaDetail.tsx`
+- `src/pages/edu/EduAluno.tsx` (fluxo entrar com código)
 
-**Arquivos refeitos:**
-- `src/pages/edu/EduLayout.tsx` — novo menu (8 itens), garante zero links pro BookQuest
-- `src/pages/edu/EduDashboard.tsx` — KPIs + cards laterais + feed
-- `src/pages/edu/EduTurmaDetail.tsx` — sub-navegação interna por abas
-- `src/pages/edu/EduRelatorios.tsx` — fluxo de geração + envio + histórico
-- `src/App.tsx` — registrar novas rotas, remover rotas obsoletas (`/edu/atividades`, `/edu/quizzes`, `/edu/agenda`, `/edu/mensagens`)
+**Novos:**
+- `src/hooks/useJourneys.ts`
+- `src/hooks/useJourneyQuestions.ts`
+- `src/hooks/useReports.ts`
+- `src/hooks/useTeacherSettings.ts`
+- `src/lib/edu/generateReportPDF.ts`
+- `src/components/edu/InviteStudentsDialog.tsx`
 
-**Arquivos deletados:**
-- `src/pages/edu/EduAtividades.tsx`
-- `src/pages/edu/EduQuizzes.tsx`
-- `src/pages/edu/EduAgenda.tsx`
-- `src/pages/edu/EduMensagens.tsx`
+### Fora do escopo desta rodada (para não inflar)
 
-**Escopo de dados:** este redesign é puramente front-end/UI. Persistência real (jornadas, perguntas, relatórios enviados, configs do EDU) ficará com mocks bem estruturados — a integração com Supabase pode ser feita em uma segunda etapa quando você quiser, para não atrasar a entrega visual e evitar criar muitas tabelas sem definição final do fluxo.
+- Envio real de e-mail aos responsáveis (precisa Resend + edge function — posso fazer em seguida se quiser)
+- Upload do PDF para Storage (por ora download direto)
+- Cadastro de e-mail dos responsáveis por aluno (posso adicionar tabela `student_guardians` se quiser já)
 
-Quer que eu siga esse plano ou prefere que eu já inclua as tabelas no banco (jornadas, perguntas por capítulo, relatórios enviados, configs do professor) nesta mesma rodada?
+Posso seguir com tudo isso? Ou prefere que eu já inclua na mesma rodada o envio por e-mail (Resend) e a tabela de responsáveis?

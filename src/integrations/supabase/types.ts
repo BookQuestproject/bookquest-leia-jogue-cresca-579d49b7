@@ -1121,6 +1121,178 @@ export type Database = {
           },
         ]
       }
+      edu_journey_chapter_questions: {
+        Row: {
+          chapter_number: number
+          created_at: string
+          created_by: string
+          id: string
+          journey_id: string
+          question_text: string
+          updated_at: string
+        }
+        Insert: {
+          chapter_number: number
+          created_at?: string
+          created_by: string
+          id?: string
+          journey_id: string
+          question_text: string
+          updated_at?: string
+        }
+        Update: {
+          chapter_number?: number
+          created_at?: string
+          created_by?: string
+          id?: string
+          journey_id?: string
+          question_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_journey_chapter_questions_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "edu_journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edu_journey_classes: {
+        Row: {
+          assigned_at: string
+          class_id: string
+          id: string
+          journey_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          class_id: string
+          id?: string
+          journey_id: string
+        }
+        Update: {
+          assigned_at?: string
+          class_id?: string
+          id?: string
+          journey_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_journey_classes_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edu_journey_classes_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "edu_journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edu_journeys: {
+        Row: {
+          author: string | null
+          book_id: string | null
+          book_title: string | null
+          created_at: string
+          description: string | null
+          id: string
+          teacher_id: string
+          title: string
+          total_chapters: number
+          total_pages: number | null
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          book_id?: string | null
+          book_title?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          teacher_id: string
+          title: string
+          total_chapters?: number
+          total_pages?: number | null
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          book_id?: string | null
+          book_title?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          teacher_id?: string
+          title?: string
+          total_chapters?: number
+          total_pages?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      edu_reports: {
+        Row: {
+          analysis_text: string | null
+          class_id: string
+          created_at: string
+          id: string
+          metrics: Json
+          pdf_url: string | null
+          period_label: string | null
+          sent_at: string | null
+          status: string
+          student_user_id: string
+          teacher_id: string
+          teacher_note: string | null
+          updated_at: string
+        }
+        Insert: {
+          analysis_text?: string | null
+          class_id: string
+          created_at?: string
+          id?: string
+          metrics?: Json
+          pdf_url?: string | null
+          period_label?: string | null
+          sent_at?: string | null
+          status?: string
+          student_user_id: string
+          teacher_id: string
+          teacher_note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          analysis_text?: string | null
+          class_id?: string
+          created_at?: string
+          id?: string
+          metrics?: Json
+          pdf_url?: string | null
+          period_label?: string | null
+          sent_at?: string | null
+          status?: string
+          student_user_id?: string
+          teacher_id?: string
+          teacher_note?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_reports_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       edu_student_achievements: {
         Row: {
           achievement_label: string
@@ -1158,6 +1330,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      edu_teacher_settings: {
+        Row: {
+          created_at: string
+          email_settings: Json
+          notification_prefs: Json
+          school_name: string | null
+          signature: string | null
+          teacher_id: string
+          updated_at: string
+          visual_prefs: Json
+        }
+        Insert: {
+          created_at?: string
+          email_settings?: Json
+          notification_prefs?: Json
+          school_name?: string | null
+          signature?: string | null
+          teacher_id: string
+          updated_at?: string
+          visual_prefs?: Json
+        }
+        Update: {
+          created_at?: string
+          email_settings?: Json
+          notification_prefs?: Json
+          school_name?: string | null
+          signature?: string | null
+          teacher_id?: string
+          updated_at?: string
+          visual_prefs?: Json
+        }
+        Relationships: []
       }
       edu_teachers: {
         Row: {
@@ -2022,6 +2227,15 @@ export type Database = {
         }[]
       }
       find_user_by_email: { Args: { _email: string }; Returns: string }
+      find_user_by_handle: {
+        Args: { _handle: string }
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+          username: string
+        }[]
+      }
       generate_class_code: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
       get_founder_count: { Args: never; Returns: number }
@@ -2030,6 +2244,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      teacher_add_student_to_class: {
+        Args: { _class_id: string; _student_user_id: string }
         Returns: boolean
       }
       tick_user_streak: {
