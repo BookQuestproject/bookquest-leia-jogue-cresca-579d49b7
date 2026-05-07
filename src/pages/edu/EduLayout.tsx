@@ -38,7 +38,7 @@ const EduLayout = ({ children }: EduLayoutProps) => {
 
   if (authLoading || roleLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#021f53' }}>
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="animate-pulse text-muted-foreground">Carregando...</div>
       </div>
     );
@@ -50,7 +50,7 @@ const EduLayout = ({ children }: EduLayoutProps) => {
     path === "/edu/professor" ? location.pathname === "/edu/professor" : location.pathname.startsWith(path);
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: '#021f53' }}>
+    <div className="min-h-screen flex bg-transparent">
       {/* Sidebar */}
       <aside className="hidden lg:flex flex-col w-56 border-r border-border bg-card fixed h-full z-30">
         <div className="p-4 flex items-center gap-2 border-b border-border">
