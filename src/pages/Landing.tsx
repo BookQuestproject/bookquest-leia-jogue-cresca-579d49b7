@@ -233,32 +233,37 @@ const Landing = () => {
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold leading-[1.05] mb-6">
-                Transforme leitura
+                Sua próxima
                 <br />
-                em <span className="bg-gradient-to-r from-accent via-[hsl(48,96%,65%)] to-accent bg-clip-text text-transparent">conquista.</span>
+                <span className="bg-gradient-to-r from-accent via-[hsl(48,96%,65%)] to-accent bg-clip-text text-transparent">história favorita</span>
+                <br />
+                começa aqui.
               </h1>
 
-              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
-                O BookQuest transforma livros em desafios, evolução e experiências gamificadas que incentivam o hábito da leitura.
+              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-4 leading-relaxed">
+                Não importa se você lê todo dia ou nunca terminou um livro. O BookQuest descobre o que combina com você e transforma leitura em uma jornada divertida e personalizada.
+              </p>
+              <p className="text-sm text-accent/90 max-w-xl mx-auto lg:mx-0 mb-10 italic">
+                Nem todo mundo começa gostando de ler. E tudo bem.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center lg:items-start gap-3 sm:justify-start justify-center">
                 <Button
                   onClick={handleStart}
                   size="lg"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-base px-8 py-6 rounded-xl shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/50 hover:-translate-y-0.5 transition-all gap-2 font-bold"
+                  className={`${PRIMARY_CTA} text-base px-8 py-6 gap-2`}
                 >
-                  Começar Agora
-                  <ArrowRight className="w-4 h-4" />
+                  <span className="relative z-10">Iniciar minha jornada</span>
+                  <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button
-                  onClick={() => scrollTo("community")}
+                  onClick={() => scrollTo("discover")}
                   size="lg"
                   variant="outline"
-                  className="text-base px-8 py-6 rounded-xl border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-foreground gap-2"
+                  className={`${GHOST_CTA} text-base px-8 py-6 gap-2`}
                 >
-                  <Trophy className="w-4 h-4" />
-                  Explorar Ranking
+                  <Compass className="w-4 h-4" />
+                  Descobrir meu estilo
                 </Button>
               </div>
 
