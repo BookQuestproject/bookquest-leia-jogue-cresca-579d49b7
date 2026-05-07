@@ -824,7 +824,7 @@ const Landing = () => {
                   <Button
                     onClick={handleEdu}
                     size="lg"
-                    className="bg-foreground hover:bg-foreground/90 text-[#021f53] font-bold rounded-xl px-7 gap-2"
+                    className={`${PRIMARY_CTA} px-7 py-6 gap-2`}
                   >
                     Acessar Plataforma EDU
                     <ArrowRight className="w-4 h-4" />
