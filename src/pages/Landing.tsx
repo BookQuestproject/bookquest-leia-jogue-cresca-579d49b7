@@ -208,7 +208,7 @@ const Landing = () => {
             </button>
             <Button
               onClick={() => navigate(user ? "/dashboard" : "/auth")}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold mt-2"
+              className={`${PRIMARY_CTA} mt-2`}
             >
               Entrar
             </Button>
