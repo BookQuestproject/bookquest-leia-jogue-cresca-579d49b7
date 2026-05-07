@@ -2004,6 +2004,7 @@ export type Database = {
       }
     }
     Functions: {
+      activate_teacher_with_code: { Args: { _code: string }; Returns: boolean }
       award_badge: {
         Args: {
           _badge_label: string
@@ -2012,6 +2013,13 @@ export type Database = {
           _user_id: string
         }
         Returns: undefined
+      }
+      find_class_by_code: {
+        Args: { _code: string }
+        Returns: {
+          id: string
+          name: string
+        }[]
       }
       find_user_by_email: { Args: { _email: string }; Returns: string }
       generate_class_code: { Args: never; Returns: string }
