@@ -7,18 +7,18 @@ import {
   Library,
   Target,
   Trophy,
-  HelpCircle,
+  Award,
   Users,
   Crown,
   GraduationCap,
   MessageSquare,
   Sparkles,
   Lock,
-  Newspaper,
   LogIn,
   LogOut,
   Settings,
   Swords,
+  BookA,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -38,19 +38,21 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
   const primaryItems = [
     { icon: Home, label: "Home", path: "/home" },
-    { icon: BookOpen, label: "Trilhas Literárias", path: "/trilhas" },
+    { icon: BookOpen, label: "Jornada de Leitura", path: "/trilhas" },
+    { icon: Library, label: "Explorar Livros", path: "/biblioteca" },
     { icon: BookMarked, label: "Minha Estante", path: "/estante" },
-    { icon: Library, label: "Biblioteca", path: "/biblioteca" },
-    { icon: Target, label: "Missões", path: "/missoes" },
-    { icon: Trophy, label: "Ranking", path: "/ranking" },
-    ...(!isAdmin ? [{ icon: HelpCircle, label: "Quiz Literário", path: "/quiz" }] : []),
   ];
 
-  const secondaryItems = [
-    { icon: BookOpen, label: "Espaço Literário", path: "/espaco-literario" },
+  const gamificationItems = [
+    { icon: Target, label: "Missões", path: "/missoes" },
+    { icon: Award, label: "Conquistas", path: "/conquistas" },
+    { icon: Trophy, label: "Ranking", path: "/ranking" },
+  ];
+
+  const communityItems = [
+    { icon: Users, label: "Comunidade", path: "/espaco-literario" },
     { icon: Swords, label: "Desafios", path: "/desafios" },
-    { icon: BookMarked, label: "Meu Vocabulário", path: "/vocabulario" },
-    { icon: Newspaper, label: "Notícias", path: "/noticias" },
+    { icon: BookA, label: "Vocabulário", path: "/vocabulario" },
   ];
 
   const premiumItems = [
