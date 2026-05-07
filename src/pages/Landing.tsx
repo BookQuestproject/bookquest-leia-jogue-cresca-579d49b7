@@ -68,7 +68,7 @@ const Landing = () => {
             <img
               src={logoCrown}
               alt="BookQuest Crown"
-              className="w-28 h-28 sm:w-36 sm:h-36 object-contain drop-shadow-[0_0_30px_hsl(48,96%,53%,0.15)]"
+              className="w-28 h-28 sm:w-36 sm:h-36 object-contain"
             />
           </div>
 

@@ -473,7 +473,7 @@ const QuizOnboarding = () => {
   const renderNameStep = () => (
     <div className="max-w-md w-full">
       <div className="text-center mb-8">
-        <img src={logoCrown} alt="BookQuest" className="w-20 h-20 object-contain mx-auto mb-6 drop-shadow-lg" />
+        <img src={logoCrown} alt="BookQuest" className="w-20 h-20 object-contain mx-auto mb-6" />
         <h1 className="text-3xl font-serif font-bold mb-2">Vamos começar!</h1>
         <p className="text-muted-foreground">Como você quer ser chamado?</p>
       </div>

@@ -212,20 +212,7 @@ const SpotlightOverlay = () => {
         />
       </svg>
 
-      {/* Spotlight border glow */}
-      {targetRect && (
-        <div
-          className="fixed rounded-xl border-2 border-accent shadow-[0_0_24px_hsl(var(--accent)/0.4)] pointer-events-none"
-          style={{
-            top: targetRect.top,
-            left: targetRect.left,
-            width: targetRect.width,
-            height: targetRect.height,
-            opacity: showOverlay ? 1 : 0,
-            transition: "all 0.5s ease, opacity 0.4s ease",
-          }}
-        />
-      )}
+      {/* Spotlight border glow removed per design — cutout alone highlights the target */}
 
       {/* Speech bubble tooltip — positioned above Agatha */}
       <div
