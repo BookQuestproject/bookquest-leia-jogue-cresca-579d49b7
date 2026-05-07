@@ -15,7 +15,8 @@ import logoCrown from "@/assets/logo-crown-transparent.png";
 import DemoButton from "@/components/demo/DemoButton";
 
 const ROYAL = "#021f53";
-const GOLD = "#D4AF37";
+const GOLD = "#F5C842";
+const GOLD_DEEP = "#E0A82E";
 
 const useReveal = () => {
   const [visible, setVisible] = useState<Set<string>>(new Set());
@@ -169,8 +170,8 @@ const EduEntry = () => {
             <Button
               size="sm"
               onClick={handleAccess}
-              className="font-semibold text-[#021f53]"
-              style={{ background: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+              className="font-bold text-[#021f53] hover:scale-[1.04] hover:brightness-110 hover:shadow-[0_0_24px_rgba(245,200,66,0.5)] transition-all duration-300"
+              style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
             >
               Acessar Plataforma
             </Button>
@@ -197,7 +198,7 @@ const EduEntry = () => {
               Transformando leitura em{" "}
               <span
                 className="bg-clip-text text-transparent"
-                style={{ backgroundImage: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+                style={{ backgroundImage: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 evolução mensurável.
               </span>
@@ -210,8 +211,8 @@ const EduEntry = () => {
               <Button
                 size="lg"
                 onClick={handleAccess}
-                className="text-[#021f53] font-semibold h-12 px-7 shadow-lg shadow-amber-500/20"
-                style={{ background: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+                className="text-[#021f53] font-bold h-12 px-7 shadow-lg shadow-amber-500/30 hover:shadow-[0_0_45px_rgba(245,200,66,0.55)] hover:scale-[1.04] hover:brightness-110 transition-all duration-300"
+                style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 Acessar Plataforma <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
@@ -474,7 +475,7 @@ const EduEntry = () => {
             Mais do que leitura.{" "}
             <span
               className="bg-clip-text text-transparent"
-              style={{ backgroundImage: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+              style={{ backgroundImage: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
             >
               Evolução real.
             </span>
@@ -704,8 +705,8 @@ const EduEntry = () => {
               <Button
                 size="lg"
                 onClick={handleAccess}
-                className="text-[#021f53] font-semibold h-12 px-8 shadow-lg shadow-amber-500/20"
-                style={{ background: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+                className="text-[#021f53] font-bold h-12 px-8 shadow-lg shadow-amber-500/30 hover:shadow-[0_0_45px_rgba(245,200,66,0.55)] hover:scale-[1.04] hover:brightness-110 transition-all duration-300"
+                style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 Entrar no BookQuest EDU <ArrowRight className="ml-1 h-4 w-4" />
               </Button>

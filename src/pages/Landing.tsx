@@ -17,7 +17,22 @@ import {
   Crown,
   Menu,
   X,
+  Compass,
+  Heart,
+  Rocket,
+  Wand2,
+  Ghost,
+  Swords,
+  Telescope,
+  Search,
 } from "lucide-react";
+
+// Reusable premium button classes
+const PRIMARY_CTA =
+  "relative overflow-hidden bg-gradient-to-r from-accent via-[hsl(48,96%,60%)] to-accent bg-[length:200%_100%] bg-left hover:bg-right text-accent-foreground font-bold rounded-xl shadow-lg shadow-accent/30 hover:shadow-[0_0_45px_hsl(48,96%,55%/0.55)] hover:scale-[1.025] hover:brightness-110 active:scale-[0.98] transition-all duration-300 ease-out";
+
+const GHOST_CTA =
+  "rounded-xl border-white/15 bg-white/5 backdrop-blur-sm text-foreground hover:bg-white/10 hover:border-accent/40 hover:scale-[1.02] hover:shadow-[0_0_24px_hsl(48,96%,55%/0.2)] transition-all duration-300 ease-out";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
@@ -68,8 +83,8 @@ const Landing = () => {
 
   const navItems = [
     { label: "Início", id: "hero" },
+    { label: "Descobrir", id: "discover" },
     { label: "Recursos", id: "features" },
-    { label: "Ranking", id: "community" },
     { label: "Comunidade", id: "community" },
     { label: "Sobre", id: "about" },
   ];
@@ -158,7 +173,7 @@ const Landing = () => {
             </button>
             <Button
               onClick={() => navigate(user ? "/dashboard" : "/auth")}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-lg px-5 shadow-md shadow-accent/20"
+              className={`${PRIMARY_CTA} px-5 h-10`}
             >
               Entrar
             </Button>
@@ -193,7 +208,7 @@ const Landing = () => {
             </button>
             <Button
               onClick={() => navigate(user ? "/dashboard" : "/auth")}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold mt-2"
+              className={`${PRIMARY_CTA} mt-2`}
             >
               Entrar
             </Button>
@@ -218,32 +233,37 @@ const Landing = () => {
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold leading-[1.05] mb-6">
-                Transforme leitura
+                Sua próxima
                 <br />
-                em <span className="bg-gradient-to-r from-accent via-[hsl(48,96%,65%)] to-accent bg-clip-text text-transparent">conquista.</span>
+                <span className="bg-gradient-to-r from-accent via-[hsl(48,96%,65%)] to-accent bg-clip-text text-transparent">história favorita</span>
+                <br />
+                começa aqui.
               </h1>
 
-              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
-                O BookQuest transforma livros em desafios, evolução e experiências gamificadas que incentivam o hábito da leitura.
+              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-4 leading-relaxed">
+                Não importa se você lê todo dia ou nunca terminou um livro. O BookQuest descobre o que combina com você e transforma leitura em uma jornada divertida e personalizada.
+              </p>
+              <p className="text-sm text-accent/90 max-w-xl mx-auto lg:mx-0 mb-10 italic">
+                Nem todo mundo começa gostando de ler. E tudo bem.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center lg:items-start gap-3 sm:justify-start justify-center">
                 <Button
                   onClick={handleStart}
                   size="lg"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-base px-8 py-6 rounded-xl shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/50 hover:-translate-y-0.5 transition-all gap-2 font-bold"
+                  className={`${PRIMARY_CTA} text-base px-8 py-6 gap-2`}
                 >
-                  Começar Agora
-                  <ArrowRight className="w-4 h-4" />
+                  <span className="relative z-10">Iniciar minha jornada</span>
+                  <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button
-                  onClick={() => scrollTo("community")}
+                  onClick={() => scrollTo("discover")}
                   size="lg"
                   variant="outline"
-                  className="text-base px-8 py-6 rounded-xl border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-foreground gap-2"
+                  className={`${GHOST_CTA} text-base px-8 py-6 gap-2`}
                 >
-                  <Trophy className="w-4 h-4" />
-                  Explorar Ranking
+                  <Compass className="w-4 h-4" />
+                  Descobrir meu estilo
                 </Button>
               </div>
 
@@ -365,6 +385,141 @@ const Landing = () => {
           </div>
         </section>
 
+        {/* ═══════════ DESCOBERTA / QUIZ ═══════════ */}
+        <section
+          id="discover"
+          ref={setRef("discover")}
+          className="py-24 sm:py-32 px-6 relative"
+        >
+          <div
+            className={`max-w-6xl mx-auto transition-all duration-700 ${
+              isVisible("discover") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent/30 bg-accent/5 mb-5">
+                  <Compass className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-xs font-medium text-accent tracking-wide">Descoberta pessoal</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-5 leading-tight">
+                  Não sabe por onde
+                  <br />
+                  <span className="text-accent italic">começar?</span>
+                </h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-3">
+                  O BookQuest entende seu estilo e recomenda gêneros, livros e experiências que combinam com você.
+                </p>
+                <p className="text-sm text-foreground/70 italic mb-8">
+                  Descubra qual tipo de livro combina com sua personalidade. A leitura certa muda tudo.
+                </p>
+
+                <Button
+                  onClick={handleStart}
+                  size="lg"
+                  className={`${PRIMARY_CTA} px-7 py-6 gap-2`}
+                >
+                  <Wand2 className="w-4 h-4" />
+                  Fazer o quiz literário
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 bg-accent/10 blur-3xl rounded-full -z-10" />
+                <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-6 shadow-2xl shadow-black/40">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-accent" />
+                      <span className="text-xs uppercase tracking-wider text-muted-foreground">Quiz · Pergunta 3 de 6</span>
+                    </div>
+                    <span className="text-xs text-accent font-semibold">50%</span>
+                  </div>
+                  <div className="h-1 rounded-full bg-white/5 mb-6 overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-accent to-[hsl(48,96%,65%)] rounded-full" style={{ width: "50%" }} />
+                  </div>
+                  <p className="text-base font-semibold mb-4">Que tipo de história te prende?</p>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {[
+                      { icon: Swords, label: "Aventura", hot: false },
+                      { icon: Search, label: "Mistério", hot: true },
+                      { icon: Heart, label: "Romance", hot: false },
+                      { icon: Rocket, label: "Ficção científica", hot: false },
+                      { icon: Ghost, label: "Suspense", hot: false },
+                      { icon: Wand2, label: "Fantasia", hot: false },
+                    ].map((g) => (
+                      <button
+                        key={g.label}
+                        className={`flex items-center gap-2 p-3 rounded-xl border text-sm transition-all duration-300 ${
+                          g.hot
+                            ? "border-accent/60 bg-accent/15 text-accent shadow-[0_0_20px_hsl(48,96%,55%/0.25)]"
+                            : "border-white/10 bg-white/[0.02] hover:border-accent/40 hover:bg-accent/[0.06] hover:scale-[1.03]"
+                        }`}
+                      >
+                        <g.icon className="w-4 h-4" />
+                        <span className="font-medium">{g.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-5 p-3 rounded-xl bg-accent/[0.06] border border-accent/20 text-xs text-foreground/80 flex items-start gap-2">
+                    <Telescope className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" />
+                    <span>Suas escolhas vão moldar uma trilha personalizada de livros que talvez você nunca teria descoberto sozinho.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════ PARA TODOS OS TIPOS ═══════════ */}
+        <section
+          id="for-everyone"
+          ref={setRef("for-everyone")}
+          className="py-24 sm:py-32 px-6 relative"
+        >
+          <div
+            className={`max-w-6xl mx-auto transition-all duration-700 ${
+              isVisible("for-everyone") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="text-center mb-14 max-w-2xl mx-auto">
+              <p className="text-xs uppercase tracking-[0.25em] text-accent mb-3 font-semibold">Para todos</p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4">
+                Uma experiência feita para todos os tipos de leitores.
+              </h2>
+              <p className="text-muted-foreground">
+                Cada jornada começa de um jeito diferente. A sua também.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { icon: Heart, label: "Nunca gostei de ler", desc: "Comece por algo curto, leve e do seu interesse." },
+                { icon: Flame, label: "Quero criar hábito", desc: "Sequências diárias que tornam a leitura parte da rotina." },
+                { icon: Trophy, label: "Quero competir com amigos", desc: "Rankings, desafios PvP e ligas semanais." },
+                { icon: Compass, label: "Quero descobrir gêneros", desc: "Recomendações personalizadas a cada leitura." },
+                { icon: TrendingUp, label: "Quero evoluir aos poucos", desc: "Metas adaptadas ao seu ritmo, sem pressão." },
+                { icon: Sparkles, label: "Quero algo divertido", desc: "Gamificação real: Essência, medalhas e tiers." },
+              ].map((c, i) => (
+                <div
+                  key={i}
+                  className="group p-6 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-accent/40 hover:bg-white/[0.06] hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_hsl(48,96%,55%/0.3)] transition-all duration-300"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-3 group-hover:bg-accent/25 group-hover:scale-110 transition-all">
+                    <c.icon className="w-4 h-4 text-accent" />
+                  </div>
+                  <h3 className="text-base font-semibold mb-1.5">{c.label}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-center text-sm text-muted-foreground/80 italic mt-10">
+              Seu próximo livro favorito pode estar aqui. Não importa seu nível de leitura.
+            </p>
+          </div>
+        </section>
+
         {/* ═══════════ FEATURES ═══════════ */}
         <section
           id="features"
@@ -381,10 +536,10 @@ const Landing = () => {
                 Recursos
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4">
-                Por que o BookQuest é diferente?
+                Transformamos leitura em <span className="text-accent">experiência</span>.
               </h2>
               <p className="text-muted-foreground">
-                Uma experiência completa pensada para transformar leitores comuns em leitores constantes.
+                Uma plataforma divertida, gamificada e personalizada — pensada tanto para quem ama ler quanto para quem ainda está descobrindo.
               </p>
             </div>
 
@@ -669,7 +824,7 @@ const Landing = () => {
                   <Button
                     onClick={handleEdu}
                     size="lg"
-                    className="bg-foreground hover:bg-foreground/90 text-[#021f53] font-bold rounded-xl px-7 gap-2"
+                    className={`${PRIMARY_CTA} px-7 py-6 gap-2`}
                   >
                     Acessar Plataforma EDU
                     <ArrowRight className="w-4 h-4" />
@@ -787,19 +942,19 @@ const Landing = () => {
           <div className="max-w-3xl mx-auto text-center relative z-10">
             <Crown className="w-12 h-12 text-accent mx-auto mb-6" strokeWidth={1.4} />
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold mb-5 leading-tight">
-              Pronto para transformar
+              Sua jornada de leitura
               <br />
-              sua jornada de leitura?
+              começa <span className="text-accent italic">agora.</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-10">
-              Junte-se a uma nova geração de leitores. Leva menos de 1 minuto.
+              Comece descobrindo o que combina com você. Leva menos de 1 minuto.
             </p>
             <Button
               onClick={handleStart}
               size="lg"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-12 py-7 rounded-xl shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:-translate-y-0.5 transition-all gap-2 font-bold"
+              className={`${PRIMARY_CTA} text-lg px-12 py-7 gap-2`}
             >
-              Começar Agora
+              Iniciar minha jornada
               <ArrowRight className="w-5 h-5" />
             </Button>
           </div>
