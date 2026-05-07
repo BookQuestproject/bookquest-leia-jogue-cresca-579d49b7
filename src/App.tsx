@@ -52,6 +52,10 @@ import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
 import EduLivros from "./pages/edu/EduLivros";
 import EduAluno from "./pages/edu/EduAluno";
+import EduAtividades from "./pages/edu/EduAtividades";
+import EduQuizzes from "./pages/edu/EduQuizzes";
+import EduAgenda from "./pages/edu/EduAgenda";
+import EduMensagens from "./pages/edu/EduMensagens";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
 
@@ -112,6 +116,10 @@ const App = () => (
                 <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
                 <Route path="/edu/relatorios" element={<EduRelatorios />} />
                 <Route path="/edu/livros" element={<EduLivros />} />
+                <Route path="/edu/atividades" element={<EduAtividades />} />
+                <Route path="/edu/quizzes" element={<EduQuizzes />} />
+                <Route path="/edu/agenda" element={<EduAgenda />} />
+                <Route path="/edu/mensagens" element={<EduMensagens />} />
                 <Route path="/politica-de-privacidade" element={<PoliticaDePrivacidade />} />
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
                 <Route path="*" element={<NotFound />} />
