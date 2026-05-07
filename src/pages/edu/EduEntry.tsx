@@ -15,7 +15,8 @@ import logoCrown from "@/assets/logo-crown-transparent.png";
 import DemoButton from "@/components/demo/DemoButton";
 
 const ROYAL = "#021f53";
-const GOLD = "#D4AF37";
+const GOLD = "#F5C842";
+const GOLD_DEEP = "#E0A82E";
 
 const useReveal = () => {
   const [visible, setVisible] = useState<Set<string>>(new Set());
