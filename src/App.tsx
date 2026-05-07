@@ -116,10 +116,10 @@ const App = () => (
                 <Route path="/edu/turmas/:classId" element={<EduTurmaDetail />} />
                 <Route path="/edu/relatorios" element={<EduRelatorios />} />
                 <Route path="/edu/livros" element={<EduLivros />} />
-                <Route path="/edu/atividades" element={<EduAtividades />} />
-                <Route path="/edu/quizzes" element={<EduQuizzes />} />
-                <Route path="/edu/agenda" element={<EduAgenda />} />
-                <Route path="/edu/mensagens" element={<EduMensagens />} />
+                <Route path="/edu/jornadas" element={<EduJornadas />} />
+                <Route path="/edu/perguntas" element={<EduPerguntas />} />
+                <Route path="/edu/comunicacao" element={<EduComunicacao />} />
+                <Route path="/edu/configuracoes" element={<EduConfiguracoes />} />
                 <Route path="/politica-de-privacidade" element={<PoliticaDePrivacidade />} />
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
                 <Route path="*" element={<NotFound />} />
