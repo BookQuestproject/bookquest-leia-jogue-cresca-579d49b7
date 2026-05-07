@@ -170,7 +170,7 @@ const EduEntry = () => {
             <Button
               size="sm"
               onClick={handleAccess}
-              className="font-semibold text-[#021f53]"
+              className="font-bold text-[#021f53] hover:scale-[1.04] hover:brightness-110 hover:shadow-[0_0_24px_rgba(245,200,66,0.5)] transition-all duration-300"
               style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
             >
               Acessar Plataforma
@@ -211,7 +211,7 @@ const EduEntry = () => {
               <Button
                 size="lg"
                 onClick={handleAccess}
-                className="text-[#021f53] font-semibold h-12 px-7 shadow-lg shadow-amber-500/20"
+                className="text-[#021f53] font-bold h-12 px-7 shadow-lg shadow-amber-500/30 hover:shadow-[0_0_45px_rgba(245,200,66,0.55)] hover:scale-[1.04] hover:brightness-110 transition-all duration-300"
                 style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 Acessar Plataforma <ArrowRight className="ml-1 h-4 w-4" />
@@ -705,7 +705,7 @@ const EduEntry = () => {
               <Button
                 size="lg"
                 onClick={handleAccess}
-                className="text-[#021f53] font-semibold h-12 px-8 shadow-lg shadow-amber-500/20"
+                className="text-[#021f53] font-bold h-12 px-8 shadow-lg shadow-amber-500/30 hover:shadow-[0_0_45px_rgba(245,200,66,0.55)] hover:scale-[1.04] hover:brightness-110 transition-all duration-300"
                 style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 Entrar no BookQuest EDU <ArrowRight className="ml-1 h-4 w-4" />
