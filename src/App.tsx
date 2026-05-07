@@ -52,10 +52,10 @@ import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
 import EduRelatorios from "./pages/edu/EduRelatorios";
 import EduLivros from "./pages/edu/EduLivros";
 import EduAluno from "./pages/edu/EduAluno";
-import EduAtividades from "./pages/edu/EduAtividades";
-import EduQuizzes from "./pages/edu/EduQuizzes";
-import EduAgenda from "./pages/edu/EduAgenda";
-import EduMensagens from "./pages/edu/EduMensagens";
+import EduJornadas from "./pages/edu/EduJornadas";
+import EduPerguntas from "./pages/edu/EduPerguntas";
+import EduComunicacao from "./pages/edu/EduComunicacao";
+import EduConfiguracoes from "./pages/edu/EduConfiguracoes";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
 
