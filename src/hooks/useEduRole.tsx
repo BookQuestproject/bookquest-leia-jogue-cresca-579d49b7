@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
 
-const TEACHER_ACTIVATION_CODE = "BOOKQUEST2026";
+
 
 export const useEduRole = () => {
   const { user, loading: authLoading } = useAuth();
@@ -59,22 +59,13 @@ export const useEduRole = () => {
 
   const activateTeacher = async (code: string): Promise<boolean> => {
     if (!user) return false;
-    
-    if (code.toUpperCase() !== TEACHER_ACTIVATION_CODE) {
+
+    const { data, error } = await supabase.rpc('activate_teacher_with_code' as any, {
+      _code: code.toUpperCase(),
+    });
+
+    if (error || data !== true) {
       toast({ title: 'Código inválido', description: 'O código de ativação não é válido.', variant: 'destructive' });
-      return false;
-    }
-
-    const { error } = await supabase
-      .from('edu_teachers' as any)
-      .insert({ user_id: user.id, activation_code: code.toUpperCase() });
-
-    if (error) {
-      if (error.code === '23505') {
-        setIsTeacher(true);
-        return true;
-      }
-      toast({ title: 'Erro', description: 'Falha ao ativar conta de professor.', variant: 'destructive' });
       return false;
     }
 

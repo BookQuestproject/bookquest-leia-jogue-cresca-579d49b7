@@ -224,13 +224,11 @@ export const useClasses = () => {
       return false;
     }
 
-    // Find class by code
-    const { data: classData, error: findError } = await supabase
-      .from('classes')
-      .select('id, name')
-      .eq('access_code', code.toUpperCase())
-      .eq('is_active', true)
+    // Find class by code via security-definer RPC (does not expose access_code)
+    const { data: classRow, error: findError } = await supabase
+      .rpc('find_class_by_code' as any, { _code: code.toUpperCase() })
       .maybeSingle();
+    const classData = classRow as { id: string; name: string } | null;
 
     if (findError || !classData) {
       toast({ title: 'Código inválido', description: 'Nenhuma turma encontrada com esse código.', variant: 'destructive' });
