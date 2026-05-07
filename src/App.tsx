@@ -34,6 +34,7 @@ import Enem from "./pages/Enem";
 import RepertoireDetail from "./pages/RepertoireDetail";
 import Configuracoes from "./pages/Configuracoes";
 import Noticias from "./pages/Noticias";
+import Conquistas from "./pages/Conquistas";
 import MeuVocabulario from "./pages/MeuVocabulario";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -96,6 +97,7 @@ const App = () => (
                 <Route path="/estante" element={<Estante />} />
                 <Route path="/biblioteca" element={<Biblioteca />} />
                 <Route path="/missoes" element={<Missoes />} />
+                <Route path="/conquistas" element={<Conquistas />} />
                 <Route path="/bookclub" element={<BookClub />} />
                 <Route path="/desafios" element={<Desafios />} />
                 <Route path="/mentoria" element={<Mentoria />} />
