@@ -83,8 +83,8 @@ const Landing = () => {
 
   const navItems = [
     { label: "Início", id: "hero" },
+    { label: "Descobrir", id: "discover" },
     { label: "Recursos", id: "features" },
-    { label: "Ranking", id: "community" },
     { label: "Comunidade", id: "community" },
     { label: "Sobre", id: "about" },
   ];
