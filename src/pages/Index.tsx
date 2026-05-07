@@ -227,7 +227,7 @@ const Index = () => {
               <div className="relative z-10">
                 <p className="text-xs text-accent font-bold uppercase tracking-[0.15em] mb-3 flex items-center gap-2">
                   <MapPin className="w-3.5 h-3.5" />
-                  Sua Jornada Atual
+                  Sua jornada continua hoje
                 </p>
 
                 <div className="flex flex-col lg:flex-row lg:items-center gap-6">
@@ -265,8 +265,14 @@ const Index = () => {
                     <h1 className="text-2xl lg:text-3xl font-serif font-bold text-foreground mb-1">
                       {userStats.currentBook}
                     </h1>
-                    <p className="text-muted-foreground text-sm mb-4">
+                    <p className="text-muted-foreground text-sm mb-1">
                       Capítulo {userStats.currentChapter} de {userStats.totalChapters} • {currentBookTheme?.genre}
+                    </p>
+                    <p className="text-[13px] text-foreground/80 font-medium mb-4 flex items-center gap-1.5">
+                      <Flame className="w-3.5 h-3.5 text-accent" />
+                      {userStats.streak > 0
+                        ? `Você está a ${userStats.streak} ${userStats.streak === 1 ? "dia" : "dias"} lendo — continue de onde parou.`
+                        : "Continue de onde parou e comece sua sequência hoje."}
                     </p>
 
                     {/* Thick progress bar with book color */}
@@ -295,17 +301,17 @@ const Index = () => {
                       size="icon"
                       className="text-muted-foreground hover:text-foreground hover:bg-muted/30"
                       onClick={(e) => { e.stopPropagation(); navigate('/trilhas'); }}
-                      title="Trocar de trilha"
+                      title="Trocar de jornada"
                     >
                       <Repeat className="w-5 h-5" />
                     </Button>
                     <Button
                       size="xl"
-                      className="gap-2.5 bg-accent text-accent-foreground hover:bg-accent/90 font-bold shadow-lg shadow-accent/25 text-base journey-cta-btn"
+                      className="gap-2.5 bg-accent text-accent-foreground hover:bg-accent/90 font-bold shadow-xl shadow-accent/30 text-lg px-8 py-7 rounded-2xl journey-cta-btn animate-fade-in"
                       onClick={() => handleContinueReading()}
                     >
-                      <Play className="w-5 h-5" />
-                      Continuar Leitura
+                      <Play className="w-6 h-6 fill-current" />
+                      Continuar leitura
                     </Button>
                   </div>
                 </div>

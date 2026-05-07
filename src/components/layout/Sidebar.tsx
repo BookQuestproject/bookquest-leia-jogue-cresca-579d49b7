@@ -7,18 +7,18 @@ import {
   Library,
   Target,
   Trophy,
-  HelpCircle,
+  Award,
   Users,
   Crown,
   GraduationCap,
   MessageSquare,
   Sparkles,
   Lock,
-  Newspaper,
   LogIn,
   LogOut,
   Settings,
   Swords,
+  BookA,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -38,19 +38,21 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
 
   const primaryItems = [
     { icon: Home, label: "Home", path: "/home" },
-    { icon: BookOpen, label: "Trilhas Literárias", path: "/trilhas" },
+    { icon: BookOpen, label: "Jornada de Leitura", path: "/trilhas" },
+    { icon: Library, label: "Explorar Livros", path: "/biblioteca" },
     { icon: BookMarked, label: "Minha Estante", path: "/estante" },
-    { icon: Library, label: "Biblioteca", path: "/biblioteca" },
-    { icon: Target, label: "Missões", path: "/missoes" },
-    { icon: Trophy, label: "Ranking", path: "/ranking" },
-    ...(!isAdmin ? [{ icon: HelpCircle, label: "Quiz Literário", path: "/quiz" }] : []),
   ];
 
-  const secondaryItems = [
-    { icon: BookOpen, label: "Espaço Literário", path: "/espaco-literario" },
+  const gamificationItems = [
+    { icon: Target, label: "Missões", path: "/missoes" },
+    { icon: Award, label: "Conquistas", path: "/conquistas" },
+    { icon: Trophy, label: "Ranking", path: "/ranking" },
+  ];
+
+  const communityItems = [
+    { icon: Users, label: "Comunidade", path: "/espaco-literario" },
     { icon: Swords, label: "Desafios", path: "/desafios" },
-    { icon: BookMarked, label: "Meu Vocabulário", path: "/vocabulario" },
-    { icon: Newspaper, label: "Notícias", path: "/noticias" },
+    { icon: BookA, label: "Vocabulário", path: "/vocabulario" },
   ];
 
   const premiumItems = [
@@ -125,19 +127,24 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       {/* Primary Navigation */}
       <nav className="flex-1 px-3 overflow-y-auto space-y-0.5" data-tutorial="sidebar-nav">
         <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
-          Navegação
+          Principal
         </p>
         {primaryItems.map((item) => renderItem(item))}
 
-        {/* Divider */}
         <div className="my-3 mx-3 border-t border-border/30" />
 
         <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
-          Social
+          Gamificação
         </p>
-        {secondaryItems.map((item) => renderItem(item))}
+        {gamificationItems.map((item) => renderItem(item))}
 
-        {/* Premium section */}
+        <div className="my-3 mx-3 border-t border-border/30" />
+
+        <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
+          Comunidade
+        </p>
+        {communityItems.map((item) => renderItem(item))}
+
         <div className="my-3 mx-3 border-t border-border/30" />
 
         <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-accent/40">
@@ -150,7 +157,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
           <>
             <div className="my-3 mx-3 border-t border-border/30" />
             <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-blue-400/60">
-              Educacional
+              EDU
             </p>
             <Link
               to="/edu"

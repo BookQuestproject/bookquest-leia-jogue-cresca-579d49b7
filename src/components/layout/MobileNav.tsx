@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Trophy, User, Target, BookMarked, LogIn, Menu, Library, Swords, Newspaper, MessageSquare, Sparkles, GraduationCap, HelpCircle, X, Crown, Play } from "lucide-react";
+import { Home, BookOpen, Trophy, User, Target, BookMarked, Menu, Library, Swords, MessageSquare, Sparkles, GraduationCap, Award, BookA, X, Crown, Play, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useProfile } from "@/hooks/useProfile";
@@ -22,18 +22,18 @@ const MobileNav = ({
 
   const menuItems = [
     { icon: Home, label: "Home", path: "/home" },
-    { icon: BookOpen, label: "Trilhas", path: "/trilhas" },
+    { icon: BookOpen, label: "Jornada", path: "/trilhas" },
     { icon: Target, label: "Missões", path: "/missoes" },
     { icon: Trophy, label: "Ranking", path: "/ranking" },
   ];
 
   const moreItems = [
     { icon: BookMarked, label: "Minha Estante", path: "/estante" },
-    { icon: Library, label: "Biblioteca", path: "/biblioteca" },
-    { icon: HelpCircle, label: "Quiz Literário", path: "/quiz" },
-    { icon: BookOpen, label: "Espaço Literário", path: "/espaco-literario" },
+    { icon: Library, label: "Explorar Livros", path: "/biblioteca" },
+    { icon: Award, label: "Conquistas", path: "/conquistas" },
+    { icon: Users, label: "Comunidade", path: "/espaco-literario" },
     { icon: Swords, label: "Desafios", path: "/desafios" },
-    { icon: Newspaper, label: "Notícias", path: "/noticias" },
+    { icon: BookA, label: "Vocabulário", path: "/vocabulario" },
     { icon: MessageSquare, label: "Book Club", path: "/bookclub", premium: true },
     { icon: Sparkles, label: "Mentoria", path: "/mentoria", premium: true },
     { icon: GraduationCap, label: "Trilhas Acadêmicas", path: "/enem", premium: true },
