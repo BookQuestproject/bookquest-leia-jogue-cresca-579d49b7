@@ -171,7 +171,7 @@ const EduEntry = () => {
               size="sm"
               onClick={handleAccess}
               className="font-semibold text-[#021f53]"
-              style={{ background: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+              style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
             >
               Acessar Plataforma
             </Button>
@@ -198,7 +198,7 @@ const EduEntry = () => {
               Transformando leitura em{" "}
               <span
                 className="bg-clip-text text-transparent"
-                style={{ backgroundImage: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+                style={{ backgroundImage: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 evolução mensurável.
               </span>
@@ -212,7 +212,7 @@ const EduEntry = () => {
                 size="lg"
                 onClick={handleAccess}
                 className="text-[#021f53] font-semibold h-12 px-7 shadow-lg shadow-amber-500/20"
-                style={{ background: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+                style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 Acessar Plataforma <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
@@ -475,7 +475,7 @@ const EduEntry = () => {
             Mais do que leitura.{" "}
             <span
               className="bg-clip-text text-transparent"
-              style={{ backgroundImage: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+              style={{ backgroundImage: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
             >
               Evolução real.
             </span>
@@ -706,7 +706,7 @@ const EduEntry = () => {
                 size="lg"
                 onClick={handleAccess}
                 className="text-[#021f53] font-semibold h-12 px-8 shadow-lg shadow-amber-500/20"
-                style={{ background: `linear-gradient(135deg, ${GOLD}, #F5D77A)` }}
+                style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
               >
                 Entrar no BookQuest EDU <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
