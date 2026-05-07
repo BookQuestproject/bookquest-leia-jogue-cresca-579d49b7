@@ -1,22 +1,45 @@
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowRight, Trophy, BookOpen, Target, Zap, Users, Quote, ChevronDown } from "lucide-react";
+import {
+  ArrowRight,
+  Trophy,
+  BookOpen,
+  Target,
+  Zap,
+  Users,
+  Flame,
+  Brain,
+  Award,
+  Sparkles,
+  BarChart3,
+  GraduationCap,
+  Star,
+  TrendingUp,
+  Crown,
+  Menu,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
-import premiacaoImg from "@/assets/batalha-pitch-premiacao.jpeg";
-import equipeApresentacaoImg from "@/assets/equipe-apresentacao.jpeg";
 import { useEffect, useRef, useState } from "react";
 import DemoButton from "@/components/demo/DemoButton";
 
 const Landing = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  const handleStart = () => {
-    navigate(user ? "/quiz-literario" : "/auth");
-  };
+  const handleStart = () => navigate(user ? "/quiz-literario" : "/auth");
+  const handleEdu = () => navigate("/edu");
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -29,357 +52,752 @@ const Landing = () => {
       },
       { threshold: 0.15 }
     );
-
-    Object.values(sectionRefs.current).forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
+    Object.values(sectionRefs.current).forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
   const setRef = (id: string) => (el: HTMLElement | null) => {
     sectionRefs.current[id] = el;
   };
-
   const isVisible = (id: string) => visibleSections.has(id);
 
-  const team = [
-    { name: "Davi Miranda", role: "Idealização e Estratégia" },
-    { name: "Anny Eduarda", role: "Pesquisa e Desenvolvimento Educacional" },
-    { name: "Anna Gabriella", role: "Experiência do Usuário e Organização de Trilhas" },
-    { name: "Matheus Pierre", role: "Tecnologia e Estrutura da Plataforma" },
-    { name: "Henrique De Assis", role: "Comunicação e Expansão" },
+  const scrollTo = (id: string) => {
+    setMenuOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const navItems = [
+    { label: "Início", id: "hero" },
+    { label: "Recursos", id: "features" },
+    { label: "Ranking", id: "community" },
+    { label: "Comunidade", id: "community" },
+    { label: "Sobre", id: "about" },
+  ];
+
+  const features = [
+    { icon: Zap, title: "Gamificação", desc: "Cada capítulo lido vira XP e progressão real." },
+    { icon: Flame, title: "Sequência diária", desc: "Mantenha o streak e construa o hábito." },
+    { icon: Trophy, title: "Ranking de leitores", desc: "Suba de tier competindo com outros leitores." },
+    { icon: Brain, title: "Quizzes interativos", desc: "Valide a leitura e ganhe Essência (✦)." },
+    { icon: Target, title: "Metas personalizadas", desc: "Plano adaptado ao seu ritmo e objetivos." },
+    { icon: Award, title: "Competições literárias", desc: "Desafios PvP e missões semanais." },
+  ];
+
+  const stats = [
+    { value: "300+", label: "Livros cadastrados" },
+    { value: "120+", label: "Usuários impactados" },
+    { value: "500+", label: "Quizzes realizados" },
+    { value: "95%", label: "Relatam ler mais" },
+  ];
+
+  const testimonials = [
+    {
+      name: "Mariana C.",
+      role: "Estudante, 17 anos",
+      text: "Nunca tinha terminado um livro. Hoje leio todo dia para manter meu streak.",
+    },
+    {
+      name: "Lucas R.",
+      role: "Vestibulando",
+      text: "O ranking me motivou a ler clássicos que eu jamais abriria sozinho.",
+    },
+    {
+      name: "Profª Helena",
+      role: "Professora de Literatura",
+      text: "O EDU mudou como acompanho a leitura da turma. Métricas claras e engajamento real.",
+    },
   ];
 
   return (
     <main id="main-content" className="min-h-screen text-foreground overflow-hidden bg-transparent relative z-[1]">
-      {/* Background gradients */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] via-transparent to-transparent" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-accent/[0.03] blur-[150px]" />
+      {/* Glow ambient layers */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1100px] h-[700px] rounded-full bg-accent/[0.05] blur-[160px]" />
+        <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[hsl(220,80%,40%)]/[0.18] blur-[140px]" />
+        <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] rounded-full bg-accent/[0.04] blur-[140px]" />
       </div>
+
+      {/* ═══════════ NAVBAR ═══════════ */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-[#021f53]/70 backdrop-blur-xl border-b border-white/5 py-3"
+            : "bg-transparent py-5"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <button
+            onClick={() => scrollTo("hero")}
+            className="flex items-center gap-2 group"
+            aria-label="BookQuest"
+          >
+            <img src={logoCrown} alt="" className="w-8 h-8 object-contain" />
+            <span className="font-serif font-bold text-lg tracking-tight text-foreground">
+              BookQuest
+            </span>
+          </button>
+
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => scrollTo(item.id)}
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={handleEdu}
+              className="text-sm px-4 py-2 rounded-lg text-muted-foreground hover:text-foreground border border-white/10 hover:border-white/20 transition-all"
+            >
+              BookQuest EDU
+            </button>
+            <Button
+              onClick={() => navigate(user ? "/dashboard" : "/auth")}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-lg px-5 shadow-md shadow-accent/20"
+            >
+              Entrar
+            </Button>
+          </div>
+
+          <button
+            className="md:hidden p-2 text-foreground"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Menu"
+          >
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="md:hidden bg-[#021f53]/95 backdrop-blur-xl border-t border-white/5 px-6 py-4 flex flex-col gap-2 animate-fade-in">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => scrollTo(item.id)}
+                className="text-left px-3 py-2 text-sm text-muted-foreground hover:text-foreground"
+              >
+                {item.label}
+              </button>
+            ))}
+            <button
+              onClick={handleEdu}
+              className="text-left px-3 py-2 text-sm text-muted-foreground hover:text-foreground border-t border-white/5 mt-2 pt-3"
+            >
+              BookQuest EDU
+            </button>
+            <Button
+              onClick={() => navigate(user ? "/dashboard" : "/auth")}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold mt-2"
+            >
+              Entrar
+            </Button>
+          </div>
+        )}
+      </nav>
 
       <div className="relative z-10">
         {/* ═══════════ HERO ═══════════ */}
-        <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center relative">
-
-          {/* Logo */}
-          <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.05s" }}>
-            <img
-              src={logoCrown}
-              alt="BookQuest Crown"
-              className="w-28 h-28 sm:w-36 sm:h-36 object-contain"
-            />
-          </div>
-
-          {/* Headline */}
-          <h1
-            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold leading-[1.1] max-w-4xl mb-6 animate-fade-in"
-            style={{ animationDelay: "0.1s" }}
-          >
-            Transforme sua leitura
-            <br />
-            <span className="text-accent">em uma jornada.</span>
-          </h1>
-
-          {/* Subtitle */}
-          <p
-            className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed animate-fade-in"
-            style={{ animationDelay: "0.2s" }}
-          >
-            O BookQuest foi criado para jovens que nunca tiveram o hábito de ler.
-            <br className="hidden sm:block" />
-            Transformamos a leitura em uma experiência gamificada, trilhada e com propósito.
-          </p>
-
-          {/* CTA */}
-          <div className="flex flex-col items-center gap-3 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <Button
-              onClick={handleStart}
-              size="lg"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-12 py-7 rounded-xl shadow-lg shadow-accent/25 transition-all duration-300 hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-0.5 gap-2 font-bold"
-            >
-              Começar Jornada
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-            <p className="text-xs text-muted-foreground/60">
-              Leva menos de 1 minuto para começar.
-            </p>
-            <DemoButton size="default" label="Explorar BookQuest EDU em modo demo" />
-          </div>
-
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
-            <ChevronDown className="w-6 h-6" />
-          </div>
-        </section>
-
-        {/* ═══════════ O PROPÓSITO ═══════════ */}
         <section
-          id="purpose"
-          ref={setRef("purpose")}
-          className="py-24 sm:py-32 px-6 bg-card/50"
+          id="hero"
+          className="min-h-screen flex items-center px-6 pt-32 pb-16 relative"
         >
-          <div
-            className={`max-w-3xl mx-auto text-center transition-all duration-700 ${
-              isVisible("purpose") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <p className="text-sm uppercase tracking-[0.2em] text-accent mb-4 font-medium">
-              Propósito
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-10">
-              Por que o BookQuest existe?
-            </h2>
-
-            <div className="space-y-6 text-base sm:text-lg text-muted-foreground leading-relaxed text-left sm:text-center">
-              <p>
-                Muitos jovens nunca desenvolveram o hábito da leitura.
-                <br className="hidden sm:block" />
-                Não por falta de capacidade, mas por falta de{" "}
-                <span className="text-foreground font-medium">direcionamento</span> e{" "}
-                <span className="text-foreground font-medium">propósito</span>.
-              </p>
-              <p>
-                O BookQuest transforma a leitura em uma jornada clara e evolutiva.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-                {[
-                  { icon: BookOpen, text: "Cada capítulo lido representa progresso." },
-                  { icon: Target, text: "Cada desafio cumprido fortalece a disciplina." },
-                  { icon: Zap, text: "Cada sequência mantida constrói consistência." },
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col items-center gap-3 p-5 rounded-xl border border-border/50 bg-background/50"
-                  >
-                    <item.icon className="w-5 h-5 text-accent" />
-                    <p className="text-sm text-muted-foreground text-center">{item.text}</p>
-                  </div>
-                ))}
+          <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            {/* Left – text */}
+            <div className="text-center lg:text-left animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent/30 bg-accent/5 backdrop-blur-sm mb-6">
+                <Sparkles className="w-3.5 h-3.5 text-accent" />
+                <span className="text-xs font-medium text-accent tracking-wide">
+                  Plataforma de leitura gamificada
+                </span>
               </div>
 
-              <p className="pt-4 text-foreground/80 font-medium italic">
-                Não é apenas sobre ler mais.
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold leading-[1.05] mb-6">
+                Transforme leitura
                 <br />
-                É sobre criar o hábito de forma estratégica e motivadora.
+                em <span className="bg-gradient-to-r from-accent via-[hsl(48,96%,65%)] to-accent bg-clip-text text-transparent">conquista.</span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
+                O BookQuest transforma livros em desafios, evolução e experiências gamificadas que incentivam o hábito da leitura.
               </p>
+
+              <div className="flex flex-col sm:flex-row items-center lg:items-start gap-3 sm:justify-start justify-center">
+                <Button
+                  onClick={handleStart}
+                  size="lg"
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-base px-8 py-6 rounded-xl shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/50 hover:-translate-y-0.5 transition-all gap-2 font-bold"
+                >
+                  Começar Agora
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+                <Button
+                  onClick={() => scrollTo("community")}
+                  size="lg"
+                  variant="outline"
+                  className="text-base px-8 py-6 rounded-xl border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-foreground gap-2"
+                >
+                  <Trophy className="w-4 h-4" />
+                  Explorar Ranking
+                </Button>
+              </div>
+
+              <div className="mt-6 flex justify-center lg:justify-start">
+                <DemoButton size="default" label="Explorar BookQuest EDU em modo demo" />
+              </div>
+            </div>
+
+            {/* Right – mockup */}
+            <div className="relative animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              {/* Floating glow */}
+              <div className="absolute inset-0 -z-10">
+                <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-accent/15 blur-3xl" />
+                <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-[hsl(220,80%,50%)]/25 blur-3xl" />
+              </div>
+
+              {/* Profile card */}
+              <div className="relative bg-white/[0.04] backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl shadow-black/40">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-[hsl(48,96%,40%)] flex items-center justify-center text-accent-foreground font-bold text-xl shadow-lg shadow-accent/30">
+                    L
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-foreground">@leitor.pro</span>
+                      <Crown className="w-4 h-4 text-accent" />
+                    </div>
+                    <span className="text-xs text-muted-foreground">Tier Diamante · Top 3%</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20">
+                    <Flame className="w-3.5 h-3.5 text-orange-400" />
+                    <span className="text-xs font-bold text-orange-300">42</span>
+                  </div>
+                </div>
+
+                {/* XP bar */}
+                <div className="mb-5">
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="text-muted-foreground">Essência ✦</span>
+                    <span className="text-accent font-semibold">2.840 / 3.500</span>
+                  </div>
+                  <div className="h-2.5 rounded-full bg-white/5 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-accent to-[hsl(48,96%,65%)] rounded-full shadow-[0_0_12px_hsl(48,96%,53%,0.6)]"
+                      style={{ width: "81%" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Stats grid */}
+                <div className="grid grid-cols-3 gap-3 mb-5">
+                  {[
+                    { icon: BookOpen, value: "27", label: "Livros" },
+                    { icon: Target, value: "184", label: "Capítulos" },
+                    { icon: Award, value: "12", label: "Medalhas" },
+                  ].map((s, i) => (
+                    <div
+                      key={i}
+                      className="rounded-xl bg-white/[0.03] border border-white/5 p-3 text-center"
+                    >
+                      <s.icon className="w-4 h-4 text-accent mx-auto mb-1.5" />
+                      <div className="text-lg font-bold text-foreground">{s.value}</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
+                        {s.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Mini ranking */}
+                <div className="rounded-xl bg-white/[0.02] border border-white/5 p-3">
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <Trophy className="w-3 h-3 text-accent" /> Ranking Semanal
+                  </div>
+                  {[
+                    { pos: 1, name: "marina.lê", xp: "3.420", you: false },
+                    { pos: 2, name: "@leitor.pro", xp: "2.840", you: true },
+                    { pos: 3, name: "joão_books", xp: "2.610", you: false },
+                  ].map((r) => (
+                    <div
+                      key={r.pos}
+                      className={`flex items-center gap-2 py-1.5 text-xs ${
+                        r.you ? "text-accent font-semibold" : "text-muted-foreground"
+                      }`}
+                    >
+                      <span className="w-4 text-center">{r.pos}</span>
+                      <span className="flex-1 truncate">{r.name}</span>
+                      <span>{r.xp} ✦</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Floating badges */}
+              <div
+                className="absolute -top-4 -right-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 shadow-xl shadow-black/40 hidden sm:flex items-center gap-2 animate-fade-in"
+                style={{ animationDelay: "0.5s" }}
+              >
+                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
+                  <Award className="w-4 h-4 text-accent" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-foreground">Nova medalha!</div>
+                  <div className="text-[10px] text-muted-foreground">Maratonista</div>
+                </div>
+              </div>
+
+              <div
+                className="absolute -bottom-4 -left-2 bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 shadow-xl shadow-black/40 hidden sm:flex items-center gap-2 animate-fade-in"
+                style={{ animationDelay: "0.7s" }}
+              >
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <div>
+                  <div className="text-xs font-semibold text-foreground">+320 ✦ hoje</div>
+                  <div className="text-[10px] text-muted-foreground">3 capítulos lidos</div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
-
-        {/* ═══════════ COMO FUNCIONA ═══════════ */}
+        {/* ═══════════ FEATURES ═══════════ */}
         <section
-          id="how"
-          ref={setRef("how")}
-          className="py-24 sm:py-32 px-6 bg-primary/40"
+          id="features"
+          ref={setRef("features")}
+          className="py-24 sm:py-32 px-6 relative"
         >
           <div
-            className={`max-w-4xl mx-auto text-center transition-all duration-700 ${
-              isVisible("how") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            className={`max-w-6xl mx-auto transition-all duration-700 ${
+              isVisible("features") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            <p className="text-sm uppercase tracking-[0.2em] text-accent mb-4 font-medium">
-              Como funciona
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">
-              Simples. Estratégico. Transformador.
-            </h2>
-            <p className="text-muted-foreground mb-14 max-w-xl mx-auto">
-              Três etapas para construir um hábito real de leitura.
-            </p>
+            <div className="text-center mb-16 max-w-2xl mx-auto">
+              <p className="text-xs uppercase tracking-[0.25em] text-accent mb-3 font-semibold">
+                Recursos
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4">
+                Por que o BookQuest é diferente?
+              </h2>
+              <p className="text-muted-foreground">
+                Uma experiência completa pensada para transformar leitores comuns em leitores constantes.
+              </p>
+            </div>
 
-            <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {features.map((f, i) => (
+                <div
+                  key={i}
+                  className="group relative p-7 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-accent/30 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                    <f.icon className="w-5 h-5 text-accent" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2 text-foreground">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════ EXPERIÊNCIA ═══════════ */}
+        <section
+          id="experience"
+          ref={setRef("experience")}
+          className="py-24 sm:py-32 px-6 relative"
+        >
+          <div
+            className={`max-w-6xl mx-auto transition-all duration-700 ${
+              isVisible("experience") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="text-center mb-16 max-w-2xl mx-auto">
+              <p className="text-xs uppercase tracking-[0.25em] text-accent mb-3 font-semibold">
+                Experiência
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4">
+                Veja a experiência na prática
+              </h2>
+            </div>
+
+            <div className="space-y-20">
               {[
                 {
-                  step: "01",
-                  title: "Descubra seu perfil",
-                  desc: "Faça um quiz rápido e descubra seu estilo literário.",
-                  icon: "🧠",
+                  tag: "Progressão",
+                  title: "Cada capítulo é um passo a mais",
+                  desc: "Acompanhe seu avanço em tempo real. Veja Essência ganha, capítulos concluídos e o quanto falta para o próximo nível.",
+                  icon: BarChart3,
+                  reverse: false,
                 },
                 {
-                  step: "02",
-                  title: "Escolha sua trilha",
-                  desc: "Siga um caminho estruturado de leitura, capítulo por capítulo.",
-                  icon: "📖",
+                  tag: "Comunidade",
+                  title: "Compita com outros leitores",
+                  desc: "Ranking semanal, tiers e desafios PvP. A leitura vira um espaço vivo de comunidade e evolução conjunta.",
+                  icon: Users,
+                  reverse: true,
                 },
                 {
-                  step: "03",
-                  title: "Evolua",
-                  desc: "Ganhe XP, mantenha sua sequência e desenvolva constância.",
-                  icon: "⚡",
+                  tag: "Inteligência",
+                  title: "Quizzes que validam de verdade",
+                  desc: "Perguntas geradas com IA garantem que você leu, entendeu e absorveu o conteúdo. Sem atalhos.",
+                  icon: Brain,
+                  reverse: false,
                 },
-              ].map((item, i) => (
+              ].map((row, i) => (
                 <div
                   key={i}
-                  className="relative group p-8 rounded-2xl border border-border/40 bg-card/60 backdrop-blur-sm hover:border-accent/30 hover:bg-card/80 transition-all duration-300"
+                  className={`grid lg:grid-cols-2 gap-10 items-center ${
+                    row.reverse ? "lg:[&>*:first-child]:order-2" : ""
+                  }`}
                 >
-                  <div className="text-4xl mb-4">{item.icon}</div>
-                  <div className="text-xs font-bold text-accent/40 tracking-widest mb-2 uppercase">
-                    Etapa {item.step}
+                  <div>
+                    <span className="text-xs uppercase tracking-[0.2em] text-accent font-semibold">
+                      {row.tag}
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-serif font-bold mt-2 mb-3">
+                      {row.title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">{row.desc}</p>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-accent/10 blur-3xl rounded-full" />
+                    <div className="relative aspect-video rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.01] backdrop-blur-xl flex items-center justify-center shadow-2xl shadow-black/40">
+                      <row.icon className="w-20 h-20 text-accent/60" strokeWidth={1.2} />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
-
-        {/* ═══════════ RECONHECIMENTO ═══════════ */}
+        {/* ═══════════ EMOTIONAL ═══════════ */}
         <section
-          id="recognition"
-          ref={setRef("recognition")}
-          className="py-24 sm:py-32 px-6 bg-card/50"
+          id="emotional"
+          ref={setRef("emotional")}
+          className="py-28 sm:py-36 px-6 relative"
         >
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-radial from-accent/[0.06] via-transparent to-transparent" />
+          </div>
           <div
-            className={`max-w-5xl mx-auto transition-all duration-700 ${
-              isVisible("recognition") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            className={`max-w-3xl mx-auto text-center relative transition-all duration-700 ${
+              isVisible("emotional") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            {/* Header */}
-            <div className="text-center mb-14">
-              <span className="inline-block text-[11px] uppercase tracking-[0.25em] text-accent font-bold bg-accent/10 px-4 py-1.5 rounded-full mb-5">
-                Validação
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold">
-                Reconhecimento e impacto real
-              </h2>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
-              {/* Card 1 – Apresentação */}
-              <div className="rounded-2xl border border-accent/20 bg-primary/60 shadow-lg shadow-primary/20 overflow-hidden flex flex-col">
-                {/* Image */}
-                <div className="overflow-hidden">
-                  <img
-                    src={equipeApresentacaoImg}
-                    alt="Equipe BookQuest apresentando o projeto na Batalha de Pitch 2025"
-                    className="w-full h-52 sm:h-56 object-cover"
-                  />
-                </div>
-                {/* Content */}
-                <div className="p-7 flex flex-col flex-1 text-center">
-                  <h3 className="text-xl font-serif font-bold mb-3">Batalha de Pitch 2025</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Projeto vencedor entre mais de{" "}
-                    <span className="text-accent font-semibold">150 projetos</span>, validando o potencial do BookQuest como solução inovadora para incentivar a leitura entre jovens.
-                  </p>
-                </div>
-              </div>
-
-              {/* Card 2 – Premiação */}
-              <div className="rounded-2xl border border-accent/20 bg-primary/60 shadow-lg shadow-primary/20 overflow-hidden flex flex-col">
-                {/* Image */}
-                <div className="overflow-hidden">
-                  <img
-                    src={premiacaoImg}
-                    alt="Equipe BookQuest recebendo premiação de 1º lugar na Batalha de Pitch 2025"
-                    className="w-full h-52 sm:h-56 object-cover"
-                  />
-                </div>
-                {/* Content */}
-                <div className="p-7 flex flex-col flex-1 text-center">
-                  <h3 className="text-xl font-serif font-bold mb-3">Momento da premiação</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    A equipe BookQuest recebendo o prêmio de{" "}
-                    <span className="text-accent font-semibold">1º lugar</span> na Batalha de Pitch 2025, competição que reuniu mais de 150 projetos inovadores.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* UFU mention */}
-            <p className="text-center text-sm text-muted-foreground/70 mt-10">
-              Projeto com apoio acadêmico da{" "}
-              <span className="text-foreground/80 font-medium">
-                Universidade Federal de Uberlândia (UFU)
-              </span>.
+            <BookOpen className="w-10 h-10 text-accent/50 mx-auto mb-6" strokeWidth={1.2} />
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-6 leading-tight">
+              Ler nunca deveria ser
+              <br />
+              uma <span className="italic text-accent">obrigação</span>.
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              O BookQuest transforma leitura em motivação, progresso e pertencimento através da tecnologia e da gamificação.
             </p>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
-
-        {/* ═══════════ TIME ═══════════ */}
+        {/* ═══════════ STATS ═══════════ */}
         <section
-          id="team"
-          ref={setRef("team")}
-          className="py-24 sm:py-32 px-6 bg-primary/40"
+          id="stats"
+          ref={setRef("stats")}
+          className="py-20 px-6"
         >
           <div
-            className={`max-w-4xl mx-auto transition-all duration-700 ${
-              isVisible("team") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            className={`max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-700 ${
+              isVisible("stats") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            <div className="text-center mb-6">
-              <p className="text-sm uppercase tracking-[0.2em] text-accent mb-4 font-medium">
-                O Time
+            {stats.map((s, i) => (
+              <div
+                key={i}
+                className="relative p-6 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm text-center group hover:border-accent/30 transition-all"
+              >
+                <div className="absolute inset-0 rounded-2xl bg-accent/0 group-hover:bg-accent/[0.04] transition-colors" />
+                <div className="relative text-3xl sm:text-4xl font-bold bg-gradient-to-br from-foreground to-accent bg-clip-text text-transparent mb-1">
+                  {s.value}
+                </div>
+                <div className="relative text-xs sm:text-sm text-muted-foreground uppercase tracking-wide">
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ═══════════ COMMUNITY / RANKING ═══════════ */}
+        <section
+          id="community"
+          ref={setRef("community")}
+          className="py-24 sm:py-32 px-6"
+        >
+          <div
+            className={`max-w-6xl mx-auto transition-all duration-700 ${
+              isVisible("community") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="text-center mb-14 max-w-2xl mx-auto">
+              <p className="text-xs uppercase tracking-[0.25em] text-accent mb-3 font-semibold">
+                Comunidade
               </p>
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">
-                Quem está construindo essa jornada
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4">
+                Uma comunidade viva de leitores
               </h2>
-              <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
-                Somos um time movido pelo propósito de transformar a leitura em uma experiência acessível, estruturada e evolutiva.
+              <p className="text-muted-foreground">
+                Compita, evolua e descubra novas leituras junto com milhares de outros leitores.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-12">
-              {team.map((member, i) => (
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Ranking card */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-6">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-accent" />
+                    <h3 className="font-semibold">Top leitores</h3>
+                  </div>
+                  <span className="text-xs text-muted-foreground">Esta semana</span>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { pos: 1, name: "marina.lê", xp: "3.420", color: "from-yellow-300 to-amber-500" },
+                    { pos: 2, name: "rafael_books", xp: "3.180", color: "from-slate-300 to-slate-500" },
+                    { pos: 3, name: "ana.literaria", xp: "2.940", color: "from-orange-300 to-orange-600" },
+                    { pos: 4, name: "leitor.pro", xp: "2.840", color: "from-white/30 to-white/10" },
+                    { pos: 5, name: "joão_books", xp: "2.610", color: "from-white/30 to-white/10" },
+                  ].map((r) => (
+                    <div
+                      key={r.pos}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5"
+                    >
+                      <div
+                        className={`w-8 h-8 rounded-lg bg-gradient-to-br ${r.color} flex items-center justify-center font-bold text-sm text-[#021f53]`}
+                      >
+                        {r.pos}
+                      </div>
+                      <span className="flex-1 text-sm">{r.name}</span>
+                      <span className="text-sm text-accent font-semibold">{r.xp} ✦</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Active challenges */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-6">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-accent" />
+                    <h3 className="font-semibold">Desafios ativos</h3>
+                  </div>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                    Ao vivo
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { title: "Maratona de Clássicos", players: "48 leitores", progress: 68 },
+                    { title: "Sprint Semanal", players: "126 leitores", progress: 42 },
+                    { title: "Duelo: Ficção vs Não-Ficção", players: "32 leitores", progress: 85 },
+                  ].map((c, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">{c.title}</span>
+                        <span className="text-xs text-muted-foreground">{c.players}</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-accent to-[hsl(48,96%,65%)]"
+                          style={{ width: `${c.progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════ BOOKQUEST EDU ═══════════ */}
+        <section
+          id="edu"
+          ref={setRef("edu")}
+          className="py-24 sm:py-32 px-6"
+        >
+          <div
+            className={`max-w-6xl mx-auto transition-all duration-700 ${
+              isVisible("edu") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl p-8 sm:p-14 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-accent/[0.06] blur-3xl rounded-full pointer-events-none" />
+
+              <div className="grid lg:grid-cols-2 gap-10 items-center relative">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/5 mb-5">
+                    <GraduationCap className="w-3.5 h-3.5 text-accent" />
+                    <span className="text-xs font-medium tracking-wide">Para escolas</span>
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4">
+                    BookQuest <span className="text-accent">EDU</span>
+                  </h2>
+                  <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+                    Uma plataforma para escolas acompanharem desempenho, engajamento e evolução leitora — tudo em dashboards claros e em tempo real.
+                  </p>
+
+                  <ul className="space-y-3 mb-8">
+                    {[
+                      "Dashboards e métricas por turma",
+                      "Ranking competitivo entre alunos",
+                      "Quizzes escolares automatizados",
+                      "Acompanhamento de desempenho individual",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm">
+                        <div className="w-5 h-5 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center flex-shrink-0">
+                          <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        </div>
+                        <span className="text-foreground/85">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    onClick={handleEdu}
+                    size="lg"
+                    className="bg-foreground hover:bg-foreground/90 text-[#021f53] font-bold rounded-xl px-7 gap-2"
+                  >
+                    Acessar Plataforma EDU
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {/* Dashboard mockup */}
+                <div className="relative">
+                  <div className="rounded-2xl border border-white/10 bg-[#021f53]/60 backdrop-blur-xl p-5 shadow-2xl shadow-black/50">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <div className="text-xs text-muted-foreground">Turma 9º A</div>
+                        <div className="font-semibold">Engajamento semanal</div>
+                      </div>
+                      <BarChart3 className="w-5 h-5 text-accent" />
+                    </div>
+
+                    {/* Bar chart */}
+                    <div className="flex items-end gap-2 h-32 mb-5">
+                      {[40, 65, 45, 80, 70, 90, 75].map((h, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                          <div
+                            className="w-full rounded-t-md bg-gradient-to-t from-accent/40 to-accent"
+                            style={{ height: `${h}%` }}
+                          />
+                          <span className="text-[10px] text-muted-foreground">
+                            {["S", "T", "Q", "Q", "S", "S", "D"][i]}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { label: "Alunos ativos", value: "28/32" },
+                        { label: "Capítulos", value: "184" },
+                        { label: "Quizzes", value: "92%" },
+                      ].map((s, i) => (
+                        <div
+                          key={i}
+                          className="rounded-lg bg-white/[0.03] border border-white/5 p-2 text-center"
+                        >
+                          <div className="text-sm font-bold text-accent">{s.value}</div>
+                          <div className="text-[9px] text-muted-foreground uppercase tracking-wide">
+                            {s.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════ TESTIMONIALS ═══════════ */}
+        <section
+          id="testimonials"
+          ref={setRef("testimonials")}
+          className="py-24 sm:py-32 px-6"
+        >
+          <div
+            className={`max-w-6xl mx-auto transition-all duration-700 ${
+              isVisible("testimonials") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="text-center mb-14 max-w-2xl mx-auto">
+              <p className="text-xs uppercase tracking-[0.25em] text-accent mb-3 font-semibold">
+                Depoimentos
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold">
+                O que dizem os leitores
+              </h2>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {testimonials.map((t, i) => (
                 <div
                   key={i}
-                  className="flex flex-col items-center text-center p-5 rounded-2xl border border-border/30 bg-card/40 hover:border-accent/20 transition-colors duration-300"
+                  className="p-7 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-accent/30 transition-all"
                 >
-                  <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-3">
-                    <Users className="w-5 h-5 text-accent/70" />
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} className="w-3.5 h-3.5 fill-accent text-accent" />
+                    ))}
                   </div>
-                  <h4 className="text-sm font-semibold leading-tight">{member.name}</h4>
-                  <p className="text-xs text-muted-foreground mt-1 leading-snug">{member.role}</p>
+                  <p className="text-sm text-foreground/85 leading-relaxed mb-5 italic">
+                    "{t.text}"
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/20 flex items-center justify-center font-bold text-sm text-accent">
+                      {t.name[0]}
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold">{t.name}</div>
+                      <div className="text-xs text-muted-foreground">{t.role}</div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
+        {/* ═══════════ ABOUT (anchor) ═══════════ */}
+        <section id="about" className="hidden" ref={setRef("about")} />
 
         {/* ═══════════ CTA FINAL ═══════════ */}
-        <section
-          id="cta"
-          ref={setRef("cta")}
-          className="py-28 sm:py-36 px-6 bg-card/50 relative overflow-hidden"
-        >
-          {/* Glow */}
+        <section className="py-28 sm:py-36 px-6 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-accent/[0.05] blur-[100px]" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-accent/[0.08] blur-[120px]" />
           </div>
 
-          <div
-            className={`max-w-2xl mx-auto text-center relative z-10 transition-all duration-700 ${
-              isVisible("cta") ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <Quote className="w-8 h-8 text-accent/40 mx-auto mb-6 rotate-180" />
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold mb-4">
-              Pronto para transformar sua relação com a leitura?
+          <div className="max-w-3xl mx-auto text-center relative z-10">
+            <Crown className="w-12 h-12 text-accent mx-auto mb-6" strokeWidth={1.4} />
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold mb-5 leading-tight">
+              Pronto para transformar
+              <br />
+              sua jornada de leitura?
             </h2>
-            <p className="text-muted-foreground mb-10 text-lg">
-              Comece agora e descubra seu perfil literário.
+            <p className="text-muted-foreground text-lg mb-10">
+              Junte-se a uma nova geração de leitores. Leva menos de 1 minuto.
             </p>
             <Button
               onClick={handleStart}
               size="lg"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-12 py-7 rounded-xl shadow-lg shadow-accent/25 transition-all duration-300 hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-0.5 gap-2 font-bold"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-12 py-7 rounded-xl shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:-translate-y-0.5 transition-all gap-2 font-bold"
             >
               Começar Agora
               <ArrowRight className="w-5 h-5" />
@@ -388,23 +806,24 @@ const Landing = () => {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 px-6 border-t border-border/30">
-          <div className="max-w-5xl mx-auto flex flex-col items-center gap-4 text-sm text-muted-foreground/50">
-            <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
-              <div className="flex items-center gap-2">
-                <img src={logoCrown} alt="BookQuest" className="w-5 h-5 object-contain" />
-                <span className="font-serif font-semibold text-foreground/60">BookQuest</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <Link to="/politica-de-privacidade" className="hover:text-foreground/70 transition-colors">
-                  Política de Privacidade
-                </Link>
-                <Link to="/termos-de-servico" className="hover:text-foreground/70 transition-colors">
-                  Termos de Serviço
-                </Link>
-              </div>
+        <footer className="py-10 px-6 border-t border-white/5">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground/60">
+            <div className="flex items-center gap-2">
+              <img src={logoCrown} alt="BookQuest" className="w-5 h-5 object-contain" />
+              <span className="font-serif font-semibold text-foreground/70">BookQuest</span>
             </div>
-            <p>© 2026 BookQuest. Todos os direitos reservados.</p>
+            <div className="flex items-center gap-5">
+              <Link to="/politica-de-privacidade" className="hover:text-foreground/80 transition-colors">
+                Privacidade
+              </Link>
+              <Link to="/termos-de-servico" className="hover:text-foreground/80 transition-colors">
+                Termos
+              </Link>
+              <button onClick={handleEdu} className="hover:text-foreground/80 transition-colors">
+                EDU
+              </button>
+            </div>
+            <p>© 2026 BookQuest</p>
           </div>
         </footer>
       </div>
