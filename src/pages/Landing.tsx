@@ -942,19 +942,19 @@ const Landing = () => {
           <div className="max-w-3xl mx-auto text-center relative z-10">
             <Crown className="w-12 h-12 text-accent mx-auto mb-6" strokeWidth={1.4} />
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold mb-5 leading-tight">
-              Pronto para transformar
+              Sua jornada de leitura
               <br />
-              sua jornada de leitura?
+              começa <span className="text-accent italic">agora.</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-10">
-              Junte-se a uma nova geração de leitores. Leva menos de 1 minuto.
+              Comece descobrindo o que combina com você. Leva menos de 1 minuto.
             </p>
             <Button
               onClick={handleStart}
               size="lg"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-12 py-7 rounded-xl shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:-translate-y-0.5 transition-all gap-2 font-bold"
+              className={`${PRIMARY_CTA} text-lg px-12 py-7 gap-2`}
             >
-              Começar Agora
+              Iniciar minha jornada
               <ArrowRight className="w-5 h-5" />
             </Button>
           </div>
