@@ -230,15 +230,12 @@ const EduTurmaDetail = () => {
         )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 text-xs">
-            <TabsTrigger value="overview">Geral</TabsTrigger>
-            <TabsTrigger value="books">Livros</TabsTrigger>
-            <TabsTrigger value="metrics">Métricas</TabsTrigger>
-            <TabsTrigger value="challenges">Desafios</TabsTrigger>
-            <TabsTrigger value="announcements">Avisos</TabsTrigger>
-            <TabsTrigger value="discussions">Discussões</TabsTrigger>
-            <TabsTrigger value="questions">Perguntas</TabsTrigger>
-            <TabsTrigger value="ranking">Ranking</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 text-xs">
+            <TabsTrigger value="overview">Visão geral</TabsTrigger>
+            <TabsTrigger value="ranking">Alunos</TabsTrigger>
+            <TabsTrigger value="books">Jornadas</TabsTrigger>
+            <TabsTrigger value="announcements">Comunicação</TabsTrigger>
+            <TabsTrigger value="metrics">Relatórios</TabsTrigger>
           </TabsList>
 
           {/* Books */}
