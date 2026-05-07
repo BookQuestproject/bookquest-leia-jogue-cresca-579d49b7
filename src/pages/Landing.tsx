@@ -17,7 +17,22 @@ import {
   Crown,
   Menu,
   X,
+  Compass,
+  Heart,
+  Rocket,
+  Wand2,
+  Ghost,
+  Swords,
+  Telescope,
+  Search,
 } from "lucide-react";
+
+// Reusable premium button classes
+const PRIMARY_CTA =
+  "relative overflow-hidden bg-gradient-to-r from-accent via-[hsl(48,96%,60%)] to-accent bg-[length:200%_100%] bg-left hover:bg-right text-accent-foreground font-bold rounded-xl shadow-lg shadow-accent/30 hover:shadow-[0_0_45px_hsl(48,96%,55%/0.55)] hover:scale-[1.025] hover:brightness-110 active:scale-[0.98] transition-all duration-300 ease-out";
+
+const GHOST_CTA =
+  "rounded-xl border-white/15 bg-white/5 backdrop-blur-sm text-foreground hover:bg-white/10 hover:border-accent/40 hover:scale-[1.02] hover:shadow-[0_0_24px_hsl(48,96%,55%/0.2)] transition-all duration-300 ease-out";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
