@@ -172,12 +172,10 @@ const EduAluno = () => {
     if (!user || !joinCode.trim()) return;
     setJoining(true);
 
-    const { data: classData, error: findError } = await supabase
-      .from('classes')
-      .select('id, name')
-      .eq('access_code', joinCode.toUpperCase())
-      .eq('is_active', true)
+    const { data: classRow, error: findError } = await supabase
+      .rpc('find_class_by_code' as any, { _code: joinCode.toUpperCase() })
       .maybeSingle();
+    const classData = classRow as { id: string; name: string } | null;
 
     if (findError || !classData) {
       toast({ title: 'Código inválido', description: 'Nenhuma turma encontrada.', variant: 'destructive' });
