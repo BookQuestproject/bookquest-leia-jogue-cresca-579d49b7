@@ -536,10 +536,10 @@ const Landing = () => {
                 Recursos
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold mb-4">
-                Por que o BookQuest é diferente?
+                Transformamos leitura em <span className="text-accent">experiência</span>.
               </h2>
               <p className="text-muted-foreground">
-                Uma experiência completa pensada para transformar leitores comuns em leitores constantes.
+                Uma plataforma divertida, gamificada e personalizada — pensada tanto para quem ama ler quanto para quem ainda está descobrindo.
               </p>
             </div>
 
