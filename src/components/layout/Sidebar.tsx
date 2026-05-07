@@ -127,19 +127,24 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
       {/* Primary Navigation */}
       <nav className="flex-1 px-3 overflow-y-auto space-y-0.5" data-tutorial="sidebar-nav">
         <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
-          Navegação
+          Principal
         </p>
         {primaryItems.map((item) => renderItem(item))}
 
-        {/* Divider */}
         <div className="my-3 mx-3 border-t border-border/30" />
 
         <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
-          Social
+          Gamificação
         </p>
-        {secondaryItems.map((item) => renderItem(item))}
+        {gamificationItems.map((item) => renderItem(item))}
 
-        {/* Premium section */}
+        <div className="my-3 mx-3 border-t border-border/30" />
+
+        <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
+          Comunidade
+        </p>
+        {communityItems.map((item) => renderItem(item))}
+
         <div className="my-3 mx-3 border-t border-border/30" />
 
         <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-accent/40">
