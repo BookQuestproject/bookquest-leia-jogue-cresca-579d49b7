@@ -244,7 +244,7 @@ const Auth = () => {
             <img
               src={crownIcon}
               alt="BookQuest"
-              className="w-full h-full object-contain drop-shadow-[0_0_20px_hsl(var(--accent)/0.3)]"
+              className="w-full h-full object-contain"
             />
           </div>
           <h1 className={`text-3xl font-serif font-bold text-foreground tracking-tight transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
