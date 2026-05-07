@@ -225,7 +225,7 @@ const EduAluno = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -246,7 +246,7 @@ const EduAluno = () => {
   const myAchievements = achievements.filter(a => a.user_id === user?.id);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       {/* Header */}
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur-sm px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center justify-between">

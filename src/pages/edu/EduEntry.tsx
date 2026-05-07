@@ -55,7 +55,7 @@ const EduEntry = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col bg-transparent">
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-sm px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
