@@ -157,7 +157,7 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
           <>
             <div className="my-3 mx-3 border-t border-border/30" />
             <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-blue-400/60">
-              Educacional
+              EDU
             </p>
             <Link
               to="/edu"
