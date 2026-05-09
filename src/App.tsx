@@ -125,6 +125,7 @@ const App = () => (
                 <Route path="/edu/configuracoes" element={<EduConfiguracoes />} />
                 <Route path="/politica-de-privacidade" element={<PoliticaDePrivacidade />} />
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
+                <Route path="/install" element={<Install />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
                 </RouteTransition>
