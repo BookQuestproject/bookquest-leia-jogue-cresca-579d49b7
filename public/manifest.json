@@ -1,0 +1,40 @@
+{
+  "name": "BookQuest - Sua Jornada Literária",
+  "short_name": "BookQuest",
+  "description": "Transforme sua leitura em uma aventura gamificada. Descubra seu gênero literário, suba no ranking e conecte-se com outros leitores.",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#1E3A8A",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "books", "games"],
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "BookQuest - Sua Jornada Literária"
+    }
+  ]
+}

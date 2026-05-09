@@ -59,6 +59,7 @@ import EduComunicacao from "./pages/edu/EduComunicacao";
 import EduConfiguracoes from "./pages/edu/EduConfiguracoes";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
+import Install from "./pages/Install";
 
 // App configuration
 const queryClient = new QueryClient();
@@ -124,6 +125,7 @@ const App = () => (
                 <Route path="/edu/configuracoes" element={<EduConfiguracoes />} />
                 <Route path="/politica-de-privacidade" element={<PoliticaDePrivacidade />} />
                 <Route path="/termos-de-servico" element={<TermosDeServico />} />
+                <Route path="/install" element={<Install />} />
                 <Route path="*" element={<NotFound />} />
                 </Routes>
                 </RouteTransition>
