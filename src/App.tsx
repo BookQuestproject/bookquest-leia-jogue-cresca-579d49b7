@@ -59,6 +59,7 @@ import EduComunicacao from "./pages/edu/EduComunicacao";
 import EduConfiguracoes from "./pages/edu/EduConfiguracoes";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
+import Install from "./pages/Install";
 
 // App configuration
 const queryClient = new QueryClient();
