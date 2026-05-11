@@ -27,20 +27,27 @@ const AuthCallback = () => {
       return;
     }
 
+    const getRedirect = () => {
+      try {
+        const r = localStorage.getItem("bookquest-post-auth-redirect");
+        localStorage.removeItem("bookquest-post-auth-redirect");
+        if (r && r.startsWith("/")) return r;
+      } catch {}
+      return "/dashboard";
+    };
+
     // The Supabase client automatically detects the hash fragment
     // and processes the OAuth tokens. We just need to listen for the result.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "SIGNED_IN" && session) {
-          // Clean the URL hash
           window.history.replaceState(null, "", window.location.pathname);
-          // Redirect to dashboard
-          window.location.replace("/dashboard");
+          window.location.replace(getRedirect());
         }
 
         if (event === "TOKEN_REFRESHED" && session) {
           window.history.replaceState(null, "", window.location.pathname);
-          window.location.replace("/dashboard");
+          window.location.replace(getRedirect());
         }
       }
     );
@@ -53,7 +60,7 @@ const AuthCallback = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         window.history.replaceState(null, "", window.location.pathname);
-        window.location.replace("/dashboard");
+        window.location.replace(getRedirect());
       } else if (!window.location.hash) {
         // No hash and no session = something went wrong
         setError("Token inválido ou expirado. Faça login novamente.");
