@@ -163,8 +163,68 @@ const EduProfessorInner = () => {
   const onTrackCount = ranked.filter(r => Math.abs(r.progress_percent - avgProgress) < 10).length;
   const behindCount = ranked.filter(r => r.progress_percent <= avgProgress - 10).length;
 
-  // Pending reviews = responses without "reviewed" — we treat all responses as pending (no reviewed col yet)
-  const pendingReviewCount = responses.length;
+  // Pending reviews = responses with no reviewed_at
+  const pendingReviewCount = responses.filter(r => !r.reviewed_at).length;
+
+  // Chart data
+  const progressChartData = useMemo(() => ranked.map(r => ({
+    name: (r.profile?.full_name || "Aluno").split(" ")[0].slice(0, 12),
+    progresso: r.progress_percent,
+  })), [ranked]);
+
+  const exportCSV = () => {
+    if (!selectedClass) return;
+    const rows = [
+      ["Aluno", "Página atual", "Total de páginas", "Progresso (%)", "Páginas hoje", "Última leitura", "Status"],
+      ...ranked.map(r => [
+        (r.profile?.full_name || "Aluno").replaceAll(";", ","),
+        r.current_page,
+        totalPages,
+        r.progress_percent,
+        r.pages_today,
+        r.last_read_date || "",
+        r.progress_percent >= avgProgress + 10 ? "Adiantado"
+          : r.progress_percent <= avgProgress - 10 ? "Atrasado" : "No prazo",
+      ]),
+    ];
+    const csv = rows.map(r => r.join(";")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `relatorio-${selectedClass.name.replaceAll(" ", "_")}-${today}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportClassPDF = () => {
+    if (!selectedClass) return;
+    const summary = ranked
+      .map(r => `${r.profile?.full_name || "Aluno"} — ${r.current_page}/${totalPages || "?"} págs (${r.progress_percent}%)`)
+      .join("\n");
+    downloadReportPDF({
+      studentName: `Turma ${selectedClass.name}`,
+      className: selectedClass.name,
+      bookTitle: selectedClass.book_title,
+      schoolName: settings?.school_name,
+      teacherName: profile?.full_name,
+      periodLabel: new Date().toLocaleDateString("pt-BR"),
+      metrics: {
+        progress: avgProgress,
+        chapters: 0,
+        frequency: activeToday,
+        reflections: responses.length,
+        current_page: 0,
+        total_pages: totalPages,
+      },
+      analysisText:
+        `A turma ${selectedClass.name} está com progresso médio de ${avgProgress}% no livro "${selectedClass.book_title || "—"}". ` +
+        `${activeToday} aluno(s) leram hoje. ${aheadCount} adiantado(s), ${onTrackCount} no prazo, ${behindCount} atrasado(s). ` +
+        `Total de respostas em atividades: ${responses.length}.\n\nDetalhamento:\n${summary}`,
+      teacherNote: undefined,
+      signature: settings?.signature,
+    });
+  };
 
   const filteredStudents = ranked.filter(r =>
     (r.profile?.full_name || "").toLowerCase().includes(search.toLowerCase()),
