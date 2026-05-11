@@ -23,6 +23,7 @@ const JoinClass = () => {
   const navigate = useNavigate();
   const { user, signUp, signIn } = useAuth();
   const { toast } = useToast();
+  const [teacherBlocked, setTeacherBlocked] = useState(false);
 
   const [classInfo, setClassInfo] = useState<{ id: string; name: string } | null>(null);
   const [lookupLoading, setLookupLoading] = useState(true);
@@ -46,11 +47,22 @@ const JoinClass = () => {
     })();
   }, [code]);
 
-  // If already logged in, just join and go to onboarding
+  // If already logged in, just join and go to class room
   useEffect(() => {
-    if (user && classInfo) {
+    (async () => {
+      if (!user || !classInfo) return;
+      // Block teachers from joining via class code
+      const { data: teacherRow } = await supabase
+        .from("edu_teachers" as any)
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (teacherRow) {
+        setTeacherBlocked(true);
+        return;
+      }
       void joinAndGo(user.email ?? null);
-    }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, classInfo]);
 
@@ -68,7 +80,18 @@ const JoinClass = () => {
       if (u?.user) await supabase.from("profiles").update({ full_name: name }).eq("id", u.user.id);
     }
     try { localStorage.setItem("bookquest-edu-pending-class", String(data)); } catch {}
-    navigate("/edu/onboarding-aluno", { replace: true });
+
+    // Check if onboarding already completed → go straight to class room
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("edu_onboarding_completed")
+      .eq("id", (await supabase.auth.getUser()).data.user!.id)
+      .maybeSingle();
+    if ((prof as any)?.edu_onboarding_completed) {
+      navigate("/edu/aluno", { replace: true });
+    } else {
+      navigate("/edu/onboarding-aluno", { replace: true });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,6 +132,27 @@ const JoinClass = () => {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#021f53" }}>
         <Loader2 className="h-8 w-8 animate-spin text-white" />
+      </div>
+    );
+  }
+
+  if (teacherBlocked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 text-white" style={{ backgroundColor: "#021f53" }}>
+        <Card className="max-w-md w-full bg-white/5 border-white/10 backdrop-blur-xl">
+          <CardContent className="p-8 text-center space-y-4">
+            <GraduationCap className="h-12 w-12 mx-auto text-amber-400" />
+            <h1 className="text-2xl font-bold">Acesso restrito a alunos</h1>
+            <p className="text-sm text-white/70">
+              Esta página é exclusiva para alunos. Professores acessam pelo painel próprio.
+            </p>
+            <Button onClick={() => navigate("/edu/professor", { replace: true })}
+              className="font-bold text-[#021f53]"
+              style={{ background: "linear-gradient(135deg,#E0A82E,#F5C842,#FCE17A)" }}>
+              Ir para o painel do professor
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
