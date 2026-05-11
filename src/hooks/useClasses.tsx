@@ -252,6 +252,62 @@ export const useClasses = () => {
     return true;
   };
 
+  const setBookForClass = async (
+    classId: string,
+    payload: {
+      book_id?: string | null;
+      book_title: string;
+      author?: string | null;
+      total_pages?: number | null;
+      reading_start_date?: string | null;
+      reading_deadline?: string | null;
+    },
+  ) => {
+    const { error } = await supabase
+      .from('classes')
+      .update({
+        book_id: payload.book_id ?? null,
+        book_title: payload.book_title,
+        author: payload.author ?? null,
+        total_pages: payload.total_pages ?? null,
+        reading_start_date: payload.reading_start_date ?? null,
+        reading_deadline: payload.reading_deadline ?? null,
+      })
+      .eq('id', classId);
+
+    if (error) {
+      toast({ title: 'Erro', description: 'Falha ao definir livro da turma.', variant: 'destructive' });
+      return false;
+    }
+
+    // Seed initial reading progress for every member that doesn't have a row yet
+    const { data: members } = await supabase
+      .from('class_members')
+      .select('user_id')
+      .eq('class_id', classId);
+
+    if (members && members.length) {
+      const today = new Date().toISOString().split('T')[0];
+      const rows = members.map((m: any) => ({
+        class_id: classId,
+        user_id: m.user_id,
+        current_page: 0,
+        pages_read_today: 0,
+        last_read_date: today,
+        is_up_to_date: true,
+      }));
+      // upsert keeps existing progress untouched only for new conflicts; we want NOT to overwrite existing
+      // So insert one by one ignoring conflicts.
+      await supabase
+        .from('class_reading_progress')
+        .upsert(rows, { onConflict: 'class_id,user_id', ignoreDuplicates: true });
+    }
+
+    toast({ title: '📖 Livro definido!', description: payload.book_title });
+    await fetchClasses();
+    return true;
+  };
+
   return { 
     classes, 
     loading, 
@@ -261,6 +317,7 @@ export const useClasses = () => {
     archiveClass,
     duplicateClass,
     fetchClassMembers, 
-    joinClassByCode 
+    joinClassByCode,
+    setBookForClass,
   };
 };

@@ -393,10 +393,27 @@ const EduAluno = () => {
                         ? <>Meta diária: <strong className="text-accent">{dailyGoal} pág/dia</strong> ({daysRemaining} dias restantes)</>
                         : "Sem meta diária definida"}
                     </div>
-                    <Button onClick={() => setSection("stats")} className="gap-2">
-                      <CheckCircle2 className="h-4 w-4" />
-                      Atualizar progresso
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button onClick={() => setSection("stats")} className="gap-2">
+                        <BookOpen className="h-4 w-4" /> Continuar leitura
+                      </Button>
+                      {totalPages > 0 && (
+                        <Button
+                          variant="outline"
+                          onClick={async () => {
+                            const next = Math.min(totalPages, currentPage + Math.max(1, Math.ceil(totalPages / 20)));
+                            await updateProgress(selectedClass.id, next);
+                            fetchRanking(selectedClass.id);
+                          }}
+                          className="gap-2"
+                        >
+                          <CheckCircle2 className="h-4 w-4" /> Próximo capítulo
+                        </Button>
+                      )}
+                      <Button variant="secondary" onClick={() => setSection("activities")} className="gap-2">
+                        <ClipboardList className="h-4 w-4" /> Atividades {pendingQuestions.length > 0 && <span className="ml-1 text-[10px] bg-accent text-accent-foreground rounded-full px-1.5 py-0.5">{pendingQuestions.length}</span>}
+                      </Button>
+                    </div>
                   </div>
                 </Card>
 
@@ -524,15 +541,24 @@ const EduAluno = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {submittedQuestions.map(q => {
                             const myR = responses.find(r => r.question_id === q.id && r.user_id === user?.id);
+                            const reviewed = !!myR?.reviewed_at;
                             return (
-                              <Card key={q.id} className="border-success/30">
+                              <Card key={q.id} className={reviewed ? "border-success/40" : "border-success/20"}>
                                 <CardContent className="p-4 space-y-2">
                                   <div className="flex items-start justify-between gap-2">
-                                    <span className="text-[10px] px-2 py-0.5 rounded-full text-success border border-success/40 font-semibold">Respondida</span>
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full text-success border border-success/40 font-semibold">
+                                      {reviewed ? "Revisada" : "Respondida"}
+                                    </span>
                                     <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
                                   </div>
                                   <p className="text-sm text-foreground font-medium">{q.question_text}</p>
                                   {myR && <p className="text-xs text-muted-foreground italic line-clamp-3">"{myR.response_text}"</p>}
+                                  {myR?.teacher_feedback && (
+                                    <div className="mt-2 rounded-md border border-primary/30 bg-primary/5 p-2.5">
+                                      <p className="text-[10px] uppercase tracking-wider text-primary font-bold mb-1">Feedback do professor</p>
+                                      <p className="text-xs text-foreground leading-relaxed">{myR.teacher_feedback}</p>
+                                    </div>
+                                  )}
                                 </CardContent>
                               </Card>
                             );

@@ -4,7 +4,11 @@ import {
   GraduationCap, LayoutDashboard, Users, BarChart3, LogOut,
   TrendingUp, Trophy, Target, Megaphone, Clock, ArrowUpRight,
   Search, FileCheck, BookOpen, Plus, Copy, Loader2, Send,
+  Check, MessageSquare, Pencil, Download, FileText,
 } from "lucide-react";
+import {
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell,
+} from "recharts";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +28,8 @@ import { useEduEngagement } from "@/hooks/useEduEngagement";
 import { useClassQuestions } from "@/hooks/useClassQuestions";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
+import { downloadReportPDF } from "@/lib/edu/generateReportPDF";
+import { useTeacherSettings } from "@/hooks/useTeacherSettings";
 import TeacherProfileGate from "@/components/edu/TeacherProfileGate";
 
 const StatCard = ({ icon: Icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) => (
@@ -53,7 +59,8 @@ const EduProfessorInner = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const { profile } = useProfile();
-  const { classes, loading: loadingClasses } = useClasses();
+  const { classes, loading: loadingClasses, fetchClassMembers, setBookForClass, fetchClasses } = useClasses();
+  const { settings } = useTeacherSettings();
 
   const tabFromUrl = new URLSearchParams(location.search).get("tab") || "overview";
   const classFromUrl = new URLSearchParams(location.search).get("class");
@@ -63,6 +70,14 @@ const EduProfessorInner = () => {
   const [members, setMembers] = useState<ClassMember[]>([]);
   const [showAnnouncementDialog, setShowAnnouncementDialog] = useState(false);
   const [announcementText, setAnnouncementText] = useState("");
+
+  // Book dialog
+  const [showBookDialog, setShowBookDialog] = useState(false);
+  const [bookForm, setBookForm] = useState({ book_title: "", author: "", total_pages: "", reading_start_date: "", reading_deadline: "" });
+  const [savingBook, setSavingBook] = useState(false);
+
+  // Review feedback per response (id -> text)
+  const [feedbackDrafts, setFeedbackDrafts] = useState<Record<string, string>>({});
 
   const activeClasses = useMemo(() => classes.filter(c => c.is_active && !c.is_archived), [classes]);
 
@@ -78,10 +93,9 @@ const EduProfessorInner = () => {
 
   const selectedClass: ClassData | undefined = activeClasses.find(c => c.id === selectedClassId);
 
-  const { fetchClassMembers } = useClasses();
   const { progressData, fetchProgress } = useClassReadingProgress();
   const { announcements, createAnnouncement } = useEduEngagement(selectedClassId || undefined);
-  const { questions, responses, fetchQuestions } = useClassQuestions();
+  const { questions, responses, fetchQuestions, reviewResponse } = useClassQuestions();
 
   useEffect(() => {
     if (!selectedClassId) return;
@@ -89,6 +103,39 @@ const EduProfessorInner = () => {
     fetchProgress(selectedClassId);
     fetchQuestions(selectedClassId);
   }, [selectedClassId]);
+
+  const openBookDialog = () => {
+    if (!selectedClass) return;
+    setBookForm({
+      book_title: selectedClass.book_title || "",
+      author: selectedClass.author || "",
+      total_pages: selectedClass.total_pages ? String(selectedClass.total_pages) : "",
+      reading_start_date: selectedClass.reading_start_date || "",
+      reading_deadline: selectedClass.reading_deadline || "",
+    });
+    setShowBookDialog(true);
+  };
+
+  const handleSaveBook = async () => {
+    if (!selectedClass || !bookForm.book_title.trim()) {
+      toast({ title: "Título obrigatório", description: "Informe o nome do livro.", variant: "destructive" });
+      return;
+    }
+    setSavingBook(true);
+    const ok = await setBookForClass(selectedClass.id, {
+      book_title: bookForm.book_title.trim(),
+      author: bookForm.author.trim() || null,
+      total_pages: bookForm.total_pages ? parseInt(bookForm.total_pages, 10) : null,
+      reading_start_date: bookForm.reading_start_date || null,
+      reading_deadline: bookForm.reading_deadline || null,
+    });
+    setSavingBook(false);
+    if (ok) {
+      setShowBookDialog(false);
+      // refresh progress to reflect new seeded rows
+      fetchProgress(selectedClass.id);
+    }
+  };
 
   // Stats derivation
   const totalPages = selectedClass?.total_pages || 0;
@@ -116,8 +163,68 @@ const EduProfessorInner = () => {
   const onTrackCount = ranked.filter(r => Math.abs(r.progress_percent - avgProgress) < 10).length;
   const behindCount = ranked.filter(r => r.progress_percent <= avgProgress - 10).length;
 
-  // Pending reviews = responses without "reviewed" — we treat all responses as pending (no reviewed col yet)
-  const pendingReviewCount = responses.length;
+  // Pending reviews = responses with no reviewed_at
+  const pendingReviewCount = responses.filter(r => !r.reviewed_at).length;
+
+  // Chart data
+  const progressChartData = useMemo(() => ranked.map(r => ({
+    name: (r.profile?.full_name || "Aluno").split(" ")[0].slice(0, 12),
+    progresso: r.progress_percent,
+  })), [ranked]);
+
+  const exportCSV = () => {
+    if (!selectedClass) return;
+    const rows = [
+      ["Aluno", "Página atual", "Total de páginas", "Progresso (%)", "Páginas hoje", "Última leitura", "Status"],
+      ...ranked.map(r => [
+        (r.profile?.full_name || "Aluno").replace(/;/g, ","),
+        r.current_page,
+        totalPages,
+        r.progress_percent,
+        r.pages_today,
+        r.last_read_date || "",
+        r.progress_percent >= avgProgress + 10 ? "Adiantado"
+          : r.progress_percent <= avgProgress - 10 ? "Atrasado" : "No prazo",
+      ]),
+    ];
+    const csv = rows.map(r => r.join(";")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `relatorio-${selectedClass.name.replace(/ /g, "_")}-${today}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportClassPDF = () => {
+    if (!selectedClass) return;
+    const summary = ranked
+      .map(r => `${r.profile?.full_name || "Aluno"} — ${r.current_page}/${totalPages || "?"} págs (${r.progress_percent}%)`)
+      .join("\n");
+    downloadReportPDF({
+      studentName: `Turma ${selectedClass.name}`,
+      className: selectedClass.name,
+      bookTitle: selectedClass.book_title,
+      schoolName: settings?.school_name,
+      teacherName: profile?.full_name,
+      periodLabel: new Date().toLocaleDateString("pt-BR"),
+      metrics: {
+        progress: avgProgress,
+        chapters: 0,
+        frequency: activeToday,
+        reflections: responses.length,
+        current_page: 0,
+        total_pages: totalPages,
+      },
+      analysisText:
+        `A turma ${selectedClass.name} está com progresso médio de ${avgProgress}% no livro "${selectedClass.book_title || "—"}". ` +
+        `${activeToday} aluno(s) leram hoje. ${aheadCount} adiantado(s), ${onTrackCount} no prazo, ${behindCount} atrasado(s). ` +
+        `Total de respostas em atividades: ${responses.length}.\n\nDetalhamento:\n${summary}`,
+      teacherNote: undefined,
+      signature: settings?.signature,
+    });
+  };
 
   const filteredStudents = ranked.filter(r =>
     (r.profile?.full_name || "").toLowerCase().includes(search.toLowerCase()),
@@ -361,11 +468,10 @@ const EduProfessorInner = () => {
                         )}
                         {totalPages > 0 && <span>📖 {totalPages} páginas</span>}
                       </div>
-                      {!selectedClass?.book_title && (
-                        <Button size="sm" variant="outline" onClick={() => selectedClass && navigate(`/edu/turmas/${selectedClass.id}`)}>
-                          <BookOpen className="h-4 w-4 mr-1.5" /> Definir livro
-                        </Button>
-                      )}
+                      <Button size="sm" variant={selectedClass?.book_title ? "outline" : "default"} onClick={openBookDialog}>
+                        <Pencil className="h-4 w-4 mr-1.5" />
+                        {selectedClass?.book_title ? "Alterar livro" : "Definir livro"}
+                      </Button>
                     </CardContent>
                   </div>
                 </Card>
@@ -582,17 +688,55 @@ const EduProfessorInner = () => {
                           {qResponses.length === 0 ? (
                             <p className="text-xs text-muted-foreground italic">Sem respostas ainda.</p>
                           ) : (
-                            qResponses.slice(0, 5).map(r => {
+                            qResponses.map(r => {
                               const m = members.find(mm => mm.user_id === r.user_id);
+                              const reviewed = !!r.reviewed_at;
+                              const draft = feedbackDrafts[r.id] ?? r.teacher_feedback ?? "";
                               return (
-                                <div key={r.id} className="p-3 rounded-lg bg-muted/40 border border-border">
-                                  <p className="text-xs font-semibold text-foreground mb-1">
-                                    {m?.profile?.full_name || "Aluno"}
-                                  </p>
+                                <div key={r.id} className={`p-3 rounded-lg border space-y-2 ${reviewed ? "bg-success/5 border-success/30" : "bg-muted/40 border-border"}`}>
+                                  <div className="flex items-start justify-between gap-2">
+                                    <p className="text-xs font-semibold text-foreground">
+                                      {m?.profile?.full_name || "Aluno"}
+                                    </p>
+                                    {reviewed ? (
+                                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/30 font-semibold flex items-center gap-1">
+                                        <Check className="h-3 w-3" /> Revisada
+                                      </span>
+                                    ) : (
+                                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/30 font-semibold">
+                                        Pendente
+                                      </span>
+                                    )}
+                                  </div>
                                   <p className="text-sm text-foreground/90">{r.response_text}</p>
-                                  <p className="text-[10px] text-muted-foreground mt-1">
+                                  <p className="text-[10px] text-muted-foreground">
                                     {new Date(r.created_at).toLocaleString("pt-BR")}
                                   </p>
+
+                                  <div className="pt-2 border-t border-border space-y-2">
+                                    <div className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                      <MessageSquare className="h-3 w-3" /> Feedback do professor
+                                    </div>
+                                    <Textarea
+                                      rows={2}
+                                      placeholder="Escreva um feedback para o aluno..."
+                                      value={draft}
+                                      onChange={e => setFeedbackDrafts(s => ({ ...s, [r.id]: e.target.value }))}
+                                      className="text-sm"
+                                    />
+                                    <div className="flex justify-end gap-2">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={async () => {
+                                          if (!selectedClassId) return;
+                                          await reviewResponse(r.id, selectedClassId, draft.trim());
+                                        }}
+                                      >
+                                        <Check className="h-3.5 w-3.5 mr-1" /> Marcar como revisada
+                                      </Button>
+                                    </div>
+                                  </div>
                                 </div>
                               );
                             })
@@ -635,19 +779,51 @@ const EduProfessorInner = () => {
                 </div>
 
                 <Card className="bg-card border-border">
-                  <CardHeader>
+                  <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
                     <CardTitle className="text-base flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4 text-accent" />
-                      Relatório completo
+                      <BarChart3 className="h-4 w-4 text-accent" /> Progresso por aluno
                     </CardTitle>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={exportCSV} disabled={ranked.length === 0}>
+                        <Download className="h-3.5 w-3.5 mr-1.5" /> CSV
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={exportClassPDF} disabled={ranked.length === 0}>
+                        <FileText className="h-3.5 w-3.5 mr-1.5" /> PDF da turma
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => navigate("/edu/relatorios")}>
+                        Por aluno →
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Gere relatórios detalhados em PDF na seção dedicada.
-                    </p>
-                    <Button variant="outline" onClick={() => navigate("/edu/relatorios")}>
-                      <BarChart3 className="h-4 w-4 mr-2" /> Abrir relatórios
-                    </Button>
+                    {progressChartData.length === 0 ? (
+                      <p className="text-xs text-muted-foreground text-center py-8">
+                        Sem dados de leitura ainda.
+                      </p>
+                    ) : (
+                      <div className="w-full h-72">
+                        <ResponsiveContainer>
+                          <BarChart data={progressChartData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                            <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
+                            <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} unit="%" />
+                            <Tooltip
+                              contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", fontSize: 12 }}
+                              formatter={(v: any) => [`${v}%`, "Progresso"]}
+                            />
+                            <Bar dataKey="progresso" radius={[6, 6, 0, 0]}>
+                              {progressChartData.map((d, i) => (
+                                <Cell key={i} fill={
+                                  d.progresso >= avgProgress + 10 ? "hsl(var(--success))"
+                                  : d.progresso <= avgProgress - 10 ? "hsl(var(--destructive))"
+                                  : "hsl(var(--primary))"
+                                } />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -675,6 +851,52 @@ const EduProfessorInner = () => {
             <Button variant="outline" onClick={() => setShowAnnouncementDialog(false)}>Cancelar</Button>
             <Button onClick={handleSendAnnouncement} disabled={!announcementText.trim()}>
               <Send className="h-4 w-4 mr-2" /> Enviar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Book dialog */}
+      <Dialog open={showBookDialog} onOpenChange={setShowBookDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-accent" />
+              {selectedClass?.book_title ? "Alterar livro da turma" : "Definir livro da turma"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Título *</label>
+              <Input value={bookForm.book_title} onChange={e => setBookForm(s => ({ ...s, book_title: e.target.value }))} placeholder="Ex.: Dom Casmurro" />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Autor</label>
+              <Input value={bookForm.author} onChange={e => setBookForm(s => ({ ...s, author: e.target.value }))} placeholder="Ex.: Machado de Assis" />
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div>
+                <label className="text-xs text-muted-foreground">Páginas</label>
+                <Input type="number" value={bookForm.total_pages} onChange={e => setBookForm(s => ({ ...s, total_pages: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Início</label>
+                <Input type="date" value={bookForm.reading_start_date} onChange={e => setBookForm(s => ({ ...s, reading_start_date: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Prazo</label>
+                <Input type="date" value={bookForm.reading_deadline} onChange={e => setBookForm(s => ({ ...s, reading_deadline: e.target.value }))} />
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Ao salvar, o progresso inicial dos alunos da turma será criado automaticamente em 0 páginas.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowBookDialog(false)}>Cancelar</Button>
+            <Button onClick={handleSaveBook} disabled={savingBook || !bookForm.book_title.trim()}>
+              {savingBook ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
+              Salvar
             </Button>
           </DialogFooter>
         </DialogContent>
