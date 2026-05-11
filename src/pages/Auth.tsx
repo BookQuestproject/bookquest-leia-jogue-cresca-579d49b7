@@ -54,6 +54,13 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
+      // Persist redirect target so AuthCallback can honor it after OAuth
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const r = params.get('redirect');
+        if (r && r.startsWith('/')) localStorage.setItem('bookquest-post-auth-redirect', r);
+        else localStorage.removeItem('bookquest-post-auth-redirect');
+      } catch {}
       const isCustomDomain =
         !window.location.hostname.includes('lovable.app') &&
         !window.location.hostname.includes('lovableproject.com');
@@ -105,8 +112,15 @@ const Auth = () => {
     }
   };
 
+  const getRedirectTarget = () => {
+    const params = new URLSearchParams(window.location.search);
+    const r = params.get('redirect');
+    if (r && r.startsWith('/')) return r;
+    return '/quiz-literario';
+  };
+
   useEffect(() => {
-    if (!loading && user) navigate('/quiz-literario');
+    if (!loading && user) navigate(getRedirectTarget());
   }, [user, loading, navigate]);
 
   const validateForm = () => {
@@ -144,7 +158,7 @@ const Auth = () => {
           toast({ title: 'Erro no login', description: msg, variant: 'destructive' });
         } else {
           toast({ title: 'Bem-vindo de volta!', description: 'Login realizado com sucesso' });
-          navigate('/quiz-literario');
+          navigate(getRedirectTarget());
         }
       } else {
         const { error } = await signUp(email, password);
