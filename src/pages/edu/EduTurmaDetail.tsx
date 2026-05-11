@@ -519,6 +519,74 @@ const EduTurmaDetail = () => {
 
           {/* Ranking */}
           <TabsContent value="ranking" className="space-y-4">
+            {/* Student status table */}
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Lista de Alunos
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {members.length === 0 ? (
+                  <div className="text-center py-8 space-y-2">
+                    <p className="text-sm text-muted-foreground">Nenhum aluno entrou ainda.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Compartilhe o código <span className="font-mono font-bold text-accent">{classData.access_code}</span> ou o link de entrada com sua turma.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                          <th className="py-2 pr-3 font-medium">Nome</th>
+                          <th className="py-2 pr-3 font-medium">E-mail escolar</th>
+                          <th className="py-2 pr-3 font-medium">Status</th>
+                          <th className="py-2 font-medium">Último acesso</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {members.map((m) => {
+                          const lastSeen = m.last_seen_at ? new Date(m.last_seen_at) : null;
+                          const daysSince = lastSeen
+                            ? Math.floor((Date.now() - lastSeen.getTime()) / (1000 * 60 * 60 * 24))
+                            : null;
+                          let statusLabel = "Não acessou ainda";
+                          let statusClass = "bg-muted text-muted-foreground";
+                          if (lastSeen) {
+                            if (daysSince! <= 7) {
+                              statusLabel = "Ativo";
+                              statusClass = "bg-primary/10 text-primary";
+                            } else {
+                              statusLabel = "Inativo";
+                              statusClass = "bg-destructive/10 text-destructive";
+                            }
+                          }
+                          return (
+                            <tr key={m.id} className="border-b border-border/50 last:border-0">
+                              <td className="py-2 pr-3 text-foreground">{m.profile?.full_name || "Aluno"}</td>
+                              <td className="py-2 pr-3 text-muted-foreground">
+                                {m.student_email || m.profile?.email || "—"}
+                              </td>
+                              <td className="py-2 pr-3">
+                                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}>
+                                  {statusLabel}
+                                </span>
+                              </td>
+                              <td className="py-2 text-xs text-muted-foreground">
+                                {lastSeen ? lastSeen.toLocaleDateString("pt-BR") : "—"}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
