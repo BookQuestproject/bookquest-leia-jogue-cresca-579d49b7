@@ -639,18 +639,24 @@ export type Database = {
           class_id: string
           id: string
           joined_at: string
+          last_seen_at: string | null
+          student_email: string | null
           user_id: string
         }
         Insert: {
           class_id: string
           id?: string
           joined_at?: string
+          last_seen_at?: string | null
+          student_email?: string | null
           user_id: string
         }
         Update: {
           class_id?: string
           id?: string
           joined_at?: string
+          last_seen_at?: string | null
+          student_email?: string | null
           user_id?: string
         }
         Relationships: [
@@ -834,6 +840,8 @@ export type Database = {
           name: string
           reading_deadline: string | null
           reading_start_date: string | null
+          school_year: number | null
+          student_count_estimate: number | null
           teacher_id: string
           total_pages: number | null
           updated_at: string
@@ -852,6 +860,8 @@ export type Database = {
           name: string
           reading_deadline?: string | null
           reading_start_date?: string | null
+          school_year?: number | null
+          student_count_estimate?: number | null
           teacher_id: string
           total_pages?: number | null
           updated_at?: string
@@ -870,6 +880,8 @@ export type Database = {
           name?: string
           reading_deadline?: string | null
           reading_start_date?: string | null
+          school_year?: number | null
+          student_count_estimate?: number | null
           teacher_id?: string
           total_pages?: number | null
           updated_at?: string
@@ -1369,18 +1381,24 @@ export type Database = {
           activated_at: string
           activation_code: string
           id: string
+          onboarding_completed: boolean
+          profile_completed: boolean
           user_id: string
         }
         Insert: {
           activated_at?: string
           activation_code: string
           id?: string
+          onboarding_completed?: boolean
+          profile_completed?: boolean
           user_id: string
         }
         Update: {
           activated_at?: string
           activation_code?: string
           id?: string
+          onboarding_completed?: boolean
+          profile_completed?: boolean
           user_id?: string
         }
         Relationships: []
@@ -1754,44 +1772,62 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_character: string | null
           avatar_url: string | null
+          city: string | null
           created_at: string
+          edu_onboarding_completed: boolean
           email: string | null
           full_name: string | null
+          grades_taught: string[] | null
           id: string
           is_premium: boolean | null
           literary_profile: Json | null
           premium_expires_at: string | null
           quiz_completed: boolean | null
           referral_code: string | null
+          school_name: string | null
+          state: string | null
           updated_at: string
           username: string | null
         }
         Insert: {
+          avatar_character?: string | null
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          edu_onboarding_completed?: boolean
           email?: string | null
           full_name?: string | null
+          grades_taught?: string[] | null
           id: string
           is_premium?: boolean | null
           literary_profile?: Json | null
           premium_expires_at?: string | null
           quiz_completed?: boolean | null
           referral_code?: string | null
+          school_name?: string | null
+          state?: string | null
           updated_at?: string
           username?: string | null
         }
         Update: {
+          avatar_character?: string | null
           avatar_url?: string | null
+          city?: string | null
           created_at?: string
+          edu_onboarding_completed?: boolean
           email?: string | null
           full_name?: string | null
+          grades_taught?: string[] | null
           id?: string
           is_premium?: boolean | null
           literary_profile?: Json | null
           premium_expires_at?: string | null
           quiz_completed?: boolean | null
           referral_code?: string | null
+          school_name?: string | null
+          state?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -2246,6 +2282,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      student_join_class_by_code: {
+        Args: { _code: string; _email?: string }
+        Returns: string
+      }
       teacher_add_student_to_class: {
         Args: { _class_id: string; _student_user_id: string }
         Returns: boolean
@@ -2256,6 +2296,10 @@ export type Database = {
           streak: number
           was_updated: boolean
         }[]
+      }
+      touch_class_member_seen: {
+        Args: { _class_id: string }
+        Returns: undefined
       }
     }
     Enums: {
