@@ -177,7 +177,7 @@ const EduProfessorInner = () => {
     const rows = [
       ["Aluno", "Página atual", "Total de páginas", "Progresso (%)", "Páginas hoje", "Última leitura", "Status"],
       ...ranked.map(r => [
-        (r.profile?.full_name || "Aluno").replaceAll(";", ","),
+        (r.profile?.full_name || "Aluno").replace(/;/g, ","),
         r.current_page,
         totalPages,
         r.progress_percent,
@@ -192,7 +192,7 @@ const EduProfessorInner = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `relatorio-${selectedClass.name.replaceAll(" ", "_")}-${today}.csv`;
+    a.download = `relatorio-${selectedClass.name.replace(/ /g, "_")}-${today}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
