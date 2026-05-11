@@ -22,7 +22,7 @@ const UsernameGate = ({ children }: UsernameGateProps) => {
   const [error, setError] = useState("");
 
   // Exempt paths
-  const exemptPaths = ["/", "/auth", "/quiz-literario", "/configuracoes", "/auth/callback", "/politica-de-privacidade", "/termos-de-servico", "/reset-password", "/edu"];
+  const exemptPaths = ["/", "/auth", "/quiz-literario", "/configuracoes", "/auth/callback", "/politica-de-privacidade", "/termos-de-servico", "/reset-password", "/edu", "/entrar/"];
   if (exemptPaths.some(p => location.pathname.startsWith(p))) {
     return <>{children}</>;
   }
