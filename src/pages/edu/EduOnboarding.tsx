@@ -53,9 +53,9 @@ const EduOnboarding = () => {
   const [stateUF, setStateUF] = useState("");
   const [grades, setGrades] = useState<string[]>([]);
 
-  // Classes (batch)
+  // Classes (batch with custom names)
   const [classGrade, setClassGrade] = useState("");
-  const [classCount, setClassCount] = useState(1);
+  const [classNames, setClassNames] = useState<string[]>([""]);
   const [classYear, setClassYear] = useState(new Date().getFullYear().toString());
   const [studentCount, setStudentCount] = useState("30");
   const [createdClasses, setCreatedClasses] = useState<any[]>([]);
