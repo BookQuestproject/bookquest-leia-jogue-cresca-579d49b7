@@ -54,7 +54,7 @@ const JoinClass = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, classInfo]);
 
-  const joinAndGo = async (studentEmail: string | null) => {
+  const joinAndGo = async (studentEmail: string | null, name?: string) => {
     const { data, error } = await supabase.rpc("student_join_class_by_code" as any, {
       _code: code,
       _email: studentEmail,
@@ -62,6 +62,10 @@ const JoinClass = () => {
     if (error || !data) {
       toast({ title: "Erro ao entrar na turma", description: "Tente novamente.", variant: "destructive" });
       return;
+    }
+    if (name) {
+      const { data: u } = await supabase.auth.getUser();
+      if (u?.user) await supabase.from("profiles").update({ full_name: name }).eq("id", u.user.id);
     }
     try { localStorage.setItem("bookquest-edu-pending-class", String(data)); } catch {}
     navigate("/edu/onboarding-aluno", { replace: true });
@@ -94,7 +98,7 @@ const JoinClass = () => {
         }
       }
       // Wait briefly for session to settle
-      setTimeout(() => joinAndGo(email), 600);
+      setTimeout(() => joinAndGo(email, fullName), 600);
     } catch (err: any) {
       toast({ title: "Erro inesperado", description: err?.message ?? "Tente novamente", variant: "destructive" });
       setSubmitting(false);
