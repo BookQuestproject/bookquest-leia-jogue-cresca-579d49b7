@@ -337,7 +337,7 @@ const EduOnboarding = () => {
                   <h2 className="text-2xl font-bold">Crie suas turmas</h2>
                 </div>
                 <p className="text-sm text-white/70">
-                  Tem várias turmas do mesmo ano? Crie todas de uma vez. As turmas vão receber letras (A, B, C…) automaticamente.
+                  Cada escola divide as turmas do seu jeito. Adicione uma identificação para cada turma desse ano (ex: "A", "Manhã", "Integral", "Vermelha"…).
                 </p>
 
                 <div className="space-y-2">
@@ -353,27 +353,39 @@ const EduOnboarding = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Quantas turmas desse ano?</Label>
-                  <div className="flex items-center gap-3">
-                    <Button type="button" size="icon" variant="outline"
-                      onClick={() => setClassCount(c => Math.max(1, c - 1))}
-                      className="bg-white/10 text-white hover:bg-white/20 h-10 w-10">
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <div className="flex-1 text-center">
-                      <span className="text-3xl font-bold">{classCount}</span>
-                      <p className="text-xs text-white/60 mt-1">
-                        {classCount === 1
-                          ? "1 turma"
-                          : `${classCount} turmas (${classGrade || "ano"} ${LETTERS.slice(0, classCount).join(", ")})`}
-                      </p>
-                    </div>
-                    <Button type="button" size="icon" variant="outline"
-                      onClick={() => setClassCount(c => Math.min(10, c + 1))}
-                      className="bg-white/10 text-white hover:bg-white/20 h-10 w-10">
-                      <Plus className="h-4 w-4" />
-                    </Button>
+                  <Label>Identificação de cada turma</Label>
+                  <p className="text-xs text-white/50">
+                    Vai virar: <span className="text-amber-300">{classGrade || "Ano"} {classNames[0]?.trim() || "—"}</span>
+                  </p>
+                  <div className="space-y-2">
+                    {classNames.map((nm, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <Input
+                          value={nm}
+                          onChange={e => {
+                            const next = [...classNames];
+                            next[idx] = e.target.value;
+                            setClassNames(next);
+                          }}
+                          placeholder={`Ex: ${["A", "B", "Manhã", "Tarde", "Vermelha"][idx] ?? "Turma"}`}
+                          className="bg-white/10 border-white/20 text-white"
+                        />
+                        {classNames.length > 1 && (
+                          <Button type="button" size="icon" variant="outline"
+                            onClick={() => setClassNames(classNames.filter((_, i) => i !== idx))}
+                            className="bg-white/10 text-white hover:bg-white/20 h-10 w-10 flex-shrink-0">
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
                   </div>
+                  <Button type="button" variant="outline" size="sm"
+                    onClick={() => setClassNames([...classNames, ""])}
+                    disabled={classNames.length >= 12}
+                    className="bg-white/10 text-white hover:bg-white/20 mt-2">
+                    <Plus className="h-4 w-4 mr-1" /> Adicionar outra turma
+                  </Button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
