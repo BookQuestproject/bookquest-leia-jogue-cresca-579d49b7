@@ -89,13 +89,21 @@ const EduEntry = () => {
     return null;
   }
 
-  const handleAccess = () => {
+  const handleAccess = async () => {
     if (!user) {
       navigate("/auth?redirect=/edu");
       return;
     }
-    if (isTeacher) navigate("/edu/professor");
-    else setShowTeacherCode(true);
+    if (isTeacher) { navigate("/edu/professor"); return; }
+    // Block students (already in a class) from activating as teacher
+    const { data: membership } = await import("@/integrations/supabase/client").then(({ supabase }) =>
+      supabase.from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle()
+    );
+    if (membership) {
+      navigate("/edu/aluno");
+      return;
+    }
+    setShowTeacherCode(true);
   };
 
   const handleStudent = () => {
