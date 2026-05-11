@@ -79,7 +79,7 @@ const JoinClass = () => {
     setErrors({});
     setSubmitting(true);
     try {
-      const { error } = await signUp(email, password, fullName);
+      const { error } = await signUp(email, password);
       if (error && !error.message?.includes("already")) {
         toast({ title: "Não foi possível criar a conta", description: error.message, variant: "destructive" });
         setSubmitting(false);
