@@ -468,11 +468,10 @@ const EduProfessorInner = () => {
                         )}
                         {totalPages > 0 && <span>📖 {totalPages} páginas</span>}
                       </div>
-                      {!selectedClass?.book_title && (
-                        <Button size="sm" variant="outline" onClick={() => selectedClass && navigate(`/edu/turmas/${selectedClass.id}`)}>
-                          <BookOpen className="h-4 w-4 mr-1.5" /> Definir livro
-                        </Button>
-                      )}
+                      <Button size="sm" variant={selectedClass?.book_title ? "outline" : "default"} onClick={openBookDialog}>
+                        <Pencil className="h-4 w-4 mr-1.5" />
+                        {selectedClass?.book_title ? "Alterar livro" : "Definir livro"}
+                      </Button>
                     </CardContent>
                   </div>
                 </Card>
