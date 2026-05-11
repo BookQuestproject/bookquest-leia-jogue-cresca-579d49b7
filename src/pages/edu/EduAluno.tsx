@@ -1,22 +1,26 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  BookOpen, Trophy, Target, Megaphone, LogOut, CheckCircle2,
+  Flame, Sparkles, LayoutDashboard, ClipboardList, BarChart3,
+  Send, HelpCircle, Loader2, Users, Medal, TrendingUp, Clock,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import logoCrown from "@/assets/logo-crown-transparent.png";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
 import { useClassReadingProgress } from "@/hooks/useClassReadingProgress";
 import { useEduEngagement } from "@/hooks/useEduEngagement";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  BookOpen, Users, Trophy, ArrowLeft, LogOut,
-  CheckCircle2, Plus, Loader2, GraduationCap, Target,
-  Medal, Megaphone, HelpCircle,
-} from "lucide-react";
-import logoCrown from "@/assets/logo-crown-transparent.png";
+import { useClassQuestions } from "@/hooks/useClassQuestions";
+import { useProfile } from "@/hooks/useProfile";
+import { useUserStats } from "@/hooks/useUserStats";
 import { useToast } from "@/hooks/use-toast";
 
 interface ClassInfo {
@@ -30,77 +34,79 @@ interface ClassInfo {
   access_code: string;
 }
 
-const EDU_TUTORIAL_KEY = "bookquest_edu_tutorial_done";
+type Section = "dashboard" | "book" | "ranking" | "activities" | "announcements" | "stats";
 
-const tutorialSteps = [
-  {
-    title: "Bem-vindo ao BookQuest EDU! 📚",
-    description: "Aqui você vai acompanhar a leitura do livro da sua turma, competir com colegas e ganhar conquistas. Vamos te mostrar como funciona!",
-    icon: "🎉",
-  },
-  {
-    title: "Trilha do Livro 📖",
-    description: "Na seção 'Progresso', você atualiza a página em que está. Basta digitar o número da página atual e clicar em 'Atualizar'. O sistema calcula automaticamente quantas páginas por dia você precisa ler.",
-    icon: "📖",
-  },
-  {
-    title: "Ranking da Turma 🏆",
-    description: "Na aba 'Ranking', você vê sua posição em relação aos colegas. Quanto mais você lê, mais sobe! A competição saudável motiva todo mundo.",
-    icon: "🏆",
-  },
-  {
-    title: "Desafios Semanais 🎯",
-    description: "Na aba 'Desafios', o professor cria metas semanais como 'Ler 50 páginas' ou 'Terminar o livro primeiro'. Complete os desafios para ganhar medalhas!",
-    icon: "🎯",
-  },
-  {
-    title: "Conquistas e Medalhas 🏅",
-    description: "Na aba 'Conquistas', você desbloqueia medalhas automaticamente ao atingir marcos: 25%, 50%, 75% e 100% do livro. Quanto mais lê, mais medalhas coleciona!",
-    icon: "🏅",
-  },
-  {
-    title: "Avisos do Professor 📢",
-    description: "Fique de olho nos avisos! O professor pode enviar mensagens e dicas para toda a turma. Você encontra na aba 'Avisos'.",
-    icon: "📢",
-  },
-  {
-    title: "Tudo pronto! 🚀",
-    description: "Agora é com você! Atualize seu progresso diariamente, suba no ranking e conquiste todas as medalhas. Boa leitura!",
-    icon: "🚀",
-  },
+const NAV: { id: Section; label: string; icon: any }[] = [
+  { id: "dashboard", label: "Início", icon: LayoutDashboard },
+  { id: "book", label: "Livro", icon: BookOpen },
+  { id: "activities", label: "Atividades", icon: ClipboardList },
+  { id: "ranking", label: "Ranking", icon: Trophy },
+  { id: "announcements", label: "Avisos", icon: Megaphone },
+  { id: "stats", label: "Progresso", icon: BarChart3 },
 ];
+
+const MiniStat = ({ icon: Icon, value, label, tone }: { icon: any; value: string | number; label: string; tone: "primary" | "accent" | "destructive" }) => {
+  const colorMap = {
+    primary: "text-primary bg-primary/10",
+    accent: "text-accent bg-accent/10",
+    destructive: "text-destructive bg-destructive/10",
+  };
+  return (
+    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card border border-border min-w-0">
+      <div className={`h-7 w-7 rounded-md flex items-center justify-center flex-shrink-0 ${colorMap[tone]}`}>
+        <Icon className="h-3.5 w-3.5" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-sm font-bold text-foreground leading-none truncate">{value}</p>
+        <p className="text-[9px] text-muted-foreground uppercase tracking-wider mt-0.5 truncate">{label}</p>
+      </div>
+    </div>
+  );
+};
+
+const InfoSquare = ({ icon: Icon, title, value, subtitle, tone, onClick }: {
+  icon: any; title: string; value: string | number; subtitle: string;
+  tone: "primary" | "accent" | "destructive"; onClick?: () => void;
+}) => {
+  const colorMap = {
+    primary: "text-primary bg-primary/10 border-primary/20 hover:border-primary/40",
+    accent: "text-accent bg-accent/10 border-accent/20 hover:border-accent/40",
+    destructive: "text-destructive bg-destructive/10 border-destructive/20 hover:border-destructive/40",
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group text-left rounded-lg border-2 bg-card p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md ${colorMap[tone]}`}
+    >
+      <div className={`h-9 w-9 rounded-md flex items-center justify-center mb-2 ${colorMap[tone]}`}>
+        <Icon className="h-4 w-4" />
+      </div>
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{title}</p>
+      <p className="text-xl font-bold text-foreground mt-0.5 leading-none">{value}</p>
+      <p className="text-[11px] text-muted-foreground mt-1">{subtitle}</p>
+    </button>
+  );
+};
 
 const EduAluno = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { studentClasses, fetchStudentClasses } = useEduRole();
+  const { studentClasses } = useEduRole();
   const { progressData, fetchProgress, updateProgress } = useClassReadingProgress();
+  const { profile } = useProfile();
+  const { stats } = useUserStats();
   const { toast } = useToast();
 
-  const [showJoinDialog, setShowJoinDialog] = useState(false);
-  const [joinCode, setJoinCode] = useState("");
-  const [joining, setJoining] = useState(false);
+  const [section, setSection] = useState<Section>("dashboard");
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
   const [classRanking, setClassRanking] = useState<any[]>([]);
-  const [myProgress, setMyProgress] = useState<any>(null);
   const [updatingPage, setUpdatingPage] = useState("");
-  const [activeTab, setActiveTab] = useState("progress");
-
-  // Tutorial state
-  const [showTutorial, setShowTutorial] = useState(false);
-  const [tutorialStep, setTutorialStep] = useState(0);
-
-  // Engagement
-  const {
-    challenges, achievements, announcements,
-    fetchChallenges, fetchAchievements, fetchAnnouncements,
-    checkAndAwardAchievements,
-  } = useEduEngagement(selectedClass?.id);
+  const [activeQuestion, setActiveQuestion] = useState<any | null>(null);
+  const [responseText, setResponseText] = useState("");
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/auth?redirect=/edu/aluno");
-    }
+    if (!authLoading && !user) navigate("/auth?redirect=/edu/aluno");
   }, [authLoading, user, navigate]);
 
   // Auto-select first class
@@ -110,560 +116,587 @@ const EduAluno = () => {
     }
   }, [studentClasses, selectedClass]);
 
-  // Show tutorial on first visit
-  useEffect(() => {
-    if (selectedClass && !localStorage.getItem(EDU_TUTORIAL_KEY)) {
-      const timer = setTimeout(() => setShowTutorial(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [selectedClass]);
+  const { announcements } = useEduEngagement(selectedClass?.id);
+  const { questions, responses, fetchQuestions, createResponse } = useClassQuestions();
 
-  // Fetch progress when class selected
   useEffect(() => {
     if (selectedClass?.id) {
       fetchProgress(selectedClass.id);
+      fetchQuestions(selectedClass.id);
       fetchRanking(selectedClass.id);
     }
   }, [selectedClass?.id]);
 
-  // Get my progress from progressData
-  useEffect(() => {
-    if (user && progressData.length > 0) {
-      const mine = progressData.find(p => p.user_id === user.id);
-      setMyProgress(mine || null);
-    }
-  }, [progressData, user]);
-
   const fetchRanking = async (classId: string) => {
-    const { data: members } = await supabase
-      .from('class_members')
-      .select('user_id')
-      .eq('class_id', classId);
-
+    const { data: members } = await supabase.from("class_members").select("user_id").eq("class_id", classId);
     if (!members) return;
-
     const userIds = members.map(m => m.user_id);
     const { data: profiles } = await supabase
-      .from('profiles_public' as any)
-      .select('id, full_name, username, avatar_url')
-      .in('id', userIds);
-
+      .from("profiles_public" as any)
+      .select("id, full_name, username, avatar_url")
+      .in("id", userIds);
     const { data: progress } = await supabase
-      .from('class_reading_progress')
-      .select('user_id, current_page')
-      .eq('class_id', classId);
+      .from("class_reading_progress")
+      .select("user_id, current_page")
+      .eq("class_id", classId);
 
     const ranked = userIds.map(uid => {
-      const profile = (profiles as any[])?.find(p => p.id === uid);
-      const prog = (progress as any[])?.find(p => p.user_id === uid);
+      const p = (profiles as any[])?.find(x => x.id === uid);
+      const pr = (progress as any[])?.find(x => x.user_id === uid);
       return {
         user_id: uid,
-        name: profile?.full_name || profile?.username || "Aluno",
-        username: profile?.username,
-        avatar_url: profile?.avatar_url,
-        pages: prog?.current_page || 0,
+        name: p?.full_name || p?.username || "Aluno",
+        avatar_url: p?.avatar_url,
+        pages: pr?.current_page || 0,
       };
     }).sort((a, b) => b.pages - a.pages);
-
     setClassRanking(ranked);
   };
 
-  const handleJoinClass = async () => {
-    if (!user || !joinCode.trim()) return;
-    setJoining(true);
+  const totalPages = selectedClass?.total_pages || 0;
+  const myProgress = progressData.find(p => p.user_id === user?.id);
+  const currentPage = myProgress?.current_page || 0;
+  const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
+  const myRank = classRanking.findIndex(r => r.user_id === user?.id) + 1;
 
-    const { data: classRow, error: findError } = await supabase
-      .rpc('find_class_by_code' as any, { _code: joinCode.toUpperCase() })
-      .maybeSingle();
-    const classData = classRow as { id: string; name: string } | null;
+  const myResponseIds = useMemo(
+    () => new Set(responses.filter(r => r.user_id === user?.id).map(r => r.question_id)),
+    [responses, user?.id],
+  );
+  const pendingQuestions = questions.filter(q => !myResponseIds.has(q.id));
+  const submittedQuestions = questions.filter(q => myResponseIds.has(q.id));
 
-    if (findError || !classData) {
-      toast({ title: 'Código inválido', description: 'Nenhuma turma encontrada.', variant: 'destructive' });
-      setJoining(false);
-      return;
-    }
-
-    const { error: joinError } = await supabase
-      .from('class_members')
-      .insert({ class_id: (classData as any).id, user_id: user.id });
-
-    if (joinError) {
-      if (joinError.code === '23505') {
-        toast({ title: 'Já inscrito', description: 'Você já faz parte dessa turma.' });
-      } else {
-        toast({ title: 'Erro', description: 'Falha ao entrar na turma.', variant: 'destructive' });
-      }
-      setJoining(false);
-      return;
-    }
-
-    toast({ title: '🎉 Bem-vindo!', description: `Você entrou na turma "${(classData as any).name}".` });
-    setJoinCode("");
-    setShowJoinDialog(false);
-    setJoining(false);
-    await fetchStudentClasses();
-  };
+  const deadline = selectedClass?.reading_deadline ? new Date(selectedClass.reading_deadline) : null;
+  const today = new Date();
+  const daysRemaining = deadline ? Math.max(1, Math.ceil((deadline.getTime() - today.getTime()) / 86400000)) : 0;
+  const dailyGoal = daysRemaining > 0 ? Math.ceil(Math.max(0, totalPages - currentPage) / daysRemaining) : 0;
 
   const handleUpdatePage = async () => {
-    if (!selectedClass || !updatingPage) return;
+    if (!selectedClass) return;
     const page = parseInt(updatingPage);
-    if (isNaN(page) || page < 0) return;
+    if (isNaN(page) || page < 0 || page > totalPages) {
+      toast({ title: "Página inválida", description: `Digite entre 0 e ${totalPages}.`, variant: "destructive" });
+      return;
+    }
     await updateProgress(selectedClass.id, page);
     setUpdatingPage("");
-    await fetchRanking(selectedClass.id);
-    // Check achievements
-    await checkAndAwardAchievements(page, selectedClass.total_pages || 0);
+    fetchRanking(selectedClass.id);
   };
 
-  const dismissTutorial = () => {
-    setShowTutorial(false);
-    setTutorialStep(0);
-    localStorage.setItem(EDU_TUTORIAL_KEY, "true");
+  const handleSubmitResponse = async () => {
+    if (!activeQuestion || responseText.trim().length < 10) {
+      toast({ title: "Resposta muito curta", description: "Escreva pelo menos 10 caracteres.", variant: "destructive" });
+      return;
+    }
+    await createResponse(activeQuestion.id, responseText.trim());
+    setResponseText("");
+    setActiveQuestion(null);
   };
+
+  const initials = (profile?.full_name || "A").split(" ").map(s => s[0]).slice(0, 2).join("").toUpperCase();
+  const studentName = profile?.full_name || "Aluno";
 
   if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+  }
+
+  // No classes
+  if (!selectedClass) {
     return (
-      <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="max-w-md w-full">
+          <CardContent className="text-center py-10 space-y-4">
+            <Users className="h-14 w-14 text-muted-foreground mx-auto" />
+            <h2 className="text-xl font-bold">Entre na sua primeira turma</h2>
+            <p className="text-sm text-muted-foreground">Peça o código da turma ao seu professor.</p>
+            <Button onClick={() => navigate("/edu")} className="gap-2">
+              <Users className="h-4 w-4" /> Entrar com código
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  const totalPages = selectedClass?.total_pages || 0;
-  const currentPage = myProgress?.current_page || 0;
-  const progressPercent = totalPages > 0 ? Math.min((currentPage / totalPages) * 100, 100) : 0;
-  const myRankPosition = classRanking.findIndex(r => r.user_id === user?.id) + 1;
-
-  const deadline = selectedClass?.reading_deadline ? new Date(selectedClass.reading_deadline) : null;
-  const today = new Date();
-  const daysRemaining = deadline ? Math.max(1, Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))) : 0;
-  const pagesRemaining = Math.max(0, totalPages - currentPage);
-  const dailyGoal = daysRemaining > 0 ? Math.ceil(pagesRemaining / daysRemaining) : 0;
-
-  const activeChallenges = challenges.filter(c => c.is_active && new Date(c.end_date) >= today);
-  const myAchievements = achievements.filter(a => a.user_id === user?.id);
-
   return (
     <div className="min-h-screen bg-transparent">
-      {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur-sm px-4 py-3">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={logoCrown} alt="BookQuest" className="h-7 w-7" />
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className="hidden lg:flex flex-col w-60 border-r border-border bg-card fixed h-screen top-0 z-20">
+          <div className="p-4 border-b border-border flex items-center gap-2">
+            <img src={logoCrown} alt="BookQuest" className="h-8 w-8" />
+            <div className="leading-tight">
+              <div className="font-bold text-foreground text-sm">BookQuest</div>
+              <div className="text-[10px] font-semibold text-accent uppercase tracking-wider">EDU · Aluno</div>
+            </div>
+          </div>
+
+          {/* Profile */}
+          <div className="p-4 border-b border-border">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                {profile?.avatar_url && <AvatarImage src={profile.avatar_url} alt={studentName} />}
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-foreground truncate">{studentName}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{selectedClass.name}</p>
+              </div>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-1.5 text-center">
+              <div className="rounded-md bg-accent/10 py-1.5">
+                <p className="text-[9px] uppercase text-muted-foreground">✦</p>
+                <p className="text-sm font-bold text-accent">{stats.xp}</p>
+              </div>
+              <div className="rounded-md bg-destructive/5 py-1.5">
+                <p className="text-[9px] uppercase text-muted-foreground">🔥</p>
+                <p className="text-sm font-bold text-destructive">{stats.streak}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Class switcher */}
+          {studentClasses.length > 1 && (
+            <div className="p-3 border-b border-border space-y-1">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold px-2">Suas turmas</p>
+              {studentClasses.map((c: any) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedClass(c as ClassInfo)}
+                  className={`w-full text-left text-xs px-2.5 py-1.5 rounded-md ${
+                    c.id === selectedClass.id ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+            {NAV.map(item => {
+              const active = section === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setSection(item.id)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="p-3 border-t border-border">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-muted-foreground"
+              onClick={() => supabase.auth.signOut().then(() => navigate("/"))}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
+        </aside>
+
+        {/* Mobile top bar */}
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-card border-b border-border px-3 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src={logoCrown} alt="" className="h-7 w-7" />
             <span className="font-bold text-foreground text-sm">BookQuest EDU</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => { setTutorialStep(0); setShowTutorial(true); }} title="Ver tutorial">
-              <HelpCircle className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => supabase.auth.signOut().then(() => navigate("/auth"))} title="Sair">
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button variant="ghost" size="icon" onClick={() => supabase.auth.signOut().then(() => navigate("/"))}>
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
-      </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-6 space-y-6 pb-20">
-        {/* No classes state */}
-        {studentClasses.length === 0 && (
-          <div className="text-center py-16 space-y-4">
-            <GraduationCap className="h-16 w-16 text-muted-foreground mx-auto" />
-            <h2 className="text-xl font-bold text-foreground">Entre na sua primeira turma!</h2>
-            <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              Peça o código da turma ao seu professor e comece sua jornada de leitura.
-            </p>
-            <Button size="lg" onClick={() => setShowJoinDialog(true)}>
-              <Users className="h-5 w-5 mr-2" />
-              Entrar com Código
-            </Button>
-          </div>
-        )}
-
-        {/* Class selector */}
-        {studentClasses.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {studentClasses.map((c: any) => (
-              <Button
-                key={c.id}
-                variant={selectedClass?.id === c.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedClass(c as ClassInfo)}
-                className="whitespace-nowrap"
+        {/* Mobile bottom nav */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border flex justify-around py-1.5 overflow-x-auto">
+          {NAV.slice(0, 5).map(item => {
+            const active = section === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setSection(item.id)}
+                className={`flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] min-w-[56px] ${
+                  active ? "text-primary" : "text-muted-foreground"
+                }`}
               >
-                {c.name}
-              </Button>
-            ))}
-          </div>
-        )}
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
 
-        {selectedClass && (
-          <>
-            {/* Book info */}
-            <Card className="bg-card border-border">
-              <CardContent className="p-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-16 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BookOpen className="h-6 w-6 text-primary" />
+        {/* Content */}
+        <div className="flex-1 lg:ml-60 min-h-screen pt-14 lg:pt-0 pb-24 lg:pb-6">
+          <main className="px-4 lg:px-8 py-6 max-w-6xl mx-auto">
+            {section === "dashboard" && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
+                      Olá, {studentName.split(" ")[0]} 👋
+                    </h1>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      <strong className="text-foreground">{selectedClass.name}</strong>
+                    </p>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground font-medium">{selectedClass.name}</p>
-                    <h2 className="text-lg font-bold text-foreground truncate">
-                      {selectedClass.book_title || "Livro não definido"}
-                    </h2>
-                    {selectedClass.author && (
-                      <p className="text-sm text-muted-foreground">{selectedClass.author}</p>
-                    )}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <MiniStat icon={Sparkles} value={stats.xp} label="Essência" tone="primary" />
+                    <MiniStat icon={Flame} value={stats.streak} label="Sequência" tone="destructive" />
+                    <MiniStat icon={Trophy} value={myRank > 0 ? `#${myRank}` : "—"} label="Ranking" tone="accent" />
+                    <MiniStat icon={BookOpen} value={`${currentPage}p`} label="Página" tone="primary" />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Quick stats */}
-            <div className="grid grid-cols-4 gap-2">
-              <Card className="bg-card border-border">
-                <CardContent className="p-3 text-center">
-                  <Trophy className="h-5 w-5 text-accent mx-auto mb-1" />
-                  <p className="text-lg font-bold text-foreground">{myRankPosition > 0 ? `#${myRankPosition}` : "—"}</p>
-                  <p className="text-[10px] text-muted-foreground">Posição</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-card border-border">
-                <CardContent className="p-3 text-center">
-                  <BookOpen className="h-5 w-5 text-primary mx-auto mb-1" />
-                  <p className="text-lg font-bold text-foreground">{currentPage}</p>
-                  <p className="text-[10px] text-muted-foreground">Páginas</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-card border-border">
-                <CardContent className="p-3 text-center">
-                  <Medal className="h-5 w-5 text-accent mx-auto mb-1" />
-                  <p className="text-lg font-bold text-foreground">{myAchievements.length}</p>
-                  <p className="text-[10px] text-muted-foreground">Medalhas</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-card border-border">
-                <CardContent className="p-3 text-center">
-                  <Target className="h-5 w-5 text-primary mx-auto mb-1" />
-                  <p className="text-lg font-bold text-foreground">{activeChallenges.length}</p>
-                  <p className="text-[10px] text-muted-foreground">Desafios</p>
-                </CardContent>
-              </Card>
-            </div>
+                {/* Book card */}
+                <Card className="border-2 border-primary/20 overflow-hidden">
+                  <div className="bg-gradient-to-br from-primary/10 via-card to-accent/5 p-5 lg:p-6 border-b border-border">
+                    <div className="flex items-start gap-4 flex-wrap">
+                      <div className="w-20 h-28 lg:w-24 lg:h-32 rounded-md shadow-md flex-shrink-0 bg-primary/10 flex items-center justify-center">
+                        <BookOpen className="h-8 w-8 text-primary/60" />
+                      </div>
+                      <div className="flex-1 min-w-[200px]">
+                        <p className="text-[10px] uppercase tracking-wider text-primary font-bold">Livro da Turma</p>
+                        <h2 className="text-xl lg:text-2xl font-bold text-foreground mt-1 leading-tight">
+                          {selectedClass.book_title ?? "Aguardando o livro"}
+                        </h2>
+                        {selectedClass.author && <p className="text-sm text-muted-foreground">{selectedClass.author}</p>}
+                        <div className="flex items-center gap-3 mt-3 flex-wrap">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-semibold">
+                            {progressPercent}% concluído
+                          </span>
+                          {totalPages > 0 && (
+                            <span className="text-xs text-muted-foreground">
+                              Página {currentPage} de {totalPages}
+                            </span>
+                          )}
+                        </div>
+                        <Progress value={progressPercent} className="h-2 mt-3" />
+                      </div>
+                    </div>
+                  </div>
 
-            {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="progress" className="text-xs">Progresso</TabsTrigger>
-                <TabsTrigger value="ranking" className="text-xs">Ranking</TabsTrigger>
-                <TabsTrigger value="challenges" className="text-xs">Desafios</TabsTrigger>
-                <TabsTrigger value="achievements" className="text-xs">Medalhas</TabsTrigger>
-                <TabsTrigger value="announcements" className="text-xs">Avisos</TabsTrigger>
-              </TabsList>
+                  <div className="p-5 lg:p-6 flex flex-wrap items-center justify-between gap-3 border-t border-border">
+                    <div className="text-xs text-muted-foreground">
+                      {dailyGoal > 0
+                        ? <>Meta diária: <strong className="text-accent">{dailyGoal} pág/dia</strong> ({daysRemaining} dias restantes)</>
+                        : "Sem meta diária definida"}
+                    </div>
+                    <Button onClick={() => setSection("stats")} className="gap-2">
+                      <CheckCircle2 className="h-4 w-4" />
+                      Atualizar progresso
+                    </Button>
+                  </div>
+                </Card>
 
-              {/* Progress Tab */}
-              <TabsContent value="progress" className="space-y-4">
-                <Card className="bg-card border-border">
+                {/* Info squares */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  <InfoSquare icon={ClipboardList} title="Atividades" value={pendingQuestions.length} subtitle="pendentes" tone="accent" onClick={() => setSection("activities")} />
+                  <InfoSquare icon={Trophy} title="Ranking" value={myRank > 0 ? `#${myRank}` : "—"} subtitle="na turma" tone="accent" onClick={() => setSection("ranking")} />
+                  <InfoSquare icon={Megaphone} title="Avisos" value={announcements.length} subtitle="do professor" tone="primary" onClick={() => setSection("announcements")} />
+                  <InfoSquare icon={Flame} title="Sequência" value={`${stats.streak}d`} subtitle="lendo seguidos" tone="destructive" onClick={() => setSection("stats")} />
+                </div>
+
+                {/* Pending activities */}
+                <div>
+                  <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-3">
+                    <ClipboardList className="h-4 w-4 text-primary" />
+                    Atividades pendentes
+                  </h3>
+                  {pendingQuestions.length === 0 ? (
+                    <Card><CardContent className="py-6 text-center text-sm text-muted-foreground">Nenhuma atividade pendente.</CardContent></Card>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {pendingQuestions.slice(0, 4).map(q => (
+                        <Card key={q.id} className="border-accent/30 hover:border-accent/60 transition-colors cursor-pointer" onClick={() => setActiveQuestion(q)}>
+                          <CardContent className="p-4 space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <span className="text-[10px] px-2 py-0.5 rounded-full text-accent border border-accent/40 font-semibold">Pendente</span>
+                              <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
+                            </div>
+                            <p className="text-sm text-foreground line-clamp-3">{q.question_text}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Announcements preview */}
+                <div>
+                  <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-3">
+                    <Megaphone className="h-4 w-4 text-primary" />
+                    Avisos do professor
+                  </h3>
+                  {announcements.length === 0 ? (
+                    <Card><CardContent className="py-6 text-center text-sm text-muted-foreground">Nenhum aviso ainda.</CardContent></Card>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {announcements.slice(0, 2).map(a => (
+                        <Card key={a.id}>
+                          <CardContent className="p-4 space-y-2">
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(a.created_at).toLocaleString("pt-BR")}
+                            </p>
+                            <p className="text-sm text-foreground leading-relaxed line-clamp-3">{a.content}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {section === "book" && (
+              <div className="space-y-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                    <BookOpen className="h-6 w-6 text-primary" /> Livro da Turma
+                  </h1>
+                </div>
+                <Card>
+                  <CardContent className="p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6">
+                    <div className="w-40 h-56 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                      <BookOpen className="h-14 w-14 text-primary/60" />
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <h2 className="text-2xl font-bold text-foreground">{selectedClass.book_title ?? "Aguardando livro"}</h2>
+                        {selectedClass.author && <p className="text-muted-foreground">{selectedClass.author}</p>}
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div><p className="text-xs text-muted-foreground">Total de páginas</p><p className="font-semibold">{totalPages || "—"}</p></div>
+                        <div><p className="text-xs text-muted-foreground">Sua página</p><p className="font-semibold">{currentPage}</p></div>
+                        <div><p className="text-xs text-muted-foreground">Início</p><p className="font-semibold">{selectedClass.reading_start_date ? new Date(selectedClass.reading_start_date).toLocaleDateString("pt-BR") : "—"}</p></div>
+                        <div><p className="text-xs text-muted-foreground">Prazo</p><p className="font-semibold">{deadline ? deadline.toLocaleDateString("pt-BR") : "—"}</p></div>
+                      </div>
+                      <Progress value={progressPercent} className="h-2" />
+                      <p className="text-xs text-muted-foreground">{progressPercent}% concluído</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {section === "activities" && (
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <ClipboardList className="h-6 w-6 text-primary" /> Atividades
+                </h1>
+                {questions.length === 0 ? (
+                  <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">Nenhuma atividade disponível.</CardContent></Card>
+                ) : (
+                  <>
+                    {pendingQuestions.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-foreground mb-2">Pendentes</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {pendingQuestions.map(q => (
+                            <Card key={q.id} className="border-accent/30 hover:border-accent/60 cursor-pointer" onClick={() => setActiveQuestion(q)}>
+                              <CardContent className="p-4 space-y-2">
+                                <div className="flex items-start justify-between gap-2">
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full text-accent border border-accent/40 font-semibold">Pendente</span>
+                                  <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
+                                </div>
+                                <p className="text-sm text-foreground">{q.question_text}</p>
+                                <Button size="sm" variant="outline" className="w-full mt-2"><Send className="h-3.5 w-3.5 mr-1.5" /> Responder</Button>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {submittedQuestions.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-foreground mb-2 mt-6">Respondidas</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {submittedQuestions.map(q => {
+                            const myR = responses.find(r => r.question_id === q.id && r.user_id === user?.id);
+                            return (
+                              <Card key={q.id} className="border-success/30">
+                                <CardContent className="p-4 space-y-2">
+                                  <div className="flex items-start justify-between gap-2">
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full text-success border border-success/40 font-semibold">Respondida</span>
+                                    <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
+                                  </div>
+                                  <p className="text-sm text-foreground font-medium">{q.question_text}</p>
+                                  {myR && <p className="text-xs text-muted-foreground italic line-clamp-3">"{myR.response_text}"</p>}
+                                </CardContent>
+                              </Card>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {section === "ranking" && (
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Trophy className="h-6 w-6 text-accent" /> Ranking da Turma
+                </h1>
+                <Card>
+                  <CardContent className="p-4 space-y-2">
+                    {classRanking.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-6">Nenhum aluno começou a leitura ainda.</p>
+                    ) : (
+                      classRanking.map((r, i) => {
+                        const isMe = r.user_id === user?.id;
+                        return (
+                          <div key={r.user_id} className={`flex items-center gap-3 p-3 rounded-lg ${isMe ? "bg-primary/10 border border-primary/30" : "bg-muted/30"}`}>
+                            <span className={`w-8 text-center text-sm font-bold ${i === 0 ? "text-accent" : "text-muted-foreground"}`}>{i + 1}º</span>
+                            <Avatar className="h-9 w-9">
+                              {r.avatar_url && <AvatarImage src={r.avatar_url} alt={r.name} />}
+                              <AvatarFallback>{r.name[0]?.toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">
+                                {r.name} {isMe && <span className="text-[10px] text-primary font-bold">(você)</span>}
+                              </p>
+                              <Progress value={totalPages > 0 ? (r.pages / totalPages) * 100 : 0} className="h-1 mt-1" />
+                            </div>
+                            <span className="text-xs font-mono text-muted-foreground whitespace-nowrap">{r.pages}p</span>
+                          </div>
+                        );
+                      })
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {section === "announcements" && (
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Megaphone className="h-6 w-6 text-accent" /> Avisos
+                </h1>
+                {announcements.length === 0 ? (
+                  <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">Nenhum aviso publicado.</CardContent></Card>
+                ) : (
+                  announcements.map(a => (
+                    <Card key={a.id}>
+                      <CardContent className="p-4 space-y-2">
+                        <p className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString("pt-BR")}</p>
+                        <p className="text-sm text-foreground leading-relaxed">{a.content}</p>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            )}
+
+            {section === "stats" && (
+              <div className="space-y-4">
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <BarChart3 className="h-6 w-6 text-primary" /> Meu Progresso
+                </h1>
+
+                <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center justify-between">
-                      <span>Meu Progresso</span>
-                      <span className="text-sm font-normal text-muted-foreground">
-                        {currentPage}/{totalPages} páginas
-                      </span>
+                      <span>Atualize sua página atual</span>
+                      <span className="text-sm font-normal text-muted-foreground">{currentPage}/{totalPages || "?"}</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <Progress value={progressPercent} className="h-3" />
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{progressPercent.toFixed(0)}% concluído</span>
-                      {dailyGoal > 0 && (
-                        <span className="text-accent font-medium">Meta: {dailyGoal} págs/dia</span>
-                      )}
+                      <span className="text-muted-foreground">{progressPercent}% concluído</span>
+                      {dailyGoal > 0 && <span className="text-accent font-medium">Meta: {dailyGoal} pág/dia</span>}
                     </div>
                     {deadline && (
                       <p className="text-xs text-muted-foreground">
                         Prazo: {deadline.toLocaleDateString("pt-BR")} ({daysRemaining} dias restantes)
                       </p>
                     )}
-                    <div className="flex gap-2 pt-2">
+                    <div className="flex gap-2">
                       <Input
                         type="number"
                         value={updatingPage}
-                        onChange={(e) => setUpdatingPage(e.target.value)}
+                        onChange={e => setUpdatingPage(e.target.value)}
                         placeholder="Página atual"
                         min={0}
                         max={totalPages}
                         className="flex-1"
                       />
                       <Button onClick={handleUpdatePage} disabled={!updatingPage}>
-                        <CheckCircle2 className="h-4 w-4 mr-1" />
-                        Atualizar
+                        <CheckCircle2 className="h-4 w-4 mr-1" /> Atualizar
                       </Button>
                     </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
 
-              {/* Ranking Tab */}
-              <TabsContent value="ranking" className="space-y-4">
-                <Card className="bg-card border-border">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-accent" />
-                      Ranking da Turma
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {classRanking.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-6">
-                        Nenhum aluno iniciou a leitura ainda
-                      </p>
-                    ) : (
-                      <div className="space-y-2">
-                        {classRanking.map((r, idx) => {
-                          const isMe = r.user_id === user?.id;
-                          const pct = totalPages > 0 ? (r.pages / totalPages) * 100 : 0;
-                          return (
-                            <div
-                              key={r.user_id}
-                              className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                                isMe ? "bg-primary/10 border border-primary/20" : "bg-muted/30"
-                              }`}
-                            >
-                              <div className="text-lg font-bold w-8 text-center">
-                                {idx === 0 && "🥇"}
-                                {idx === 1 && "🥈"}
-                                {idx === 2 && "🥉"}
-                                {idx > 2 && <span className="text-muted-foreground text-sm">#{idx + 1}</span>}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className={`text-sm font-medium truncate ${isMe ? "text-primary" : "text-foreground"}`}>
-                                  {r.name} {isMe && "(Você)"}
-                                </p>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <Progress value={pct} className="h-1.5 flex-1" />
-                                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                                    {r.pages}/{totalPages}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <Card><CardContent className="p-4 text-center">
+                    <Sparkles className="h-5 w-5 text-accent mx-auto mb-1" />
+                    <p className="text-xl font-bold">{stats.xp}</p>
+                    <p className="text-[10px] text-muted-foreground">Essência</p>
+                  </CardContent></Card>
+                  <Card><CardContent className="p-4 text-center">
+                    <Flame className="h-5 w-5 text-destructive mx-auto mb-1" />
+                    <p className="text-xl font-bold">{stats.streak}</p>
+                    <p className="text-[10px] text-muted-foreground">Dias seguidos</p>
+                  </CardContent></Card>
+                  <Card><CardContent className="p-4 text-center">
+                    <Trophy className="h-5 w-5 text-accent mx-auto mb-1" />
+                    <p className="text-xl font-bold">{myRank > 0 ? `#${myRank}` : "—"}</p>
+                    <p className="text-[10px] text-muted-foreground">Posição</p>
+                  </CardContent></Card>
+                  <Card><CardContent className="p-4 text-center">
+                    <Target className="h-5 w-5 text-primary mx-auto mb-1" />
+                    <p className="text-xl font-bold">{submittedQuestions.length}</p>
+                    <p className="text-[10px] text-muted-foreground">Atividades feitas</p>
+                  </CardContent></Card>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
 
-              {/* Challenges Tab */}
-              <TabsContent value="challenges" className="space-y-4">
-                {activeChallenges.length === 0 ? (
-                  <Card className="bg-card border-border">
-                    <CardContent className="text-center py-12">
-                      <Target className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                      <p className="text-muted-foreground">Nenhum desafio ativo no momento</p>
-                      <p className="text-xs text-muted-foreground mt-1">O professor pode criar desafios semanais</p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  activeChallenges.map(ch => {
-                    const daysLeft = Math.max(0, Math.ceil((new Date(ch.end_date).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
-                    return (
-                      <Card key={ch.id} className="bg-card border-border border-l-4 border-l-accent">
-                        <CardContent className="p-5">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h3 className="font-bold text-foreground">{ch.title}</h3>
-                              {ch.description && (
-                                <p className="text-sm text-muted-foreground mt-1">{ch.description}</p>
-                              )}
-                            </div>
-                            <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">
-                              {daysLeft}d restantes
-                            </span>
-                          </div>
-                          <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                            <Target className="h-3 w-3" />
-                            Meta: {ch.goal_value} páginas
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })
-                )}
-              </TabsContent>
-
-              {/* Achievements Tab */}
-              <TabsContent value="achievements" className="space-y-4">
-                <Card className="bg-card border-border">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Medal className="h-5 w-5 text-accent" />
-                      Minhas Conquistas
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {myAchievements.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Medal className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                        <p className="text-muted-foreground">Nenhuma conquista ainda</p>
-                        <p className="text-xs text-muted-foreground mt-1">Leia para desbloquear medalhas!</p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-3">
-                        {myAchievements.map(a => (
-                          <div key={a.id} className="p-4 rounded-xl bg-accent/5 border border-accent/20 text-center">
-                            <p className="text-2xl mb-1">{a.achievement_label.split(' ')[0]}</p>
-                            <p className="text-xs font-medium text-foreground">
-                              {a.achievement_label.split(' ').slice(1).join(' ')}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground mt-1">
-                              {new Date(a.awarded_at).toLocaleDateString("pt-BR")}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Available achievements */}
-                    <div className="mt-6 pt-4 border-t border-border">
-                      <p className="text-xs font-medium text-muted-foreground mb-3">Conquistas Disponíveis</p>
-                      <div className="space-y-2">
-                        {[
-                          { type: 'first_read', label: '🌟 Primeira Leitura', desc: 'Atualize seu progresso pela primeira vez' },
-                          { type: 'progress_25', label: '📖 25% do Livro', desc: 'Leia 25% do livro' },
-                          { type: 'progress_50', label: '📚 Metade do Livro', desc: 'Leia 50% do livro' },
-                          { type: 'progress_75', label: '🔥 75% Concluído', desc: 'Leia 75% do livro' },
-                          { type: 'progress_100', label: '🏆 Livro Completo!', desc: 'Termine o livro inteiro' },
-                        ].map(a => {
-                          const earned = myAchievements.some(ma => ma.achievement_type === a.type);
-                          return (
-                            <div key={a.type} className={`flex items-center gap-3 p-2 rounded-lg ${earned ? 'bg-accent/10' : 'bg-muted/30 opacity-50'}`}>
-                              <span className="text-lg">{a.label.split(' ')[0]}</span>
-                              <div className="flex-1">
-                                <p className={`text-xs font-medium ${earned ? 'text-foreground' : 'text-muted-foreground'}`}>
-                                  {a.label.split(' ').slice(1).join(' ')}
-                                </p>
-                                <p className="text-[10px] text-muted-foreground">{a.desc}</p>
-                              </div>
-                              {earned && <CheckCircle2 className="h-4 w-4 text-accent" />}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Announcements Tab */}
-              <TabsContent value="announcements" className="space-y-4">
-                {announcements.length === 0 ? (
-                  <Card className="bg-card border-border">
-                    <CardContent className="text-center py-12">
-                      <Megaphone className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                      <p className="text-muted-foreground">Nenhum aviso do professor</p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  announcements.map(a => (
-                    <Card key={a.id} className="bg-card border-border">
-                      <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <Megaphone className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                          <div>
-                            <p className="text-sm text-foreground">{a.content}</p>
-                            <p className="text-xs text-muted-foreground mt-2">
-                              {new Date(a.created_at).toLocaleString("pt-BR")}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
-              </TabsContent>
-            </Tabs>
-          </>
-        )}
-      </main>
-
-      {/* Join Dialog */}
-      <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
-        <DialogContent className="bg-card border-border">
+      {/* Activity response dialog */}
+      <Dialog open={!!activeQuestion} onOpenChange={o => !o && setActiveQuestion(null)}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-foreground">
-              <Users className="h-5 w-5 text-accent" />
-              Entrar em uma Turma
+            <DialogTitle className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5 text-primary" />
+              Atividade — Capítulo {activeQuestion?.chapter_number ?? "—"}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Digite o código fornecido pelo seu professor.
-            </p>
-            <Input
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-              placeholder="Ex: A3B7K2"
-              maxLength={6}
-              className="text-center text-lg font-mono tracking-widest"
-            />
-          </div>
+          {activeQuestion && (
+            <div className="space-y-3">
+              <div className="rounded-lg border border-border bg-muted/30 p-3">
+                <p className="text-xs uppercase text-muted-foreground font-semibold mb-1">Pergunta</p>
+                <p className="text-sm text-foreground italic">"{activeQuestion.question_text}"</p>
+              </div>
+              <Textarea
+                rows={6}
+                placeholder="Escreva sua resposta (mín. 10 caracteres)..."
+                value={responseText}
+                onChange={e => setResponseText(e.target.value)}
+              />
+            </div>
+          )}
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowJoinDialog(false)}>Cancelar</Button>
-            <Button onClick={handleJoinClass} disabled={joinCode.trim().length < 4 || joining}>
-              {joining ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Entrar na Turma
+            <Button variant="outline" onClick={() => setActiveQuestion(null)}>Cancelar</Button>
+            <Button onClick={handleSubmitResponse}>
+              <Send className="h-4 w-4 mr-2" /> Enviar resposta
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Tutorial Dialog */}
-      <Dialog open={showTutorial} onOpenChange={(open) => { if (!open) dismissTutorial(); }}>
-        <DialogContent className="bg-card border-border max-w-md">
-          <div className="text-center space-y-4 py-4">
-            <span className="text-5xl">{tutorialSteps[tutorialStep].icon}</span>
-            <h2 className="text-lg font-bold text-foreground">{tutorialSteps[tutorialStep].title}</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {tutorialSteps[tutorialStep].description}
-            </p>
-
-            {/* Progress dots */}
-            <div className="flex justify-center gap-1.5 pt-2">
-              {tutorialSteps.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    idx === tutorialStep ? "bg-primary" : idx < tutorialStep ? "bg-primary/40" : "bg-muted"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-          <DialogFooter className="flex-row justify-between sm:justify-between">
-            <Button variant="ghost" size="sm" onClick={dismissTutorial}>
-              Pular
-            </Button>
-            <div className="flex gap-2">
-              {tutorialStep > 0 && (
-                <Button variant="outline" size="sm" onClick={() => setTutorialStep(s => s - 1)}>
-                  Anterior
-                </Button>
-              )}
-              <Button
-                size="sm"
-                onClick={() => {
-                  if (tutorialStep < tutorialSteps.length - 1) {
-                    setTutorialStep(s => s + 1);
-                  } else {
-                    dismissTutorial();
-                  }
-                }}
-              >
-                {tutorialStep < tutorialSteps.length - 1 ? "Próximo" : "Começar!"}
-              </Button>
-            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
