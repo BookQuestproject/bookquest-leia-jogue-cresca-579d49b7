@@ -779,19 +779,51 @@ const EduProfessorInner = () => {
                 </div>
 
                 <Card className="bg-card border-border">
-                  <CardHeader>
+                  <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
                     <CardTitle className="text-base flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4 text-accent" />
-                      Relatório completo
+                      <BarChart3 className="h-4 w-4 text-accent" /> Progresso por aluno
                     </CardTitle>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={exportCSV} disabled={ranked.length === 0}>
+                        <Download className="h-3.5 w-3.5 mr-1.5" /> CSV
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={exportClassPDF} disabled={ranked.length === 0}>
+                        <FileText className="h-3.5 w-3.5 mr-1.5" /> PDF da turma
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => navigate("/edu/relatorios")}>
+                        Por aluno →
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Gere relatórios detalhados em PDF na seção dedicada.
-                    </p>
-                    <Button variant="outline" onClick={() => navigate("/edu/relatorios")}>
-                      <BarChart3 className="h-4 w-4 mr-2" /> Abrir relatórios
-                    </Button>
+                    {progressChartData.length === 0 ? (
+                      <p className="text-xs text-muted-foreground text-center py-8">
+                        Sem dados de leitura ainda.
+                      </p>
+                    ) : (
+                      <div className="w-full h-72">
+                        <ResponsiveContainer>
+                          <BarChart data={progressChartData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                            <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
+                            <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} unit="%" />
+                            <Tooltip
+                              contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", fontSize: 12 }}
+                              formatter={(v: any) => [`${v}%`, "Progresso"]}
+                            />
+                            <Bar dataKey="progresso" radius={[6, 6, 0, 0]}>
+                              {progressChartData.map((d, i) => (
+                                <Cell key={i} fill={
+                                  d.progresso >= avgProgress + 10 ? "hsl(var(--success))"
+                                  : d.progresso <= avgProgress - 10 ? "hsl(var(--destructive))"
+                                  : "hsl(var(--primary))"
+                                } />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
