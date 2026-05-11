@@ -1,40 +1,53 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 import EduDashboard from "./EduDashboard";
+import TeacherProfileGate from "@/components/edu/TeacherProfileGate";
 
-/**
- * Wrapper that checks teacher status before showing the dashboard.
- * Redirects non-teachers back to /edu.
- */
 const EduProfessor = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isTeacher, loading: roleLoading } = useEduRole();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (!authLoading && !roleLoading) {
-      if (!user) {
-        navigate("/auth?redirect=/edu", { replace: true });
-      } else if (!isTeacher) {
-        navigate("/edu", { replace: true });
+    (async () => {
+      if (authLoading || roleLoading) return;
+      if (!user) { navigate("/auth?redirect=/edu", { replace: true }); return; }
+      if (!isTeacher) { navigate("/edu", { replace: true }); return; }
+
+      const { data } = await supabase
+        .from("edu_teachers" as any)
+        .select("onboarding_completed")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if ((data as any)?.onboarding_completed === false) {
+        navigate("/edu/onboarding", { replace: true });
+        return;
       }
-    }
+      setChecking(false);
+    })();
   }, [user, isTeacher, authLoading, roleLoading, navigate]);
 
-  if (authLoading || roleLoading) {
+  if (authLoading || roleLoading || checking) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Carregando...</div>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (!user || !isTeacher) return null;
 
-  // Render the existing dashboard (it's wrapped in EduLayout)
-  return <EduDashboard />;
+  return (
+    <TeacherProfileGate>
+      <EduDashboard />
+    </TeacherProfileGate>
+  );
 };
 
 export default EduProfessor;
