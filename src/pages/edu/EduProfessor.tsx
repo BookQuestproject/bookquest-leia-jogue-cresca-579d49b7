@@ -59,7 +59,8 @@ const EduProfessorInner = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const { profile } = useProfile();
-  const { classes, loading: loadingClasses } = useClasses();
+  const { classes, loading: loadingClasses, fetchClassMembers, setBookForClass, fetchClasses } = useClasses();
+  const { settings } = useTeacherSettings();
 
   const tabFromUrl = new URLSearchParams(location.search).get("tab") || "overview";
   const classFromUrl = new URLSearchParams(location.search).get("class");
@@ -69,6 +70,14 @@ const EduProfessorInner = () => {
   const [members, setMembers] = useState<ClassMember[]>([]);
   const [showAnnouncementDialog, setShowAnnouncementDialog] = useState(false);
   const [announcementText, setAnnouncementText] = useState("");
+
+  // Book dialog
+  const [showBookDialog, setShowBookDialog] = useState(false);
+  const [bookForm, setBookForm] = useState({ book_title: "", author: "", total_pages: "", reading_start_date: "", reading_deadline: "" });
+  const [savingBook, setSavingBook] = useState(false);
+
+  // Review feedback per response (id -> text)
+  const [feedbackDrafts, setFeedbackDrafts] = useState<Record<string, string>>({});
 
   const activeClasses = useMemo(() => classes.filter(c => c.is_active && !c.is_archived), [classes]);
 
@@ -84,10 +93,9 @@ const EduProfessorInner = () => {
 
   const selectedClass: ClassData | undefined = activeClasses.find(c => c.id === selectedClassId);
 
-  const { fetchClassMembers } = useClasses();
   const { progressData, fetchProgress } = useClassReadingProgress();
   const { announcements, createAnnouncement } = useEduEngagement(selectedClassId || undefined);
-  const { questions, responses, fetchQuestions } = useClassQuestions();
+  const { questions, responses, fetchQuestions, reviewResponse } = useClassQuestions();
 
   useEffect(() => {
     if (!selectedClassId) return;
@@ -95,6 +103,39 @@ const EduProfessorInner = () => {
     fetchProgress(selectedClassId);
     fetchQuestions(selectedClassId);
   }, [selectedClassId]);
+
+  const openBookDialog = () => {
+    if (!selectedClass) return;
+    setBookForm({
+      book_title: selectedClass.book_title || "",
+      author: selectedClass.author || "",
+      total_pages: selectedClass.total_pages ? String(selectedClass.total_pages) : "",
+      reading_start_date: selectedClass.reading_start_date || "",
+      reading_deadline: selectedClass.reading_deadline || "",
+    });
+    setShowBookDialog(true);
+  };
+
+  const handleSaveBook = async () => {
+    if (!selectedClass || !bookForm.book_title.trim()) {
+      toast({ title: "Título obrigatório", description: "Informe o nome do livro.", variant: "destructive" });
+      return;
+    }
+    setSavingBook(true);
+    const ok = await setBookForClass(selectedClass.id, {
+      book_title: bookForm.book_title.trim(),
+      author: bookForm.author.trim() || null,
+      total_pages: bookForm.total_pages ? parseInt(bookForm.total_pages, 10) : null,
+      reading_start_date: bookForm.reading_start_date || null,
+      reading_deadline: bookForm.reading_deadline || null,
+    });
+    setSavingBook(false);
+    if (ok) {
+      setShowBookDialog(false);
+      // refresh progress to reflect new seeded rows
+      fetchProgress(selectedClass.id);
+    }
+  };
 
   // Stats derivation
   const totalPages = selectedClass?.total_pages || 0;
