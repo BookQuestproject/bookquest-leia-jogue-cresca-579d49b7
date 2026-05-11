@@ -688,17 +688,55 @@ const EduProfessorInner = () => {
                           {qResponses.length === 0 ? (
                             <p className="text-xs text-muted-foreground italic">Sem respostas ainda.</p>
                           ) : (
-                            qResponses.slice(0, 5).map(r => {
+                            qResponses.map(r => {
                               const m = members.find(mm => mm.user_id === r.user_id);
+                              const reviewed = !!r.reviewed_at;
+                              const draft = feedbackDrafts[r.id] ?? r.teacher_feedback ?? "";
                               return (
-                                <div key={r.id} className="p-3 rounded-lg bg-muted/40 border border-border">
-                                  <p className="text-xs font-semibold text-foreground mb-1">
-                                    {m?.profile?.full_name || "Aluno"}
-                                  </p>
+                                <div key={r.id} className={`p-3 rounded-lg border space-y-2 ${reviewed ? "bg-success/5 border-success/30" : "bg-muted/40 border-border"}`}>
+                                  <div className="flex items-start justify-between gap-2">
+                                    <p className="text-xs font-semibold text-foreground">
+                                      {m?.profile?.full_name || "Aluno"}
+                                    </p>
+                                    {reviewed ? (
+                                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/30 font-semibold flex items-center gap-1">
+                                        <Check className="h-3 w-3" /> Revisada
+                                      </span>
+                                    ) : (
+                                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/30 font-semibold">
+                                        Pendente
+                                      </span>
+                                    )}
+                                  </div>
                                   <p className="text-sm text-foreground/90">{r.response_text}</p>
-                                  <p className="text-[10px] text-muted-foreground mt-1">
+                                  <p className="text-[10px] text-muted-foreground">
                                     {new Date(r.created_at).toLocaleString("pt-BR")}
                                   </p>
+
+                                  <div className="pt-2 border-t border-border space-y-2">
+                                    <div className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                      <MessageSquare className="h-3 w-3" /> Feedback do professor
+                                    </div>
+                                    <Textarea
+                                      rows={2}
+                                      placeholder="Escreva um feedback para o aluno..."
+                                      value={draft}
+                                      onChange={e => setFeedbackDrafts(s => ({ ...s, [r.id]: e.target.value }))}
+                                      className="text-sm"
+                                    />
+                                    <div className="flex justify-end gap-2">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={async () => {
+                                          if (!selectedClassId) return;
+                                          await reviewResponse(r.id, selectedClassId, draft.trim());
+                                        }}
+                                      >
+                                        <Check className="h-3.5 w-3.5 mr-1" /> Marcar como revisada
+                                      </Button>
+                                    </div>
+                                  </div>
                                 </div>
                               );
                             })
