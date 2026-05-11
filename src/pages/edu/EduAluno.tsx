@@ -95,7 +95,7 @@ const EduAluno = () => {
   const { studentClasses } = useEduRole();
   const { progressData, fetchProgress, updateProgress } = useClassReadingProgress();
   const { profile } = useProfile();
-  const { stats } = useUserStats();
+  const { essencia, streak } = useUserStats();
   const { toast } = useToast();
 
   const [section, setSection] = useState<Section>("dashboard");
@@ -246,11 +246,11 @@ const EduAluno = () => {
             <div className="mt-3 grid grid-cols-2 gap-1.5 text-center">
               <div className="rounded-md bg-accent/10 py-1.5">
                 <p className="text-[9px] uppercase text-muted-foreground">✦</p>
-                <p className="text-sm font-bold text-accent">{stats.xp}</p>
+                <p className="text-sm font-bold text-accent">{essencia}</p>
               </div>
               <div className="rounded-md bg-destructive/5 py-1.5">
                 <p className="text-[9px] uppercase text-muted-foreground">🔥</p>
-                <p className="text-sm font-bold text-destructive">{stats.streak}</p>
+                <p className="text-sm font-bold text-destructive">{streak}</p>
               </div>
             </div>
           </div>
@@ -352,8 +352,8 @@ const EduAluno = () => {
                     </p>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <MiniStat icon={Sparkles} value={stats.xp} label="Essência" tone="primary" />
-                    <MiniStat icon={Flame} value={stats.streak} label="Sequência" tone="destructive" />
+                    <MiniStat icon={Sparkles} value={essencia} label="Essência" tone="primary" />
+                    <MiniStat icon={Flame} value={streak} label="Sequência" tone="destructive" />
                     <MiniStat icon={Trophy} value={myRank > 0 ? `#${myRank}` : "—"} label="Ranking" tone="accent" />
                     <MiniStat icon={BookOpen} value={`${currentPage}p`} label="Página" tone="primary" />
                   </div>
@@ -405,7 +405,7 @@ const EduAluno = () => {
                   <InfoSquare icon={ClipboardList} title="Atividades" value={pendingQuestions.length} subtitle="pendentes" tone="accent" onClick={() => setSection("activities")} />
                   <InfoSquare icon={Trophy} title="Ranking" value={myRank > 0 ? `#${myRank}` : "—"} subtitle="na turma" tone="accent" onClick={() => setSection("ranking")} />
                   <InfoSquare icon={Megaphone} title="Avisos" value={announcements.length} subtitle="do professor" tone="primary" onClick={() => setSection("announcements")} />
-                  <InfoSquare icon={Flame} title="Sequência" value={`${stats.streak}d`} subtitle="lendo seguidos" tone="destructive" onClick={() => setSection("stats")} />
+                  <InfoSquare icon={Flame} title="Sequência" value={`${streak}d`} subtitle="lendo seguidos" tone="destructive" onClick={() => setSection("stats")} />
                 </div>
 
                 {/* Pending activities */}
@@ -644,12 +644,12 @@ const EduAluno = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <Card><CardContent className="p-4 text-center">
                     <Sparkles className="h-5 w-5 text-accent mx-auto mb-1" />
-                    <p className="text-xl font-bold">{stats.xp}</p>
+                    <p className="text-xl font-bold">{essencia}</p>
                     <p className="text-[10px] text-muted-foreground">Essência</p>
                   </CardContent></Card>
                   <Card><CardContent className="p-4 text-center">
                     <Flame className="h-5 w-5 text-destructive mx-auto mb-1" />
-                    <p className="text-xl font-bold">{stats.streak}</p>
+                    <p className="text-xl font-bold">{streak}</p>
                     <p className="text-[10px] text-muted-foreground">Dias seguidos</p>
                   </CardContent></Card>
                   <Card><CardContent className="p-4 text-center">
