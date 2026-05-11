@@ -125,14 +125,17 @@ const EduOnboarding = () => {
       toast({ title: "Escolha o ano/série", variant: "destructive" });
       return false;
     }
-    if (classCount < 1) return false;
+    const cleanNames = classNames.map(n => n.trim()).filter(Boolean);
+    if (cleanNames.length === 0) {
+      toast({ title: "Dê um nome a pelo menos uma turma", variant: "destructive" });
+      return false;
+    }
 
     setSaving(true);
     const created: any[] = [];
 
-    for (let i = 0; i < classCount; i++) {
-      const letter = LETTERS[i] ?? String(i + 1);
-      const name = classCount === 1 ? classGrade : `${classGrade} ${letter}`;
+    for (const suffix of cleanNames) {
+      const name = `${classGrade} ${suffix}`;
 
       // Generate unique code
       const { data: codeData, error: codeErr } = await supabase.rpc("generate_class_code");
