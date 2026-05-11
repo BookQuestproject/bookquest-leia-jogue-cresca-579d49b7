@@ -20,6 +20,9 @@ export interface QuestionResponse {
   response_text: string;
   created_at: string;
   updated_at: string;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
+  teacher_feedback?: string | null;
 }
 
 export const useClassQuestions = () => {
@@ -119,6 +122,30 @@ export const useClassQuestions = () => {
     return data as QuestionResponse;
   };
 
+  const reviewResponse = async (
+    responseId: string,
+    classId: string,
+    feedback: string,
+  ) => {
+    if (!user) return null;
+    const { error } = await supabase
+      .from('class_question_responses')
+      .update({
+        teacher_feedback: feedback,
+        reviewed_by: user.id,
+        reviewed_at: new Date().toISOString(),
+      })
+      .eq('id', responseId);
+
+    if (error) {
+      toast({ title: 'Erro', description: 'Falha ao salvar revisão.', variant: 'destructive' });
+      return null;
+    }
+    toast({ title: 'Resposta revisada!' });
+    await fetchQuestions(classId);
+    return true;
+  };
+
   return {
     questions,
     responses,
@@ -126,5 +153,6 @@ export const useClassQuestions = () => {
     fetchQuestions,
     createQuestion,
     createResponse,
+    reviewResponse,
   };
 };
