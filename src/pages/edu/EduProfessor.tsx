@@ -4,7 +4,11 @@ import {
   GraduationCap, LayoutDashboard, Users, BarChart3, LogOut,
   TrendingUp, Trophy, Target, Megaphone, Clock, ArrowUpRight,
   Search, FileCheck, BookOpen, Plus, Copy, Loader2, Send,
+  Check, MessageSquare, Pencil, Download, FileText,
 } from "lucide-react";
+import {
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell,
+} from "recharts";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +28,8 @@ import { useEduEngagement } from "@/hooks/useEduEngagement";
 import { useClassQuestions } from "@/hooks/useClassQuestions";
 import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
+import { downloadReportPDF } from "@/lib/edu/generateReportPDF";
+import { useTeacherSettings } from "@/hooks/useTeacherSettings";
 import TeacherProfileGate from "@/components/edu/TeacherProfileGate";
 
 const StatCard = ({ icon: Icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) => (
