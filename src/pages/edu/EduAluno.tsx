@@ -541,15 +541,24 @@ const EduAluno = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {submittedQuestions.map(q => {
                             const myR = responses.find(r => r.question_id === q.id && r.user_id === user?.id);
+                            const reviewed = !!myR?.reviewed_at;
                             return (
-                              <Card key={q.id} className="border-success/30">
+                              <Card key={q.id} className={reviewed ? "border-success/40" : "border-success/20"}>
                                 <CardContent className="p-4 space-y-2">
                                   <div className="flex items-start justify-between gap-2">
-                                    <span className="text-[10px] px-2 py-0.5 rounded-full text-success border border-success/40 font-semibold">Respondida</span>
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full text-success border border-success/40 font-semibold">
+                                      {reviewed ? "Revisada" : "Respondida"}
+                                    </span>
                                     <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
                                   </div>
                                   <p className="text-sm text-foreground font-medium">{q.question_text}</p>
                                   {myR && <p className="text-xs text-muted-foreground italic line-clamp-3">"{myR.response_text}"</p>}
+                                  {myR?.teacher_feedback && (
+                                    <div className="mt-2 rounded-md border border-primary/30 bg-primary/5 p-2.5">
+                                      <p className="text-[10px] uppercase tracking-wider text-primary font-bold mb-1">Feedback do professor</p>
+                                      <p className="text-xs text-foreground leading-relaxed">{myR.teacher_feedback}</p>
+                                    </div>
+                                  )}
                                 </CardContent>
                               </Card>
                             );
