@@ -249,9 +249,6 @@ const EduAluno = () => {
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur-sm px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/edu")}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
             <img src={logoCrown} alt="BookQuest" className="h-7 w-7" />
             <span className="font-bold text-foreground text-sm">BookQuest EDU</span>
           </div>
@@ -259,11 +256,7 @@ const EduAluno = () => {
             <Button variant="ghost" size="icon" onClick={() => { setTutorialStep(0); setShowTutorial(true); }} title="Ver tutorial">
               <HelpCircle className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setShowJoinDialog(true)}>
-              <Plus className="h-4 w-4 mr-1" />
-              Turma
-            </Button>
-            <Button variant="ghost" size="icon" onClick={() => supabase.auth.signOut().then(() => navigate("/edu"))}>
+            <Button variant="ghost" size="icon" onClick={() => supabase.auth.signOut().then(() => navigate("/auth"))} title="Sair">
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
