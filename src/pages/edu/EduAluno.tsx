@@ -393,10 +393,27 @@ const EduAluno = () => {
                         ? <>Meta diária: <strong className="text-accent">{dailyGoal} pág/dia</strong> ({daysRemaining} dias restantes)</>
                         : "Sem meta diária definida"}
                     </div>
-                    <Button onClick={() => setSection("stats")} className="gap-2">
-                      <CheckCircle2 className="h-4 w-4" />
-                      Atualizar progresso
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button onClick={() => setSection("stats")} className="gap-2">
+                        <BookOpen className="h-4 w-4" /> Continuar leitura
+                      </Button>
+                      {totalPages > 0 && (
+                        <Button
+                          variant="outline"
+                          onClick={async () => {
+                            const next = Math.min(totalPages, currentPage + Math.max(1, Math.ceil(totalPages / 20)));
+                            await updateProgress(selectedClass.id, next);
+                            fetchRanking(selectedClass.id);
+                          }}
+                          className="gap-2"
+                        >
+                          <CheckCircle2 className="h-4 w-4" /> Próximo capítulo
+                        </Button>
+                      )}
+                      <Button variant="secondary" onClick={() => setSection("activities")} className="gap-2">
+                        <ClipboardList className="h-4 w-4" /> Atividades {pendingQuestions.length > 0 && <span className="ml-1 text-[10px] bg-accent text-accent-foreground rounded-full px-1.5 py-0.5">{pendingQuestions.length}</span>}
+                      </Button>
+                    </div>
                   </div>
                 </Card>
 
