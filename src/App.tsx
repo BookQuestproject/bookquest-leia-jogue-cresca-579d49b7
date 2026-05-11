@@ -60,6 +60,9 @@ import EduConfiguracoes from "./pages/edu/EduConfiguracoes";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
 import Install from "./pages/Install";
+import EduOnboarding from "./pages/edu/EduOnboarding";
+import EduAlunoOnboarding from "./pages/edu/EduAlunoOnboarding";
+import JoinClass from "./pages/edu/JoinClass";
 
 // App configuration
 const queryClient = new QueryClient();
@@ -111,6 +114,9 @@ const App = () => (
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
                 <Route path="/edu" element={<EduEntry />} />
+                <Route path="/edu/onboarding" element={<EduOnboarding />} />
+                <Route path="/edu/onboarding-aluno" element={<EduAlunoOnboarding />} />
+                <Route path="/entrar/:codigo" element={<JoinClass />} />
                 <Route path="/edu/demo/professor" element={<DemoEduProfessor />} />
                 <Route path="/edu/demo/aluno" element={<DemoEduAluno />} />
                 <Route path="/edu/aluno" element={<EduAluno />} />
