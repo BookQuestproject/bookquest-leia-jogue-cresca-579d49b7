@@ -855,6 +855,52 @@ const EduProfessorInner = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Book dialog */}
+      <Dialog open={showBookDialog} onOpenChange={setShowBookDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-accent" />
+              {selectedClass?.book_title ? "Alterar livro da turma" : "Definir livro da turma"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Título *</label>
+              <Input value={bookForm.book_title} onChange={e => setBookForm(s => ({ ...s, book_title: e.target.value }))} placeholder="Ex.: Dom Casmurro" />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Autor</label>
+              <Input value={bookForm.author} onChange={e => setBookForm(s => ({ ...s, author: e.target.value }))} placeholder="Ex.: Machado de Assis" />
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div>
+                <label className="text-xs text-muted-foreground">Páginas</label>
+                <Input type="number" value={bookForm.total_pages} onChange={e => setBookForm(s => ({ ...s, total_pages: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Início</label>
+                <Input type="date" value={bookForm.reading_start_date} onChange={e => setBookForm(s => ({ ...s, reading_start_date: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Prazo</label>
+                <Input type="date" value={bookForm.reading_deadline} onChange={e => setBookForm(s => ({ ...s, reading_deadline: e.target.value }))} />
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Ao salvar, o progresso inicial dos alunos da turma será criado automaticamente em 0 páginas.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowBookDialog(false)}>Cancelar</Button>
+            <Button onClick={handleSaveBook} disabled={savingBook || !bookForm.book_title.trim()}>
+              {savingBook ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
