@@ -714,6 +714,9 @@ export type Database = {
           id: string
           question_id: string
           response_text: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          teacher_feedback: string | null
           updated_at: string
           user_id: string
         }
@@ -722,6 +725,9 @@ export type Database = {
           id?: string
           question_id: string
           response_text: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          teacher_feedback?: string | null
           updated_at?: string
           user_id: string
         }
@@ -730,6 +736,9 @@ export type Database = {
           id?: string
           question_id?: string
           response_text?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          teacher_feedback?: string | null
           updated_at?: string
           user_id?: string
         }
