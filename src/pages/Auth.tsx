@@ -105,8 +105,15 @@ const Auth = () => {
     }
   };
 
+  const getRedirectTarget = () => {
+    const params = new URLSearchParams(window.location.search);
+    const r = params.get('redirect');
+    if (r && r.startsWith('/')) return r;
+    return '/quiz-literario';
+  };
+
   useEffect(() => {
-    if (!loading && user) navigate('/quiz-literario');
+    if (!loading && user) navigate(getRedirectTarget());
   }, [user, loading, navigate]);
 
   const validateForm = () => {
