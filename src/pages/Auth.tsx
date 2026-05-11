@@ -54,6 +54,13 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
+      // Persist redirect target so AuthCallback can honor it after OAuth
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const r = params.get('redirect');
+        if (r && r.startsWith('/')) localStorage.setItem('bookquest-post-auth-redirect', r);
+        else localStorage.removeItem('bookquest-post-auth-redirect');
+      } catch {}
       const isCustomDomain =
         !window.location.hostname.includes('lovable.app') &&
         !window.location.hostname.includes('lovableproject.com');
