@@ -924,8 +924,21 @@ const EduProfessor = () => {
         .maybeSingle();
 
       if ((data as any)?.onboarding_completed === false) {
-        navigate("/edu/onboarding", { replace: true });
-        return;
+        // Self-heal: if the teacher already has at least one class, treat onboarding as complete
+        const { count } = await supabase
+          .from("classes")
+          .select("id", { count: "exact", head: true })
+          .eq("teacher_id", user.id);
+
+        if ((count ?? 0) > 0) {
+          await supabase
+            .from("edu_teachers" as any)
+            .update({ onboarding_completed: true } as any)
+            .eq("user_id", user.id);
+        } else {
+          navigate("/edu/onboarding", { replace: true });
+          return;
+        }
       }
       setChecking(false);
     })();
