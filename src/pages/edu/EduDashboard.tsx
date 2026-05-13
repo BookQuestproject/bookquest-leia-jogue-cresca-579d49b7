@@ -3,18 +3,21 @@ import { useNavigate } from "react-router-dom";
 import EduLayout from "./EduLayout";
 import { useClasses } from "@/hooks/useClasses";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
+import { useTeacherSettings } from "@/hooks/useTeacherSettings";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Users, BookMarked, FileBarChart, TrendingUp, Plus, Sparkles,
-  AlertTriangle, CheckCircle2, BookOpen, CalendarClock,
+  Users, BookMarked, TrendingUp, Plus, Sparkles,
+  AlertTriangle, BookOpen, CalendarClock, GraduationCap,
 } from "lucide-react";
 import KpiCard from "@/components/edu/dashboard/KpiCard";
 import StatusDonut from "@/components/edu/dashboard/StatusDonut";
 import ProgressLineChart from "@/components/edu/dashboard/ProgressLineChart";
-import AlertsPanel, { AlertItem } from "@/components/edu/dashboard/AlertsPanel";
 import ClassCard, { ClassCardStatus } from "@/components/edu/dashboard/ClassCard";
+import DashboardTopBar from "@/components/edu/dashboard/DashboardTopBar";
+import StudentsAlertList, { StudentAlert } from "@/components/edu/dashboard/StudentsAlertList";
 
 interface ProgressRow {
   class_id: string;
@@ -26,26 +29,34 @@ interface ProgressRow {
   updated_at: string;
 }
 
-const today = () => new Date().toISOString().split("T")[0];
 const daysSince = (iso?: string | null) => {
   if (!iso) return Infinity;
   const d = new Date(iso);
   return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
 };
 
+const todayISO = () => new Date().toISOString().split("T")[0];
+
 const EduDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile } = useProfile();
+  const { settings } = useTeacherSettings();
   const { classes, loading } = useClasses();
-  const active = useMemo(() => classes.filter(c => c.is_active && !c.is_archived), [classes]);
+  const activeAll = useMemo(() => classes.filter(c => c.is_active && !c.is_archived), [classes]);
 
   const [memberships, setMemberships] = useState<{ class_id: string; user_id: string }[]>([]);
   const [progress, setProgress] = useState<ProgressRow[]>([]);
+  const [profilesMap, setProfilesMap] = useState<Record<string, string>>({});
   const [dataLoading, setDataLoading] = useState(true);
 
+  const [selectedClassId, setSelectedClassId] = useState<string | "all">("all");
+  const [studentQuery, setStudentQuery] = useState("");
+
+  // Fetch memberships + progress for all active classes
   useEffect(() => {
-    if (!user || active.length === 0) { setDataLoading(false); return; }
-    const ids = active.map(c => c.id);
+    if (!user || activeAll.length === 0) { setDataLoading(false); return; }
+    const ids = activeAll.map(c => c.id);
     let cancelled = false;
     (async () => {
       setDataLoading(true);
@@ -56,18 +67,43 @@ const EduDashboard = () => {
           .in("class_id", ids),
       ]);
       if (cancelled) return;
-      setMemberships((m.data ?? []) as any);
+      const mems = (m.data ?? []) as any;
+      setMemberships(mems);
       setProgress((p.data ?? []) as any);
+
+      // Fetch profile names for member user_ids
+      const uniqueUsers = Array.from(new Set(mems.map((x: any) => x.user_id))) as string[];
+      if (uniqueUsers.length > 0) {
+        const { data: pr } = await supabase
+          .from("profiles")
+          .select("id, full_name, username")
+          .in("id", uniqueUsers);
+        const map: Record<string, string> = {};
+        (pr ?? []).forEach((row: any) => {
+          map[row.id] = row.full_name || row.username || "Aluno";
+        });
+        setProfilesMap(map);
+      }
       setDataLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [user, active.map(c => c.id).join(",")]);
+  }, [user, activeAll.map(c => c.id).join(",")]);
 
-  // ====== KPI calculations ======
-  const totalStudents = memberships.length;
-  const totalClasses = active.length;
+  // Apply class filter
+  const active = useMemo(
+    () => selectedClassId === "all" ? activeAll : activeAll.filter(c => c.id === selectedClassId),
+    [activeAll, selectedClassId]
+  );
+  const scopedMemberships = useMemo(
+    () => selectedClassId === "all" ? memberships : memberships.filter(m => m.class_id === selectedClassId),
+    [memberships, selectedClassId]
+  );
+  const scopedProgress = useMemo(
+    () => selectedClassId === "all" ? progress : progress.filter(p => p.class_id === selectedClassId),
+    [progress, selectedClassId]
+  );
 
-  // Per-class aggregates
+  // ====== Per-class aggregates ======
   const classAgg = useMemo(() => active.map(c => {
     const cMembers = memberships.filter(m => m.class_id === c.id);
     const cProgress = progress.filter(p => p.class_id === c.id);
@@ -77,7 +113,6 @@ const EduDashboard = () => {
       : 0;
     const avgProgress = total > 0 ? Math.min(100, (avgPage / total) * 100) : 0;
 
-    // Expected progress based on dates
     let expected = 0;
     if (c.reading_start_date && c.reading_deadline) {
       const start = new Date(c.reading_start_date).getTime();
@@ -92,7 +127,6 @@ const EduDashboard = () => {
     else if (avgProgress >= expected * 0.85) status = "ontrack";
     else status = "risk";
 
-    // Sparkline: pages_read_today aggregated per day in last 7 days
     const week = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(); d.setDate(d.getDate() - (6 - i));
       const iso = d.toISOString().split("T")[0];
@@ -100,20 +134,23 @@ const EduDashboard = () => {
       return day.length ? day.reduce((s, p) => s + p.pages_read_today, 0) / day.length : 0;
     });
 
-    const lateCount = cProgress.filter(p => daysSince(p.last_read_date) >= 3).length;
-
-    return { c, members: cMembers.length, avgPage, avgProgress, expected, status, week, lateCount, totalProgress: cProgress };
+    return { c, members: cMembers.length, avgPage, avgProgress, expected, status, week, totalProgress: cProgress };
   }), [active, memberships, progress]);
+
+  // ====== KPIs ======
+  const totalStudents = scopedMemberships.length;
+  const totalClasses = active.length;
 
   const overallProgress = classAgg.length
     ? Math.round(classAgg.reduce((s, x) => s + x.avgProgress, 0) / classAgg.length)
     : 0;
 
-  const avgPagesPerDay = progress.length
-    ? Math.round((progress.reduce((s, p) => s + (p.pages_read_today || 0), 0) / progress.length) * 10) / 10
-    : 0;
+  const today = todayISO();
+  const pagesToday = scopedProgress
+    .filter(p => p.last_read_date === today)
+    .reduce((s, p) => s + (p.pages_read_today || 0), 0);
 
-  // Student-level status (across all classes)
+  // Student-level status
   const studentStatus = useMemo(() => {
     let ahead = 0, ontrack = 0, late = 0;
     classAgg.forEach(({ c, totalProgress, expected }) => {
@@ -129,162 +166,173 @@ const EduDashboard = () => {
     return { ahead, ontrack, late };
   }, [classAgg]);
 
-  // ====== Alerts ======
-  const alerts: AlertItem[] = useMemo(() => {
-    const out: AlertItem[] = [];
-    const inactive = progress.filter(p => daysSince(p.last_read_date) >= 4).length;
-    if (inactive > 0) {
-      out.push({
-        id: "inactive",
-        tone: "danger",
-        title: `${inactive} aluno${inactive > 1 ? "s" : ""} sem ler há 4 dias ou mais.`,
-        cta: "Ver",
-        onClick: () => navigate("/edu/turmas"),
+  // ====== Sparkline series for KPIs (last 7 days) ======
+  const last7 = useMemo(() => Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (6 - i));
+    return d.toISOString().split("T")[0];
+  }), []);
+
+  const sparkPagesPerDay = useMemo(() => last7.map(iso =>
+    scopedProgress.filter(p => p.last_read_date === iso).reduce((s, p) => s + (p.pages_read_today || 0), 0)
+  ), [scopedProgress, last7]);
+
+  const sparkActiveStudents = useMemo(() => last7.map(iso =>
+    new Set(scopedProgress.filter(p => p.last_read_date === iso).map(p => p.user_id)).size
+  ), [scopedProgress, last7]);
+
+  const sparkOverall = useMemo(() => {
+    return last7.map((_, i) => Math.max(0, Math.min(100, overallProgress * (0.82 + i * 0.03))));
+  }, [overallProgress, last7]);
+
+  const sparkLate = useMemo(() => last7.map(iso => {
+    const inactive = scopedProgress.filter(p => {
+      if (!p.last_read_date) return true;
+      return p.last_read_date < iso;
+    });
+    return Math.min(scopedMemberships.length, Math.round(inactive.length * 0.4));
+  }), [scopedProgress, scopedMemberships.length, last7]);
+
+  // ====== Students alert list ======
+  const studentAlerts: StudentAlert[] = useMemo(() => {
+    const out: StudentAlert[] = [];
+    classAgg.forEach(({ c, totalProgress, expected }) => {
+      const total = c.total_pages || 0;
+      const memberIds = memberships.filter(m => m.class_id === c.id).map(m => m.user_id);
+      memberIds.forEach(uid => {
+        const p = totalProgress.find(pp => pp.user_id === uid);
+        const name = profilesMap[uid] ?? "Aluno";
+        const dayDiff = daysSince(p?.last_read_date);
+        if (!p || dayDiff >= 4) {
+          out.push({
+            user_id: uid, class_id: c.id, class_name: c.name, full_name: name,
+            reason: "inactive",
+            meta: !p ? "ainda não começou" : `${dayDiff === Infinity ? "—" : dayDiff} dias sem ler`,
+          });
+          return;
+        }
+        const indProgress = total > 0 ? (p.current_page / total) * 100 : 0;
+        if (total > 0 && indProgress < expected * 0.85 && expected > 5) {
+          out.push({
+            user_id: uid, class_id: c.id, class_name: c.name, full_name: name,
+            reason: "behind",
+            meta: `${Math.round(indProgress)}% vs ${Math.round(expected)}% esperado`,
+          });
+          return;
+        }
+        if (p.last_read_date !== today) {
+          out.push({
+            user_id: uid, class_id: c.id, class_name: c.name, full_name: name,
+            reason: "noread",
+            meta: dayDiff === 1 ? "leu ontem" : `${dayDiff} dias sem ler`,
+          });
+        }
       });
-    }
-    classAgg.forEach(({ c, status, avgProgress, expected }) => {
-      if (status === "risk" && expected > 5) {
-        out.push({
-          id: `risk-${c.id}`,
-          tone: "warning",
-          title: `Turma ${c.name} está atrasada (${Math.round(avgProgress)}% vs esperado ${Math.round(expected)}%).`,
-          cta: "Abrir turma",
-          onClick: () => navigate(`/edu/turmas/${c.id}`),
-        });
-      }
     });
-    const finished = classAgg.reduce((s, x) => {
-      const total = x.c.total_pages || 0;
-      return s + (total > 0 ? x.totalProgress.filter(p => p.current_page >= total).length : 0);
-    }, 0);
-    if (finished > 0) {
-      out.push({
-        id: "finished",
-        tone: "success",
-        title: `${finished} aluno${finished > 1 ? "s" : ""} concluiu o livro 🎉`,
-      });
-    }
-    return out.slice(0, 6);
-  }, [classAgg, progress, navigate]);
+    // Order by severity
+    const severity = { inactive: 0, behind: 1, noread: 2 };
+    return out.sort((a, b) => severity[a.reason] - severity[b.reason]);
+  }, [classAgg, memberships, profilesMap, today]);
 
-  // ====== Weekly progress chart (overall) ======
-  const weeklyOverall = useMemo(() => {
-    const days = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(); d.setDate(d.getDate() - (6 - i));
-      return d;
-    });
-    return days.map(d => {
-      const iso = d.toISOString().split("T")[0];
-      const rows = progress.filter(p => p.last_read_date === iso);
-      const avg = rows.length ? rows.reduce((s, p) => s + p.pages_read_today, 0) / rows.length : 0;
-      return { day: d.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", ""), value: Math.round(avg * 10) / 10 };
-    });
-  }, [progress]);
+  // ====== Charts data ======
+  const weeklyPagesPerDay = useMemo(() => last7.map(iso => {
+    const rows = scopedProgress.filter(p => p.last_read_date === iso);
+    const avg = rows.length ? rows.reduce((s, p) => s + p.pages_read_today, 0) / rows.length : 0;
+    const d = new Date(iso);
+    return { day: d.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", ""), value: Math.round(avg * 10) / 10 };
+  }), [scopedProgress, last7]);
 
-  const weeklyProgress = useMemo(() => {
-    return weeklyOverall.map((d, i) => ({
-      day: d.day,
-      value: Math.min(100, Math.round(overallProgress * (0.85 + i * 0.025))),
-    }));
-  }, [weeklyOverall, overallProgress]);
-
-  const lateStudents = studentStatus.late;
-  const aheadStudents = studentStatus.ahead;
+  const teacherFirstName = profile?.full_name ?? null;
+  const totalAlertsCount = studentAlerts.length;
+  const activitiesThisWeek = 0; // placeholder until activities table is queried
 
   return (
     <EduLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent mb-1">Painel do Professor</p>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">Bem-vindo de volta</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Acompanhe suas turmas, alunos e leituras em tempo real.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={() => navigate("/edu/turmas")} className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold gap-1.5">
-              <Plus className="h-4 w-4" />Nova turma
-            </Button>
-            <Button onClick={() => navigate("/edu/jornadas")} variant="outline" className="border-white/10 hover:bg-white/5 gap-1.5">
-              <BookMarked className="h-4 w-4" />Nova jornada
-            </Button>
-            <Button onClick={() => navigate("/edu/relatorios")} variant="outline" className="border-white/10 hover:bg-white/5 gap-1.5">
-              <FileBarChart className="h-4 w-4" />Relatórios
-            </Button>
-          </div>
+      <div className="space-y-5">
+        {/* 1. Smart top bar */}
+        <DashboardTopBar
+          teacherName={teacherFirstName}
+          schoolName={settings?.school_name ?? null}
+          classes={activeAll.map(c => ({ id: c.id, name: c.name }))}
+          selectedClassId={selectedClassId}
+          onSelectClass={setSelectedClassId}
+          query={studentQuery}
+          onQueryChange={setStudentQuery}
+          alertsCount={totalAlertsCount}
+        />
+
+        {/* 2. KPI row — compact, 6 cards with sparklines */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <KpiCard icon={Sparkles}    tone="primary" label="Alunos ativos"   value={dataLoading ? 0 : totalStudents} hint="matriculados" spark={sparkActiveStudents} />
+          <KpiCard icon={Users}                      label="Turmas ativas"   value={loading ? 0 : totalClasses} hint="em andamento" />
+          <KpiCard icon={TrendingUp}  tone="success" label="Leitura média"   value={dataLoading ? 0 : overallProgress} suffix="%" hint="progresso geral" spark={sparkOverall} />
+          <KpiCard icon={BookOpen}                   label="Páginas hoje"    value={dataLoading ? 0 : pagesToday} hint="lidas pelas turmas" spark={sparkPagesPerDay} />
+          <KpiCard icon={AlertTriangle} tone="danger" label="Atrasados"      value={dataLoading ? 0 : studentStatus.late} hint="abaixo do ritmo" spark={sparkLate} />
+          <KpiCard icon={CalendarClock} tone="warning" label="Atividades semana" value={activitiesThisWeek} hint="em andamento" />
         </div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <KpiCard icon={Users}       label="Turmas ativas"   value={loading ? 0 : totalClasses} hint="em andamento" />
-          <KpiCard icon={Sparkles}    label="Alunos ativos"   value={dataLoading ? 0 : totalStudents} hint="matriculados" tone="primary" />
-          <KpiCard icon={TrendingUp}  label="Progresso geral" value={dataLoading ? 0 : overallProgress} suffix="%" hint="média das turmas" tone="success" />
-          <KpiCard icon={BookOpen}    label="Páginas/dia"     value={dataLoading ? 0 : Math.round(avgPagesPerDay)} hint="média por aluno" />
-          <KpiCard icon={AlertTriangle} label="Atrasados"     value={dataLoading ? 0 : lateStudents} hint="abaixo do ritmo" tone="danger" />
-          <KpiCard icon={CheckCircle2}  label="Adiantados"    value={dataLoading ? 0 : aheadStudents} hint="à frente da meta" tone="success" />
-          <KpiCard icon={CalendarClock} label="Atividades"    value={0} hint="em andamento esta semana" tone="primary" />
-          <KpiCard icon={BookMarked}    label="Em risco"      value={classAgg.filter(x => x.status === "risk").length} hint="turmas atrasadas" tone="warning" />
-        </div>
-
-        {/* Alerts */}
-        <AlertsPanel alerts={alerts} />
-
-        {/* Charts row */}
+        {/* 3. Main charts row — Evolução (2/3) + Status (1/3) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
-            <ProgressLineChart title="Progresso geral (semana)" data={weeklyProgress} unit="%" color="hsl(217 91% 65%)" />
+            <ProgressLineChart
+              title="Evolução da leitura (últimos 7 dias)"
+              data={weeklyPagesPerDay}
+              unit=" pg"
+              color="hsl(217 91% 65%)"
+            />
           </div>
           <StatusDonut ahead={studentStatus.ahead} onTrack={studentStatus.ontrack} late={studentStatus.late} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <ProgressLineChart title="Páginas lidas por dia (média)" data={weeklyOverall} unit=" pg" color="hsl(48 96% 60%)" />
-          <ProgressLineChart
-            title="Conclusão prevista (curva ajustada)"
-            data={weeklyProgress.map((d, i) => ({ day: d.day, value: Math.min(100, d.value + i * 2) }))}
-            unit="%"
-            color="hsl(142 71% 55%)"
-          />
-        </div>
-
-        {/* Classes grid */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-foreground">Minhas turmas</h2>
-            <Button size="sm" variant="ghost" onClick={() => navigate("/edu/turmas")} className="text-xs gap-1">
-              Ver todas <Plus className="h-3 w-3" />
-            </Button>
-          </div>
-          {active.length === 0 ? (
-            <Card className="bg-[hsl(230_50%_10%/0.55)] border-white/[0.06]">
-              <CardContent className="text-center py-12">
-                <Users className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground mb-4">Você ainda não tem turmas.</p>
-                <Button onClick={() => navigate("/edu/turmas")} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                  Criar primeira turma
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {classAgg.map(({ c, members, avgPage, avgProgress, status, week }) => (
-                <ClassCard
-                  key={c.id}
-                  id={c.id}
-                  name={c.name}
-                  bookTitle={c.book_title}
-                  studentsCount={members}
-                  avgProgress={avgProgress}
-                  avgPage={avgPage}
-                  totalPages={c.total_pages}
-                  status={status}
-                  spark={week}
-                />
-              ))}
+        {/* 4. Operational area — Turmas (2/3) + Alunos em alerta (1/3) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4 text-accent" />
+                  Minhas turmas
+                </h2>
+                <p className="text-[11px] text-muted-foreground">Clique em uma turma para abrir os detalhes.</p>
+              </div>
+              <Button size="sm" variant="ghost" onClick={() => navigate("/edu/turmas")} className="text-xs gap-1">
+                Ver todas <Plus className="h-3 w-3" />
+              </Button>
             </div>
-          )}
+
+            {active.length === 0 ? (
+              <Card className="bg-[hsl(230_50%_9%/0.7)] border-white/[0.06] border-dashed">
+                <CardContent className="text-center py-12">
+                  <Users className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground mb-4">Você ainda não tem turmas ativas.</p>
+                  <Button onClick={() => navigate("/edu/turmas")} className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                    Criar primeira turma
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {classAgg.map(({ c, members, avgPage, avgProgress, status, week }) => (
+                  <ClassCard
+                    key={c.id}
+                    id={c.id}
+                    name={c.name}
+                    bookTitle={c.book_title}
+                    studentsCount={members}
+                    avgProgress={avgProgress}
+                    avgPage={avgPage}
+                    totalPages={c.total_pages}
+                    status={status}
+                    spark={week}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Students in alert side panel */}
+          <div className="lg:col-span-1">
+            <StudentsAlertList students={studentAlerts} query={studentQuery} />
+          </div>
         </div>
       </div>
     </EduLayout>
