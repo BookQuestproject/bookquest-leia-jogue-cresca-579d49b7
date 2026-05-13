@@ -134,8 +134,8 @@ const EduOnboarding = () => {
   const toggle = <T,>(arr: T[], v: T) =>
     arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v];
 
-  // Preview de turmas geradas
-  const previewClasses = useMemo(() => {
+  // Preview de turmas geradas (com renomeação opcional por turma)
+  const defaultClassNames = useMemo(() => {
     const list: string[] = [];
     rows.forEach(r => {
       if (!r.grade) return;
@@ -145,6 +145,11 @@ const EduOnboarding = () => {
     });
     return list;
   }, [rows]);
+
+  const previewClasses = useMemo(
+    () => defaultClassNames.map((n, i) => (customNames[i]?.trim() ? customNames[i].trim() : n)),
+    [defaultClassNames, customNames]
+  );
 
   // ------- Validação por etapa -------
   const canAdvance = (s: number): boolean => {
