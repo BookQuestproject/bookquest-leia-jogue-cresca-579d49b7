@@ -46,6 +46,7 @@ const EduTurmaDetail = () => {
   const [showQuestionDialog, setShowQuestionDialog] = useState(false);
   const [showChallengeDialog, setShowChallengeDialog] = useState(false);
   const [showAnnouncementDialog, setShowAnnouncementDialog] = useState(false);
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [announcementText, setAnnouncementText] = useState("");
   const [challengeForm, setChallengeForm] = useState({
     title: "",
