@@ -174,6 +174,17 @@ const EduTurmas = () => {
                         <Copy className="h-3 w-3" />
                         {c.access_code}
                       </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRenameTarget({ id: c.id, name: c.name });
+                        }}
+                        className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
+                        aria-label="Renomear turma"
+                        title="Renomear"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
                       {!showArchived && (
                         <button
                           onClick={(e) => {
@@ -181,6 +192,8 @@ const EduTurmas = () => {
                             handleArchive(c.id);
                           }}
                           className="p-1.5 text-muted-foreground hover:text-accent transition-colors"
+                          aria-label="Arquivar turma"
+                          title="Arquivar"
                         >
                           <Archive className="h-3.5 w-3.5" />
                         </button>
