@@ -158,32 +158,52 @@ const EduEntry = () => {
   };
 
   const handleStudentJoin = async () => {
+    setJoinError(null);
     const code = studentCode.trim().toUpperCase();
-    if (!code || !user) return;
+    if (code.length !== 6) {
+      setJoinError("O código tem exatamente 6 caracteres.");
+      return;
+    }
+    if (!user) return;
     setJoiningClass(true);
-    const { data, error } = await supabase.rpc("student_join_class_by_code" as any, {
+    const { data: classId, error } = await supabase.rpc("student_join_class_by_code" as any, {
       _code: code,
       _email: user.email ?? null,
     });
-    setJoiningClass(false);
-    if (error || !data) {
-      toast({
-        title: "Código inválido",
-        description: "Verifique o código com seu professor e tente novamente.",
-        variant: "destructive",
-      });
+    if (error || !classId) {
+      setJoiningClass(false);
+      setJoinError("Código não encontrado. Verifique com seu professor.");
       return;
     }
-    try { localStorage.setItem("bookquest-edu-pending-class", String(data)); } catch {}
-    setShowStudentCode(false);
-    setStudentCode("");
+    // Fetch class + teacher info to confirm
+    const { data: cls } = await supabase
+      .from("classes")
+      .select("id, name, teacher_id")
+      .eq("id", classId as string)
+      .maybeSingle();
+    let teacherName = "Professor(a)";
+    if (cls?.teacher_id) {
+      const { data: prof } = await supabase
+        .from("profiles").select("full_name, username").eq("id", cls.teacher_id).maybeSingle();
+      teacherName = (prof as any)?.full_name || ((prof as any)?.username ? `@${(prof as any).username}` : teacherName);
+    }
+    try { localStorage.setItem("bookquest-edu-pending-class", String(classId)); } catch {}
+    setJoiningClass(false);
+    setJoinedInfo({
+      classId: classId as string,
+      className: cls?.name ?? "Sua turma",
+      teacherName,
+    });
+  };
+
+  const goToStudentDashboard = async () => {
+    if (!user) return;
     const { data: prof } = await supabase
       .from("profiles").select("edu_onboarding_completed").eq("id", user.id).maybeSingle();
-    if ((prof as any)?.edu_onboarding_completed) {
-      navigate("/edu/aluno");
-    } else {
-      navigate("/edu/onboarding-aluno");
-    }
+    setShowStudentCode(false);
+    resetStudentDialog();
+    if ((prof as any)?.edu_onboarding_completed) navigate("/edu/aluno");
+    else navigate("/edu/onboarding-aluno");
   };
 
   const handleActivate = async () => {
