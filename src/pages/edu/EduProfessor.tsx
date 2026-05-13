@@ -954,11 +954,7 @@ const EduProfessor = () => {
 
   if (!user || !isTeacher) return null;
 
-  return (
-    <TeacherProfileGate>
-      <EduProfessorInner />
-    </TeacherProfileGate>
-  );
+  return <EduProfessorInner />;
 };
 
 export default EduProfessor;
