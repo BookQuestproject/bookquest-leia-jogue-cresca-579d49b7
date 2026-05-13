@@ -752,6 +752,58 @@ const EduEntry = () => {
         </div>
       </footer>
 
+      {/* Role Picker Dialog */}
+      <Dialog open={showRolePicker} onOpenChange={setShowRolePicker}>
+        <DialogContent className="bg-[#021f53] border-white/15 text-white sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl text-white">
+              Como você quer entrar?
+            </DialogTitle>
+            <p className="text-center text-sm text-white/60 mt-1">
+              Escolha seu perfil para continuar no BookQuest EDU.
+            </p>
+          </DialogHeader>
+          <div className="grid sm:grid-cols-2 gap-4 pt-2">
+            <button
+              onClick={handleStudent}
+              className="group text-left rounded-xl border border-white/15 bg-white/[0.04] p-5 transition-all hover:border-white/35 hover:-translate-y-0.5"
+            >
+              <div
+                className="w-11 h-11 rounded-lg flex items-center justify-center mb-3"
+                style={{ background: `${GOLD}1A`, color: GOLD }}
+              >
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <h3 className="font-semibold mb-1">Sou Estudante</h3>
+              <p className="text-xs text-white/60 mb-3">
+                Cadastre-se com e-mail e senha e entre na turma com o código do professor.
+              </p>
+              <span className="inline-flex items-center text-xs font-semibold" style={{ color: GOLD }}>
+                Entrar como estudante <ArrowRight className="ml-1.5 h-3.5 w-3.5 group-hover:translate-x-1 transition" />
+              </span>
+            </button>
+            <button
+              onClick={handleTeacher}
+              className="group text-left rounded-xl border border-white/15 bg-white/[0.04] p-5 transition-all hover:border-white/35 hover:-translate-y-0.5"
+            >
+              <div
+                className="w-11 h-11 rounded-lg flex items-center justify-center mb-3"
+                style={{ background: `${GOLD}1A`, color: GOLD }}
+              >
+                <GraduationCap className="h-5 w-5" />
+              </div>
+              <h3 className="font-semibold mb-1">Sou Professor</h3>
+              <p className="text-xs text-white/60 mb-3">
+                Configure escola, turmas e acompanhe o desempenho dos seus alunos.
+              </p>
+              <span className="inline-flex items-center text-xs font-semibold" style={{ color: GOLD }}>
+                Entrar como professor <ArrowRight className="ml-1.5 h-3.5 w-3.5 group-hover:translate-x-1 transition" />
+              </span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Teacher Code Dialog */}
       <Dialog open={showTeacherCode} onOpenChange={setShowTeacherCode}>
         <DialogContent className="bg-card border-border">
