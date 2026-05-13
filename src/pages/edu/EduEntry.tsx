@@ -83,6 +83,20 @@ const EduEntry = () => {
   const [showStudentCode, setShowStudentCode] = useState(false);
   const [studentCode, setStudentCode] = useState("");
   const [joiningClass, setJoiningClass] = useState(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
+  const [joinedInfo, setJoinedInfo] = useState<{ classId: string; className: string; teacherName: string } | null>(null);
+
+  const resetStudentDialog = () => {
+    setStudentCode("");
+    setJoinError(null);
+    setJoinedInfo(null);
+  };
+
+  const closeStudentDialog = (returnToPicker: boolean) => {
+    setShowStudentCode(false);
+    resetStudentDialog();
+    if (returnToPicker) setShowRolePicker(true);
+  };
   const [scrolled, setScrolled] = useState(false);
   const { visible, refs } = useReveal();
 
