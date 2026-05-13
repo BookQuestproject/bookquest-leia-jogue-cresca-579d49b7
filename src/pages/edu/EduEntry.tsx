@@ -888,6 +888,132 @@ const EduEntry = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Student Class Code Dialog */}
+      <Dialog open={showStudentCode} onOpenChange={(o) => { setShowStudentCode(o); if (!o) setStudentCode(""); }}>
+        <DialogContent
+          className="border-white/15 text-white sm:max-w-2xl p-0 overflow-hidden"
+          style={{ background: `linear-gradient(160deg, #021f53 0%, #02174a 60%, #010f3a 100%)` }}
+        >
+          <div className="grid md:grid-cols-[1.05fr_1fr]">
+            {/* Left — visual / context */}
+            <div
+              className="relative hidden md:flex flex-col justify-between p-8 overflow-hidden"
+              style={{ background: `radial-gradient(circle at 20% 0%, ${GOLD}26, transparent 60%)` }}
+            >
+              <div
+                className="absolute -top-20 -left-20 h-56 w-56 rounded-full blur-3xl opacity-50"
+                style={{ background: `radial-gradient(circle, ${GOLD}55, transparent 70%)` }}
+              />
+              <div className="relative space-y-5">
+                <div className="flex items-center gap-2">
+                  <img src={logoCrown} alt="BookQuest" className="h-7 w-7" />
+                  <span className="font-bold text-sm">BookQuest</span>
+                  <span
+                    className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded-full border"
+                    style={{ color: GOLD, borderColor: `${GOLD}55`, background: `${GOLD}10` }}
+                  >EDU</span>
+                </div>
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-medium"
+                  style={{ borderColor: `${GOLD}55`, color: GOLD, background: `${GOLD}0D` }}
+                >
+                  <Sparkles className="h-3 w-3" /> Acesso de estudante
+                </div>
+                <h2 className="text-2xl font-bold leading-tight">
+                  Entre na sua{" "}
+                  <span
+                    className="bg-clip-text text-transparent"
+                    style={{ backgroundImage: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+                  >turma</span>
+                </h2>
+                <p className="text-sm text-white/70 leading-relaxed">
+                  Use o código de 6 dígitos enviado pelo seu professor para começar sua jornada de leitura.
+                </p>
+              </div>
+
+              <div className="relative space-y-3 pt-6">
+                {[
+                  { icon: KeyRound, t: "Peça o código ao professor" },
+                  { icon: GitBranch, t: "Digite no campo ao lado" },
+                  { icon: Rocket, t: "Comece a ler e evoluir" },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div
+                      className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ background: `${GOLD}1A`, color: GOLD }}
+                    >
+                      <s.icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-white/80">
+                      <span
+                        className="text-[10px] font-bold w-4 text-center"
+                        style={{ color: GOLD }}
+                      >{i + 1}.</span>
+                      {s.t}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right — form */}
+            <div className="p-7 sm:p-8 space-y-5">
+              <DialogHeader className="space-y-2 text-left">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style={{ background: `${GOLD}1A`, color: GOLD }}
+                >
+                  <Users className="h-5 w-5" />
+                </div>
+                <DialogTitle className="text-xl text-white">Código da Turma</DialogTitle>
+                <p className="text-sm text-white/60">
+                  Insira o código fornecido pelo professor.
+                </p>
+              </DialogHeader>
+
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-wider font-semibold text-white/60">
+                  Código de acesso
+                </label>
+                <Input
+                  value={studentCode}
+                  onChange={(e) => setStudentCode(e.target.value.toUpperCase().replace(/\s/g, ""))}
+                  onKeyDown={(e) => { if (e.key === "Enter" && studentCode.trim().length >= 4 && !joiningClass) handleStudentJoin(); }}
+                  placeholder="A3B7K2"
+                  maxLength={8}
+                  autoFocus
+                  className="bg-white/5 border-white/15 text-white placeholder:text-white/30 text-center text-2xl font-mono tracking-[0.5em] h-14"
+                />
+                <p className="text-[11px] text-white/50 flex items-center gap-1.5">
+                  <ShieldCheck className="h-3 w-3" style={{ color: GOLD }} />
+                  Conexão segura · Seus dados são protegidos
+                </p>
+              </div>
+
+              <Button
+                onClick={handleStudentJoin}
+                disabled={studentCode.trim().length < 4 || joiningClass}
+                className="w-full h-12 font-bold text-[#021f53] hover:brightness-110 hover:scale-[1.01] transition-all"
+                style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+              >
+                {joiningClass ? (
+                  <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Entrando...</>
+                ) : (
+                  <>Entrar na turma <ArrowRight className="h-4 w-4 ml-1.5" /></>
+                )}
+              </Button>
+
+              <button
+                onClick={() => { setShowStudentCode(false); setStudentCode(""); }}
+                className="w-full text-xs text-white/50 hover:text-white/80 transition py-1"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
