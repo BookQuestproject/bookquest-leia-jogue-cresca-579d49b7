@@ -16,11 +16,12 @@ import { Progress } from "@/components/ui/progress";
 import {
   ArrowLeft, Users, BookOpen, Calendar, Copy, Send, HelpCircle,
   BarChart3, Trophy, Target, Megaphone, Medal, Trash2, TrendingUp,
-  UserCheck, Clock, Flame,
+  UserCheck, Clock, Flame, Pencil,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import ClassBooksManager from "@/components/edu/ClassBooksManager";
+import { RenameClassDialog } from "@/components/edu/RenameClassDialog";
 
 const EduTurmaDetail = () => {
   const { classId } = useParams<{ classId: string }>();
