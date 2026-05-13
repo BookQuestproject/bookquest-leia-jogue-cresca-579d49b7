@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Copy, Trash2, Users, BookOpen, Calendar, Archive } from "lucide-react";
+import { Plus, Copy, Trash2, Users, BookOpen, Calendar, Archive, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { RenameClassDialog } from "@/components/edu/RenameClassDialog";
 
 // Mock book library - replace with actual data source
 const libraryBooks = [
