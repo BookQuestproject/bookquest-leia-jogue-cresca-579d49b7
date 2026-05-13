@@ -1,0 +1,52 @@
+# BookQuest
+
+> Plataforma gamificada de leitura literária que transforma o hábito de ler em uma jornada de evolução com rankings, conquistas, trilhas de estudo e comunidade de leitores.
+
+BookQuest é uma edtech brasileira que une gamificação, inteligência artificial e metodologia de leitura para ajudar estudantes e entusiastas a desenvolverem o hábito de ler obras clássicas e contemporâneas. Os usuários acumulam Essência (pontos de experiência), mantêm sequências diárias (streaks), sobem de ranking semanal e participam de desafios literários individuais ou em grupo.
+
+## Páginas principais
+
+- [/](/): Landing page com apresentação da plataforma, recursos gamificados e call-to-action.
+- [/home](/home): Dashboard do leitor com estatísticas de leitura, missões diárias e progresso pessoal.
+- [/quiz](/quiz): Quiz literário interativo para testar conhecimento sobre clássicos da literatura.
+- [/quiz-literario](/quiz-literario): Onboarding obrigatório com quiz de perfil para personalizar recomendações de leitura.
+- [/estante](/estante): Estante virtual do usuário com livros em leitura, lidos e lista de desejos.
+- [/biblioteca](/biblioteca): Biblioteca completa da plataforma com obras disponíveis para leitura.
+- [/trilhas](/trilhas): Trilhas literárias organizadas com capítulos, metas e recompensas de Essência.
+- [/ranking](/ranking): Ranking semanal de leitores com sistema de promoção e tiers.
+- [/missoes](/missoes): Missões diárias, semanais e mensais para engajamento contínuo.
+- [/conquistas](/conquistas): Conquistas e badges desbloqueáveis por marcos de leitura.
+- [/desafios](/desafios): Desafios PvP de leitura contra outros usuários da plataforma.
+- [/bookclub](/bookclub): Clube do livro com reuniões, materiais e discussões em grupo.
+- [/mentoria](/mentoria): Programa de mentoria literária em grupos reduzidos.
+
+## Comunidade e social
+
+- [/comunidade](/comunidade): Comunidades temáticas, avaliações de livros e espaço literário.
+- [/espaco-literario](/espaco-literario): Espaço literário com reviews e interação entre leitores.
+- [/premium](/premium): Página de planos premium e assinatura com benefícios exclusivos.
+- [/perfil](/perfil): Perfil público do leitor com estatísticas, conquistas e atividade recente.
+
+## Estudo e preparação
+
+- [/enem](/enem): Portal de preparação para o ENEM com repertórios, questões e trilhas acadêmicas.
+- [/vocabulario](/vocabulario): Vocabulário pessoal do usuário com palavras aprendidas durante a leitura.
+- [/noticias](/noticias): Notícias editoriais, atualizações da plataforma e conteúdo literário.
+- [/configuracoes](/configuracoes): Configurações da conta, plano de leitura personalizado e preferências.
+
+## BookQuest EDU (Educação)
+
+- [/edu](/edu): Portal educacional para escolas e professores com turmas de leitura.
+- [/edu/professor](/edu/professor): Painel do professor para gestão de turmas, alunos e relatórios.
+- [/edu/aluno](/edu/aluno): Painel do aluno com livro da turma, atividades e progresso de leitura.
+
+## Documentos
+
+- [/politica-de-privacidade](/politica-de-privacidade): Política de privacidade da plataforma.
+- [/termos-de-servico](/termos-de-servico): Termos de serviço e condições de uso.
+
+## Opcional
+
+- [/ler/:bookId/:chapterId](/ler): Modo de leitura focado com timer, vocabulário e reflexão pós-capitulo.
+- [/trilhas/:bookId](/trilhas): Página específica de uma trilha literária com todos os capítulos.
+- [/enem/repertorio/:id](/enem): Página de um repertório acadêmico específico para o ENEM.
