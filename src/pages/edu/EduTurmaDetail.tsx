@@ -170,16 +170,34 @@ const EduTurmaDetail = () => {
           Voltar
         </Button>
 
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-bold text-foreground">{classData.name}</h1>
             {classData.grade && <p className="text-sm text-muted-foreground">{classData.grade}</p>}
           </div>
-          <button onClick={copyCode} className="flex items-center gap-2 text-sm font-mono bg-accent/10 text-accent px-3 py-2 rounded-lg hover:bg-accent/20 transition-colors">
-            <Copy className="h-4 w-4" />
-            {classData.access_code}
-          </button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowRenameDialog(true)}
+              className="gap-1.5"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+              Renomear
+            </Button>
+            <button onClick={copyCode} className="flex items-center gap-2 text-sm font-mono bg-accent/10 text-accent px-3 py-2 rounded-lg hover:bg-accent/20 transition-colors">
+              <Copy className="h-4 w-4" />
+              {classData.access_code}
+            </button>
+          </div>
         </div>
+
+        <RenameClassDialog
+          open={showRenameDialog}
+          onOpenChange={setShowRenameDialog}
+          classId={classData.id}
+          currentName={classData.name}
+        />
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
