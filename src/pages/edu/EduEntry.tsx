@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import {
   GraduationCap, Users, BookOpen, ArrowRight, Key, Loader2,
   LayoutDashboard, Trophy, BarChart3, Target, Activity,
   Sparkles, LineChart, ShieldCheck, Zap, TrendingUp, CheckCircle2,
-  Quote, Award, Brain, ClipboardList,
+  Quote, Award, Brain, ClipboardList, KeyRound, GitBranch, Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
