@@ -72,12 +72,17 @@ const AnimatedNumber = ({ value, suffix = "" }: { value: number; suffix?: string
 
 const EduEntry = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
   const { isTeacher, loading: roleLoading, activateTeacher } = useEduRole();
   const [showRolePicker, setShowRolePicker] = useState(false);
   const [showTeacherCode, setShowTeacherCode] = useState(false);
   const [teacherCode, setTeacherCode] = useState("");
   const [activating, setActivating] = useState(false);
+  const [showStudentCode, setShowStudentCode] = useState(false);
+  const [studentCode, setStudentCode] = useState("");
+  const [joiningClass, setJoiningClass] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { visible, refs } = useReveal();
 
@@ -86,6 +91,16 @@ const EduEntry = () => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Deep-link: /edu?join=1 auto-opens the student code dialog (used after auth)
+  useEffect(() => {
+    if (searchParams.get("join") === "1" && user) {
+      setShowStudentCode(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete("join");
+      setSearchParams(next, { replace: true });
+    }
+  }, [user, searchParams, setSearchParams]);
 
   // Open role picker — never auto-redirect teachers from the landing
   const handleAccess = () => {
@@ -103,9 +118,8 @@ const EduEntry = () => {
       return;
     }
     // Block users already enrolled as students
-    const { data: membership } = await import("@/integrations/supabase/client").then(({ supabase }) =>
-      supabase.from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle()
-    );
+    const { data: membership } = await supabase
+      .from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle();
     if (membership) {
       navigate("/edu/aluno");
       return;
@@ -113,10 +127,49 @@ const EduEntry = () => {
     setShowTeacherCode(true);
   };
 
-  const handleStudent = () => {
+  const handleStudent = async () => {
     setShowRolePicker(false);
-    if (!user) navigate("/auth?redirect=/edu/aluno");
-    else navigate("/edu/aluno");
+    if (!user) {
+      navigate("/auth?redirect=" + encodeURIComponent("/edu?join=1"));
+      return;
+    }
+    // If already in a class, go straight to student dashboard
+    const { data: membership } = await supabase
+      .from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle();
+    if (membership) {
+      navigate("/edu/aluno");
+      return;
+    }
+    setShowStudentCode(true);
+  };
+
+  const handleStudentJoin = async () => {
+    const code = studentCode.trim().toUpperCase();
+    if (!code || !user) return;
+    setJoiningClass(true);
+    const { data, error } = await supabase.rpc("student_join_class_by_code" as any, {
+      _code: code,
+      _email: user.email ?? null,
+    });
+    setJoiningClass(false);
+    if (error || !data) {
+      toast({
+        title: "Código inválido",
+        description: "Verifique o código com seu professor e tente novamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+    try { localStorage.setItem("bookquest-edu-pending-class", String(data)); } catch {}
+    setShowStudentCode(false);
+    setStudentCode("");
+    const { data: prof } = await supabase
+      .from("profiles").select("edu_onboarding_completed").eq("id", user.id).maybeSingle();
+    if ((prof as any)?.edu_onboarding_completed) {
+      navigate("/edu/aluno");
+    } else {
+      navigate("/edu/onboarding-aluno");
+    }
   };
 
   const handleActivate = async () => {
