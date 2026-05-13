@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Copy, Trash2, Users, BookOpen, Calendar, Archive } from "lucide-react";
+import { Plus, Copy, Trash2, Users, BookOpen, Calendar, Archive, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { RenameClassDialog } from "@/components/edu/RenameClassDialog";
 
 // Mock book library - replace with actual data source
 const libraryBooks = [
@@ -38,6 +39,7 @@ const EduTurmas = () => {
   const [selectedLibraryBook, setSelectedLibraryBook] = useState<string>("");
   const [creating, setCreating] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
+  const [renameTarget, setRenameTarget] = useState<{ id: string; name: string } | null>(null);
 
   const activeClasses = classes.filter(c => !c.is_archived);
   const archivedClasses = classes.filter(c => c.is_archived);
@@ -172,6 +174,17 @@ const EduTurmas = () => {
                         <Copy className="h-3 w-3" />
                         {c.access_code}
                       </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRenameTarget({ id: c.id, name: c.name });
+                        }}
+                        className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
+                        aria-label="Renomear turma"
+                        title="Renomear"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
                       {!showArchived && (
                         <button
                           onClick={(e) => {
@@ -179,6 +192,8 @@ const EduTurmas = () => {
                             handleArchive(c.id);
                           }}
                           className="p-1.5 text-muted-foreground hover:text-accent transition-colors"
+                          aria-label="Arquivar turma"
+                          title="Arquivar"
                         >
                           <Archive className="h-3.5 w-3.5" />
                         </button>
@@ -347,6 +362,15 @@ const EduTurmas = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {renameTarget && (
+          <RenameClassDialog
+            open={!!renameTarget}
+            onOpenChange={(v) => { if (!v) setRenameTarget(null); }}
+            classId={renameTarget.id}
+            currentName={renameTarget.name}
+          />
+        )}
       </div>
     </EduLayout>
   );

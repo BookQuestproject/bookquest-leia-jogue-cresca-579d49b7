@@ -1060,6 +1060,42 @@ export type Database = {
           },
         ]
       }
+      edu_class_activities: {
+        Row: {
+          class_id: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          teacher_id: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          teacher_id: string
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          teacher_id?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       edu_class_announcements: {
         Row: {
           class_id: string
@@ -1149,7 +1185,9 @@ export type Database = {
           created_by: string
           id: string
           journey_id: string
+          options: Json
           question_text: string
+          reflection_text: string | null
           updated_at: string
         }
         Insert: {
@@ -1158,7 +1196,9 @@ export type Database = {
           created_by: string
           id?: string
           journey_id: string
+          options?: Json
           question_text: string
+          reflection_text?: string | null
           updated_at?: string
         }
         Update: {
@@ -1167,7 +1207,9 @@ export type Database = {
           created_by?: string
           id?: string
           journey_id?: string
+          options?: Json
           question_text?: string
+          reflection_text?: string | null
           updated_at?: string
         }
         Relationships: [

@@ -101,6 +101,24 @@ export const useClasses = () => {
     return data as ClassData;
   };
 
+  const renameClass = async (id: string, name: string) => {
+    const trimmed = name.trim();
+    if (trimmed.length < 2 || trimmed.length > 60) {
+      toast({ title: 'Nome inválido', description: 'Use entre 2 e 60 caracteres.', variant: 'destructive' });
+      return false;
+    }
+    // optimistic
+    setClasses(prev => prev.map(c => c.id === id ? { ...c, name: trimmed } : c));
+    const { error } = await supabase.from('classes').update({ name: trimmed }).eq('id', id);
+    if (error) {
+      toast({ title: 'Erro', description: 'Falha ao renomear turma.', variant: 'destructive' });
+      await fetchClasses();
+      return false;
+    }
+    toast({ title: 'Turma renomeada' });
+    return true;
+  };
+
   const deleteClass = async (id: string) => {
     const { error } = await supabase.from('classes').delete().eq('id', id);
     if (error) {
@@ -313,6 +331,7 @@ export const useClasses = () => {
     loading, 
     fetchClasses, 
     createClass, 
+    renameClass,
     deleteClass, 
     archiveClass,
     duplicateClass,
