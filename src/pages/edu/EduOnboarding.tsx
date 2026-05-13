@@ -87,6 +87,7 @@ const EduOnboarding = () => {
 
   // Etapa 3 — Turmas (batch por série)
   const [rows, setRows] = useState<ClassRow[]>([defaultRow()]);
+  const [customNames, setCustomNames] = useState<Record<number, string>>({});
   const [createdClasses, setCreatedClasses] = useState<any[]>([]);
 
   // Etapa 4 — Livros
