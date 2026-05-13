@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://bookquest-leia-jogue-cresca.lovable.app/sitemap.xml
