@@ -362,6 +362,15 @@ const EduTurmas = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {renameTarget && (
+          <RenameClassDialog
+            open={!!renameTarget}
+            onOpenChange={(v) => { if (!v) setRenameTarget(null); }}
+            classId={renameTarget.id}
+            currentName={renameTarget.name}
+          />
+        )}
       </div>
     </EduLayout>
   );
