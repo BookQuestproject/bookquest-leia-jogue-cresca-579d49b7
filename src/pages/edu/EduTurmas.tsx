@@ -39,6 +39,7 @@ const EduTurmas = () => {
   const [selectedLibraryBook, setSelectedLibraryBook] = useState<string>("");
   const [creating, setCreating] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
+  const [renameTarget, setRenameTarget] = useState<{ id: string; name: string } | null>(null);
 
   const activeClasses = classes.filter(c => !c.is_archived);
   const archivedClasses = classes.filter(c => c.is_archived);
