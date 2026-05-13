@@ -331,6 +331,7 @@ export const useClasses = () => {
     loading, 
     fetchClasses, 
     createClass, 
+    renameClass,
     deleteClass, 
     archiveClass,
     duplicateClass,
