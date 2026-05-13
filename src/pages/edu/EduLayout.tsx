@@ -1,27 +1,29 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
 import { useProfile } from "@/hooks/useProfile";
-import { useEffect } from "react";
 import {
-  LayoutDashboard, Users, BookMarked, MessageCircle, FileBarChart, Library,
-  HelpCircle, Settings, LogOut, Search, ChevronsLeft, ChevronsRight, Sparkles,
+  Home, Users, GraduationCap, ClipboardList, FileBarChart, Library, Settings, LogOut, Plus, MessageCircle, BookMarked,
 } from "lucide-react";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell } from "@/components/NotificationBell";
 
 interface EduLayoutProps { children: ReactNode }
 
-const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard",            path: "/edu/professor" },
-  { icon: Users,           label: "Turmas",               path: "/edu/turmas" },
-  { icon: BookMarked,      label: "Jornadas de leitura",  path: "/edu/jornadas" },
-  { icon: HelpCircle,      label: "Perguntas de Reflexão",path: "/edu/perguntas" },
-  { icon: MessageCircle,   label: "Comunicação",          path: "/edu/comunicacao" },
-  { icon: FileBarChart,    label: "Relatórios",           path: "/edu/relatorios" },
-  { icon: Library,         label: "Biblioteca",           path: "/edu/livros" },
-  { icon: Settings,        label: "Configurações",        path: "/edu/configuracoes" },
+const principalItems = [
+  { icon: Home,           label: "Visão geral",   path: "/edu/professor" },
+  { icon: Users,          label: "Turmas",        path: "/edu/turmas" },
+  { icon: GraduationCap,  label: "Alunos",        path: "/edu/turmas?view=alunos" },
+  { icon: ClipboardList,  label: "Atividades",    path: "/edu/jornadas" },
+];
+
+const apoioItems = [
+  { icon: FileBarChart,   label: "Relatórios",    path: "/edu/relatorios" },
+  { icon: Library,        label: "Biblioteca",    path: "/edu/livros" },
+  { icon: BookMarked,     label: "Reflexões",     path: "/edu/perguntas" },
+  { icon: MessageCircle,  label: "Comunicação",   path: "/edu/comunicacao" },
 ];
 
 const EduLayout = ({ children }: EduLayoutProps) => {
@@ -30,7 +32,6 @@ const EduLayout = ({ children }: EduLayoutProps) => {
   const { profile } = useProfile();
   const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !roleLoading) {
@@ -44,110 +45,111 @@ const EduLayout = ({ children }: EduLayoutProps) => {
   if (!user || !isTeacher) return null;
 
   const isActive = (path: string) =>
-    path === "/edu/professor" ? location.pathname === "/edu/professor" : location.pathname.startsWith(path);
+    path === "/edu/professor"
+      ? location.pathname === "/edu/professor"
+      : location.pathname.startsWith(path.split("?")[0]);
 
-  const initials = (profile?.full_name ?? "P").split(" ").map(s => s[0]).slice(0, 2).join("").toUpperCase();
+  const userName = profile?.full_name ?? "Professor";
+
+  const renderItem = (item: { icon: any; label: string; path: string }) => {
+    const active = isActive(item.path);
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-200 ${
+          active
+            ? "text-foreground bg-sidebar-accent"
+            : "text-muted-foreground/70 hover:text-foreground hover:bg-sidebar-accent/50"
+        }`}
+      >
+        {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-accent" />}
+        <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${active ? "text-accent" : ""}`} />
+        <span className="truncate">{item.label}</span>
+      </Link>
+    );
+  };
 
   return (
     <div className="min-h-screen flex bg-transparent">
-      <aside className={`hidden lg:flex flex-col ${collapsed ? "w-[72px]" : "w-64"} fixed h-full z-30 border-r border-white/[0.06] bg-[hsl(230_72%_7%/0.82)] backdrop-blur-2xl transition-all duration-300`}>
-        <div className="p-4 flex items-center gap-2.5 border-b border-white/[0.06]">
-          <div className="relative shrink-0">
-            <img src={logoCrown} alt="BookQuest" className="h-9 w-9" />
-            <div className="absolute inset-0 bg-accent/30 blur-xl -z-10" />
-          </div>
-          {!collapsed && (
-            <div className="flex flex-col leading-tight">
-              <span className="font-bold text-foreground text-sm">BookQuest</span>
-              <span className="text-[10px] font-bold text-accent tracking-[0.2em] uppercase">EDU</span>
+      {/* Desktop sidebar — same aesthetic as student panel */}
+      <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-56 bg-sidebar flex-col z-50 border-r border-border/40">
+        <div className="px-5 py-5 flex items-center justify-between">
+          <Link to="/edu/professor" className="flex items-center gap-2">
+            <img src={logoCrown} alt="BookQuest" className="w-12 h-12 object-contain" loading="eager" decoding="sync" />
+            <div className="leading-tight">
+              <p className="font-bold text-foreground text-sm">BookQuest</p>
+              <p className="text-[10px] font-bold text-accent tracking-[0.2em]">EDU</p>
             </div>
-          )}
-          <button
-            onClick={() => setCollapsed(c => !c)}
-            className="ml-auto p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
-            aria-label="Colapsar"
-          >
-            {collapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
-          </button>
+          </Link>
+          <NotificationBell />
         </div>
 
-        {!collapsed && (
-          <div className="px-3 pt-3">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-              <Search className="h-3.5 w-3.5 text-muted-foreground" />
-              <input placeholder="Buscar turmas, alunos..." className="bg-transparent outline-none text-xs text-foreground placeholder:text-muted-foreground/70 flex-1 min-w-0" />
-            </div>
-          </div>
-        )}
+        {/* Gold CTA — Criar nova turma */}
+        <div className="px-3 pb-3">
+          <Link
+            to="/edu/turmas"
+            className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-bold text-accent-foreground bg-accent hover:bg-[hsl(var(--accent)/0.9)] transition-all shadow-[0_0_22px_hsl(var(--accent)/0.35)]"
+          >
+            <Plus className="w-4 h-4" />
+            Criar nova turma
+          </Link>
+        </div>
 
-        <nav className="flex-1 p-2.5 mt-2 space-y-0.5 overflow-y-auto">
-          {navItems.map((item) => {
-            const active = isActive(item.path);
-            return (
-              <Link
-                key={item.label}
-                to={item.path}
-                title={collapsed ? item.label : undefined}
-                className={`group relative flex items-center gap-3 ${collapsed ? "justify-center px-2" : "px-3"} py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ${
-                  active
-                    ? "bg-gradient-to-r from-accent/[0.20] via-accent/[0.06] to-transparent text-foreground"
-                    : "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
-                }`}
-              >
-                {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-r-full bg-accent shadow-[0_0_12px_hsl(48_96%_55%)]" />}
-                <item.icon className={`h-4 w-4 shrink-0 ${active ? "text-accent" : "group-hover:text-accent/70"}`} />
-                {!collapsed && <span>{item.label}</span>}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-3 overflow-y-auto space-y-0.5">
+          <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">Principal</p>
+          {principalItems.map(renderItem)}
+
+          <div className="my-3 mx-3 border-t border-border/30" />
+
+          <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">Pedagógico</p>
+          {apoioItems.map(renderItem)}
         </nav>
 
-        {!collapsed && (
-          <div className="px-3 pb-2">
-            <div className="rounded-xl p-3 bg-gradient-to-br from-accent/15 via-accent/5 to-transparent border border-accent/20 relative overflow-hidden">
-              <Sparkles className="absolute -top-2 -right-2 h-12 w-12 text-accent/10" />
-              <p className="text-xs font-bold text-foreground">EDU Pro</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">Relatórios automáticos e turmas ilimitadas.</p>
+        <div className="px-3 py-3 border-t border-border/30 space-y-1">
+          <Link
+            to="/edu/configuracoes"
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
+              isActive("/edu/configuracoes")
+                ? "bg-sidebar-accent text-foreground"
+                : "text-muted-foreground/60 hover:text-foreground hover:bg-sidebar-accent/50"
+            }`}
+          >
+            <Settings className="w-4 h-4" />
+            <span>Configurações</span>
+          </Link>
+          <Link
+            to="/edu/professor"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium text-muted-foreground/70 hover:text-foreground hover:bg-sidebar-accent/50 transition-all"
+          >
+            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[11px] font-bold text-primary-foreground">
+              {userName.substring(0, 1).toUpperCase()}
             </div>
-          </div>
-        )}
-
-        <div className="p-2.5 border-t border-white/[0.06]">
-          <div className={`flex items-center gap-2.5 ${collapsed ? "justify-center" : "px-2"} py-2 rounded-xl`}>
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-accent to-[hsl(48_96%_45%)] text-accent-foreground font-bold text-xs flex items-center justify-center shrink-0 shadow-md shadow-accent/30">
-              {initials}
-            </div>
-            {!collapsed && (
-              <>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-foreground truncate">{profile?.full_name ?? "Professor"}</p>
-                  <p className="text-[10px] text-muted-foreground">Educador</p>
-                </div>
-                <button
-                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5"
-                  onClick={() => supabase.auth.signOut().then(() => navigate("/edu"))}
-                  aria-label="Sair"
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                </button>
-              </>
-            )}
-          </div>
+            <span className="truncate">{userName}</span>
+          </Link>
+          <button
+            onClick={() => supabase.auth.signOut().then(() => navigate("/edu"))}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium text-muted-foreground/60 hover:text-foreground hover:bg-sidebar-accent/50 transition-all w-full text-left"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sair</span>
+          </button>
         </div>
       </aside>
 
       {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-[hsl(230_70%_8%/0.92)] backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-sidebar/95 backdrop-blur-xl border-b border-border/40 px-4 py-3 flex items-center justify-between">
+        <Link to="/edu/professor" className="flex items-center gap-2">
           <img src={logoCrown} alt="BookQuest" className="h-7 w-7" />
           <span className="font-bold text-foreground text-sm">BookQuest</span>
           <span className="text-[10px] font-bold text-accent tracking-widest">EDU</span>
-        </div>
+        </Link>
+        <NotificationBell />
       </div>
 
       {/* Mobile bottom nav */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[hsl(230_70%_8%/0.95)] backdrop-blur-xl border-t border-white/5 flex justify-around py-2">
-        {navItems.slice(0, 5).map((item) => {
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-sidebar/95 backdrop-blur-xl border-t border-border/40 flex justify-around py-2">
+        {principalItems.map((item) => {
           const active = isActive(item.path);
           return (
             <Link key={item.label} to={item.path} className={`flex flex-col items-center gap-0.5 px-2 py-1 text-[9px] transition-colors ${active ? "text-accent" : "text-muted-foreground"}`}>
@@ -158,8 +160,8 @@ const EduLayout = ({ children }: EduLayoutProps) => {
         })}
       </div>
 
-      <main className={`${collapsed ? "lg:ml-[72px]" : "lg:ml-64"} flex-1 min-h-screen pt-16 lg:pt-0 pb-20 lg:pb-0 transition-all duration-300`}>
-        <div className="p-4 lg:px-8 lg:py-6 max-w-[1400px] mx-auto">{children}</div>
+      <main className="lg:ml-56 flex-1 min-h-screen pt-16 lg:pt-0 pb-20 lg:pb-0">
+        <div className="p-4 lg:px-8 lg:py-8 max-w-6xl mx-auto">{children}</div>
       </main>
     </div>
   );
