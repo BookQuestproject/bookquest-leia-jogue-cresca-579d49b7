@@ -72,6 +72,7 @@ const EduEntry = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isTeacher, loading: roleLoading, activateTeacher } = useEduRole();
+  const [showRolePicker, setShowRolePicker] = useState(false);
   const [showTeacherCode, setShowTeacherCode] = useState(false);
   const [teacherCode, setTeacherCode] = useState("");
   const [activating, setActivating] = useState(false);
@@ -84,18 +85,22 @@ const EduEntry = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (!authLoading && !roleLoading && user && isTeacher) {
-    navigate("/edu/professor", { replace: true });
-    return null;
-  }
+  // Open role picker — never auto-redirect teachers from the landing
+  const handleAccess = () => {
+    setShowRolePicker(true);
+  };
 
-  const handleAccess = async () => {
+  const handleTeacher = async () => {
+    setShowRolePicker(false);
     if (!user) {
       navigate("/auth?redirect=/edu");
       return;
     }
-    if (isTeacher) { navigate("/edu/professor"); return; }
-    // Block students (already in a class) from activating as teacher
+    if (isTeacher) {
+      navigate("/edu/professor");
+      return;
+    }
+    // Block users already enrolled as students
     const { data: membership } = await import("@/integrations/supabase/client").then(({ supabase }) =>
       supabase.from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle()
     );
@@ -107,6 +112,7 @@ const EduEntry = () => {
   };
 
   const handleStudent = () => {
+    setShowRolePicker(false);
     if (!user) navigate("/auth?redirect=/edu/aluno");
     else navigate("/edu/aluno");
   };
@@ -665,7 +671,7 @@ const EduEntry = () => {
               </span>
             </button>
             <button
-              onClick={handleAccess}
+              onClick={handleTeacher}
               className="group text-left rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-7 transition-all hover:border-white/25 hover:-translate-y-1"
             >
               <div
@@ -745,6 +751,58 @@ const EduEntry = () => {
           </div>
         </div>
       </footer>
+
+      {/* Role Picker Dialog */}
+      <Dialog open={showRolePicker} onOpenChange={setShowRolePicker}>
+        <DialogContent className="bg-[#021f53] border-white/15 text-white sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl text-white">
+              Como você quer entrar?
+            </DialogTitle>
+            <p className="text-center text-sm text-white/60 mt-1">
+              Escolha seu perfil para continuar no BookQuest EDU.
+            </p>
+          </DialogHeader>
+          <div className="grid sm:grid-cols-2 gap-4 pt-2">
+            <button
+              onClick={handleStudent}
+              className="group text-left rounded-xl border border-white/15 bg-white/[0.04] p-5 transition-all hover:border-white/35 hover:-translate-y-0.5"
+            >
+              <div
+                className="w-11 h-11 rounded-lg flex items-center justify-center mb-3"
+                style={{ background: `${GOLD}1A`, color: GOLD }}
+              >
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <h3 className="font-semibold mb-1">Sou Estudante</h3>
+              <p className="text-xs text-white/60 mb-3">
+                Cadastre-se com e-mail e senha e entre na turma com o código do professor.
+              </p>
+              <span className="inline-flex items-center text-xs font-semibold" style={{ color: GOLD }}>
+                Entrar como estudante <ArrowRight className="ml-1.5 h-3.5 w-3.5 group-hover:translate-x-1 transition" />
+              </span>
+            </button>
+            <button
+              onClick={handleTeacher}
+              className="group text-left rounded-xl border border-white/15 bg-white/[0.04] p-5 transition-all hover:border-white/35 hover:-translate-y-0.5"
+            >
+              <div
+                className="w-11 h-11 rounded-lg flex items-center justify-center mb-3"
+                style={{ background: `${GOLD}1A`, color: GOLD }}
+              >
+                <GraduationCap className="h-5 w-5" />
+              </div>
+              <h3 className="font-semibold mb-1">Sou Professor</h3>
+              <p className="text-xs text-white/60 mb-3">
+                Configure escola, turmas e acompanhe o desempenho dos seus alunos.
+              </p>
+              <span className="inline-flex items-center text-xs font-semibold" style={{ color: GOLD }}>
+                Entrar como professor <ArrowRight className="ml-1.5 h-3.5 w-3.5 group-hover:translate-x-1 transition" />
+              </span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Teacher Code Dialog */}
       <Dialog open={showTeacherCode} onOpenChange={setShowTeacherCode}>
