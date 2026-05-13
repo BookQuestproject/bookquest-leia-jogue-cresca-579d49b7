@@ -72,6 +72,7 @@ const EduEntry = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isTeacher, loading: roleLoading, activateTeacher } = useEduRole();
+  const [showRolePicker, setShowRolePicker] = useState(false);
   const [showTeacherCode, setShowTeacherCode] = useState(false);
   const [teacherCode, setTeacherCode] = useState("");
   const [activating, setActivating] = useState(false);
@@ -84,18 +85,22 @@ const EduEntry = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (!authLoading && !roleLoading && user && isTeacher) {
-    navigate("/edu/professor", { replace: true });
-    return null;
-  }
+  // Open role picker — never auto-redirect teachers from the landing
+  const handleAccess = () => {
+    setShowRolePicker(true);
+  };
 
-  const handleAccess = async () => {
+  const handleTeacher = async () => {
+    setShowRolePicker(false);
     if (!user) {
       navigate("/auth?redirect=/edu");
       return;
     }
-    if (isTeacher) { navigate("/edu/professor"); return; }
-    // Block students (already in a class) from activating as teacher
+    if (isTeacher) {
+      navigate("/edu/professor");
+      return;
+    }
+    // Block users already enrolled as students
     const { data: membership } = await import("@/integrations/supabase/client").then(({ supabase }) =>
       supabase.from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle()
     );
@@ -107,6 +112,7 @@ const EduEntry = () => {
   };
 
   const handleStudent = () => {
+    setShowRolePicker(false);
     if (!user) navigate("/auth?redirect=/edu/aluno");
     else navigate("/edu/aluno");
   };
