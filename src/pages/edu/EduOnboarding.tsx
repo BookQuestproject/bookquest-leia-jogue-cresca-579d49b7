@@ -187,12 +187,13 @@ const EduOnboarding = () => {
 
     setSaving(true);
     const created: any[] = [];
+    let nameIdx = 0;
 
     for (const row of rows) {
       if (!row.grade) continue;
       for (let i = 0; i < row.count; i++) {
-        const suffix = String.fromCharCode(65 + i);
-        const name = `${row.grade} ${suffix}`;
+        const name = previewClasses[nameIdx] ?? `${row.grade} ${String.fromCharCode(65 + i)}`;
+        nameIdx++;
 
         const { data: codeData, error: codeErr } = await supabase.rpc("generate_class_code");
         if (codeErr) {
