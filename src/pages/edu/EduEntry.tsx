@@ -671,7 +671,7 @@ const EduEntry = () => {
               </span>
             </button>
             <button
-              onClick={handleAccess}
+              onClick={handleTeacher}
               className="group text-left rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-7 transition-all hover:border-white/25 hover:-translate-y-1"
             >
               <div
