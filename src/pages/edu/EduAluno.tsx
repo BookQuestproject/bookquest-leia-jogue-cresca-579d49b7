@@ -209,7 +209,7 @@ const EduAluno = () => {
             <Users className="h-14 w-14 text-muted-foreground mx-auto" />
             <h2 className="text-xl font-bold">Entre na sua primeira turma</h2>
             <p className="text-sm text-muted-foreground">Peça o código da turma ao seu professor.</p>
-            <Button onClick={() => navigate("/edu")} className="gap-2">
+            <Button onClick={() => navigate("/edu?join=1")} className="gap-2">
               <Users className="h-4 w-4" /> Entrar com código
             </Button>
           </CardContent>

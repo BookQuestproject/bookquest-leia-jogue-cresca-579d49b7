@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import {
   GraduationCap, Users, BookOpen, ArrowRight, Key, Loader2,
   LayoutDashboard, Trophy, BarChart3, Target, Activity,
   Sparkles, LineChart, ShieldCheck, Zap, TrendingUp, CheckCircle2,
-  Quote, Award, Brain, ClipboardList,
+  Quote, Award, Brain, ClipboardList, KeyRound, GitBranch, Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,12 +72,17 @@ const AnimatedNumber = ({ value, suffix = "" }: { value: number; suffix?: string
 
 const EduEntry = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
   const { isTeacher, loading: roleLoading, activateTeacher } = useEduRole();
   const [showRolePicker, setShowRolePicker] = useState(false);
   const [showTeacherCode, setShowTeacherCode] = useState(false);
   const [teacherCode, setTeacherCode] = useState("");
   const [activating, setActivating] = useState(false);
+  const [showStudentCode, setShowStudentCode] = useState(false);
+  const [studentCode, setStudentCode] = useState("");
+  const [joiningClass, setJoiningClass] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { visible, refs } = useReveal();
 
@@ -84,6 +91,16 @@ const EduEntry = () => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Deep-link: /edu?join=1 auto-opens the student code dialog (used after auth)
+  useEffect(() => {
+    if (searchParams.get("join") === "1" && user) {
+      setShowStudentCode(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete("join");
+      setSearchParams(next, { replace: true });
+    }
+  }, [user, searchParams, setSearchParams]);
 
   // Open role picker — never auto-redirect teachers from the landing
   const handleAccess = () => {
@@ -101,9 +118,8 @@ const EduEntry = () => {
       return;
     }
     // Block users already enrolled as students
-    const { data: membership } = await import("@/integrations/supabase/client").then(({ supabase }) =>
-      supabase.from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle()
-    );
+    const { data: membership } = await supabase
+      .from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle();
     if (membership) {
       navigate("/edu/aluno");
       return;
@@ -111,10 +127,49 @@ const EduEntry = () => {
     setShowTeacherCode(true);
   };
 
-  const handleStudent = () => {
+  const handleStudent = async () => {
     setShowRolePicker(false);
-    if (!user) navigate("/auth?redirect=/edu/aluno");
-    else navigate("/edu/aluno");
+    if (!user) {
+      navigate("/auth?redirect=" + encodeURIComponent("/edu?join=1"));
+      return;
+    }
+    // If already in a class, go straight to student dashboard
+    const { data: membership } = await supabase
+      .from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle();
+    if (membership) {
+      navigate("/edu/aluno");
+      return;
+    }
+    setShowStudentCode(true);
+  };
+
+  const handleStudentJoin = async () => {
+    const code = studentCode.trim().toUpperCase();
+    if (!code || !user) return;
+    setJoiningClass(true);
+    const { data, error } = await supabase.rpc("student_join_class_by_code" as any, {
+      _code: code,
+      _email: user.email ?? null,
+    });
+    setJoiningClass(false);
+    if (error || !data) {
+      toast({
+        title: "Código inválido",
+        description: "Verifique o código com seu professor e tente novamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+    try { localStorage.setItem("bookquest-edu-pending-class", String(data)); } catch {}
+    setShowStudentCode(false);
+    setStudentCode("");
+    const { data: prof } = await supabase
+      .from("profiles").select("edu_onboarding_completed").eq("id", user.id).maybeSingle();
+    if ((prof as any)?.edu_onboarding_completed) {
+      navigate("/edu/aluno");
+    } else {
+      navigate("/edu/onboarding-aluno");
+    }
   };
 
   const handleActivate = async () => {
@@ -831,6 +886,132 @@ const EduEntry = () => {
               Ativar
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Student Class Code Dialog */}
+      <Dialog open={showStudentCode} onOpenChange={(o) => { setShowStudentCode(o); if (!o) setStudentCode(""); }}>
+        <DialogContent
+          className="border-white/15 text-white sm:max-w-2xl p-0 overflow-hidden"
+          style={{ background: `linear-gradient(160deg, #021f53 0%, #02174a 60%, #010f3a 100%)` }}
+        >
+          <div className="grid md:grid-cols-[1.05fr_1fr]">
+            {/* Left — visual / context */}
+            <div
+              className="relative hidden md:flex flex-col justify-between p-8 overflow-hidden"
+              style={{ background: `radial-gradient(circle at 20% 0%, ${GOLD}26, transparent 60%)` }}
+            >
+              <div
+                className="absolute -top-20 -left-20 h-56 w-56 rounded-full blur-3xl opacity-50"
+                style={{ background: `radial-gradient(circle, ${GOLD}55, transparent 70%)` }}
+              />
+              <div className="relative space-y-5">
+                <div className="flex items-center gap-2">
+                  <img src={logoCrown} alt="BookQuest" className="h-7 w-7" />
+                  <span className="font-bold text-sm">BookQuest</span>
+                  <span
+                    className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded-full border"
+                    style={{ color: GOLD, borderColor: `${GOLD}55`, background: `${GOLD}10` }}
+                  >EDU</span>
+                </div>
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-medium"
+                  style={{ borderColor: `${GOLD}55`, color: GOLD, background: `${GOLD}0D` }}
+                >
+                  <Sparkles className="h-3 w-3" /> Acesso de estudante
+                </div>
+                <h2 className="text-2xl font-bold leading-tight">
+                  Entre na sua{" "}
+                  <span
+                    className="bg-clip-text text-transparent"
+                    style={{ backgroundImage: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+                  >turma</span>
+                </h2>
+                <p className="text-sm text-white/70 leading-relaxed">
+                  Use o código de 6 dígitos enviado pelo seu professor para começar sua jornada de leitura.
+                </p>
+              </div>
+
+              <div className="relative space-y-3 pt-6">
+                {[
+                  { icon: KeyRound, t: "Peça o código ao professor" },
+                  { icon: GitBranch, t: "Digite no campo ao lado" },
+                  { icon: Rocket, t: "Comece a ler e evoluir" },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div
+                      className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ background: `${GOLD}1A`, color: GOLD }}
+                    >
+                      <s.icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-white/80">
+                      <span
+                        className="text-[10px] font-bold w-4 text-center"
+                        style={{ color: GOLD }}
+                      >{i + 1}.</span>
+                      {s.t}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right — form */}
+            <div className="p-7 sm:p-8 space-y-5">
+              <DialogHeader className="space-y-2 text-left">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style={{ background: `${GOLD}1A`, color: GOLD }}
+                >
+                  <Users className="h-5 w-5" />
+                </div>
+                <DialogTitle className="text-xl text-white">Código da Turma</DialogTitle>
+                <p className="text-sm text-white/60">
+                  Insira o código fornecido pelo professor.
+                </p>
+              </DialogHeader>
+
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-wider font-semibold text-white/60">
+                  Código de acesso
+                </label>
+                <Input
+                  value={studentCode}
+                  onChange={(e) => setStudentCode(e.target.value.toUpperCase().replace(/\s/g, ""))}
+                  onKeyDown={(e) => { if (e.key === "Enter" && studentCode.trim().length >= 4 && !joiningClass) handleStudentJoin(); }}
+                  placeholder="A3B7K2"
+                  maxLength={8}
+                  autoFocus
+                  className="bg-white/5 border-white/15 text-white placeholder:text-white/30 text-center text-2xl font-mono tracking-[0.5em] h-14"
+                />
+                <p className="text-[11px] text-white/50 flex items-center gap-1.5">
+                  <ShieldCheck className="h-3 w-3" style={{ color: GOLD }} />
+                  Conexão segura · Seus dados são protegidos
+                </p>
+              </div>
+
+              <Button
+                onClick={handleStudentJoin}
+                disabled={studentCode.trim().length < 4 || joiningClass}
+                className="w-full h-12 font-bold text-[#021f53] hover:brightness-110 hover:scale-[1.01] transition-all"
+                style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+              >
+                {joiningClass ? (
+                  <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Entrando...</>
+                ) : (
+                  <>Entrar na turma <ArrowRight className="h-4 w-4 ml-1.5" /></>
+                )}
+              </Button>
+
+              <button
+                onClick={() => { setShowStudentCode(false); setStudentCode(""); }}
+                className="w-full text-xs text-white/50 hover:text-white/80 transition py-1"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
