@@ -576,7 +576,7 @@ const StatusColumn = ({
   title, emoji, color, students, empty,
 }: {
   title: string; emoji: string; color: string; empty: string;
-  students: { user_id: string; class_name: string; name: string; page: number; totalPages: number; progress: number }[];
+  students: { user_id: string; class_id: string; class_name: string; name: string; page: number; totalPages: number; progress: number }[];
 }) => (
   <Card className="border" style={{ background: C.cardBg, borderColor: C.border }}>
     <CardHeader className="pb-2">
