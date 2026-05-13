@@ -924,7 +924,13 @@ const EduEntry = () => {
       </Dialog>
 
       {/* Student Class Code Dialog */}
-      <Dialog open={showStudentCode} onOpenChange={(o) => { setShowStudentCode(o); if (!o) setStudentCode(""); }}>
+      <Dialog
+        open={showStudentCode}
+        onOpenChange={(o) => {
+          if (!o) closeStudentDialog(!joinedInfo);
+          else setShowStudentCode(true);
+        }}
+      >
         <DialogContent
           className="border-white/15 text-white sm:max-w-2xl p-0 overflow-hidden"
           style={{ background: `linear-gradient(160deg, #021f53 0%, #02174a 60%, #010f3a 100%)` }}
@@ -962,7 +968,7 @@ const EduEntry = () => {
                   >turma</span>
                 </h2>
                 <p className="text-sm text-white/70 leading-relaxed">
-                  Use o código de 6 dígitos enviado pelo seu professor para começar sua jornada de leitura.
+                  Use o código de 6 caracteres enviado pelo seu professor para começar sua jornada de leitura.
                 </p>
               </div>
 
@@ -991,59 +997,155 @@ const EduEntry = () => {
               </div>
             </div>
 
-            {/* Right — form */}
+            {/* Right — form OR success */}
             <div className="p-7 sm:p-8 space-y-5">
-              <DialogHeader className="space-y-2 text-left">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center"
-                  style={{ background: `${GOLD}1A`, color: GOLD }}
-                >
-                  <Users className="h-5 w-5" />
+              {!joinedInfo ? (
+                <>
+                  <DialogHeader className="space-y-2 text-left">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ background: `${GOLD}1A`, color: GOLD }}
+                    >
+                      <Users className="h-5 w-5" />
+                    </div>
+                    <DialogTitle className="text-xl text-white">Código da turma</DialogTitle>
+                    <p className="text-sm text-white/60">
+                      Insira o código de 6 caracteres fornecido pelo professor.
+                    </p>
+                  </DialogHeader>
+
+                  <div className="space-y-3">
+                    <label htmlFor="student-code-input" className="text-[11px] uppercase tracking-wider font-semibold text-white/60">
+                      Código de acesso
+                    </label>
+
+                    {/* Hidden input drives the value; visible slots reflect each char */}
+                    <div className="relative">
+                      <input
+                        id="student-code-input"
+                        value={studentCode}
+                        onChange={(e) => {
+                          const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+                          setStudentCode(v);
+                          if (joinError) setJoinError(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && studentCode.length === 6 && !joiningClass) handleStudentJoin();
+                        }}
+                        autoFocus
+                        autoComplete="one-time-code"
+                        inputMode="text"
+                        maxLength={6}
+                        aria-label="Código da turma com 6 caracteres"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-text z-10"
+                      />
+                      <div className="grid grid-cols-6 gap-2">
+                        {Array.from({ length: 6 }).map((_, i) => {
+                          const char = studentCode[i] ?? "";
+                          const filled = !!char;
+                          const isCursor = i === studentCode.length;
+                          return (
+                            <div
+                              key={i}
+                              className={`h-14 rounded-lg border-2 flex items-center justify-center text-2xl font-mono font-bold transition-all ${
+                                joinError
+                                  ? "border-red-400/60 bg-red-500/5 text-red-200"
+                                  : filled
+                                  ? "text-white"
+                                  : "text-white/30"
+                              }`}
+                              style={
+                                joinError
+                                  ? undefined
+                                  : {
+                                      borderColor: filled
+                                        ? `${GOLD}AA`
+                                        : isCursor
+                                        ? `${GOLD}66`
+                                        : "rgba(255,255,255,0.12)",
+                                      background: filled ? `${GOLD}10` : "rgba(255,255,255,0.03)",
+                                    }
+                              }
+                            >
+                              {char || (isCursor ? <span className="animate-pulse text-white/40">|</span> : "")}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="mt-2 min-h-[18px]">
+                        {joinError ? (
+                          <p className="text-[12px] text-red-300 flex items-center gap-1.5">
+                            {joinError}
+                          </p>
+                        ) : (
+                          <p className="text-[11px] text-white/50 flex items-center gap-1.5">
+                            <ShieldCheck className="h-3 w-3" style={{ color: GOLD }} />
+                            {studentCode.length}/6 — somente letras e números
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={handleStudentJoin}
+                    disabled={studentCode.length !== 6 || joiningClass}
+                    className="w-full h-12 font-bold text-[#021f53] hover:brightness-110 hover:scale-[1.01] transition-all disabled:opacity-50 disabled:hover:scale-100"
+                    style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+                  >
+                    {joiningClass ? (
+                      <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Entrando...</>
+                    ) : (
+                      <>Entrar na turma <ArrowRight className="h-4 w-4 ml-1.5" /></>
+                    )}
+                  </Button>
+
+                  <button
+                    onClick={() => closeStudentDialog(true)}
+                    className="w-full text-xs text-white/50 hover:text-white/80 transition py-1"
+                  >
+                    Voltar
+                  </button>
+                </>
+              ) : (
+                <div className="space-y-5">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                    style={{ background: `${GOLD}1A`, color: GOLD }}
+                  >
+                    <CheckCircle2 className="h-6 w-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: GOLD }}>
+                      Tudo certo
+                    </p>
+                    <h3 className="text-2xl font-bold text-white leading-tight">
+                      Você entrou em {joinedInfo.className}
+                    </h3>
+                  </div>
+
+                  <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white/55">Turma</span>
+                      <span className="font-semibold text-white">{joinedInfo.className}</span>
+                    </div>
+                    <div className="h-px bg-white/10" />
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white/55">Professor(a)</span>
+                      <span className="font-semibold text-white">{joinedInfo.teacherName}</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={goToStudentDashboard}
+                    className="w-full h-12 font-bold text-[#021f53] hover:brightness-110 hover:scale-[1.01] transition-all"
+                    style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+                  >
+                    Ir para minha turma <ArrowRight className="h-4 w-4 ml-1.5" />
+                  </Button>
                 </div>
-                <DialogTitle className="text-xl text-white">Código da Turma</DialogTitle>
-                <p className="text-sm text-white/60">
-                  Insira o código fornecido pelo professor.
-                </p>
-              </DialogHeader>
-
-              <div className="space-y-2">
-                <label className="text-[11px] uppercase tracking-wider font-semibold text-white/60">
-                  Código de acesso
-                </label>
-                <Input
-                  value={studentCode}
-                  onChange={(e) => setStudentCode(e.target.value.toUpperCase().replace(/\s/g, ""))}
-                  onKeyDown={(e) => { if (e.key === "Enter" && studentCode.trim().length >= 4 && !joiningClass) handleStudentJoin(); }}
-                  placeholder="A3B7K2"
-                  maxLength={8}
-                  autoFocus
-                  className="bg-white/5 border-white/15 text-white placeholder:text-white/30 text-center text-2xl font-mono tracking-[0.5em] h-14"
-                />
-                <p className="text-[11px] text-white/50 flex items-center gap-1.5">
-                  <ShieldCheck className="h-3 w-3" style={{ color: GOLD }} />
-                  Conexão segura · Seus dados são protegidos
-                </p>
-              </div>
-
-              <Button
-                onClick={handleStudentJoin}
-                disabled={studentCode.trim().length < 4 || joiningClass}
-                className="w-full h-12 font-bold text-[#021f53] hover:brightness-110 hover:scale-[1.01] transition-all"
-                style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
-              >
-                {joiningClass ? (
-                  <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Entrando...</>
-                ) : (
-                  <>Entrar na turma <ArrowRight className="h-4 w-4 ml-1.5" /></>
-                )}
-              </Button>
-
-              <button
-                onClick={() => { setShowStudentCode(false); setStudentCode(""); }}
-                className="w-full text-xs text-white/50 hover:text-white/80 transition py-1"
-              >
-                Cancelar
-              </button>
+              )}
             </div>
           </div>
         </DialogContent>
