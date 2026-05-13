@@ -197,7 +197,7 @@ const EduEntry = () => {
       <section
         id="hero"
         ref={setRef("hero")}
-        className={`relative pt-32 pb-24 px-6 ${reveal("hero")}`}
+        className={`relative pt-28 pb-14 px-6 ${reveal("hero")}`}
       >
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-7">
@@ -336,7 +336,7 @@ const EduEntry = () => {
       <section
         id="funcionalidades"
         ref={setRef("features")}
-        className={`py-24 px-6 ${reveal("features")}`}
+        className={`py-14 px-6 ${reveal("features")}`}
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14 space-y-3">
@@ -383,7 +383,7 @@ const EduEntry = () => {
       <section
         id="dashboard"
         ref={setRef("dashboard")}
-        className={`py-24 px-6 ${reveal("dashboard")}`}
+        className={`py-14 px-6 ${reveal("dashboard")}`}
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 space-y-3">
@@ -481,7 +481,7 @@ const EduEntry = () => {
       <section
         id="impacto"
         ref={setRef("impacto")}
-        className={`py-24 px-6 ${reveal("impacto")}`}
+        className={`py-14 px-6 ${reveal("impacto")}`}
       >
         <div className="max-w-5xl mx-auto text-center space-y-6">
           <p className="text-xs uppercase tracking-[0.25em]" style={{ color: GOLD }}>Impacto educacional</p>
@@ -505,7 +505,7 @@ const EduEntry = () => {
       <section
         id="stats"
         ref={setRef("stats")}
-        className={`py-20 px-6 ${reveal("stats")}`}
+        className={`py-12 px-6 ${reveal("stats")}`}
       >
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-5">
           {[
@@ -531,7 +531,7 @@ const EduEntry = () => {
       <section
         id="teacher"
         ref={setRef("teacher")}
-        className={`py-24 px-6 ${reveal("teacher")}`}
+        className={`py-14 px-6 ${reveal("teacher")}`}
       >
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
@@ -591,7 +591,7 @@ const EduEntry = () => {
       <section
         id="depoimentos"
         ref={setRef("depoimentos")}
-        className={`py-24 px-6 ${reveal("depoimentos")}`}
+        className={`py-14 px-6 ${reveal("depoimentos")}`}
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 space-y-3">
@@ -644,7 +644,7 @@ const EduEntry = () => {
       <section
         id="roles"
         ref={setRef("roles")}
-        className={`py-20 px-6 ${reveal("roles")}`}
+        className={`py-12 px-6 ${reveal("roles")}`}
       >
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
@@ -700,7 +700,7 @@ const EduEntry = () => {
       <section
         id="cta"
         ref={setRef("cta")}
-        className={`py-28 px-6 ${reveal("cta")}`}
+        className={`py-16 px-6 ${reveal("cta")}`}
       >
         <div className="max-w-4xl mx-auto relative">
           <div
