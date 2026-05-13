@@ -30,7 +30,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useToast } from "@/hooks/use-toast";
 import { downloadReportPDF } from "@/lib/edu/generateReportPDF";
 import { useTeacherSettings } from "@/hooks/useTeacherSettings";
-import TeacherProfileGate from "@/components/edu/TeacherProfileGate";
+
 
 const StatCard = ({ icon: Icon, label, value, color }: { icon: any; label: string; value: string | number; color: string }) => (
   <Card className="bg-card border-border">
@@ -954,11 +954,7 @@ const EduProfessor = () => {
 
   if (!user || !isTeacher) return null;
 
-  return (
-    <TeacherProfileGate>
-      <EduProfessorInner />
-    </TeacherProfileGate>
-  );
+  return <EduProfessorInner />;
 };
 
 export default EduProfessor;

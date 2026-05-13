@@ -87,6 +87,7 @@ const EduOnboarding = () => {
 
   // Etapa 3 — Turmas (batch por série)
   const [rows, setRows] = useState<ClassRow[]>([defaultRow()]);
+  const [customNames, setCustomNames] = useState<Record<number, string>>({});
   const [createdClasses, setCreatedClasses] = useState<any[]>([]);
 
   // Etapa 4 — Livros
@@ -133,8 +134,8 @@ const EduOnboarding = () => {
   const toggle = <T,>(arr: T[], v: T) =>
     arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v];
 
-  // Preview de turmas geradas
-  const previewClasses = useMemo(() => {
+  // Preview de turmas geradas (com renomeação opcional por turma)
+  const defaultClassNames = useMemo(() => {
     const list: string[] = [];
     rows.forEach(r => {
       if (!r.grade) return;
@@ -144,6 +145,11 @@ const EduOnboarding = () => {
     });
     return list;
   }, [rows]);
+
+  const previewClasses = useMemo(
+    () => defaultClassNames.map((n, i) => (customNames[i]?.trim() ? customNames[i].trim() : n)),
+    [defaultClassNames, customNames]
+  );
 
   // ------- Validação por etapa -------
   const canAdvance = (s: number): boolean => {
@@ -181,12 +187,13 @@ const EduOnboarding = () => {
 
     setSaving(true);
     const created: any[] = [];
+    let nameIdx = 0;
 
     for (const row of rows) {
       if (!row.grade) continue;
       for (let i = 0; i < row.count; i++) {
-        const suffix = String.fromCharCode(65 + i);
-        const name = `${row.grade} ${suffix}`;
+        const name = previewClasses[nameIdx] ?? `${row.grade} ${String.fromCharCode(65 + i)}`;
+        nameIdx++;
 
         const { data: codeData, error: codeErr } = await supabase.rpc("generate_class_code");
         if (codeErr) {
@@ -709,26 +716,34 @@ const EduOnboarding = () => {
 
                 {previewClasses.length > 0 && (
                   <div
-                    className="rounded-lg p-4 space-y-2"
+                    className="rounded-lg p-4 space-y-3"
                     style={{ background: `${GOLD}0F`, border: `1px solid ${GOLD}33` }}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-white/80">
-                        Você vai criar <span style={{ color: GOLD }}>{previewClasses.length}</span> turma(s):
+                        Você vai criar <span style={{ color: GOLD }}>{previewClasses.length}</span> turma(s)
+                        <span className="text-white/50 font-normal"> · clique para renomear</span>
                       </span>
                       <Sparkles className="h-3.5 w-3.5" style={{ color: GOLD }} />
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {previewClasses.map(n => (
-                        <span
-                          key={n}
-                          className="px-2 py-0.5 rounded-md text-[11px] font-medium"
-                          style={{ background: `${GOLD}1A`, color: GOLD }}
-                        >
-                          {n}
-                        </span>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {defaultClassNames.map((defName, i) => (
+                        <Input
+                          key={i}
+                          value={customNames[i] ?? defName}
+                          onChange={e =>
+                            setCustomNames(prev => ({ ...prev, [i]: e.target.value }))
+                          }
+                          placeholder={defName}
+                          maxLength={60}
+                          className="h-9 bg-white/5 border-white/15 text-white text-xs font-medium"
+                          style={{ color: GOLD }}
+                        />
                       ))}
                     </div>
+                    <p className="text-[10px] text-white/45">
+                      Dica: use o nome que sua escola adota (ex.: "9º Manhã", "Eletiva Literatura", "Turma do Prof. João").
+                    </p>
                   </div>
                 )}
               </div>
