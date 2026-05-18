@@ -259,6 +259,9 @@ const EduEntry = () => {
             >
               EDU
             </span>
+            <span className="hidden sm:inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-white/55">
+              Landing pública /edu
+            </span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-white/70">
             <a href="#funcionalidades" className="hover:text-white transition">Funcionalidades</a>
@@ -308,7 +311,7 @@ const EduEntry = () => {
               style={{ borderColor: `${GOLD}55`, color: GOLD, background: `${GOLD}0D` }}
             >
               <Sparkles className="h-3.5 w-3.5" />
-              Tecnologia educacional premium
+              Landing pública /edu
             </div>
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
               Transformando leitura em{" "}
