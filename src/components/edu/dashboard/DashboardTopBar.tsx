@@ -89,7 +89,7 @@ export const DashboardTopBar = ({
 
           {/* CTA */}
           <Button
-            onClick={() => navigate("/edu/jornadas")}
+            onClick={() => navigate("/edu/atividades")}
             className="h-9 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-[12.5px] gap-1.5"
           >
             <Plus className="h-4 w-4" />Criar atividade
