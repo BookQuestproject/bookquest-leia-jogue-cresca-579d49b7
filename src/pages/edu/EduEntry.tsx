@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import logoCrown from "@/assets/logo-crown-transparent.png";
-import DemoButton from "@/components/demo/DemoButton";
 
 const ROYAL = "#021f53";
 const GOLD = "#F5C842";
@@ -116,7 +115,13 @@ const EduEntry = () => {
     }
   }, [user, searchParams, setSearchParams]);
 
-  // Open role picker — never auto-redirect teachers from the landing
+  useEffect(() => {
+    if (!authLoading && !roleLoading && user && isTeacher) {
+      navigate("/edu/professor", { replace: true });
+    }
+  }, [user, isTeacher, authLoading, roleLoading, navigate]);
+
+  // Open role picker
   const handleAccess = () => {
     setShowRolePicker(true);
   };
@@ -269,6 +274,14 @@ const EduEntry = () => {
               onClick={() => navigate("/")}
             >
               BookQuest
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex text-white/80 hover:text-white hover:bg-white/10"
+              onClick={() => navigate("/edu/professor/entrar")}
+            >
+              Entrada professor
             </Button>
             <Button
               size="sm"
