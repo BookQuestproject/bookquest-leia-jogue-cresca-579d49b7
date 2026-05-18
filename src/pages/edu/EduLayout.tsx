@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
 import { useProfile } from "@/hooks/useProfile";
 import {
-  Home, Users, GraduationCap, ClipboardList, FileBarChart, Library, Settings, LogOut, Plus, MessageCircle, BookMarked,
+  Home, Users, GraduationCap, ClipboardList, FileBarChart, Library, Settings, LogOut, Plus, MessageCircle, BookMarked, ChevronRight, MapPin,
 } from "lucide-react";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +50,9 @@ const EduLayout = ({ children }: EduLayoutProps) => {
       : location.pathname.startsWith(path.split("?")[0]);
 
   const userName = profile?.full_name ?? "Professor";
+  const currentRoute = [...principalItems, ...apoioItems, { icon: Settings, label: "Configurações", path: "/edu/configuracoes" }]
+    .find((item) => isActive(item.path));
+  const routeLabel = currentRoute?.label ?? "Painel";
 
   const renderItem = (item: { icon: any; label: string; path: string }) => {
     const active = isActive(item.path);
@@ -161,7 +164,22 @@ const EduLayout = ({ children }: EduLayoutProps) => {
       </div>
 
       <main className="lg:ml-56 flex-1 min-h-screen pt-16 lg:pt-0 pb-20 lg:pb-0">
-        <div className="p-4 lg:px-8 lg:py-8 max-w-6xl mx-auto">{children}</div>
+        <div className="p-4 lg:px-8 lg:py-8 max-w-6xl mx-auto">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
+              <Link to="/edu" className="hover:text-foreground transition-colors">Landing /edu</Link>
+              <ChevronRight className="h-3.5 w-3.5" />
+              <Link to="/edu/professor" className="hover:text-foreground transition-colors">Painel /edu/professor</Link>
+              <ChevronRight className="h-3.5 w-3.5" />
+              <span className="font-semibold text-accent">{routeLabel}</span>
+            </div>
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-bold text-accent">
+              <MapPin className="h-3.5 w-3.5" />
+              Você está no painel do professor
+            </div>
+          </div>
+          {children}
+        </div>
       </main>
     </div>
   );
