@@ -44,10 +44,13 @@ const EduLayout = ({ children }: EduLayoutProps) => {
   }
   if (!user || !isTeacher) return null;
 
-  const isActive = (path: string) =>
-    path === "/edu/professor"
-      ? location.pathname === "/edu/professor"
-      : location.pathname.startsWith(path.split("?")[0]);
+  const isActive = (path: string) => {
+    const [pathname, query] = path.split("?");
+    if (path === "/edu/professor") return location.pathname === "/edu/professor";
+    if (query) return location.pathname === pathname && location.search.includes(query);
+    if (pathname === "/edu/turmas" && location.search.includes("view=alunos")) return false;
+    return location.pathname.startsWith(pathname);
+  };
 
   const userName = profile?.full_name ?? "Professor";
   const currentRoute = [...principalItems, ...apoioItems, { icon: Settings, label: "Configurações", path: "/edu/configuracoes" }]
