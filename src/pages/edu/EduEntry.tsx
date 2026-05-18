@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import logoCrown from "@/assets/logo-crown-transparent.png";
-import DemoButton from "@/components/demo/DemoButton";
 
 const ROYAL = "#021f53";
 const GOLD = "#F5C842";
@@ -116,7 +115,13 @@ const EduEntry = () => {
     }
   }, [user, searchParams, setSearchParams]);
 
-  // Open role picker — never auto-redirect teachers from the landing
+  useEffect(() => {
+    if (!authLoading && !roleLoading && user && isTeacher) {
+      navigate("/edu/professor", { replace: true });
+    }
+  }, [user, isTeacher, authLoading, roleLoading, navigate]);
+
+  // Open role picker
   const handleAccess = () => {
     setShowRolePicker(true);
   };
@@ -254,6 +259,9 @@ const EduEntry = () => {
             >
               EDU
             </span>
+            <span className="hidden sm:inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-white/55">
+              Landing pública /edu
+            </span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-white/70">
             <a href="#funcionalidades" className="hover:text-white transition">Funcionalidades</a>
@@ -269,6 +277,14 @@ const EduEntry = () => {
               onClick={() => navigate("/")}
             >
               BookQuest
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex text-white/80 hover:text-white hover:bg-white/10"
+              onClick={() => navigate("/edu/professor/entrar")}
+            >
+              Entrada professor
             </Button>
             <Button
               size="sm"
@@ -295,7 +311,7 @@ const EduEntry = () => {
               style={{ borderColor: `${GOLD}55`, color: GOLD, background: `${GOLD}0D` }}
             >
               <Sparkles className="h-3.5 w-3.5" />
-              Tecnologia educacional premium
+              Landing pública /edu
             </div>
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
               Transformando leitura em{" "}
@@ -778,9 +794,15 @@ const EduEntry = () => {
               </span>
             </button>
           </div>
-          <div className="flex flex-col items-center gap-2 pt-8">
-            <DemoButton size="lg" label="Explorar BookQuest EDU em modo demonstração" />
-            <p className="text-xs text-white/50">Sem cadastro. Acesso instantâneo com dados fictícios.</p>
+          <div className="flex justify-center pt-8">
+            <Button
+              size="lg"
+              onClick={() => navigate("/edu/professor/entrar")}
+              className="text-[#021f53] font-bold h-12 px-7 shadow-lg shadow-amber-500/30 hover:shadow-[0_0_45px_rgba(245,200,66,0.55)] hover:scale-[1.04] hover:brightness-110 transition-all duration-300"
+              style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+            >
+              Entrada exclusiva de professores <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>

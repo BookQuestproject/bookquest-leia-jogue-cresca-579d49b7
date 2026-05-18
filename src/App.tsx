@@ -45,8 +45,7 @@ import AdminFounderPreview from "./pages/AdminFounderPreview";
 import AuthCallback from "./pages/AuthCallback";
 import EduEntry from "./pages/edu/EduEntry";
 import EduProfessor from "./pages/edu/EduProfessor";
-import DemoEduProfessor from "./pages/edu/DemoEduProfessor";
-import DemoEduAluno from "./pages/edu/DemoEduAluno";
+import EduProfessorEntry from "./pages/edu/EduProfessorEntry";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
@@ -117,8 +116,9 @@ const App = () => (
                 <Route path="/edu/onboarding" element={<EduOnboarding />} />
                 <Route path="/edu/onboarding-aluno" element={<EduAlunoOnboarding />} />
                 <Route path="/entrar/:codigo" element={<JoinClass />} />
-                <Route path="/edu/demo/professor" element={<DemoEduProfessor />} />
-                <Route path="/edu/demo/aluno" element={<DemoEduAluno />} />
+                <Route path="/edu/professor/entrar" element={<EduProfessorEntry />} />
+                <Route path="/edu/demo/professor" element={<Navigate to="/edu/professor/entrar" replace />} />
+                <Route path="/edu/demo/aluno" element={<Navigate to="/edu" replace />} />
                 <Route path="/edu/aluno" element={<EduAluno />} />
                 <Route path="/edu/professor" element={<EduProfessor />} />
                 <Route path="/edu/turmas" element={<EduTurmas />} />

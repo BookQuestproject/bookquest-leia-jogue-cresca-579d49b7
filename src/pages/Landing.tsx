@@ -37,7 +37,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import { useEffect, useRef, useState } from "react";
-import DemoButton from "@/components/demo/DemoButton";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -267,9 +266,6 @@ const Landing = () => {
                 </Button>
               </div>
 
-              <div className="mt-6 flex justify-center lg:justify-start">
-                <DemoButton size="default" label="Explorar BookQuest EDU em modo demo" />
-              </div>
             </div>
 
             {/* Right – mockup */}
