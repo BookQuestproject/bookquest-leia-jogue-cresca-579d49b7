@@ -10,7 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Mail, Lock, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import crownIcon from '@/assets/crown-icon.png';
-import DemoButton from '@/components/demo/DemoButton';
 
 const authSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -512,12 +511,6 @@ const Auth = () => {
               )}
             </button>
           </div>
-          )}
-
-          {!isForgotPassword && (
-            <div className="mt-4 pt-4 border-t border-border">
-              <DemoButton fullWidth label="Explorar demonstração (sem login)" />
-            </div>
           )}
         </div>
 
