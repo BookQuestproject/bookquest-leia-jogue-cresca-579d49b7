@@ -32,7 +32,7 @@ const apoioItems = [
   { icon: MessageCircle,  label: "Comunicação",   path: "/edu/comunicacao" },
 ];
 
-const EduLayout = ({ children }: EduLayoutProps) => {
+const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
   const { user, loading: authLoading } = useAuth();
   const { isTeacher, loading: roleLoading } = useEduRole();
   const { profile } = useProfile();
