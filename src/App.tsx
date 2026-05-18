@@ -54,6 +54,7 @@ import EduLivros from "./pages/edu/EduLivros";
 import EduAluno from "./pages/edu/EduAluno";
 import EduJornadas from "./pages/edu/EduJornadas";
 import EduAtividades from "./pages/edu/EduAtividades";
+import EduAtividadeReview from "./pages/edu/EduAtividadeReview";
 import EduPerguntas from "./pages/edu/EduPerguntas";
 import EduComunicacao from "./pages/edu/EduComunicacao";
 import EduConfiguracoes from "./pages/edu/EduConfiguracoes";
