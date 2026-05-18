@@ -791,9 +791,15 @@ const EduEntry = () => {
               </span>
             </button>
           </div>
-          <div className="flex flex-col items-center gap-2 pt-8">
-            <DemoButton size="lg" label="Explorar BookQuest EDU em modo demonstração" />
-            <p className="text-xs text-white/50">Sem cadastro. Acesso instantâneo com dados fictícios.</p>
+          <div className="flex justify-center pt-8">
+            <Button
+              size="lg"
+              onClick={() => navigate("/edu/professor/entrar")}
+              className="text-[#021f53] font-bold h-12 px-7 shadow-lg shadow-amber-500/30 hover:shadow-[0_0_45px_rgba(245,200,66,0.55)] hover:scale-[1.04] hover:brightness-110 transition-all duration-300"
+              style={{ background: `linear-gradient(135deg, ${GOLD_DEEP}, ${GOLD}, #FCE17A)` }}
+            >
+              Entrada exclusiva de professores <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>
