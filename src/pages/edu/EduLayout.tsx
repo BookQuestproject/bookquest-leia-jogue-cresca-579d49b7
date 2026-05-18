@@ -16,10 +16,11 @@ const principalItems = [
   { icon: Home,           label: "Visão geral",   path: "/edu/professor" },
   { icon: Users,          label: "Turmas",        path: "/edu/turmas" },
   { icon: GraduationCap,  label: "Alunos",        path: "/edu/turmas?view=alunos" },
-  { icon: ClipboardList,  label: "Atividades",    path: "/edu/jornadas" },
+  { icon: ClipboardList,  label: "Atividades",    path: "/edu/atividades" },
 ];
 
 const apoioItems = [
+  { icon: BookMarked,     label: "Jornadas",      path: "/edu/jornadas" },
   { icon: FileBarChart,   label: "Relatórios",    path: "/edu/relatorios" },
   { icon: Library,        label: "Biblioteca",    path: "/edu/livros" },
   { icon: BookMarked,     label: "Reflexões",     path: "/edu/perguntas" },
