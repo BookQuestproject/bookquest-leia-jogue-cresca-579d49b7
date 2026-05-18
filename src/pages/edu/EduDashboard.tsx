@@ -308,7 +308,7 @@ const EduDashboard = () => {
             <div className="flex items-center gap-3 flex-shrink-0">
               <Button
                 size="lg"
-                onClick={() => navigate("/edu/jornadas")}
+                onClick={() => navigate("/edu/atividades")}
                 className="bg-accent hover:bg-[hsl(var(--accent)/0.9)] text-accent-foreground font-bold gap-2 rounded-xl shadow-[0_0_28px_hsl(var(--accent)/0.45)]"
               >
                 <ClipboardList className="w-4 h-4" />
@@ -466,7 +466,7 @@ const EduDashboard = () => {
               <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
                 <ClipboardList className="w-4 h-4 text-accent" />
                 Atividades da semana
-                <Button size="sm" variant="ghost" onClick={() => navigate("/edu/jornadas")} className="ml-auto h-7 text-[11px] gap-1 text-muted-foreground hover:text-accent">
+                <Button size="sm" variant="ghost" onClick={() => navigate("/edu/atividades")} className="ml-auto h-7 text-[11px] gap-1 text-muted-foreground hover:text-accent">
                   Criar nova <Plus className="w-3 h-3" />
                 </Button>
               </CardTitle>

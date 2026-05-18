@@ -53,6 +53,7 @@ import EduRelatorios from "./pages/edu/EduRelatorios";
 import EduLivros from "./pages/edu/EduLivros";
 import EduAluno from "./pages/edu/EduAluno";
 import EduJornadas from "./pages/edu/EduJornadas";
+import EduAtividades from "./pages/edu/EduAtividades";
 import EduPerguntas from "./pages/edu/EduPerguntas";
 import EduComunicacao from "./pages/edu/EduComunicacao";
 import EduConfiguracoes from "./pages/edu/EduConfiguracoes";
@@ -126,6 +127,7 @@ const App = () => (
                 <Route path="/edu/relatorios" element={<EduRelatorios />} />
                 <Route path="/edu/livros" element={<EduLivros />} />
                 <Route path="/edu/jornadas" element={<EduJornadas />} />
+                <Route path="/edu/atividades" element={<EduAtividades />} />
                 <Route path="/edu/perguntas" element={<EduPerguntas />} />
                 <Route path="/edu/comunicacao" element={<EduComunicacao />} />
                 <Route path="/edu/configuracoes" element={<EduConfiguracoes />} />
