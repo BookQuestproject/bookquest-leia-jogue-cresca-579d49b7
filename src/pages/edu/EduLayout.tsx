@@ -1,16 +1,21 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
 import { useProfile } from "@/hooks/useProfile";
 import {
-  Home, Users, GraduationCap, ClipboardList, FileBarChart, Library, Settings, LogOut, Plus, MessageCircle, BookMarked, ChevronRight, MapPin,
+  Home, Users, GraduationCap, ClipboardList, FileBarChart, Library, Settings, LogOut, Plus, MessageCircle, BookMarked, MapPin,
 } from "lucide-react";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell } from "@/components/NotificationBell";
+import EduBreadcrumb, { BreadcrumbSegment } from "@/components/edu/EduBreadcrumb";
 
-interface EduLayoutProps { children: ReactNode }
+interface EduLayoutProps {
+  children: ReactNode;
+  /** Extra segments appended after the auto-detected page label. */
+  breadcrumbExtra?: BreadcrumbSegment[];
+}
 
 const principalItems = [
   { icon: Home,           label: "Visão geral",   path: "/edu/professor" },
@@ -27,7 +32,7 @@ const apoioItems = [
   { icon: MessageCircle,  label: "Comunicação",   path: "/edu/comunicacao" },
 ];
 
-const EduLayout = ({ children }: EduLayoutProps) => {
+const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
   const { user, loading: authLoading } = useAuth();
   const { isTeacher, loading: roleLoading } = useEduRole();
   const { profile } = useProfile();
@@ -57,6 +62,21 @@ const EduLayout = ({ children }: EduLayoutProps) => {
   const currentRoute = [...principalItems, ...apoioItems, { icon: Settings, label: "Configurações", path: "/edu/configuracoes" }]
     .find((item) => isActive(item.path));
   const routeLabel = currentRoute?.label ?? "Painel";
+
+  const breadcrumbSegments: BreadcrumbSegment[] = useMemo(() => {
+    const base: BreadcrumbSegment[] = [
+      { label: "Painel", to: "/edu/professor", icon: Home },
+    ];
+    if (currentRoute && currentRoute.path !== "/edu/professor") {
+      base.push({
+        label: currentRoute.label,
+        to: currentRoute.path,
+        icon: currentRoute.icon,
+      });
+    }
+    if (breadcrumbExtra?.length) base.push(...breadcrumbExtra);
+    return base;
+  }, [currentRoute, breadcrumbExtra]);
 
   const renderItem = (item: { icon: any; label: string; path: string }) => {
     const active = isActive(item.path);
@@ -169,17 +189,11 @@ const EduLayout = ({ children }: EduLayoutProps) => {
 
       <main className="lg:ml-56 flex-1 min-h-screen pt-16 lg:pt-0 pb-20 lg:pb-0">
         <div className="p-4 lg:px-8 lg:py-8 max-w-6xl mx-auto">
-          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
-              <Link to="/edu" className="hover:text-foreground transition-colors">Landing /edu</Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              <Link to="/edu/professor" className="hover:text-foreground transition-colors">Painel /edu/professor</Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              <span className="font-semibold text-accent">{routeLabel}</span>
-            </div>
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <EduBreadcrumb segments={breadcrumbSegments} />
             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-bold text-accent">
               <MapPin className="h-3.5 w-3.5" />
-              Você está no painel do professor
+              {routeLabel}
             </div>
           </div>
           {children}
