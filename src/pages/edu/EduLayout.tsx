@@ -63,6 +63,21 @@ const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
     .find((item) => isActive(item.path));
   const routeLabel = currentRoute?.label ?? "Painel";
 
+  const breadcrumbSegments: BreadcrumbSegment[] = useMemo(() => {
+    const base: BreadcrumbSegment[] = [
+      { label: "Painel", to: "/edu/professor", icon: Home },
+    ];
+    if (currentRoute && currentRoute.path !== "/edu/professor") {
+      base.push({
+        label: currentRoute.label,
+        to: currentRoute.path,
+        icon: currentRoute.icon,
+      });
+    }
+    if (breadcrumbExtra?.length) base.push(...breadcrumbExtra);
+    return base;
+  }, [currentRoute, breadcrumbExtra]);
+
   const renderItem = (item: { icon: any; label: string; path: string }) => {
     const active = isActive(item.path);
     return (
