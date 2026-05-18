@@ -1,16 +1,21 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useEduRole } from "@/hooks/useEduRole";
 import { useProfile } from "@/hooks/useProfile";
 import {
-  Home, Users, GraduationCap, ClipboardList, FileBarChart, Library, Settings, LogOut, Plus, MessageCircle, BookMarked, ChevronRight, MapPin,
+  Home, Users, GraduationCap, ClipboardList, FileBarChart, Library, Settings, LogOut, Plus, MessageCircle, BookMarked, MapPin,
 } from "lucide-react";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell } from "@/components/NotificationBell";
+import EduBreadcrumb, { BreadcrumbSegment } from "@/components/edu/EduBreadcrumb";
 
-interface EduLayoutProps { children: ReactNode }
+interface EduLayoutProps {
+  children: ReactNode;
+  /** Extra segments appended after the auto-detected page label. */
+  breadcrumbExtra?: BreadcrumbSegment[];
+}
 
 const principalItems = [
   { icon: Home,           label: "Visão geral",   path: "/edu/professor" },
