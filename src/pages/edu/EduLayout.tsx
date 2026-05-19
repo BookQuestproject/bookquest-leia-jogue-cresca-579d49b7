@@ -46,7 +46,12 @@ const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
   }, [user, isTeacher, authLoading, roleLoading, navigate]);
 
   if (authLoading || roleLoading) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="animate-pulse text-muted-foreground">Carregando...</div></div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-transparent">
+        <div className="h-10 w-10 rounded-full border-2 border-accent/30 border-t-accent animate-spin" />
+        <p className="text-sm font-medium text-foreground/70">Carregando painel...</p>
+      </div>
+    );
   }
   if (!user || !isTeacher) return null;
 
