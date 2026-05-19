@@ -191,14 +191,23 @@ const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
 
       <main className="lg:ml-56 flex-1 min-h-screen pt-16 lg:pt-0 pb-20 lg:pb-0">
         <div className="p-4 lg:px-8 lg:py-8 max-w-6xl mx-auto">
-          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <EduBreadcrumb segments={breadcrumbSegments} />
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-bold text-accent">
-              <MapPin className="h-3.5 w-3.5" />
-              {routeLabel}
+          {gateLoading ? (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
+              <div className="h-10 w-10 rounded-full border-2 border-accent/30 border-t-accent animate-spin" />
+              <p className="text-sm font-medium text-foreground/70">Carregando painel...</p>
             </div>
-          </div>
-          {children}
+          ) : (
+            <>
+              <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <EduBreadcrumb segments={breadcrumbSegments} />
+                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-bold text-accent">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {routeLabel}
+                </div>
+              </div>
+              {children}
+            </>
+          )}
         </div>
       </main>
     </div>
