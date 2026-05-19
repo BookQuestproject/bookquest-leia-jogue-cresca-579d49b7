@@ -116,10 +116,17 @@ const EduEntry = () => {
   }, [user, searchParams, setSearchParams]);
 
   useEffect(() => {
-    if (!authLoading && !roleLoading && user && isTeacher) {
+    if (authLoading || roleLoading || !user || !isTeacher) return;
+    // Don't auto-redirect if user is explicitly entering as a student
+    if (searchParams.get("join") === "1" || searchParams.get("as") === "student") return;
+    // Don't auto-redirect if user is already enrolled as a student in any class
+    (async () => {
+      const { data: membership } = await supabase
+        .from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle();
+      if (membership) return;
       navigate("/edu/professor", { replace: true });
-    }
-  }, [user, isTeacher, authLoading, roleLoading, navigate]);
+    })();
+  }, [user, isTeacher, authLoading, roleLoading, navigate, searchParams]);
 
   // Open role picker
   const handleAccess = () => {
