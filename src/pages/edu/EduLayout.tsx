@@ -40,20 +40,17 @@ const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
   const location = useLocation();
 
   useEffect(() => {
-    if (!authLoading && !roleLoading) {
-      if (!user || !isTeacher) navigate("/edu", { replace: true });
+    if (authLoading || roleLoading) return;
+    if (!user) {
+      navigate("/auth?redirect=/edu/professor", { replace: true });
+      return;
+    }
+    if (!isTeacher) {
+      navigate("/edu/professor/entrar", { replace: true });
     }
   }, [user, isTeacher, authLoading, roleLoading, navigate]);
 
-  if (authLoading || roleLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-transparent">
-        <div className="h-10 w-10 rounded-full border-2 border-accent/30 border-t-accent animate-spin" />
-        <p className="text-sm font-medium text-foreground/70">Carregando painel...</p>
-      </div>
-    );
-  }
-  if (!user || !isTeacher) return null;
+  const gateLoading = authLoading || roleLoading || !user || !isTeacher;
 
   const isActive = (path: string) => {
     const [pathname, query] = path.split("?");
