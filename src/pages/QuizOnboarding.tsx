@@ -248,15 +248,17 @@ const ageRangeToMaxAge = (range: string): number => {
 
 const QuizOnboarding = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isRetake = searchParams.get("retake") === "1";
   const { user, loading: authLoading } = useAuth();
   const { updateQuizCompleted, quizCompleted, loading: profileLoading } = useProfile();
 
-  // Auto-redirect if quiz already completed
+  // Auto-redirect if quiz already completed (unless explicitly retaking)
   useEffect(() => {
-    if (!authLoading && !profileLoading && user && quizCompleted) {
+    if (!isRetake && !authLoading && !profileLoading && user && quizCompleted) {
       navigate('/home', { replace: true });
     }
-  }, [authLoading, profileLoading, user, quizCompleted, navigate]);
+  }, [isRetake, authLoading, profileLoading, user, quizCompleted, navigate]);
   const { addBook } = useBookshelf();
   
   const [step, setStep] = useState<QuizStep>("name");
