@@ -1309,7 +1309,7 @@ const Trilhas = () => {
               Faça o quiz literário para receber recomendações ou acesse a Biblioteca e adicione livros às suas trilhas.
             </p>
             <div className="flex gap-3 justify-center">
-              <Link to="/quiz-literario">
+              <Link to="/quiz-literario?retake=1">
                 <Button variant="default" className="gap-2">
                   <Play className="w-4 h-4" />
                   Fazer o Quiz
