@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Lightbulb, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
