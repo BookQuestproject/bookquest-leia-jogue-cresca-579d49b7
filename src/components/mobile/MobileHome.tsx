@@ -140,7 +140,7 @@ const MobileHome = () => {
           </div>
         </button>
       ) : (
-        <div className="rounded-2xl p-6 text-center bg-card border border-border">
+        <div className="rounded-2xl p-6 text-center bg-card border border-border" data-tutorial="current-trail">
           <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-3">
             <BookOpen className="w-7 h-7 text-accent" />
           </div>
