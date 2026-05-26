@@ -486,7 +486,7 @@ const Index = () => {
               </>
             ) : (
               /* Empty state */
-              <div className="rounded-2xl p-12 text-center animate-fade-in bg-card border border-border" data-tutorial="explore-trails-cta">
+              <div className="rounded-2xl p-12 text-center animate-fade-in bg-card border border-border" data-tutorial="current-trail">
                 <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-5">
                   <BookOpen className="w-8 h-8 text-accent" />
                 </div>
