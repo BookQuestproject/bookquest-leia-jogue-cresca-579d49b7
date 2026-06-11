@@ -1,3 +1,4 @@
+import BookCover from "@/components/BookCover";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BookMarked, Plus, Star, Check, CalendarDays, HelpCircle } from "lucide-react";

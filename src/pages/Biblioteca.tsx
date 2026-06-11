@@ -1,3 +1,4 @@
+import BookCover from "@/components/BookCover";
 import { useState, useEffect, useMemo } from "react";
 import { useBookOverrides } from "@/hooks/useBookOverrides";
 import { useSearchParams, useNavigate } from "react-router-dom";

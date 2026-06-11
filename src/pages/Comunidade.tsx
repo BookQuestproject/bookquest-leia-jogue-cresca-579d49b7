@@ -1,3 +1,4 @@
+import BookCover from "@/components/BookCover";
 import { useState, useRef } from "react";
 import {
   Users, MessageSquare, ThumbsUp, BookOpen, Search, ArrowLeft,
