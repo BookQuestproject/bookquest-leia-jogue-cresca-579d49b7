@@ -66,11 +66,19 @@ const Premium = () => {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: { planType },
       });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
+      if (error) throw new Error(error.message || "Erro ao criar sessão de pagamento");
+      if (data?.error) throw new Error(data.error);
+      if (!data?.url) throw new Error("URL de pagamento não retornada");
+
+      // Try new tab first; if popup blocked, fall back to same-tab redirect.
+      const popup = window.open(data.url, "_blank");
+      if (!popup || popup.closed || typeof popup.closed === "undefined") {
+        window.location.href = data.url;
+      }
     } catch (error: any) {
-      const msg = error?.message || "Não foi possível iniciar o pagamento.";
-      toast({ title: "Erro", description: msg, variant: "destructive" });
+      console.error("[create-checkout] failed:", error);
+      const msg = error?.message || "Não foi possível iniciar o pagamento. Tente novamente.";
+      toast({ title: "Erro no pagamento", description: msg, variant: "destructive" });
     } finally {
       setLoadingPlan(null);
     }
