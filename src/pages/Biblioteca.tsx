@@ -1,3 +1,4 @@
+import BookCover from "@/components/BookCover";
 import { useState, useEffect, useMemo } from "react";
 import { useBookOverrides } from "@/hooks/useBookOverrides";
 import { useSearchParams, useNavigate } from "react-router-dom";
@@ -432,13 +433,11 @@ const Biblioteca = () => {
             >
                 <div className="flex gap-4 p-4">
                 <div className="w-20 h-28 rounded-xl flex-shrink-0 overflow-hidden shadow-md bg-muted">
-                  <img 
-                    src={book.cover} 
+                  <BookCover
+                    src={book.cover}
                     alt={`Capa de ${book.title}`}
+                    title={book.title}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(book.title.slice(0, 15))}`;
-                    }}
                   />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -624,13 +623,11 @@ const Biblioteca = () => {
                 </DialogHeader>
                 <div className="flex gap-6 py-4">
                   <div className="w-32 h-44 rounded-xl flex-shrink-0 overflow-hidden shadow-md bg-muted">
-                    <img
+                    <BookCover
                       src={inspectedBook.cover}
                       alt={`Capa de ${inspectedBook.title}`}
+                      title={inspectedBook.title}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(inspectedBook.title.slice(0, 15))}`;
-                      }}
                     />
                   </div>
                   <div className="flex-1 space-y-3">

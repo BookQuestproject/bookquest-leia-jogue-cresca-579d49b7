@@ -1,3 +1,4 @@
+import BookCover from "@/components/BookCover";
 import { useState, useRef } from "react";
 import {
   Users, MessageSquare, ThumbsUp, BookOpen, Search, ArrowLeft,
@@ -486,13 +487,11 @@ const Comunidade = () => {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <img
+              <BookCover
                 src={selectedCommunity.coverUrl}
                 alt={selectedCommunity.title}
+                title={selectedCommunity.title}
                 className="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
-                onError={(e) => {
-                  e.currentTarget.src = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=100&h=100&fit=crop";
-                }}
               />
               <div className="min-w-0">
                 <h1 className="font-bold text-lg truncate">{selectedCommunity.title}</h1>
@@ -798,13 +797,11 @@ const Comunidade = () => {
             >
               {/* Cover Banner */}
               <div className="h-36 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center overflow-hidden relative">
-                <img
+                <BookCover
                   src={community.coverUrl}
                   alt={community.title}
+                  title={community.title}
                   className="w-20 h-30 object-cover rounded shadow-lg"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=280&fit=crop";
-                  }}
                 />
               </div>
 

@@ -1,3 +1,4 @@
+import BookCover from "@/components/BookCover";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BookMarked, Plus, Star, Check, CalendarDays, HelpCircle } from "lucide-react";
@@ -149,9 +150,10 @@ const Estante = () => {
                 onClick={() => handleOpenBook(book)}
               >
                 <div className="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={book.cover} 
+                  <BookCover
+                    src={book.cover}
                     alt={`Capa de ${book.title}`}
+                    title={book.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -207,9 +209,10 @@ const Estante = () => {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-3">
                 <div className="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                  <img 
-                    src={selectedBook?.cover} 
-                    alt={`Capa de ${selectedBook?.title}`}
+                  <BookCover
+                    src={selectedBook?.cover}
+                    alt={`Capa de ${selectedBook?.title ?? ""}`}
+                    title={selectedBook?.title}
                     className="w-full h-full object-cover"
                   />
                 </div>

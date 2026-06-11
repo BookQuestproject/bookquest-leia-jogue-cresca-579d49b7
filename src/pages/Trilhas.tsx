@@ -1,3 +1,4 @@
+import BookCover from "@/components/BookCover";
 import { useState, useMemo, memo, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { BookOpen, Lock, CheckCircle, Crown, Play, ArrowLeft, HelpCircle, Bookmark, Plus, Clock, MapPin, Award, X, Sparkles } from "lucide-react";
@@ -1355,19 +1356,12 @@ const Trilhas = () => {
                     background: `linear-gradient(135deg, hsl(${themeColor} / 0.15), hsl(${themeColor} / 0.05))`,
                   }}
                 >
-                  {book.coverImage ? (
-                    <img 
-                      src={book.coverImage} 
-                      alt={book.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                        (e.target as HTMLImageElement).parentElement!.querySelector('.emoji-fallback')?.classList.remove('hidden');
-                      }}
-                    />
-                  ) : null}
-                  <span className={`text-5xl emoji-fallback ${book.coverImage ? 'hidden absolute' : ''}`}>{book.cover}</span>
+                  <BookCover
+                    src={book.coverImage}
+                    alt={book.title}
+                    title={book.title}
+                    className="w-full h-full object-cover"
+                  />
                   
                   {/* Quiz recommendation badge */}
                   {isQuiz && (
@@ -1515,11 +1509,12 @@ const Trilhas = () => {
                         className="h-44 flex items-center justify-center relative overflow-hidden"
                         style={{ background: `linear-gradient(135deg, hsl(${themeColor} / 0.15), hsl(${themeColor} / 0.05))` }}
                       >
-                        {book.coverImage ? (
-                          <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" loading="lazy" />
-                        ) : (
-                          <span className="text-5xl">{book.cover}</span>
-                        )}
+                        <BookCover
+                          src={book.coverImage}
+                          alt={book.title}
+                          title={book.title}
+                          className="w-full h-full object-cover"
+                        />
                         <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded bg-primary/90 text-xs font-semibold text-primary-foreground">
                           <Sparkles className="w-3 h-3" />
                           Comunidade
