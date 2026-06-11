@@ -1,179 +1,54 @@
-## Visão geral
+## Plano de Correção – BookQuest
 
-Duas frentes de trabalho, na ordem:
+Esta é uma lista grande (9 frentes, várias delas profundas). Em vez de tentar fazer tudo de uma vez (o que costuma gerar regressões), proponho dividir em **3 fases priorizadas**. Você confirma a fase 1, eu entrego, validamos, e seguimos.
 
-**A) Renomear turmas** — quick win: editar nome de qualquer turma (escolas que não usam A/B/C).
-**B) Redesign completo do Painel do Professor** — Overview com KPIs, gráficos, drill-down por turma, alertas inteligentes, atividades, quizzes/reflexões e relatórios automáticos.
+Antes disso, preciso de **clarificações** em alguns pontos que mudam totalmente o escopo:
 
-Referências: Google Classroom, Khan Academy Teacher, Duolingo for Schools, Notion dashboards.
-
----
-
-## PARTE A — Renomear turma
-
-### Onde
-
-- `src/pages/edu/EduTurmas.tsx` (lista de turmas) — ícone "lápis" no card.
-- `src/pages/edu/EduTurmaDetail.tsx` — botão "Renomear" no header.
-- `src/hooks/useClasses.tsx` — adicionar `renameClass(id, name)` que faz `update({ name }).eq('id', id)` (RLS já permite via `Teachers can update own classes`).
-
-### UX
-
-- Dialog com input pré-preenchido + validação (3-40 chars, único por professor — checagem client-side).
-- Toast "Turma renomeada".
-- Atualização otimista da lista.
-
-Sem mudanças de schema — coluna `name` já é livre.
+### Perguntas críticas
+1. **Quiz literário** – você se refere ao `/quiz-literario` (onboarding) ou ao quiz de capítulo dentro da trilha? O sintoma "qualquer tecla anula a questão" sugere o de capítulo. Confirma?
+2. **Assinatura / PIX** – PIX no Stripe exige conta Stripe Brasil habilitada para PIX. Posso (a) corrigir o fluxo atual de cartão e (b) adicionar PIX como método extra no Checkout. Ok seguir assim?
+3. **Biblioteca – "adicionar mais livros"** – quantos e de qual fonte? Posso adicionar ~20 clássicos de domínio público com capas do Open Library / Wikimedia. Serve?
+4. **Desafios iniciais** – quer desafios estáticos pré-cadastrados (ex.: "Leia 1 capítulo", "Complete o quiz", "Adicione 3 livros à estante") aparecendo para todo usuário novo nos primeiros 7 dias?
 
 ---
 
-## PARTE B — Painel do Professor (redesign)
+### Fase 1 – Estabilidade (bugs bloqueantes)
+**Objetivo:** Site não quebra, fluxos críticos funcionam.
 
-### Rota e estrutura
+1. **Capas dos livros (causa raiz)**
+   - Criar componente `<BookCover />` único com fallback automático (`onError` → placeholder SVG local), lazy loading e `loading="lazy"`.
+   - Substituir todos os `<img src={cover}>` de Biblioteca, Comunidade, Trilhas, Estante por esse componente.
+   - Auditar `book_overrides` / `book_trail_enrichments` para URLs quebradas e popular fallback canônico (Open Library `covers.openlibrary.org`).
 
-- Reescrever `src/pages/edu/EduDashboard.tsx` como página Overview.
-- Nova rota detalhe (já existe): `EduTurmaDetail.tsx` recebe redesign focado.
-- Novos componentes em `src/components/edu/dashboard/`:
-  - `KpiCard.tsx`, `KpiGrid.tsx`
-  - `ProgressLineChart.tsx`, `StatusDonut.tsx`, `PagesPerDayChart.tsx`, `CompletionForecast.tsx`
-  - `ClassCard.tsx` (com mini-sparkline)
-  - `AlertsPanel.tsx`
-  - `StudentsTable.tsx` (busca + filtros + ordenação)
-  - `ClassRanking.tsx`, `StudentProgressBars.tsx`, `WeeklyActivityChart.tsx`
-  - `ActivitiesPlanner.tsx` + `ActivityCalendar.tsx`
-  - `QuizReflectionEditor.tsx`
-  - `WeeklyReportPreview.tsx`, `ReportExportMenu.tsx`
+2. **Erros ao dar F5 (causa raiz)**
+   - Auditar hooks que fazem fetch antes de `auth.loading` resolver (padrão race-condition já documentado no projeto).
+   - Adicionar guard `if (authLoading) return;` consistente em `useBookshelf`, `useMyTrails`, `useActiveTrail`, `useNotifications`, `useReadingPlan`.
+   - Revisar `onAuthStateChange` para garantir que callbacks não usam `await` direto (deadlock conhecido).
 
-Lib de gráficos: **recharts** (já compatível com shadcn `chart.tsx`).
+3. **Quiz literário (causa raiz)**
+   - Remover listeners globais de `keydown` que interceptam Space/Enter durante o quiz.
+   - Adicionar estado `isProcessing` para bloquear cliques duplos.
+   - Garantir feedback visual (verde/vermelho) e auto-avanço após 1,2s.
 
-### Layout (wireframe textual)
+4. **Assinatura – corrigir fluxo atual**
+   - Investigar erro real no `create-checkout` (provavelmente origin não-allowlisted ou plano inválido).
+   - Adicionar logs claros e mensagem de erro no frontend em vez de tela branca.
 
-```text
-┌────────────────────────────────────────────────────────────┐
-│  Olá, Prof. [Nome]  ·  Semana de 12-18 mai            ⚙   │
-├────────────────────────────────────────────────────────────┤
-│ [KPI] Turmas   [KPI] Alunos   [KPI] % leitura  [KPI] pg/d │
-│ [KPI] Atrasados (vermelho)  [KPI] Adiantados  [KPI] Ativ. │
-├────────────────────────────────────────────────────────────┤
-│ ⚠  Alertas inteligentes                                    │
-│  • 5 alunos sem ler há 4 dias  → [Ver]                    │
-│  • 7ºB atrasada no cronograma  → [Abrir turma]            │
-│  • 3 alunos terminaram o livro 🎉                          │
-├──────────────────────────────────┬─────────────────────────┤
-│ Progresso geral (linha semanal)  │ Status alunos (donut)   │
-├──────────────────────────────────┼─────────────────────────┤
-│ Páginas/dia (linha)              │ Conclusão prevista      │
-├──────────────────────────────────┴─────────────────────────┤
-│ Minhas turmas                                   [+ Turma]  │
-│ ┌─ 6ºA ─────┐ ┌─ 6ºB ─────┐ ┌─ 7ºB ─────┐                 │
-│ │ Vidas Sec.│ │ Capitães..│ │ Dom Casm. │                 │
-│ │ 62% ▮▮▮▯ │ │ 78% ▮▮▮▮ │ │ 31% ▮▯▯▯ │                 │
-│ │ ✓ No ritmo│ │ ▲ Adiantd.│ │ ⚠ Em risco│                 │
-│ │ ▁▂▄▅▆▇   │ │ ▁▃▅▇█▇   │ │ ▁▁▂▂▁▁   │                 │
-│ └───────────┘ └───────────┘ └───────────┘                 │
-└────────────────────────────────────────────────────────────┘
-```
+### Fase 2 – Conteúdo e relacionamentos
+5. **Livro de trilha não aparece na comunidade** – mapear `trilha.book_id ↔ community.book_id` e criar comunidade automaticamente quando faltar (via migration + trigger).
+6. **Excluir comentários** – botão de lixeira para autor + RLS policy `DELETE USING auth.uid() = user_id` em `community_comments` e `class_chapter_discussions`.
+7. **Biblioteca – mais livros + capas garantidas** – seed de ~20 obras via migration de dados, todas com cover validada.
 
-### Detalhe da turma (drill-down ao clicar no card)
-
-```text
-┌ 7ºB · Dom Casmurro                          [Renomear] [⋯]┐
-│ KPIs: Alunos · pg/dia · ritmo · previsão · % atrasados    │
-├────────────────────────────────────────────────────────────┤
-│ Tabs: [Visão] [Alunos] [Ranking] [Atividades] [Quizzes]   │
-│       [Relatórios]                                         │
-├────────────────────────────────────────────────────────────┤
-│ Visão: progresso individual (barras) + atividade semanal  │
-│ Alunos: tabela rica (busca, filtros, ordenação)           │
-│ Ranking: top 10 com medalhas, XP da turma                 │
-│ Atividades: calendário + criar leitura/avaliativa/desafio │
-│ Quizzes: editor de perguntas/alternativas/reflexões       │
-│ Relatórios: preview semanal por aluno + exportar          │
-└────────────────────────────────────────────────────────────┘
-```
-
-### Tabela de alunos (colunas)
-
-Nome · Página atual · % livro · Status (badge verde/amarelo/vermelho) · Dias sem ler · Última atividade · Média pg/dia · Ações (mensagem, relatório).
-
-Toolbar: input de busca, filtros (status, série), ordenação por coluna, export CSV.
-
-### Alertas inteligentes (regras)
-
-Calculadas client-side a partir de `class_reading_progress`:
-- "X alunos sem ler há ≥3 dias" (last_read_date)
-- "Turma Y atrasada no cronograma" (média < esperado pelo `reading_deadline`)
-- "Z alunos finalizaram o livro" (current_page ≥ total_pages)
-- "Aluno em risco de abandono" (sem ler ≥7 dias)
-
-Cada alerta tem CTA contextual (abrir turma/aluno/enviar mensagem).
-
-### Atividades
-
-- Tipos: Leitura, Avaliativa, Desafio semanal.
-- Calendário mensal (componente leve com grid 7×N).
-- Reaproveita `edu_class_challenges` para Desafios; nova tabela `edu_class_activities` (migration) para Leitura/Avaliativa com `type`, `title`, `description`, `due_date`.
-
-### Quizzes & Reflexões
-
-- Reaproveita `edu_journey_chapter_questions` (perguntas por capítulo).
-- Editor inline: listar por capítulo, editar `question_text`, criar/excluir.
-- Para alternativas e texto reflexivo: estender com colunas `options jsonb`, `reflection_text text` (migration).
-
-### Relatórios automáticos
-
-- Preview no painel usando dados existentes (`edu_reports` já existe).
-- Botões: gerar PDF (já há `src/lib/edu/generateReportPDF.ts`), enviar email/WhatsApp (link `wa.me` com template).
-- Cron semanal (fora deste plano) — apenas UI de "agendar".
-
-### KPIs — fórmulas
-
-- % leitura geral = média(`current_page / total_pages`) por turma.
-- pg/dia = média(`pages_read_today`) últimos 7 dias.
-- Atrasado = ritmo < esperado para `reading_deadline`.
-- Adiantado = ritmo > 1.2× esperado.
-
-### Migrations necessárias
-
-```sql
--- Atividades
-create table edu_class_activities (
-  id uuid pk default gen_random_uuid(),
-  class_id uuid not null,
-  teacher_id uuid not null,
-  type text not null check (type in ('leitura','avaliativa','desafio')),
-  title text not null,
-  description text,
-  due_date date,
-  created_at timestamptz default now()
-);
--- RLS: teacher manage own; members select.
-
--- Quizzes estendidos
-alter table edu_journey_chapter_questions
-  add column options jsonb default '[]'::jsonb,
-  add column reflection_text text;
-```
-
-### Diretrizes de design
-
-- Tokens semânticos do projeto (Royal Blue #2563EB / Gold #FACC15). Status: verde `--success`, amarelo `--warning`, vermelho `--destructive`.
-- Cards `rounded-2xl`, `shadow-sm`, `p-6`, gap generoso (`gap-6`).
-- Tipografia: KPIs `text-3xl font-bold`, labels `text-xs uppercase tracking-wide text-muted-foreground`.
-- Gráficos: paleta consistente, grid suave, tooltips clean.
-- Sem emojis em títulos (apenas ícones lucide). Microcopy direta.
-- Mobile: KPIs 2 colunas, gráficos empilhados, tabela vira cards.
+### Fase 3 – Engajamento
+8. **Progresso de leitura** – tempo estimado por capítulo (baseado em páginas × 2min/pg), barra de % concluída no card da trilha e na página do livro.
+9. **Desafios iniciais** – 5 desafios pré-definidos para novos usuários (primeiros 7 dias), exibidos no topo de `/missoes` e no `/home`.
+10. **PIX no Stripe Checkout** – adicionar `payment_method_types: ["card", "pix"]` (requer conta Stripe BR).
 
 ---
 
-## Ordem de execução
+### Como prosseguir
+Por favor responda:
+- As 4 perguntas críticas acima.
+- Se topa começar pela **Fase 1** (estabilidade) e aprovar as próximas fases depois de validar.
 
-1. **Parte A** — `renameClass` no hook + dialog em `EduTurmas.tsx` e `EduTurmaDetail.tsx`. (rápido)
-2. Migrations (atividades + colunas em quizzes).
-3. Componentes base do dashboard (`KpiCard`, gráficos com recharts).
-4. Reescrita de `EduDashboard.tsx` (Overview + Alertas + Cards turmas).
-5. Redesign de `EduTurmaDetail.tsx` em tabs.
-6. Editor de Quizzes & Reflexões.
-7. Preview de Relatórios + export.
-
-Entrega faseada — confirmo cada bloco antes de seguir, ou implemento tudo se você aprovar o plano completo.
+Se preferir que eu vá atacando tudo na ordem listada sem esperar (assumindo respostas padrão: quiz = capítulo, PIX = adicionar como extra, biblioteca = 20 clássicos, desafios = estáticos), me diga "manda ver tudo".
