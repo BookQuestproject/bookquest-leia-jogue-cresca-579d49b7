@@ -86,9 +86,12 @@ serve(async (req) => {
       'http://localhost:3000',
     ];
     const requestOrigin = req.headers.get("origin") || '';
-    const validOrigin = ALLOWED_ORIGINS.includes(requestOrigin) 
-      ? requestOrigin 
+    // Accept any *.lovable.app preview subdomain in addition to the explicit allowlist
+    const isLovablePreview = /^https:\/\/[a-z0-9-]+\.lovable\.app$/i.test(requestOrigin);
+    const validOrigin = (ALLOWED_ORIGINS.includes(requestOrigin) || isLovablePreview)
+      ? requestOrigin
       : ALLOWED_ORIGINS[0];
+    logStep("Resolved origin", { requestOrigin, validOrigin });
 
     const priceId = PRICES[planType as keyof typeof PRICES] || PRICES.monthly;
     const isFounder = planType === "founder";
