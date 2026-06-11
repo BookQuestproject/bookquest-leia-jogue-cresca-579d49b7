@@ -195,22 +195,28 @@ const PostChapterReflection = ({
       console.warn(`[Anti-cheat] Violation #${violationCountRef.current}: ${reason}`);
     };
 
-    // Catches tab switch, minimize, Alt+Tab (when page becomes hidden)
-    const handleVisibilityChange = () => {
-      if (document.hidden) triggerViolation("visibilitychange: tab hidden");
-    };
+    // Only flag as violation when the tab is actually hidden for more than a moment.
+    // window.blur is unreliable (fires on devtools, iframe focus, OS shortcuts) and
+    // was incorrectly annulling questions on simple keypresses or clicks.
+    let hiddenTimer: ReturnType<typeof setTimeout> | null = null;
 
-    // Catches Alt+Tab, clicking outside browser — fires even if page stays "visible"
-    const handleWindowBlur = () => {
-      triggerViolation("window blur: focus lost (Alt+Tab / click outside)");
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Require the tab to stay hidden for 800ms before counting as a violation.
+        hiddenTimer = setTimeout(() => {
+          triggerViolation("tab hidden > 800ms");
+        }, 800);
+      } else if (hiddenTimer) {
+        clearTimeout(hiddenTimer);
+        hiddenTimer = null;
+      }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("blur", handleWindowBlur);
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("blur", handleWindowBlur);
+      if (hiddenTimer) clearTimeout(hiddenTimer);
     };
   }, [finished, loading, currentIdx]);
 
