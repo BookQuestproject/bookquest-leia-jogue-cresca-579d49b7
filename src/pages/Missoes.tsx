@@ -6,6 +6,7 @@ import ProgressBar from "@/components/ProgressBar";
 import HabitToast from "@/components/missions/HabitToast";
 import ChallengeModal from "@/components/missions/ChallengeModal";
 import MilestoneOverlay from "@/components/missions/MilestoneOverlay";
+import StarterChallenges from "@/components/missions/StarterChallenges";
 import {
   type Mission,
   type MissionCategory,
@@ -210,6 +211,12 @@ const Missoes = () => {
             </div>
           </div>
         </div>
+
+        {/* ── Primeiros Passos (novos usuários) ── */}
+        <div className="mb-8">
+          <StarterChallenges />
+        </div>
+
 
         {/* ── Hábitos ── */}
         <div data-tutorial="missoes-daily">

@@ -256,6 +256,23 @@ export const useCommunityDetail = (communityId: string | null) => {
     }
   };
 
+  const deleteComment = async (commentId: string) => {
+    if (!user) return false;
+    try {
+      const { error } = await supabase
+        .from('community_comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', user.id);
+      if (error) throw error;
+      await fetchPosts();
+      return true;
+    } catch (err: any) {
+      toast({ title: 'Erro ao excluir', description: err.message, variant: 'destructive' });
+      return false;
+    }
+  };
+
   const toggleLike = async (postId: string, isLiked: boolean) => {
     if (!user) return;
     try {
@@ -291,6 +308,7 @@ export const useCommunityDetail = (communityId: string | null) => {
     leaveCommunity,
     createPost,
     addComment,
+    deleteComment,
     toggleLike,
     toggleBookmark,
     refetch: fetchPosts,

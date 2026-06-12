@@ -5,6 +5,7 @@ import ProgressBar from "@/components/ProgressBar";
 import HabitToast from "@/components/missions/HabitToast";
 import ChallengeModal from "@/components/missions/ChallengeModal";
 import MilestoneOverlay from "@/components/missions/MilestoneOverlay";
+import StarterChallenges from "@/components/missions/StarterChallenges";
 import {
   type Mission,
   type MissionCategory,
@@ -99,6 +100,13 @@ const MobileMissoes = () => {
           <p className="text-[10px] text-muted-foreground">Essência</p>
         </div>
       </div>
+
+      {/* Primeiros Passos (novos usuários) */}
+      <StarterChallenges />
+
+
+
+
 
       {/* Tab Selector */}
       <div className="flex gap-1 p-1 rounded-xl bg-muted/30">
