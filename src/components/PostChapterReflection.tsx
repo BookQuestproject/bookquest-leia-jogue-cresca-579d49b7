@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Sparkles, ChevronRight, CheckCircle, Star, MessageSquare, BarChart3, Brain, Users, Tag, Loader2, ShieldAlert } from "lucide-react";
 import EssenciaIcon from "@/components/EssenciaIcon";
 import { Button } from "@/components/ui/button";
@@ -148,8 +148,24 @@ const typeLabels: Record<string, string> = {
   theme: "Tema",
 };
 
-// ─── Fullscreen cozy wrapper (module-level to avoid remount/focus-loss on every keystroke) ──
-const FullscreenWrapper = ({ children }: { children: React.ReactNode }) => (
+// ─── Particles (computed ONCE at module load, never on re-render) ───
+const PARTICLES = Array.from({ length: 30 }).map((_, i) => {
+  const phi = 0.6180339887;
+  const rx = ((i * phi) % 1) * 100;
+  const ry = ((i * phi * 2.3) % 1) * 100;
+  const sizeRand = (i * 17) % 10;
+  const size = 1.5 + (sizeRand / 10) * 3.5;
+  const opacity = 0.1 + ((i * 7) % 26) / 100;
+  const isGold = i % 3 !== 0;
+  const blurAmount = sizeRand > 6 ? "blur-[2px]" : sizeRand > 3 ? "blur-sm" : "blur-[1px]";
+  const driftAnim = i % 3 === 0 ? "animate-focus-drift-a" : i % 3 === 1 ? "animate-focus-drift-b" : "animate-focus-drift-c";
+  const duration = 35 + ((i * 11) % 30);
+  const delay = -((i * 2.7) % 40);
+  return { i, rx, ry, size, opacity, isGold, blurAmount, driftAnim, duration, delay };
+});
+
+// ─── Fullscreen cozy wrapper (module-level + memoized to avoid remount/focus-loss on every keystroke) ──
+const FullscreenWrapperBase = ({ children }: { children: React.ReactNode }) => (
   <div
     className="fixed inset-0 z-[70] overflow-y-auto text-white animate-fade-in"
     style={{
@@ -172,42 +188,30 @@ const FullscreenWrapper = ({ children }: { children: React.ReactNode }) => (
       }}
     />
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {Array.from({ length: 30 }).map((_, i) => {
-        const phi = 0.6180339887;
-        const rx = ((i * phi) % 1) * 100;
-        const ry = ((i * phi * 2.3) % 1) * 100;
-        const sizeRand = (i * 17) % 10;
-        const size = 1.5 + (sizeRand / 10) * 3.5;
-        const opacity = 0.1 + ((i * 7) % 26) / 100;
-        const isGold = i % 3 !== 0;
-        const blurAmount = sizeRand > 6 ? "blur-[2px]" : sizeRand > 3 ? "blur-sm" : "blur-[1px]";
-        const driftAnim = i % 3 === 0 ? "animate-focus-drift-a" : i % 3 === 1 ? "animate-focus-drift-b" : "animate-focus-drift-c";
-        const duration = 35 + ((i * 11) % 30);
-        const delay = -((i * 2.7) % 40);
-        return (
-          <span
-            key={i}
-            className={`absolute rounded-full ${blurAmount} ${driftAnim}`}
-            style={{
-              width: `${size}px`,
-              height: `${size}px`,
-              left: `${rx}%`,
-              top: `${ry}%`,
-              background: isGold
-                ? `hsl(45 90% 75% / ${opacity})`
-                : `hsl(210 90% 88% / ${opacity * 0.8})`,
-              animationDuration: `${duration}s`,
-              animationDelay: `${delay}s`,
-            }}
-          />
-        );
-      })}
+      {PARTICLES.map((p) => (
+        <span
+          key={p.i}
+          className={`absolute rounded-full ${p.blurAmount} ${p.driftAnim}`}
+          style={{
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            left: `${p.rx}%`,
+            top: `${p.ry}%`,
+            background: p.isGold
+              ? `hsl(45 90% 75% / ${p.opacity})`
+              : `hsl(210 90% 88% / ${p.opacity * 0.8})`,
+            animationDuration: `${p.duration}s`,
+            animationDelay: `${p.delay}s`,
+          }}
+        />
+      ))}
     </div>
     <div className="relative z-10 max-w-2xl mx-auto px-6 py-10 min-h-full flex flex-col justify-center">
       {children}
     </div>
   </div>
 );
+const FullscreenWrapper = React.memo(FullscreenWrapperBase);
 
 // ─── Component ───────────────────────────────────────────────────
 
