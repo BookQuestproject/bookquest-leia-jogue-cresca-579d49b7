@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   Users, MessageSquare, ArrowLeft, Send, LogOut, Smile,
-  Bookmark, Repeat2, Heart, Search
+  Bookmark, Repeat2, Heart, Search, Trash2
 } from "lucide-react";
 import { useCommunities, useCommunityDetail, type Community } from "@/hooks/useCommunities";
 import { useAuth } from "@/hooks/useAuth";
