@@ -104,7 +104,7 @@ const StarterChallenges = () => {
                 <p className="text-xs text-muted-foreground mt-0.5">{c.description}</p>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-[11px] flex items-center gap-1 text-accent font-semibold">
-                    +{c.essencia} <EssenciaIcon className="w-3 h-3" />
+                    +{c.essencia} <EssenciaIcon size="xs" />
                   </span>
                   {!isDone && (
                     <button
