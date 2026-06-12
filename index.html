@@ -40,7 +40,17 @@
 
   <body>
     <a href="#main-content" class="skip-to-content">Pular para o conteúdo</a>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Initial loader: shown immediately on F5/deep links, before React mounts.
+           Replaced by the app on first render so it never lingers. -->
+      <div id="bq-initial-loader" aria-label="Carregando BookQuest" role="status"
+           style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#0F172A;color:#E2E8F0;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;z-index:9999;">
+        <div style="width:48px;height:48px;border:3px solid rgba(212,175,55,0.25);border-top-color:#D4AF37;border-radius:50%;animation:bq-spin 0.9s linear infinite;"></div>
+        <div style="font-size:14px;letter-spacing:0.04em;opacity:0.75;">Carregando sua jornada literária…</div>
+        <style>@keyframes bq-spin{to{transform:rotate(360deg)}}</style>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
