@@ -414,66 +414,8 @@ const PostChapterReflection = ({
 
   const finalXp = detectDuplication() ? Math.max(10, Math.floor(totalXp * 0.5)) : totalXp;
 
-  // ─── Fullscreen cozy wrapper (matches FocusReadingMode aesthetic) ──
-  const FullscreenWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div
-      className="fixed inset-0 z-[70] overflow-y-auto text-white animate-fade-in"
-      style={{
-        background:
-          "linear-gradient(180deg, #052a6b 0%, #021f53 55%, #01153b 100%)",
-      }}
-    >
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.25) 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-50 pointer-events-none animate-focus-breathe"
-        style={{
-          background:
-            "radial-gradient(circle at 75% 80%, hsl(40 65% 60% / 0.14) 0%, transparent 60%), radial-gradient(circle at 20% 25%, hsl(215 55% 65% / 0.18) 0%, transparent 60%)",
-        }}
-      />
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 30 }).map((_, i) => {
-          const phi = 0.6180339887;
-          const rx = ((i * phi) % 1) * 100;
-          const ry = ((i * phi * 2.3) % 1) * 100;
-          const sizeRand = (i * 17) % 10;
-          const size = 1.5 + (sizeRand / 10) * 3.5;
-          const opacity = 0.1 + ((i * 7) % 26) / 100;
-          const isGold = i % 3 !== 0;
-          const blurAmount = sizeRand > 6 ? "blur-[2px]" : sizeRand > 3 ? "blur-sm" : "blur-[1px]";
-          const driftAnim = i % 3 === 0 ? "animate-focus-drift-a" : i % 3 === 1 ? "animate-focus-drift-b" : "animate-focus-drift-c";
-          const duration = 35 + ((i * 11) % 30);
-          const delay = -((i * 2.7) % 40);
-          return (
-            <span
-              key={i}
-              className={`absolute rounded-full ${blurAmount} ${driftAnim}`}
-              style={{
-                width: `${size}px`,
-                height: `${size}px`,
-                left: `${rx}%`,
-                top: `${ry}%`,
-                background: isGold
-                  ? `hsl(45 90% 75% / ${opacity})`
-                  : `hsl(210 90% 88% / ${opacity * 0.8})`,
-                animationDuration: `${duration}s`,
-                animationDelay: `${delay}s`,
-              }}
-            />
-          );
-        })}
-      </div>
-      <div className="relative z-10 max-w-2xl mx-auto px-6 py-10 min-h-full flex flex-col justify-center">
-        {children}
-      </div>
-    </div>
-  );
+
+
 
   if (loading) {
     return (
