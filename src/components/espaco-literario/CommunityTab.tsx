@@ -227,19 +227,30 @@ const CommunityDetailView = ({ community, onBack, onMembershipChange }: {
               {showComments[post.id] && (
                 <div className="mt-3 pt-3 border-t border-border/30 space-y-2">
                   {post.comments.map(comment => (
-                    <div key={comment.id} className="flex gap-2 pl-2">
+                    <div key={comment.id} className="flex gap-2 pl-2 group">
                       <Avatar className="w-6 h-6">
                         <AvatarImage src={comment.profile?.avatar_url || ""} />
                         <AvatarFallback className="text-[10px]">
                           {(comment.profile?.full_name || "U")[0].toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
+                      <div className="flex-1">
                         <span className="text-xs font-medium text-foreground">{comment.profile?.username ? `@${comment.profile.username}` : (comment.profile?.full_name || "Leitor")}</span>
                         <span className="text-[10px] text-muted-foreground ml-1">{formatTime(comment.created_at)}</span>
                         <p className="text-xs text-muted-foreground">{comment.content}</p>
                         {comment.sticker && <span className="text-lg">{comment.sticker}</span>}
                       </div>
+                      {user?.id === comment.user_id && (
+                        <button
+                          onClick={() => {
+                            if (confirm("Excluir este comentário?")) deleteComment(comment.id);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity p-1"
+                          aria-label="Excluir comentário"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
                     </div>
                   ))}
                   {user && isMember && (
