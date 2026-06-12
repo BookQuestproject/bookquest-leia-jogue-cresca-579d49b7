@@ -98,8 +98,12 @@ const MobileMissoes = () => {
         <div className="text-center flex-1">
           <p className="text-lg font-bold text-accent">{totalXp}</p>
           <p className="text-[10px] text-muted-foreground">Essência</p>
-        </div>
       </div>
+
+      {/* Primeiros Passos (novos usuários) */}
+      <StarterChallenges />
+
+
 
       {/* Tab Selector */}
       <div className="flex gap-1 p-1 rounded-xl bg-muted/30">
