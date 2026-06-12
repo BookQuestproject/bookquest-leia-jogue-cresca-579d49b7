@@ -308,6 +308,7 @@ export const useCommunityDetail = (communityId: string | null) => {
     leaveCommunity,
     createPost,
     addComment,
+    deleteComment,
     toggleLike,
     toggleBookmark,
     refetch: fetchPosts,
