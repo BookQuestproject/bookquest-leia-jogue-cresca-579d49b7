@@ -212,6 +212,12 @@ const Missoes = () => {
           </div>
         </div>
 
+        {/* ── Primeiros Passos (novos usuários) ── */}
+        <div className="mb-8">
+          <StarterChallenges />
+        </div>
+
+
         {/* ── Hábitos ── */}
         <div data-tutorial="missoes-daily">
           <MissionSection
