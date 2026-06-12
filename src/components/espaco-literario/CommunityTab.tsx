@@ -54,7 +54,7 @@ const CommunityDetailView = ({ community, onBack, onMembershipChange }: {
   const { user } = useAuth();
   const {
     posts, loading, joinCommunity, leaveCommunity,
-    createPost, addComment, toggleLike, toggleBookmark
+    createPost, addComment, deleteComment, toggleLike, toggleBookmark
   } = useCommunityDetail(community.id);
 
   const [newPostContent, setNewPostContent] = useState("");
