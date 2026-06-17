@@ -225,10 +225,20 @@ const Auth = () => {
     const hasLower = /[a-z]/.test(pwd);
     const hasNumber = /[0-9]/.test(pwd);
     const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
-    const score = [hasUpper, hasLower, hasNumber, hasSpecial, pwd.length >= 10].filter(Boolean).length;
-    if (score <= 2) return { level: 2, label: 'Média', color: 'bg-accent' };
-    if (score <= 3) return { level: 3, label: 'Boa', color: 'bg-secondary' };
-    return { level: 4, label: 'Forte', color: 'bg-success' };
+    const variety = [hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
+    const len = pwd.length;
+
+    // Comprimento sozinho já garante boa força (entropia alta)
+    if (len >= 16 && variety >= 2) return { level: 4, label: 'Forte', color: 'bg-success' };
+    if (len >= 12 && variety >= 3) return { level: 4, label: 'Forte', color: 'bg-success' };
+    if (len >= 10 && variety >= 4) return { level: 4, label: 'Forte', color: 'bg-success' };
+
+    if (len >= 12 && variety >= 2) return { level: 3, label: 'Boa', color: 'bg-secondary' };
+    if (len >= 10 && variety >= 3) return { level: 3, label: 'Boa', color: 'bg-secondary' };
+    if (len >= 8 && variety >= 3) return { level: 3, label: 'Boa', color: 'bg-secondary' };
+
+    if (len >= 8 && variety >= 2) return { level: 2, label: 'Média', color: 'bg-accent' };
+    return { level: 2, label: 'Média', color: 'bg-accent' };
   };
 
   const strength = getPasswordStrength(password);
