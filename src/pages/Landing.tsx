@@ -206,10 +206,10 @@ const Landing = () => {
               BookQuest EDU
             </button>
             <Button
-              onClick={() => navigate(user ? "/dashboard" : "/auth")}
+              onClick={() => navigate(user ? "/home" : "/auth")}
               className={`${PRIMARY_CTA} mt-2`}
             >
-              Entrar
+              {user ? "Acessar BookQuest" : "Entrar"}
             </Button>
           </div>
         )}
