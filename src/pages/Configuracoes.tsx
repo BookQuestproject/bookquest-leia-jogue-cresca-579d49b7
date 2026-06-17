@@ -1,16 +1,20 @@
 import { useState } from "react";
-import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Settings, User, Bell, Globe, Shield, LogOut, ChevronRight, BookOpen, Users, HelpCircle, Volume2, Sparkles, RotateCcw } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useTutorial } from "@/contexts/TutorialContext";
+import { useProfile } from "@/hooks/useProfile";
 import { isSoundEnabled, setSoundEnabled } from "@/hooks/useSoundEffects";
 
 
 const Configuracoes = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { startTutorial, isCompleted: tutorialCompleted } = useTutorial();
+  const { profile } = useProfile();
   
   // Estados das configurações
   const [notifications, setNotifications] = useState({
@@ -262,6 +266,109 @@ const Configuracoes = () => {
               </div>
             </div>
           </section>
+
+          {/* Quiz Literário — histórico e refazer */}
+          {(() => {
+            const lp = (profile?.literary_profile ?? null) as any;
+            const history: any[] = Array.isArray(lp?.history) ? [...lp.history] : [];
+            // Fallback: if no history but the user has a literary profile, treat current snapshot as one entry
+            if (history.length === 0 && lp && (lp.genre || lp.recommendations)) {
+              history.push({
+                genre: lp.genre,
+                genreInfo: lp.genreInfo,
+                level: lp.level,
+                timePerDay: lp.timePerDay,
+                ageRange: lp.ageRange,
+                recommendations: lp.recommendations,
+                takenAt: lp.completedAt,
+                skipped: !!lp.skipped,
+              });
+            }
+            const ordered = [...history].reverse(); // newest first
+            const fmtDate = (iso?: string) => {
+              if (!iso) return "—";
+              try { return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }); }
+              catch { return iso; }
+            };
+            return (
+              <section className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-4 border-b border-border flex items-center justify-between gap-3">
+                  <h2 className="font-bold flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    Quiz Literário
+                  </h2>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-2"
+                    onClick={() => navigate("/quiz-literario?retake=1")}
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Refazer quiz
+                  </Button>
+                </div>
+                <div className="p-4">
+                  {ordered.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">
+                      Você ainda não tem histórico de recomendações. Faça o quiz para descobrir livros sob medida.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-xs text-muted-foreground">
+                        {ordered.length} {ordered.length === 1 ? "tentativa registrada" : "tentativas registradas"} · você pode refazer o quiz quantas vezes quiser.
+                      </p>
+                      <ul className="space-y-3">
+                        {ordered.map((h, idx) => {
+                          const recs: any[] = Array.isArray(h?.recommendations) ? h.recommendations : [];
+                          return (
+                            <li key={idx} className="rounded-xl border border-border bg-muted/30 p-4">
+                              <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold uppercase tracking-wide">
+                                    {h?.skipped ? "Pulado" : (h?.genre || "Resultado")}
+                                  </span>
+                                  {h?.level && (
+                                    <span className="text-[11px] text-muted-foreground capitalize">Nível: {h.level}</span>
+                                  )}
+                                  {h?.timePerDay && (
+                                    <span className="text-[11px] text-muted-foreground">· {h.timePerDay} min/dia</span>
+                                  )}
+                                </div>
+                                <span className="text-xs text-muted-foreground">{fmtDate(h?.takenAt)}</span>
+                              </div>
+                              {h?.genreInfo?.description && (
+                                <p className="text-sm text-foreground/80 mb-2">{h.genreInfo.description}</p>
+                              )}
+                              {recs.length > 0 ? (
+                                <div>
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">Livros recomendados:</p>
+                                  <ul className="text-sm space-y-1">
+                                    {recs.map((r, i) => (
+                                      <li key={i} className="flex items-start gap-2">
+                                        <BookOpen className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
+                                        <span>
+                                          <span className="font-medium">{r.title}</span>
+                                          {r.author && <span className="text-muted-foreground"> — {r.author}</span>}
+                                        </span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ) : (
+                                !h?.skipped && (
+                                  <p className="text-xs text-muted-foreground">Sem recomendações registradas nesta tentativa.</p>
+                                )
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </section>
+            );
+          })()}
 
 
           <section className="glass-card rounded-2xl overflow-hidden" data-tutorial="config-tutorial-reset">

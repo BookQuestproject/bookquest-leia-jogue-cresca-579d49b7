@@ -86,13 +86,31 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     if (!user) return;
 
     try {
+      // Build/append history so the user can see every quiz attempt later.
+      const previous = (profile?.literary_profile ?? null) as any;
+      const previousHistory: any[] = Array.isArray(previous?.history) ? previous.history : [];
+      const isSkip = !!literaryProfile?.skipped;
+      // Snapshot entry without nested history to avoid recursion
+      const { history: _ignored, ...entrySource } = literaryProfile || {};
+      const newEntry = {
+        ...entrySource,
+        takenAt: literaryProfile?.completedAt || new Date().toISOString(),
+        skipped: isSkip,
+      };
+      const mergedHistory = [...previousHistory, newEntry].slice(-20); // keep last 20
+
+      const merged = {
+        ...literaryProfile,
+        history: mergedHistory,
+      };
+
       const payload: any = {
         id: user.id,
         email: user.email ?? null,
         full_name: literaryProfile?.name || user.user_metadata?.full_name || null,
-        username: literaryProfile?.username || null,
+        username: literaryProfile?.username || profile?.username || null,
         quiz_completed: true,
-        literary_profile: literaryProfile,
+        literary_profile: merged,
       };
 
       const { data, error } = await supabase

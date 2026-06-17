@@ -425,6 +425,12 @@ const QuizOnboarding = () => {
       timePerDay: profile.timePerDay,
       genre: resultGenre,
       genreInfo: genreInfo[resultGenre],
+      recommendations: recommendedBooks.map(b => ({
+        title: b.title,
+        author: b.author,
+        pages: (b as any).pages ?? null,
+        readingTime: (b as any).readingTime ?? null,
+      })),
       completedAt: new Date().toISOString(),
     };
 
