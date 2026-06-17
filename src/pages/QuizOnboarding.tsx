@@ -376,31 +376,47 @@ const QuizOnboarding = () => {
     .slice(0, 5);
   };
 
+  const goHome = () => {
+    try {
+      navigate('/home', { replace: true });
+    } catch {}
+    // Hard fallback in case the SPA navigation doesn't take effect
+    setTimeout(() => {
+      if (typeof window !== "undefined" && window.location.pathname !== "/home") {
+        window.location.assign("/home");
+      }
+    }, 250);
+  };
+
   const handleFinishQuiz = async () => {
+    if (isSaving) return;
     setIsSaving(true);
 
     // Save quiz recommendations to localStorage so Trilhas filters correctly
-    const recommendedBooks = getRecommendedBooks();
-    const titles = recommendedBooks.map(b => b.title);
-    localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(titles));
+    let recommendedBooks: ReturnType<typeof getRecommendedBooks> = [];
+    try {
+      recommendedBooks = getRecommendedBooks();
+      const titles = recommendedBooks.map(b => b.title);
+      localStorage.setItem("bookquest-quiz-recommendations", JSON.stringify(titles));
+    } catch (e) {
+      console.error('Error saving recommendations:', e);
+    }
 
     // Add all recommended books to the user's bookshelf as "quero-ler"
-    const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    recommendedBooks.forEach((book, index) => {
-      // Try to find real cover from bookTrails catalog
-      const trailBook = bookTrails.find(t => normalise(t.title) === normalise(book.title));
-      const cover = trailBook?.coverImage || `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(book.title.slice(0, 15))}`;
-      addBook(
-        {
-          id: 9000 + index,
-          title: book.title,
-          author: book.author,
-          cover,
-        },
-        "quero-ler"
-      );
-    });
-    
+    try {
+      const normalise = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      recommendedBooks.forEach((book, index) => {
+        const trailBook = bookTrails.find(t => normalise(t.title) === normalise(book.title));
+        const cover = trailBook?.coverImage || `https://placehold.co/200x300/1e293b/e2e8f0?text=${encodeURIComponent(book.title.slice(0, 15))}`;
+        addBook(
+          { id: 9000 + index, title: book.title, author: book.author, cover },
+          "quero-ler"
+        );
+      });
+    } catch (e) {
+      console.error('Error adding books to shelf:', e);
+    }
+
     const literaryProfile = {
       name: profile.name,
       username: profile.username,
@@ -414,24 +430,36 @@ const QuizOnboarding = () => {
 
     try {
       await updateQuizCompleted(literaryProfile);
-      localStorage.removeItem("bookquest_spotlight_tutorial_done");
-      navigate('/home');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error finishing quiz:', error);
-      setIsSaving(false);
+      toast({
+        title: "Não foi possível salvar agora",
+        description: error?.message || "Vamos te levar pra home mesmo assim. Você pode refazer o quiz depois.",
+        variant: "destructive",
+      });
     }
+
+    try { localStorage.removeItem("bookquest_spotlight_tutorial_done"); } catch {}
+    setIsSaving(false);
+    goHome();
   };
 
   const handleSkipQuiz = async () => {
+    if (isSaving) return;
     setIsSaving(true);
     try {
       await updateQuizCompleted({ skipped: true, completedAt: new Date().toISOString() });
-      localStorage.removeItem("bookquest_spotlight_tutorial_done");
-      navigate('/home');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error skipping quiz:', error);
-      setIsSaving(false);
+      toast({
+        title: "Não foi possível salvar agora",
+        description: error?.message || "Te levando pra home mesmo assim.",
+        variant: "destructive",
+      });
     }
+    try { localStorage.removeItem("bookquest_spotlight_tutorial_done"); } catch {}
+    setIsSaving(false);
+    goHome();
   };
 
   const validateUsername = (value: string) => {
