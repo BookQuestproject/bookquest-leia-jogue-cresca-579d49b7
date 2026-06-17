@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useBookshelf } from "@/hooks/useBookshelf";
+import { useToast } from "@/hooks/use-toast";
 import { bookTrails } from "@/pages/Trilhas";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 import EssenciaIcon from "@/components/EssenciaIcon";
