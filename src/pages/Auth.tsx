@@ -29,7 +29,7 @@ const Auth = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
-  const { signIn, signUp, user, loading } = useAuth();
+  const { signIn, signUp, signOut, user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
