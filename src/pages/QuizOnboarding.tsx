@@ -261,6 +261,7 @@ const QuizOnboarding = () => {
     }
   }, [isRetake, authLoading, profileLoading, user, quizCompleted, navigate]);
   const { addBook } = useBookshelf();
+  const { toast } = useToast();
   
   const [step, setStep] = useState<QuizStep>("name");
   const [profile, setProfile] = useState<ReaderProfile>({
