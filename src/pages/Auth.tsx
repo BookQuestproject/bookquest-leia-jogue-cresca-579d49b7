@@ -118,8 +118,15 @@ const Auth = () => {
     return '/quiz-literario';
   };
 
+  // Only auto-redirect when an explicit ?redirect=/... target was passed
+  // (e.g., user was sent here by a protected route). Otherwise, let the
+  // user explicitly choose to continue or switch accounts — clicking
+  // "Entrar" should always land on this screen, not bypass it.
   useEffect(() => {
-    if (!loading && user) navigate(getRedirectTarget());
+    if (loading || !user) return;
+    const params = new URLSearchParams(window.location.search);
+    const r = params.get('redirect');
+    if (r && r.startsWith('/')) navigate(r);
   }, [user, loading, navigate]);
 
   const validateForm = () => {
