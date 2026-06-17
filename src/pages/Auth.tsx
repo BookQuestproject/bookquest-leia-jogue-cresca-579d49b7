@@ -29,7 +29,7 @@ const Auth = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [resetSent, setResetSent] = useState(false);
 
-  const { signIn, signUp, user, loading } = useAuth();
+  const { signIn, signUp, signOut, user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -118,8 +118,15 @@ const Auth = () => {
     return '/quiz-literario';
   };
 
+  // Only auto-redirect when an explicit ?redirect=/... target was passed
+  // (e.g., user was sent here by a protected route). Otherwise, let the
+  // user explicitly choose to continue or switch accounts — clicking
+  // "Entrar" should always land on this screen, not bypass it.
   useEffect(() => {
-    if (!loading && user) navigate(getRedirectTarget());
+    if (loading || !user) return;
+    const params = new URLSearchParams(window.location.search);
+    const r = params.get('redirect');
+    if (r && r.startsWith('/')) navigate(r);
   }, [user, loading, navigate]);
 
   const validateForm = () => {
@@ -261,6 +268,37 @@ const Auth = () => {
       </div>
 
       <div className="w-full max-w-[420px] relative z-10 animate-fade-in">
+        {/* Already-signed-in banner */}
+        {user && (
+          <div className="mb-5 rounded-xl border border-accent/30 bg-accent/5 backdrop-blur-md p-4 flex flex-col sm:flex-row sm:items-center gap-3 animate-fade-in">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground/90">
+                Você já está conectado como{' '}
+                <strong className="break-all">{user.email}</strong>.
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Continue na sua conta ou saia para entrar com outra.
+              </p>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={async () => { await signOut(); }}
+              >
+                Sair
+              </Button>
+              <Button
+                size="sm"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+                onClick={() => navigate(getRedirectTarget())}
+              >
+                Continuar
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Crown + Title */}
         <div className="text-center mb-10">
           <div className="mx-auto w-20 h-20 mb-5 animate-scale-in">
