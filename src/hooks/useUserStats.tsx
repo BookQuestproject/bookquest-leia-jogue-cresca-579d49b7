@@ -103,25 +103,18 @@ export const useUserStats = () => {
   }, [user]);
 
   const addEssencia = useCallback(async (amount: number) => {
-    if (!user) return;
+    if (!user || !amount || amount <= 0) return;
 
     lastGainAmount = amount;
     gainTimestamp = Date.now();
 
     try {
-      const newXp = globalStats.xp + amount;
-      const { error } = await supabase
-        .from('user_xp')
-        .update({ 
-          xp: newXp, 
-          week_xp: (globalStats as any).week_xp ? (globalStats as any).week_xp + amount : amount,
-          updated_at: new Date().toISOString() 
-        })
-        .eq('user_id', user.id);
-
+      const { data, error } = await supabase.rpc('add_user_xp', { _amount: amount });
       if (error) {
         console.error('Error adding essencia:', error);
       } else {
+        const row = Array.isArray(data) ? data[0] : data;
+        const newXp = (row as any)?.xp ?? globalStats.xp + amount;
         globalStats = { ...globalStats, xp: newXp };
         notifyListeners();
       }
@@ -130,18 +123,17 @@ export const useUserStats = () => {
     }
   }, [user]);
 
-  const updateStreak = useCallback(async (newStreak: number) => {
+  const updateStreak = useCallback(async (_newStreak: number) => {
     if (!user) return;
-
+    // Streak updates are handled server-side via the tick_user_streak RPC
+    // (see useStreakTick). Direct client updates are no longer permitted.
     try {
-      const { error } = await supabase
-        .from('user_xp')
-        .update({ streak: newStreak, updated_at: new Date().toISOString() })
-        .eq('user_id', user.id);
-
+      const { data, error } = await supabase.rpc('tick_user_streak', { _user_id: user.id });
       if (error) {
         console.error('Error updating streak:', error);
       } else {
+        const row = Array.isArray(data) ? data[0] : data;
+        const newStreak = (row as any)?.streak ?? globalStats.streak;
         globalStats = { ...globalStats, streak: newStreak };
         notifyListeners();
       }
