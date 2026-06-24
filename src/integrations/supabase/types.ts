@@ -640,7 +640,6 @@ export type Database = {
           id: string
           joined_at: string
           last_seen_at: string | null
-          student_email: string | null
           user_id: string
         }
         Insert: {
@@ -648,7 +647,6 @@ export type Database = {
           id?: string
           joined_at?: string
           last_seen_at?: string | null
-          student_email?: string | null
           user_id: string
         }
         Update: {
@@ -656,7 +654,6 @@ export type Database = {
           id?: string
           joined_at?: string
           last_seen_at?: string | null
-          student_email?: string | null
           user_id?: string
         }
         Relationships: [
@@ -2297,6 +2294,13 @@ export type Database = {
     }
     Functions: {
       activate_teacher_with_code: { Args: { _code: string }; Returns: boolean }
+      add_user_xp: {
+        Args: { _amount: number }
+        Returns: {
+          week_xp: number
+          xp: number
+        }[]
+      }
       award_badge: {
         Args: {
           _badge_label: string
