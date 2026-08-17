@@ -64,6 +64,11 @@ import Install from "./pages/Install";
 import EduOnboarding from "./pages/edu/EduOnboarding";
 import EduAlunoOnboarding from "./pages/edu/EduAlunoOnboarding";
 import JoinClass from "./pages/edu/JoinClass";
+import NacionalHub from "./pages/nacional/NacionalHub";
+import ObraNacional from "./pages/nacional/ObraNacional";
+import ParteNacional from "./pages/nacional/ParteNacional";
+import ModoProfessor from "./pages/nacional/ModoProfessor";
+import ModoProva from "./pages/nacional/ModoProva";
 
 // App configuration
 const queryClient = new QueryClient();
