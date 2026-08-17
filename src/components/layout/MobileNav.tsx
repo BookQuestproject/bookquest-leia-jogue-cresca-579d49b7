@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Trophy, User, Target, BookMarked, Menu, Library, Swords, MessageSquare, Sparkles, GraduationCap, Award, BookA, X, Crown, Play, Users } from "lucide-react";
+import { Home, BookOpen, Trophy, User, Target, BookMarked, Menu, Library, Swords, MessageSquare, Sparkles, GraduationCap, School, Award, BookA, X, Crown, Play, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useProfile } from "@/hooks/useProfile";
@@ -37,6 +37,7 @@ const MobileNav = ({
     { icon: MessageSquare, label: "Book Club", path: "/bookclub", premium: true },
     { icon: Sparkles, label: "Mentoria", path: "/mentoria", premium: true },
     { icon: GraduationCap, label: "Trilhas Acadêmicas", path: "/enem", premium: true },
+    { icon: School, label: "Nacional", path: "/nacional" },
     { icon: Crown, label: "Assine Premium", path: "/premium", highlight: true },
     { icon: User, label: user ? "Perfil" : "Entrar", path: user ? "/perfil" : "/auth" },
   ];

@@ -64,6 +64,11 @@ import Install from "./pages/Install";
 import EduOnboarding from "./pages/edu/EduOnboarding";
 import EduAlunoOnboarding from "./pages/edu/EduAlunoOnboarding";
 import JoinClass from "./pages/edu/JoinClass";
+import NacionalHub from "./pages/nacional/NacionalHub";
+import ObraNacional from "./pages/nacional/ObraNacional";
+import ParteNacional from "./pages/nacional/ParteNacional";
+import ModoProfessor from "./pages/nacional/ModoProfessor";
+import ModoProva from "./pages/nacional/ModoProva";
 
 // App configuration
 const queryClient = new QueryClient();
@@ -114,6 +119,11 @@ const App = () => (
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
+                <Route path="/nacional" element={<NacionalHub />} />
+                <Route path="/nacional/:workId" element={<ObraNacional />} />
+                <Route path="/nacional/:workId/parte/:partId" element={<ParteNacional />} />
+                <Route path="/nacional/:workId/professor" element={<ModoProfessor />} />
+                <Route path="/nacional/:workId/prova" element={<ModoProva />} />
                 <Route path="/edu" element={<EduEntry />} />
                 <Route path="/edu/onboarding" element={<EduOnboarding />} />
                 <Route path="/edu/onboarding-aluno" element={<EduAlunoOnboarding />} />
