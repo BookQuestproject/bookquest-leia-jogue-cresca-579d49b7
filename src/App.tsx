@@ -119,6 +119,11 @@ const App = () => (
                 <Route path="/ler/:bookId/:chapterId" element={<ChapterReading />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/founder-preview" element={<AdminFounderPreview />} />
+                <Route path="/nacional" element={<NacionalHub />} />
+                <Route path="/nacional/:workId" element={<ObraNacional />} />
+                <Route path="/nacional/:workId/parte/:partId" element={<ParteNacional />} />
+                <Route path="/nacional/:workId/professor" element={<ModoProfessor />} />
+                <Route path="/nacional/:workId/prova" element={<ModoProva />} />
                 <Route path="/edu" element={<EduEntry />} />
                 <Route path="/edu/onboarding" element={<EduOnboarding />} />
                 <Route path="/edu/onboarding-aluno" element={<EduAlunoOnboarding />} />
