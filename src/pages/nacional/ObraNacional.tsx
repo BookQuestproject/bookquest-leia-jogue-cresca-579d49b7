@@ -28,6 +28,10 @@ const ObraNacional = () => {
 
   const isUnlocked = (partId: number) => isPremium || partId <= work.freeParts;
 
+  // First part the user hasn't completed yet, or part 1 if all done
+  const nextPartId =
+    work.parts.find((p) => !done.includes(p.id))?.id ?? work.parts[0].id;
+
   return (
     <Layout isPremium={isPremium}>
       <div className="space-y-6">
