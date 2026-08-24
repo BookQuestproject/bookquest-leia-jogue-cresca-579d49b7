@@ -59,6 +59,14 @@ const ObraNacional = () => {
                   <div className="h-full bg-accent transition-all" style={{ width: `${pct}%` }} />
                 </div>
               </div>
+
+              <Link
+                to={`/nacional/${work.id}/parte/${nextPartId}`}
+                className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-accent-foreground font-bold text-sm hover:brightness-105 transition shadow-[0_0_22px_hsl(var(--accent)/0.35)]"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                {done.length === 0 ? "Começar leitura" : "Continuar"}
+              </Link>
             </div>
           </div>
         </section>
