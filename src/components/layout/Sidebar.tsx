@@ -19,6 +19,7 @@ import {
   Settings,
   Swords,
   BookA,
+  School,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -59,6 +60,10 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
     { icon: MessageSquare, label: "Book Club", path: "/bookclub" },
     { icon: Sparkles, label: "Mentoria", path: "/mentoria" },
     { icon: GraduationCap, label: "Trilhas Acadêmicas", path: "/enem" },
+  ];
+
+  const nacionalItems = [
+    { icon: School, label: "Nacional", path: "/nacional" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -151,6 +156,13 @@ const Sidebar = ({ isPremium = false }: SidebarProps) => {
           Premium
         </p>
         {premiumItems.map((item) => renderItem(item, true))}
+
+        <div className="my-3 mx-3 border-t border-border/30" />
+
+        <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/40">
+          Nacional
+        </p>
+        {nacionalItems.map((item) => renderItem(item))}
 
         {/* Admin EDU section */}
         {isAdmin && (

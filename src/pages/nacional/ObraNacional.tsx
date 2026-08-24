@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import {
-  BookOpen, Lock, Check, GraduationCap, Shuffle, ClipboardCheck, ArrowRight, Users, Target,
+  BookOpen, Lock, Check, GraduationCap, Shuffle, ClipboardCheck, ArrowRight, Users, Target, Play,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import AgataTutora from "@/components/nacional/AgataTutora";
