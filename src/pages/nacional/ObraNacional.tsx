@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import {
-  BookOpen, Lock, Check, GraduationCap, Shuffle, ClipboardCheck, ArrowRight, Users, Target,
+  BookOpen, Lock, Check, GraduationCap, Shuffle, ClipboardCheck, ArrowRight, Users, Target, Play,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import AgataTutora from "@/components/nacional/AgataTutora";
@@ -27,6 +27,10 @@ const ObraNacional = () => {
     .join("\n") || "O aluno ainda não concluiu nenhuma parte. Fale apenas de contexto geral do autor e do gênero.";
 
   const isUnlocked = (partId: number) => isPremium || partId <= work.freeParts;
+
+  // First part the user hasn't completed yet, or part 1 if all done
+  const nextPartId =
+    work.parts.find((p) => !done.includes(p.id))?.id ?? work.parts[0].id;
 
   return (
     <Layout isPremium={isPremium}>
@@ -59,6 +63,14 @@ const ObraNacional = () => {
                   <div className="h-full bg-accent transition-all" style={{ width: `${pct}%` }} />
                 </div>
               </div>
+
+              <Link
+                to={`/nacional/${work.id}/parte/${nextPartId}`}
+                className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-accent-foreground font-bold text-sm hover:brightness-105 transition shadow-[0_0_22px_hsl(var(--accent)/0.35)]"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                {done.length === 0 ? "Começar leitura" : "Continuar"}
+              </Link>
             </div>
           </div>
         </section>
