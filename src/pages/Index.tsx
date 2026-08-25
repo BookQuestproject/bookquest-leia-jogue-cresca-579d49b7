@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
 import StreakFlame from "@/components/StreakFlame";
 import { ReadingPlanCard } from "@/components/ReadingPlanWidget";
+import BenefitsSection from "@/components/home/BenefitsSection";
+import QuizCTA from "@/components/home/QuizCTA";
 import {
   Dialog,
   DialogContent,
