@@ -338,8 +338,12 @@ const Index = () => {
 
         {/* ═══════════ BENEFITS + QUIZ CTA ═══════════ */}
         {!hasActiveTrail && (
-          <div className="mb-6 lg:mb-8 space-y-5 lg:space-y-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <div className="mb-6 lg:mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <BenefitsSection />
+          </div>
+        )}
+        {(!quizCompleted || isPremium) && (
+          <div className="mb-6 lg:mb-8 animate-fade-in" style={{ animationDelay: "0.25s" }}>
             <QuizCTA quizCompleted={!!quizCompleted} isPremium={!!isPremium} />
           </div>
         )}
