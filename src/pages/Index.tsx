@@ -336,6 +336,14 @@ const Index = () => {
           </header>
         )}
 
+        {/* ═══════════ BENEFITS + QUIZ CTA ═══════════ */}
+        {!hasActiveTrail && (
+          <div className="mb-6 lg:mb-8 space-y-5 lg:space-y-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <BenefitsSection />
+            <QuizCTA quizCompleted={!!quizCompleted} isPremium={!!isPremium} />
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-3 gap-6">
           {/* ═══════════ MAIN CONTENT — col-span-2 ═══════════ */}
           <div className="lg:col-span-2 order-2 lg:order-1 space-y-6">
