@@ -10,6 +10,8 @@ import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/R
 import { getStreakColor } from "@/components/StreakFlame";
 import StreakCard from "@/components/StreakCard";
 import MissionCompletionToast from "@/components/MissionCompletionToast";
+import BenefitsSection from "@/components/home/BenefitsSection";
+import QuizCTA from "@/components/home/QuizCTA";
 import { Button } from "@/components/ui/button";
 
 const MobileHome = () => {
