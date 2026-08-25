@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import RankingBadge, { getTierFromPoints, getNextTierInfo } from "@/components/RankingBadge";
 import StreakFlame from "@/components/StreakFlame";
 import { ReadingPlanCard } from "@/components/ReadingPlanWidget";
+import BenefitsSection from "@/components/home/BenefitsSection";
+import QuizCTA from "@/components/home/QuizCTA";
 import {
   Dialog,
   DialogContent,
@@ -332,6 +334,18 @@ const Index = () => {
               Escolha uma trilha para iniciar sua aventura
             </p>
           </header>
+        )}
+
+        {/* ═══════════ BENEFITS + QUIZ CTA ═══════════ */}
+        {!hasActiveTrail && (
+          <div className="mb-6 lg:mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <BenefitsSection />
+          </div>
+        )}
+        {(!quizCompleted || isPremium) && (
+          <div className="mb-6 lg:mb-8 animate-fade-in" style={{ animationDelay: "0.25s" }}>
+            <QuizCTA quizCompleted={!!quizCompleted} isPremium={!!isPremium} />
+          </div>
         )}
 
         <div className="grid lg:grid-cols-3 gap-6">
