@@ -158,6 +158,16 @@ const MobileHome = () => {
         </div>
       )}
 
+      {/* Benefits + Quiz CTA — highlighted */}
+      {!hasActiveTrail && <BenefitsSection />}
+      {(!profile?.quiz_completed || isPremium) && (
+        <QuizCTA
+          quizCompleted={!!profile?.quiz_completed}
+          isPremium={!!isPremium}
+          compact
+        />
+      )}
+
       {/* Quick Stats Row */}
       <div className="grid grid-cols-3 gap-2.5">
         <Link
