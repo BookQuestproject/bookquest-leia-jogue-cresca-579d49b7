@@ -1391,6 +1391,27 @@ export type Database = {
           },
         ]
       }
+      edu_teacher_allowlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          note: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          note?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          note?: string | null
+        }
+        Relationships: []
+      }
       edu_teacher_settings: {
         Row: {
           created_at: string
@@ -1448,6 +1469,39 @@ export type Database = {
           onboarding_completed?: boolean
           profile_completed?: boolean
           user_id?: string
+        }
+        Relationships: []
+      }
+      feedback_entries: {
+        Row: {
+          audience: string
+          comment: string | null
+          context: string
+          created_at: string
+          id: string
+          page_path: string | null
+          rating: number | null
+          user_id: string | null
+        }
+        Insert: {
+          audience?: string
+          comment?: string | null
+          context: string
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          rating?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          audience?: string
+          comment?: string | null
+          context?: string
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          rating?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2310,6 +2364,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      claim_teacher_access: { Args: never; Returns: boolean }
       find_class_by_code: {
         Args: { _code: string }
         Returns: {

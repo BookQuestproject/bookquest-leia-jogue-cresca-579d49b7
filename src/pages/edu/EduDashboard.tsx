@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EduLayout from "./EduLayout";
+import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
+
 import { useClasses } from "@/hooks/useClasses";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -566,7 +568,16 @@ const EduDashboard = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Feedback estratégico do professor */}
+        <FeedbackPrompt
+          context="professor_painel"
+          audience="professor"
+          delay={8000}
+          question="O painel do professor está te ajudando a acompanhar as turmas?"
+        />
       </div>
+
     </EduLayout>
   );
 };
