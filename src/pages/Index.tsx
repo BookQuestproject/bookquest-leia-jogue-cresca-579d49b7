@@ -342,11 +342,9 @@ const Index = () => {
             <BenefitsSection />
           </div>
         )}
-        {(!quizCompleted || isPremium) && (
-          <div className="mb-6 lg:mb-8 animate-fade-in" style={{ animationDelay: "0.25s" }}>
-            <QuizCTA quizCompleted={!!quizCompleted} isPremium={!!isPremium} />
-          </div>
-        )}
+        <div className="mb-6 lg:mb-8 animate-fade-in" style={{ animationDelay: "0.25s" }}>
+          <QuizCTA quizCompleted={!!quizCompleted} isPremium={!!isPremium} />
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* ═══════════ MAIN CONTENT — col-span-2 ═══════════ */}
