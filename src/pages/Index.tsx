@@ -21,6 +21,8 @@ import StreakFlame from "@/components/StreakFlame";
 import { ReadingPlanCard } from "@/components/ReadingPlanWidget";
 import BenefitsSection from "@/components/home/BenefitsSection";
 import QuizCTA from "@/components/home/QuizCTA";
+import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
+
 import {
   Dialog,
   DialogContent,
@@ -345,6 +347,16 @@ const Index = () => {
         <div className="mb-6 lg:mb-8 animate-fade-in" style={{ animationDelay: "0.25s" }}>
           <QuizCTA quizCompleted={!!quizCompleted} isPremium={!!isPremium} />
         </div>
+
+        <div className="mb-6 lg:mb-8">
+          <FeedbackPrompt
+            context="aluno_home"
+            audience="aluno"
+            delay={12000}
+            question="Rapidinho: como está sendo sua experiência de leitura no BookQuest?"
+          />
+        </div>
+
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* ═══════════ MAIN CONTENT — col-span-2 ═══════════ */}

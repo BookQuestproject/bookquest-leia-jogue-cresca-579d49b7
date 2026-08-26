@@ -10,6 +10,8 @@ import logoCrown from "@/assets/logo-crown-transparent.png";
 import { supabase } from "@/integrations/supabase/client";
 import { NotificationBell } from "@/components/NotificationBell";
 import EduBreadcrumb, { BreadcrumbSegment } from "@/components/edu/EduBreadcrumb";
+import FeedbackLauncher from "@/components/feedback/FeedbackLauncher";
+
 
 interface EduLayoutProps {
   children: ReactNode;
@@ -210,7 +212,9 @@ const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
           )}
         </div>
       </main>
+      {!gateLoading && <FeedbackLauncher audience="professor" />}
     </div>
+
   );
 };
 

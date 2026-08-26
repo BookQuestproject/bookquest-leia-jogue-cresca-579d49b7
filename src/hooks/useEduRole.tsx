@@ -20,13 +20,20 @@ export const useEduRole = () => {
         .select('id')
         .eq('user_id', user.id)
         .maybeSingle();
-      if (!error && data) setIsTeacher(true);
+      if (!error && data) {
+        setIsTeacher(true);
+      } else {
+        // Emails na allowlist recebem acesso de professor automaticamente
+        const { data: claimed } = await supabase.rpc('claim_teacher_access' as any);
+        if (claimed === true) setIsTeacher(true);
+      }
     } catch {
       // Not a teacher
     } finally {
       setLoading(false);
     }
   }, [user]);
+
 
   const fetchStudentClasses = useCallback(async () => {
     if (!user) return;
