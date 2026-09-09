@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import AgataTutora from "@/components/nacional/AgataTutora";
+import NacionalTrailMap from "@/components/nacional/NacionalTrailMap";
 import { getWork, categoryMeta, type QuestionCategory } from "@/data/nacional/pagadorDePromessas";
 import { useNacionalProgress } from "@/hooks/useNacionalProgress";
 import { useProfile } from "@/hooks/useProfile";
@@ -129,52 +130,20 @@ const ObraNacional = () => {
           </section>
         )}
 
-        {/* Partes */}
-        <section>
-          <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-3">Trilha da obra</h2>
-          <div className="space-y-2.5">
-            {work.parts.map((part) => {
-              const unlocked = isUnlocked(part.id);
-              const completed = done.includes(part.id);
-              const Wrapper: any = unlocked ? Link : "div";
-              return (
-                <Wrapper
-                  key={part.id}
-                  {...(unlocked ? { to: `/nacional/${work.id}/parte/${part.id}` } : {})}
-                  className={`flex items-center gap-4 rounded-2xl border p-4 transition-colors ${
-                    unlocked ? "border-border bg-card hover:border-accent/40" : "border-border/60 bg-card/50 opacity-70"
-                  }`}
-                >
-                  <div
-                    className={`w-10 h-10 shrink-0 rounded-xl grid place-items-center font-bold ${
-                      completed
-                        ? "bg-accent text-accent-foreground"
-                        : unlocked
-                        ? "bg-muted text-muted-foreground"
-                        : "bg-muted/50 text-muted-foreground"
-                    }`}
-                  >
-                    {completed ? <Check className="w-5 h-5" /> : unlocked ? part.id : <Lock className="w-4 h-4" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] uppercase tracking-widest text-accent font-bold">{part.act}</p>
-                    <p className="font-semibold text-foreground truncate">{part.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">{part.subtitle}</p>
-                  </div>
-                  {unlocked ? (
-                    <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                  ) : (
-                    <Link
-                      to="/premium"
-                      className="text-[11px] font-bold text-accent border border-accent/30 bg-accent/10 px-2.5 py-1 rounded-full shrink-0"
-                    >
-                      Premium
-                    </Link>
-                  )}
-                </Wrapper>
-              );
-            })}
-          </div>
+        {/* Partes — trilha literária */}
+        <section className="rounded-3xl border border-border bg-card p-5 md:p-6 section-bg-challenges">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-2 text-center">
+            Trilha literária da obra
+          </h2>
+          <p className="text-xs text-muted-foreground text-center mb-2">
+            Avance parte por parte — cada etapa desbloqueia a próxima.
+          </p>
+          <NacionalTrailMap
+            workId={work.id}
+            parts={work.parts}
+            completedIds={done}
+            isUnlocked={isUnlocked}
+          />
         </section>
 
         {/* Personagens e temas */}
