@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import AgataTutora from "@/components/nacional/AgataTutora";
+import NacionalTrailMap from "@/components/nacional/NacionalTrailMap";
 import { getWork, categoryMeta, type QuestionCategory } from "@/data/nacional/pagadorDePromessas";
 import { useNacionalProgress } from "@/hooks/useNacionalProgress";
 import { useProfile } from "@/hooks/useProfile";
