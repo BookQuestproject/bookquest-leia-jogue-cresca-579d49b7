@@ -26,6 +26,9 @@ create index if not exists edu_student_moments_user_idx on public.edu_student_mo
 alter table public.edu_reading_sessions enable row level security;
 alter table public.edu_journey_events enable row level security;
 alter table public.edu_student_moments enable row level security;
-create policy if not exists "students own reading sessions" on public.edu_reading_sessions for all using (auth.uid()=user_id) with check (auth.uid()=user_id);
-create policy if not exists "students own journey events" on public.edu_journey_events for all using (auth.uid()=user_id) with check (auth.uid()=user_id);
-create policy if not exists "students own moments" on public.edu_student_moments for all using (auth.uid()=user_id) with check (auth.uid()=user_id);
+drop policy if exists "students own reading sessions" on public.edu_reading_sessions;
+create policy "students own reading sessions" on public.edu_reading_sessions for all using (auth.uid()=user_id) with check (auth.uid()=user_id);
+drop policy if exists "students own journey events" on public.edu_journey_events;
+create policy "students own journey events" on public.edu_journey_events for all using (auth.uid()=user_id) with check (auth.uid()=user_id);
+drop policy if exists "students own moments" on public.edu_student_moments;
+create policy "students own moments" on public.edu_student_moments for all using (auth.uid()=user_id) with check (auth.uid()=user_id);
