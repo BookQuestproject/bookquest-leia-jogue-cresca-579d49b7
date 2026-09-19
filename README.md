@@ -1,73 +1,75 @@
-# Welcome to your Lovable project
+# BookQuest OFICIAL
 
-## Project info
+Crie um site completo chamado BookQuest, em português do Brasil, com interface simples, limpa, intuitiva e moderna, focada em jovens estudantes e leitores. O site deve ser fácil de navegar, visualmente leve e totalmente funcional.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Objetivo do site: aumentar o hábito de leitura por meio de gamificação, trilhas de leitura, ranking, quiz literário e comunidade.
 
-## How can I edit this code?
+Estrutura do site:
 
-There are several ways of editing your application.
+Home
+Explicação curta do que é o BookQuest.
+Botão “Começar agora”.
+Destaque dos benefícios: aumento do hábito de leitura, evolução no ranking e descoberta de livros personalizados.
 
-**Use Lovable**
+Sistema de ranking (obrigatório)
+Níveis: Bronze, Prata, Ouro, Platina, Diamante e Lendário.
+O ranking sobe conforme leituras registradas, quizzes respondidos, participação no Book Club e constância semanal.
+O ranking aparece no perfil do usuário e em uma página “Ranking Geral”.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Comunidade (gratuita)
+Fórum para discutir livros, recomendações entre usuários e grupos por gênero literário.
+A comunidade não é premium.
 
-Changes made via Lovable will be committed automatically to this repo.
+Plano Premium (em reais, R$)
+Valor mensal em reais.
+Benefícios do Premium:
+Trilhas focadas em ENEM, vestibulares e literatura obrigatória escolar.
+Book Club com leituras coletivas mensais e discussão guiada.
+Mentoria literária semanal com rotina personalizada baseada no tempo do usuário.
+Quiz literário avançado.
 
-**Use your preferred IDE**
+Sistema de pagamento
+Pagamento mensal recorrente.
+Após pagamento aprovado, o usuário se torna Premium automaticamente.
+O menu lateral libera: Book Club, Mentoria Literária e Trilhas ENEM/Vestibulares.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Quiz literário (obrigatório)
+7 perguntas com 5 alternativas fechadas cada.
+Perguntas comportamentais e indiretas, sem ser óbvias sobre gêneros.
+Durante o quiz, em dois momentos diferentes, antes da próxima pergunta, mostrar uma curiosidade sobre benefícios da leitura.
+No final, mostrar o gênero literário do usuário e recomendar livros de acordo com esse gênero.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Perfil do usuário
+Ranking atual, histórico de leitura, badges conquistados, gênero literário identificado no quiz e status Free ou Premium.
 
-Follow these steps:
+Design
+Minimalista, cores suaves, layout limpo, ícones simples e interface clara.
+
+Requisitos técnicos
+Todo o site em português.
+Valores apenas em reais.
+Navegação simples, no máximo dois cliques para qualquer função principal.
+Responsivo para celular e computador. Além disso, quero que a interface tenha como referencia essa na imagem
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://bookquest-leia-jogue-cresca.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ffe3bb13-e7a9-43fe-bcb5-c768a8710786).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
