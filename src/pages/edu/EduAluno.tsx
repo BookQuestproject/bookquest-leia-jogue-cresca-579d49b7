@@ -394,7 +394,7 @@ const EduAluno = () => {
                         : "Sem meta diária definida"}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Button onClick={() => setSection("stats")} className="gap-2">
+                      <Button onClick={() => navigate(`/edu/jornada/${selectedClass.id}`)} className="gap-2">
                         <BookOpen className="h-4 w-4" /> Continuar leitura
                       </Button>
                       {totalPages > 0 && (
