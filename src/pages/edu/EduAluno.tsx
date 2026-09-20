@@ -513,218 +513,331 @@ const EduAluno = () => {
             )}
 
             {section === "book" && (
-              <div className="space-y-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                    <BookOpen className="h-6 w-6 text-primary" /> Livro da Turma
-                  </h1>
-                </div>
-                <Card>
-                  <CardContent className="p-6 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6">
-                    <div className="w-40 h-56 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
-                      <BookOpen className="h-14 w-14 text-primary/60" />
-                    </div>
-                    <div className="space-y-3">
-                      <div>
-                        <h2 className="text-2xl font-bold text-foreground">{selectedClass.book_title ?? "Aguardando livro"}</h2>
-                        {selectedClass.author && <p className="text-muted-foreground">{selectedClass.author}</p>}
+              <div className="space-y-6">
+                <section className="rounded-[30px] border border-border bg-card overflow-hidden shadow-sm">
+                  <div
+                    className="h-2"
+                    style={{ background: `linear-gradient(90deg, hsl(${bookTheme || "210 55% 30%"}), hsl(45 82% 48%), hsl(274 72% 58%))` }}
+                  />
+                  <div className="p-6 lg:p-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-7 items-center">
+                      <div
+                        className="w-40 h-56 mx-auto rounded-2xl overflow-hidden shadow-lg flex items-center justify-center text-white"
+                        style={{ backgroundColor: `hsl(${bookTheme || "210 55% 30%"})` }}
+                      >
+                        {bookCoverUrl ? <img src={bookCoverUrl} alt={selectedClass.book_title || "Livro"} className="h-full w-full object-cover" /> : <BookOpen className="h-16 w-16 opacity-80" />}
                       </div>
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div><p className="text-xs text-muted-foreground">Total de páginas</p><p className="font-semibold">{totalPages || "—"}</p></div>
-                        <div><p className="text-xs text-muted-foreground">Sua página</p><p className="font-semibold">{currentPage}</p></div>
-                        <div><p className="text-xs text-muted-foreground">Início</p><p className="font-semibold">{selectedClass.reading_start_date ? new Date(selectedClass.reading_start_date).toLocaleDateString("pt-BR") : "—"}</p></div>
-                        <div><p className="text-xs text-muted-foreground">Prazo</p><p className="font-semibold">{deadline ? deadline.toLocaleDateString("pt-BR") : "—"}</p></div>
+                      <div className="min-w-0">
+                        <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Livro da turma</p>
+                        <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mt-2">{selectedClass.book_title || "Aguardando livro"}</h1>
+                        {selectedClass.author && <p className="text-base text-muted-foreground mt-2">{selectedClass.author}</p>}
+                        <div className="mt-6 flex flex-wrap gap-2">
+                          <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">Página {currentPage}{totalPages ? ` / ${totalPages}` : ""}</span>
+                          <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">{progressPercent}% concluído</span>
+                          {deadline && <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">{daysRemaining} dias restantes</span>}
+                        </div>
+                        <div className="mt-6">
+                          <Progress value={progressPercent} className="h-3" />
+                        </div>
                       </div>
-                      <Progress value={progressPercent} className="h-2" />
-                      <p className="text-xs text-muted-foreground">{progressPercent}% concluído</p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </section>
+
+                <section className="rounded-[30px] border border-border bg-card shadow-sm overflow-hidden">
+                  <div className="p-6 lg:p-8 pb-3 text-center">
+                    <p className="text-xs uppercase tracking-[0.18em] font-bold text-muted-foreground">A mesma trilha do BookQuest</p>
+                    <h2 className="text-2xl font-bold mt-2">Sua história, capítulo por capítulo.</h2>
+                  </div>
+                  <div className="overflow-x-auto px-3 sm:px-8 pb-8">
+                    <div className="min-w-[540px]">
+                      <BookQuestTrailMap
+                        chapters={normalizedChapters as any}
+                        themeColor={bookTheme || "210 55% 30%"}
+                        onChapterClick={(chapter) => setSelectedChapter(chapter.id)}
+                        className="max-w-[540px]"
+                        endLabel="🏁 Fim da trilha"
+                      />
+                    </div>
+                  </div>
+                </section>
               </div>
             )}
 
             {section === "activities" && (
-              <div className="space-y-4">
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <ClipboardList className="h-6 w-6 text-primary" /> Atividades
-                </h1>
+              <div className="space-y-6">
+                <section className="rounded-[30px] border border-border bg-card p-6 lg:p-8 shadow-sm">
+                  <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] font-bold text-primary">Experiências de capítulo</p>
+                      <h1 className="text-3xl sm:text-4xl font-bold mt-2">Explore o que você percebeu.</h1>
+                      <p className="text-sm text-muted-foreground mt-2 max-w-2xl">Suas atividades aparecem como experiências da história — não como uma sequência de perguntas iguais.</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="rounded-2xl bg-primary/5 border border-primary/10 px-4 py-3 text-center">
+                        <p className="text-2xl font-black">{questions.length}</p><p className="text-[10px] uppercase tracking-wider text-muted-foreground">total</p>
+                      </div>
+                      <div className="rounded-2xl bg-accent/5 border border-accent/10 px-4 py-3 text-center">
+                        <p className="text-2xl font-black">{pendingQuestions.length}</p><p className="text-[10px] uppercase tracking-wider text-muted-foreground">abertas</p>
+                      </div>
+                      <div className="rounded-2xl bg-emerald-500/5 border border-emerald-500/10 px-4 py-3 text-center">
+                        <p className="text-2xl font-black">{submittedQuestions.length}</p><p className="text-[10px] uppercase tracking-wider text-muted-foreground">feitas</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
                 {questions.length === 0 ? (
-                  <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">Nenhuma atividade disponível.</CardContent></Card>
+                  <section className="min-h-[420px] rounded-[30px] border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center text-center p-8">
+                    <div className="h-16 w-16 rounded-3xl bg-accent/10 text-accent flex items-center justify-center"><Sparkles className="h-7 w-7" /></div>
+                    <h2 className="text-xl font-bold mt-5">Nenhuma experiência ainda.</h2>
+                    <p className="text-sm text-muted-foreground mt-2 max-w-md">Quando o professor liberar uma experiência de capítulo, ela aparecerá aqui.</p>
+                  </section>
                 ) : (
-                  <>
-                    {pendingQuestions.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-semibold text-foreground mb-2">Pendentes</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {pendingQuestions.map(q => (
-                            <Card key={q.id} className="border-accent/30 hover:border-accent/60 cursor-pointer" onClick={() => setActiveQuestion(q)}>
-                              <CardContent className="p-4 space-y-2">
-                                <div className="flex items-start justify-between gap-2">
-                                  <span className="text-[10px] px-2 py-0.5 rounded-full text-accent border border-accent/40 font-semibold">Pendente</span>
-                                  <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
-                                </div>
-                                <p className="text-sm text-foreground">{q.question_text}</p>
-                                <Button size="sm" variant="outline" className="w-full mt-2"><Send className="h-3.5 w-3.5 mr-1.5" /> Responder</Button>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {submittedQuestions.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-semibold text-foreground mb-2 mt-6">Respondidas</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {submittedQuestions.map(q => {
-                            const myR = responses.find(r => r.question_id === q.id && r.user_id === user?.id);
-                            const reviewed = !!myR?.reviewed_at;
-                            return (
-                              <Card key={q.id} className={reviewed ? "border-success/40" : "border-success/20"}>
-                                <CardContent className="p-4 space-y-2">
-                                  <div className="flex items-start justify-between gap-2">
-                                    <span className="text-[10px] px-2 py-0.5 rounded-full text-success border border-success/40 font-semibold">
-                                      {reviewed ? "Revisada" : "Respondida"}
-                                    </span>
-                                    <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
-                                  </div>
-                                  <p className="text-sm text-foreground font-medium">{q.question_text}</p>
-                                  {myR && <p className="text-xs text-muted-foreground italic line-clamp-3">"{myR.response_text}"</p>}
-                                  {myR?.teacher_feedback && (
-                                    <div className="mt-2 rounded-md border border-primary/30 bg-primary/5 p-2.5">
-                                      <p className="text-[10px] uppercase tracking-wider text-primary font-bold mb-1">Feedback do professor</p>
-                                      <p className="text-xs text-foreground leading-relaxed">{myR.teacher_feedback}</p>
-                                    </div>
-                                  )}
-                                </CardContent>
-                              </Card>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {[...pendingQuestions, ...submittedQuestions].map((q) => {
+                      const done = myResponseIds.has(q.id);
+                      const myR = responses.find((r) => r.question_id === q.id && r.user_id === user?.id);
+                      return (
+                        <button
+                          key={q.id}
+                          type="button"
+                          onClick={() => !done && setActiveQuestion(q)}
+                          className={`group text-left rounded-[26px] border bg-card p-6 transition-all hover:-translate-y-0.5 hover:shadow-lg ${done ? "border-emerald-500/20" : "border-border hover:border-accent/40"}`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${done ? "bg-emerald-500/10 text-emerald-600" : "bg-accent/10 text-accent"}`}>
+                              {done ? (myR?.reviewed_at ? "Revisada" : "Respondida") : "Disponível"}
+                            </span>
+                            <span className="text-xs text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
+                          </div>
+                          <p className="text-lg font-bold leading-snug mt-5">{q.question_text}</p>
+                          {done ? (
+                            <div className="mt-5 rounded-2xl bg-muted/20 p-4">
+                              <p className="text-xs text-muted-foreground italic line-clamp-3">"{myR?.response_text || "Resposta registrada"}"</p>
+                              {myR?.teacher_feedback && <p className="text-xs text-primary font-semibold mt-3">Feedback do professor recebido.</p>}
+                            </div>
+                          ) : (
+                            <div className="mt-6 flex items-center gap-2 text-xs font-bold text-accent">
+                              <Sparkles className="h-4 w-4" /> Abrir experiência
+                              <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             )}
 
             {section === "ranking" && (
-              <div className="space-y-4">
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-accent" /> Ranking da Turma
-                </h1>
-                <Card>
-                  <CardContent className="p-4 space-y-2">
+              <div className="space-y-6">
+                <section className="rounded-[30px] border border-border bg-card p-6 lg:p-8 shadow-sm overflow-hidden relative">
+                  <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-amber-400/10 blur-3xl" />
+                  <div className="relative">
+                    <p className="text-xs uppercase tracking-[0.18em] font-bold text-amber-500">Ranking da turma</p>
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mt-2">
+                      <div>
+                        <h1 className="text-3xl sm:text-4xl font-bold">Seu lugar na jornada.</h1>
+                        <p className="text-sm text-muted-foreground mt-2">Compare o avanço de leitura da turma de forma clara e sem esconder o seu próprio progresso.</p>
+                      </div>
+                      <div className="text-left sm:text-right">
+                        <p className="text-xs text-muted-foreground">Sua posição</p>
+                        <p className="text-5xl font-black text-amber-500">{myRank > 0 ? `#${myRank}` : "—"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {classRanking.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    {[1, 0, 2].map((rankIndex, slot) => {
+                      const person = classRanking[rankIndex];
+                      if (!person) return <div key={slot} className="hidden md:block" />;
+                      const podium = slot === 1 ? "md:-translate-y-3" : "";
+                      const tone = slot === 1 ? "border-amber-400/50 bg-amber-400/5" : slot === 0 ? "border-slate-300/40 bg-muted/20" : "border-orange-300/40 bg-orange-500/5";
+                      return (
+                        <div key={person.user_id} className={`rounded-[28px] border p-6 text-center shadow-sm ${podium} ${tone}`}>
+                          <div className="text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">{rankIndex + 1}º lugar</div>
+                          <Avatar className="h-20 w-20 mx-auto mt-4 border-4 border-background shadow-md">
+                            {person.avatar_url && <AvatarImage src={person.avatar_url} alt={person.name} />}
+                            <AvatarFallback className="text-xl font-bold">{person.name.slice(0,1).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <p className="text-lg font-bold mt-4">{person.name}</p>
+                          <p className="text-sm text-muted-foreground mt-1">{person.pages} páginas</p>
+                          <Progress value={totalPages > 0 ? Math.min(100, (person.pages / totalPages) * 100) : 0} className="h-2 mt-4" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <section className="rounded-[30px] border border-border bg-card shadow-sm overflow-hidden">
+                  <div className="px-6 py-5 border-b border-border flex items-center justify-between">
+                    <div>
+                      <p className="text-xs uppercase tracking-wider font-bold text-muted-foreground">Classificação completa</p>
+                      <p className="text-sm text-muted-foreground mt-1">{classRanking.length} participante{classRanking.length === 1 ? "" : "s"}</p>
+                    </div>
+                    <Trophy className="h-5 w-5 text-amber-500" />
+                  </div>
+                  <div className="divide-y divide-border">
                     {classRanking.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-6">Nenhum aluno começou a leitura ainda.</p>
+                      <div className="p-12 text-center text-sm text-muted-foreground">Ainda não há dados de leitura para mostrar.</div>
                     ) : (
-                      classRanking.map((r, i) => {
-                        const isMe = r.user_id === user?.id;
+                      classRanking.map((person, i) => {
+                        const isMe = person.user_id === user?.id;
                         return (
-                          <div key={r.user_id} className={`flex items-center gap-3 p-3 rounded-lg ${isMe ? "bg-primary/10 border border-primary/30" : "bg-muted/30"}`}>
-                            <span className={`w-8 text-center text-sm font-bold ${i === 0 ? "text-accent" : "text-muted-foreground"}`}>{i + 1}º</span>
-                            <Avatar className="h-9 w-9">
-                              {r.avatar_url && <AvatarImage src={r.avatar_url} alt={r.name} />}
-                              <AvatarFallback>{r.name[0]?.toUpperCase()}</AvatarFallback>
+                          <div key={person.user_id} className={`grid grid-cols-[42px_48px_1fr_auto] items-center gap-3 px-5 py-4 ${isMe ? "bg-primary/[0.05]" : ""}`}>
+                            <span className={`text-center font-black ${i < 3 ? "text-amber-500" : "text-muted-foreground"}`}>{i + 1}</span>
+                            <Avatar className="h-11 w-11">
+                              {person.avatar_url && <AvatarImage src={person.avatar_url} alt={person.name} />}
+                              <AvatarFallback>{person.name.slice(0,1).toUpperCase()}</AvatarFallback>
                             </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">
-                                {r.name} {isMe && <span className="text-[10px] text-primary font-bold">(você)</span>}
-                              </p>
-                              <Progress value={totalPages > 0 ? (r.pages / totalPages) * 100 : 0} className="h-1 mt-1" />
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold truncate">{person.name}</p>
+                                {isMe && <span className="text-[9px] rounded-full bg-primary/10 text-primary px-2 py-0.5 font-bold uppercase">você</span>}
+                              </div>
+                              <Progress value={totalPages > 0 ? Math.min(100, (person.pages / totalPages) * 100) : 0} className="h-1.5 mt-2" />
                             </div>
-                            <span className="text-xs font-mono text-muted-foreground whitespace-nowrap">{r.pages}p</span>
+                            <span className="font-bold text-sm">{person.pages}p</span>
                           </div>
                         );
                       })
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </section>
               </div>
             )}
 
             {section === "announcements" && (
-              <div className="space-y-4">
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <Megaphone className="h-6 w-6 text-accent" /> Avisos
-                </h1>
+              <div className="space-y-6">
+                <section className="rounded-[30px] border border-border bg-card p-6 lg:p-8 shadow-sm">
+                  <p className="text-xs uppercase tracking-[0.18em] font-bold text-accent">Comunicação da turma</p>
+                  <h1 className="text-3xl sm:text-4xl font-bold mt-2">O que está acontecendo?</h1>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-2xl">Recados, combinados e sinais importantes ficam organizados aqui para você voltar quando precisar.</p>
+                </section>
+
                 {announcements.length === 0 ? (
-                  <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">Nenhum aviso publicado.</CardContent></Card>
+                  <section className="min-h-[420px] rounded-[30px] border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center text-center p-8">
+                    <Megaphone className="h-14 w-14 text-muted-foreground/50" />
+                    <h2 className="text-xl font-bold mt-5">Tudo tranquilo por aqui.</h2>
+                    <p className="text-sm text-muted-foreground mt-2">Novos avisos da turma aparecerão nesta linha do tempo.</p>
+                  </section>
                 ) : (
-                  announcements.map(a => (
-                    <Card key={a.id}>
-                      <CardContent className="p-4 space-y-2">
-                        <p className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString("pt-BR")}</p>
-                        <p className="text-sm text-foreground leading-relaxed">{a.content}</p>
-                      </CardContent>
-                    </Card>
-                  ))
+                  <section className="rounded-[30px] border border-border bg-card shadow-sm p-6 lg:p-8">
+                    <div className="relative max-w-3xl mx-auto">
+                      <div className="absolute left-4 top-4 bottom-4 w-px bg-border" />
+                      <div className="space-y-7">
+                        {announcements.map((a, index) => (
+                          <article key={a.id} className="relative flex gap-5">
+                            <div className={`relative z-10 h-8 w-8 rounded-full border-4 border-card flex items-center justify-center shrink-0 ${index === 0 ? "bg-accent" : "bg-muted-foreground/40"}`}>
+                              {index === 0 && <Sparkles className="h-3.5 w-3.5 text-white" />}
+                            </div>
+                            <div className="flex-1 rounded-2xl border border-border bg-muted/15 p-5">
+                              <div className="flex items-center justify-between gap-3">
+                                <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">{new Date(a.created_at).toLocaleString("pt-BR")}</span>
+                                {index === 0 && <span className="text-[10px] rounded-full bg-accent/10 text-accent px-2 py-1 font-bold">Novo</span>}
+                              </div>
+                              <p className="text-base leading-relaxed mt-3">{a.content}</p>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
                 )}
               </div>
             )}
 
             {section === "stats" && (
-              <div className="space-y-4">
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <BarChart3 className="h-6 w-6 text-primary" /> Meu Progresso
-                </h1>
-
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span>Atualize sua página atual</span>
-                      <span className="text-sm font-normal text-muted-foreground">{currentPage}/{totalPages || "?"}</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <Progress value={progressPercent} className="h-3" />
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">{progressPercent}% concluído</span>
-                      {dailyGoal > 0 && <span className="text-accent font-medium">Meta: {dailyGoal} pág/dia</span>}
+              <div className="space-y-6">
+                <section className="rounded-[30px] border border-border bg-card p-6 lg:p-8 shadow-sm overflow-hidden relative">
+                  <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+                  <div className="relative grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] font-bold text-primary">Seu progresso</p>
+                      <h1 className="text-4xl sm:text-5xl font-black tracking-tight mt-2">{progressPercent}%</h1>
+                      <p className="text-lg font-semibold mt-2">{currentPage} de {totalPages || "?"} páginas lidas</p>
+                      <p className="text-sm text-muted-foreground mt-2">{deadline ? `${daysRemaining} dias restantes até o prazo.` : "Continue registrando seu avanço para acompanhar o ritmo."}</p>
+                      <Progress value={progressPercent} className="h-4 mt-6 max-w-xl" />
                     </div>
-                    {deadline && (
-                      <p className="text-xs text-muted-foreground">
-                        Prazo: {deadline.toLocaleDateString("pt-BR")} ({daysRemaining} dias restantes)
-                      </p>
-                    )}
-                    <div className="flex gap-2">
-                      <Input
-                        type="number"
-                        value={updatingPage}
-                        onChange={e => setUpdatingPage(e.target.value)}
-                        placeholder="Página atual"
-                        min={0}
-                        max={totalPages}
-                        className="flex-1"
-                      />
-                      <Button onClick={handleUpdatePage} disabled={!updatingPage}>
-                        <CheckCircle2 className="h-4 w-4 mr-1" /> Atualizar
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-3xl border border-border bg-muted/15 p-5">
+                        <Sparkles className="h-5 w-5 text-accent" />
+                        <p className="text-3xl font-black mt-4">{essencia}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Essência</p>
+                      </div>
+                      <div className="rounded-3xl border border-border bg-muted/15 p-5">
+                        <Flame className="h-5 w-5 text-orange-500" />
+                        <p className="text-3xl font-black mt-4">{streak}</p>
+                        <p className="text-xs text-muted-foreground mt-1">dias de sequência</p>
+                      </div>
+                      <div className="rounded-3xl border border-border bg-muted/15 p-5">
+                        <Trophy className="h-5 w-5 text-amber-500" />
+                        <p className="text-3xl font-black mt-4">{myRank > 0 ? `#${myRank}` : "—"}</p>
+                        <p className="text-xs text-muted-foreground mt-1">na turma</p>
+                      </div>
+                      <div className="rounded-3xl border border-border bg-muted/15 p-5">
+                        <ClipboardList className="h-5 w-5 text-primary" />
+                        <p className="text-3xl font-black mt-4">{submittedQuestions.length}</p>
+                        <p className="text-xs text-muted-foreground mt-1">experiências feitas</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="rounded-[30px] border border-border bg-card p-6 shadow-sm">
+                    <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Meta de hoje</p>
+                    <div className="flex items-end justify-between gap-3 mt-3">
+                      <div>
+                        <p className="text-4xl font-black">{dailyPagesRead}</p>
+                        <p className="text-sm text-muted-foreground mt-1">páginas lidas</p>
+                      </div>
+                      <p className="text-sm font-bold text-accent">{dailyGoal > 0 ? `${dailyGoal} pág.` : "sem meta"}</p>
+                    </div>
+                    <Progress value={dailyGoal > 0 ? Math.min(100, (dailyPagesRead / dailyGoal) * 100) : 0} className="h-3 mt-6" />
+                  </div>
+
+                  <div className="rounded-[30px] border border-border bg-card p-6 shadow-sm">
+                    <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Registrar página</p>
+                    <div className="flex items-center gap-3 mt-4">
+                      <Input type="number" value={updatingPage} onChange={e => setUpdatingPage(e.target.value)} placeholder={String(currentPage)} min={0} max={totalPages} className="h-12 text-lg" />
+                      <Button onClick={handleUpdatePage} disabled={!updatingPage} className="h-12 px-5">
+                        <CheckCircle2 className="h-4 w-4 mr-2" /> Salvar
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                    <p className="text-xs text-muted-foreground mt-3">Use isso quando você estiver lendo fora da sessão guiada.</p>
+                  </div>
+                </section>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <Card><CardContent className="p-4 text-center">
-                    <Sparkles className="h-5 w-5 text-accent mx-auto mb-1" />
-                    <p className="text-xl font-bold">{essencia}</p>
-                    <p className="text-[10px] text-muted-foreground">Essência</p>
-                  </CardContent></Card>
-                  <Card><CardContent className="p-4 text-center">
-                    <Flame className="h-5 w-5 text-destructive mx-auto mb-1" />
-                    <p className="text-xl font-bold">{streak}</p>
-                    <p className="text-[10px] text-muted-foreground">Dias seguidos</p>
-                  </CardContent></Card>
-                  <Card><CardContent className="p-4 text-center">
-                    <Trophy className="h-5 w-5 text-accent mx-auto mb-1" />
-                    <p className="text-xl font-bold">{myRank > 0 ? `#${myRank}` : "—"}</p>
-                    <p className="text-[10px] text-muted-foreground">Posição</p>
-                  </CardContent></Card>
-                  <Card><CardContent className="p-4 text-center">
-                    <Target className="h-5 w-5 text-primary mx-auto mb-1" />
-                    <p className="text-xl font-bold">{submittedQuestions.length}</p>
-                    <p className="text-[10px] text-muted-foreground">Atividades feitas</p>
-                  </CardContent></Card>
-                </div>
+                <section className="rounded-[30px] border border-border bg-card p-6 shadow-sm">
+                  <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Evolução da sequência</p>
+                      <h2 className="text-xl font-bold mt-1">O fogo muda com você.</h2>
+                    </div>
+                    <p className="text-sm font-semibold" style={{ color: stageColor }}>{{streak}} dias</p>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-6">
+                    {[
+                      ["2", "Laranja", "hsl(24 90% 52%)"],
+                      ["5", "Vermelho", "hsl(4 78% 52%)"],
+                      ["10", "Azul", "hsl(198 85% 52%)"],
+                      ["20", "Verde", "hsl(150 62% 44%)"],
+                      ["30", "Roxo", "hsl(274 72% 58%)"],
+                      ["∞", "Continuidade", "hsl(45 82% 48%)"],
+                    ].map(([days, label, color]) => (
+                      <div key={days} className="rounded-2xl border border-border p-4 text-center" style={{ backgroundColor: `${color}08` }}>
+                        <Flame className="h-5 w-5 mx-auto" style={{ color }} />
+                        <p className="text-lg font-black mt-2">{days}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
               </div>
             )}
           </main>
