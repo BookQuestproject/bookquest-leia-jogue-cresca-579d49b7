@@ -105,15 +105,12 @@ const EduEntry = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Deep-link: /edu?join=1 auto-opens the student code dialog (used after auth)
+  // Deep-link used after authentication: open a dedicated student entry route.
   useEffect(() => {
     if (searchParams.get("join") === "1" && user) {
-      setShowStudentCode(true);
-      const next = new URLSearchParams(searchParams);
-      next.delete("join");
-      setSearchParams(next, { replace: true });
+      navigate("/edu/aluno/entrar", { replace: true });
     }
-  }, [user, searchParams, setSearchParams]);
+  }, [user, searchParams, navigate]);
 
   // Open role picker
   const handleAccess = () => {
@@ -143,21 +140,21 @@ const EduEntry = () => {
   const handleStudent = async () => {
     setShowRolePicker(false);
     if (!user) {
-      navigate("/auth?redirect=" + encodeURIComponent("/edu?join=1"));
+      navigate("/auth?redirect=" + encodeURIComponent("/edu/aluno/entrar"));
       return;
     }
     if (user.email?.toLowerCase() === "davimirandamarquesofc@gmail.com") {
       navigate("/edu/aluno");
       return;
     }
-    // If already in a class, go straight to student dashboard
+    // If already in a class, go straight to the student area.
     const { data: membership } = await supabase
       .from("class_members").select("class_id").eq("user_id", user.id).limit(1).maybeSingle();
     if (membership) {
       navigate("/edu/aluno");
       return;
     }
-    setShowStudentCode(true);
+    navigate("/edu/aluno/entrar");
   };
 
   const handleStudentJoin = async () => {
