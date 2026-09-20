@@ -29,6 +29,9 @@ type Props = {
   dailyPagesRead: number;
   dailyGoal: number;
   daysRemaining: number;
+  routineMinutes: number;
+  readingBarrier: string;
+  preferredSupport: string;
   chapters: BookQuestTrailChapter[];
   selectedChapter: number;
   ranking: RankingRow[];
@@ -67,6 +70,9 @@ const EduStudentHome = ({
   dailyPagesRead,
   dailyGoal,
   daysRemaining,
+  routineMinutes,
+  readingBarrier,
+  preferredSupport,
   chapters,
   selectedChapter,
   ranking,
@@ -179,18 +185,37 @@ const EduStudentHome = ({
             <div className="mt-4 rounded-2xl border border-border bg-muted/20 p-4">
               <div className="flex items-center gap-2">
                 {goalProgress >= 100 ? <Check className="h-5 w-5 text-emerald-500" /> : <Sparkles className="h-5 w-5 text-accent" />}
-                <p className="text-sm font-bold">{dailyGoal > 0 ? `Ler ${dailyGoal} páginas` : "Continue sua leitura"}</p>
+                <p className="text-sm font-bold">
+                  {readingBarrier === "time"
+                    ? `Sessão rápida de ${routineMinutes} min`
+                    : readingBarrier === "focus"
+                      ? `Leitura em foco por ${routineMinutes} min`
+                      : readingBarrier === "interest"
+                        ? "Encontre uma descoberta no capítulo"
+                        : readingBarrier === "difficulty"
+                          ? "Encontre uma pista que faça sentido"
+                          : dailyGoal > 0
+                            ? `Ler ${dailyGoal} páginas`
+                            : "Continue sua leitura"}
+                </p>
               </div>
-              <Progress value={goalProgress} className="h-2 mt-3" />
-              <div className="flex justify-between text-[11px] text-muted-foreground mt-2">
-                <span>{dailyPagesRead} pág. feitas</span>
-                <span>{goalProgress}%</span>
-              </div>
+              {dailyGoal > 0 && (
+                <>
+                  <Progress value={goalProgress} className="h-2 mt-3" />
+                  <div className="flex justify-between text-[11px] text-muted-foreground mt-2">
+                    <span>{dailyPagesRead} pág. feitas</span>
+                    <span>{goalProgress}%</span>
+                  </div>
+                </>
+              )}
             </div>
             <div className="mt-3 rounded-2xl border border-border bg-muted/20 p-4">
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Próximo passo</p>
               <p className="text-sm font-semibold mt-1">
-                {currentChapter ? currentChapter.title : "Abra a trilha para continuar."}
+                {preferredSupport === "discoveries" ? "Preste atenção a uma pista ou detalhe." :
+                  preferredSupport === "characters" ? "Observe o que um personagem escolhe ou muda." :
+                  preferredSupport === "competition" ? "Mantenha sua sequência e acompanhe sua posição." :
+                  currentChapter ? currentChapter.title : "Abra a trilha para continuar."}
               </p>
             </div>
           </div>
