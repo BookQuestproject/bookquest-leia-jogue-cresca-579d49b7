@@ -22,6 +22,7 @@ import { useClassQuestions } from "@/hooks/useClassQuestions";
 import { useProfile } from "@/hooks/useProfile";
 import { useUserStats } from "@/hooks/useUserStats";
 import { useToast } from "@/hooks/use-toast";
+import EduStudentHome from "@/components/edu/EduStudentHome";
 
 interface ClassInfo {
   id: string;
@@ -340,171 +341,25 @@ const EduAluno = () => {
         <div className="flex-1 lg:ml-60 min-h-screen pt-14 lg:pt-0 pb-24 lg:pb-6">
           <main className="px-4 lg:px-8 py-6 max-w-6xl mx-auto">
             {section === "dashboard" && (
-              <div className="space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <div>
-                    <h1 className="text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
-                      Olá, {studentName.split(" ")[0]} 👋
-                    </h1>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      <strong className="text-foreground">{selectedClass.name}</strong>
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <MiniStat icon={Sparkles} value={essencia} label="Essência" tone="primary" />
-                    <MiniStat icon={Flame} value={streak} label="Sequência" tone="destructive" />
-                    <MiniStat icon={Trophy} value={myRank > 0 ? `#${myRank}` : "—"} label="Ranking" tone="accent" />
-                    <MiniStat icon={BookOpen} value={`${currentPage}p`} label="Página" tone="primary" />
-                  </div>
-                </div>
-
-                {/* Book card */}
-                <Card className="border-2 border-primary/20 overflow-hidden">
-                  <div className="bg-gradient-to-br from-primary/10 via-card to-accent/5 p-5 lg:p-6 border-b border-border">
-                    <div className="flex items-start gap-4 flex-wrap">
-                      <div className="w-20 h-28 lg:w-24 lg:h-32 rounded-md shadow-md flex-shrink-0 bg-primary/10 flex items-center justify-center">
-                        <BookOpen className="h-8 w-8 text-primary/60" />
-                      </div>
-                      <div className="flex-1 min-w-[200px]">
-                        <p className="text-[10px] uppercase tracking-wider text-primary font-bold">Livro da Turma</p>
-                        <h2 className="text-xl lg:text-2xl font-bold text-foreground mt-1 leading-tight">
-                          {selectedClass.book_title ?? "Aguardando o livro"}
-                        </h2>
-                        {selectedClass.author && <p className="text-sm text-muted-foreground">{selectedClass.author}</p>}
-                        <div className="flex items-center gap-3 mt-3 flex-wrap">
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-semibold">
-                            {progressPercent}% concluído
-                          </span>
-                          {totalPages > 0 && (
-                            <span className="text-xs text-muted-foreground">
-                              Página {currentPage} de {totalPages}
-                            </span>
-                          )}
-                        </div>
-                        <Progress value={progressPercent} className="h-2 mt-3" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-5 lg:p-6 flex flex-wrap items-center justify-between gap-3 border-t border-border">
-                    <div className="text-xs text-muted-foreground">
-                      {dailyGoal > 0
-                        ? <>Meta diária: <strong className="text-accent">{dailyGoal} pág/dia</strong> ({daysRemaining} dias restantes)</>
-                        : "Sem meta diária definida"}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <Button onClick={() => navigate(`/edu/jornada/${selectedClass.id}`)} className="gap-2">
-                        <BookOpen className="h-4 w-4" /> Continuar leitura
-                      </Button>
-                      {totalPages > 0 && (
-                        <Button
-                          variant="outline"
-                          onClick={async () => {
-                            const next = Math.min(totalPages, currentPage + Math.max(1, Math.ceil(totalPages / 20)));
-                            await updateProgress(selectedClass.id, next);
-                            fetchRanking(selectedClass.id);
-                          }}
-                          className="gap-2"
-                        >
-                          <CheckCircle2 className="h-4 w-4" /> Próximo capítulo
-                        </Button>
-                      )}
-                      <Button variant="secondary" onClick={() => setSection("activities")} className="gap-2">
-                        <ClipboardList className="h-4 w-4" /> Atividades {pendingQuestions.length > 0 && <span className="ml-1 text-[10px] bg-accent text-accent-foreground rounded-full px-1.5 py-0.5">{pendingQuestions.length}</span>}
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Info squares */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  <InfoSquare icon={ClipboardList} title="Atividades" value={pendingQuestions.length} subtitle="pendentes" tone="accent" onClick={() => setSection("activities")} />
-                  <InfoSquare icon={Trophy} title="Ranking" value={myRank > 0 ? `#${myRank}` : "—"} subtitle="na turma" tone="accent" onClick={() => setSection("ranking")} />
-                  <InfoSquare icon={Megaphone} title="Avisos" value={announcements.length} subtitle="do professor" tone="primary" onClick={() => setSection("announcements")} />
-                  <InfoSquare icon={Flame} title="Sequência" value={`${streak}d`} subtitle="lendo seguidos" tone="destructive" onClick={() => setSection("stats")} />
-                </div>
-
-                {/* Próximas ações — cada objetivo tem seu próprio espaço, sem concentrar toda a experiência em uma única tela. */}
-                <section className="space-y-3">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-primary font-bold">Sua jornada</p>
-                    <h3 className="text-lg font-bold text-foreground">O que você quer fazer agora?</h3>
-                    <p className="text-sm text-muted-foreground">A Home orienta o próximo passo; cada experiência acontece no seu próprio espaço.</p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <button type="button" onClick={() => navigate('/edu/jornada/' + selectedClass.id)} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><BookOpen className="h-5 w-5" /></div>
-                      <p className="font-semibold text-foreground">Continuar leitura</p>
-                      <p className="text-xs text-muted-foreground mt-1">Voltar ao ponto onde você parou</p>
-                    </button>
-                    <button type="button" onClick={() => setSection("activities")} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-accent/30 hover:shadow-lg">
-                      <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-3 group-hover:bg-accent group-hover:text-accent-foreground transition-colors"><ClipboardList className="h-5 w-5" /></div>
-                      <p className="font-semibold text-foreground">Resolver atividades</p>
-                      <p className="text-xs text-muted-foreground mt-1">Veja o que precisa ser feito</p>
-                    </button>
-                    <button type="button" onClick={() => setSection("stats")} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><Trophy className="h-5 w-5" /></div>
-                      <p className="font-semibold text-foreground">Ver evolução</p>
-                      <p className="text-xs text-muted-foreground mt-1">Acompanhe seu progresso</p>
-                    </button>
-                    <button type="button" onClick={() => setSection("announcements")} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><Megaphone className="h-5 w-5" /></div>
-                      <p className="font-semibold text-foreground">Avisos da turma</p>
-                      <p className="text-xs text-muted-foreground mt-1">Veja as novidades do professor</p>
-                    </button>
-                  </div>
-                </section>
-
-                {/* Pending activities */}
-                <div>
-                  <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-3">
-                    <ClipboardList className="h-4 w-4 text-primary" />
-                    Atividades pendentes
-                  </h3>
-                  {pendingQuestions.length === 0 ? (
-                    <Card><CardContent className="py-6 text-center text-sm text-muted-foreground">Nenhuma atividade pendente.</CardContent></Card>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {pendingQuestions.slice(0, 4).map(q => (
-                        <Card key={q.id} className="border-accent/30 hover:border-accent/60 transition-colors cursor-pointer" onClick={() => setActiveQuestion(q)}>
-                          <CardContent className="p-4 space-y-2">
-                            <div className="flex items-start justify-between gap-2">
-                              <span className="text-[10px] px-2 py-0.5 rounded-full text-accent border border-accent/40 font-semibold">Pendente</span>
-                              <span className="text-[10px] text-muted-foreground">Cap. {q.chapter_number ?? "—"}</span>
-                            </div>
-                            <p className="text-sm text-foreground line-clamp-3">{q.question_text}</p>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Announcements preview */}
-                <div>
-                  <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-3">
-                    <Megaphone className="h-4 w-4 text-primary" />
-                    Avisos do professor
-                  </h3>
-                  {announcements.length === 0 ? (
-                    <Card><CardContent className="py-6 text-center text-sm text-muted-foreground">Nenhum aviso ainda.</CardContent></Card>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {announcements.slice(0, 2).map(a => (
-                        <Card key={a.id}>
-                          <CardContent className="p-4 space-y-2">
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(a.created_at).toLocaleString("pt-BR")}
-                            </p>
-                            <p className="text-sm text-foreground leading-relaxed line-clamp-3">{a.content}</p>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <EduStudentHome
+                studentName={studentName}
+                className={selectedClass.name}
+                bookTitle={selectedClass.book_title}
+                author={selectedClass.author}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                progressPercent={progressPercent}
+                pendingActivities={pendingQuestions.length}
+                essencia={essencia}
+                streak={streak}
+                rank={myRank}
+                daysRemaining={daysRemaining}
+                dailyGoal={dailyGoal}
+                onContinueReading={() => navigate(`/edu/jornada/${selectedClass.id}`)}
+                onActivities={() => setSection("activities")}
+                onStats={() => setSection("stats")}
+                onAnnouncements={() => setSection("announcements")}
+              />
             )}
 
             {section === "book" && (
