@@ -1,6 +1,6 @@
 import {
   Award, BarChart3, BookOpen, Check, ChevronRight, ClipboardList, Flame,
-  Lock, Megaphone, PanelRightClose, PanelRightOpen, Sparkles, Target, Trophy,
+  Lock, Megaphone, Sparkles, Target, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -53,8 +53,6 @@ type Props = {
   onActivities: () => void;
   onStats: () => void;
   onAnnouncements: () => void;
-  sidebarExpanded: boolean;
-  onToggleSidebar: () => void;
 };
 
 const BOOK_PALETTE = [
