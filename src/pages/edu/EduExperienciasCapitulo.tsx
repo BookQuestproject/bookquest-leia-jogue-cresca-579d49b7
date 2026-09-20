@@ -266,6 +266,7 @@ const EduExperienciasCapitulo = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [activeFeedback, setActiveFeedback] = useState<string | null>(null);
   const [storyCounts, setStoryCounts] = useState({ interpretation: 0, characters: 0, discoveries: 0, opinions: 0, predictions: 0, words: 0 });
 
   useEffect(() => {
@@ -332,12 +333,12 @@ const EduExperienciasCapitulo = () => {
 
         setResponses(stored);
         setStoryCounts({
-          interpretation: stored.length,
-          characters: stored.filter((r) => experiences.find((e) => e.id === r.experience_id)?.area === "character").length,
-          discoveries: stored.filter((r) => ["discovery", "prediction"].includes(experiences.find((e) => e.id === r.experience_id)?.area || "")).length,
-          opinions: stored.filter((r) => ["connection", "voice"].includes(experiences.find((e) => e.id === r.experience_id)?.area || "")).length,
-          predictions: stored.filter((r) => experiences.find((e) => e.id === r.experience_id)?.experience_type === "prediction").length,
-          words: stored.filter((r) => experiences.find((e) => e.id === r.experience_id)?.experience_type === "vocabulary").length,
+          interpretation: stored.filter((r) => loaded.find((e) => e.id === r.experience_id)?.area === "interpretation").length,
+          characters: stored.filter((r) => loaded.find((e) => e.id === r.experience_id)?.area === "character").length,
+          discoveries: stored.filter((r) => ["discovery", "prediction"].includes(loaded.find((e) => e.id === r.experience_id)?.area || "")).length,
+          opinions: stored.filter((r) => ["connection", "voice"].includes(loaded.find((e) => e.id === r.experience_id)?.area || "")).length,
+          predictions: stored.filter((r) => loaded.find((e) => e.id === r.experience_id)?.experience_type === "prediction").length,
+          words: stored.filter((r) => loaded.find((e) => e.id === r.experience_id)?.experience_type === "vocabulary").length,
         });
       }
 
@@ -348,8 +349,19 @@ const EduExperienciasCapitulo = () => {
   useEffect(() => {
     if (!experiences.length) return;
     const firstPending = experiences.findIndex((e) => !responses.some((r) => r.experience_id === e.id));
-    setStep(firstPending >= 0 ? firstPending : experiences.length);
+    if (firstPending >= 0) setStep(firstPending);
+    else setFinished(true);
   }, [experiences, responses]);
+
+  useEffect(() => {
+    if (!current || answers[current.id] !== undefined) return;
+    if (["order", "chronology"].includes(current.experience_type)) {
+      setAnswers((prev) => ({ ...prev, [current.id]: [...(current.payload.items || current.payload.options || [])] }));
+    }
+    if (["scale", "slider"].includes(current.experience_type)) {
+      setAnswers((prev) => ({ ...prev, [current.id]: Number(current.payload.min ?? 1) }));
+    }
+  }, [current?.id]);
 
   const current = experiences[step];
   const area = current ? (AREA_LABELS[current.area] || AREA_LABELS[fallbackArea(current.experience_type)]) : AREA_LABELS.interpretation;
@@ -394,12 +406,19 @@ const EduExperienciasCapitulo = () => {
 
     let ok = true;
     if (current.isLegacy) {
-      const { error } = await supabase.from("class_question_responses").upsert({
-        question_id: current.legacyQuestionId,
-        user_id: user.id,
-        response_text: String(value),
-      }, { onConflict: "question_id,user_id" } as any);
-      ok = !error;
+      const { data: existing } = await supabase.from("class_question_responses")
+        .select("id")
+        .eq("question_id", current.legacyQuestionId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const legacyWrite = existing?.id
+        ? await supabase.from("class_question_responses").update({ response_text: String(value) }).eq("id", existing.id)
+        : await supabase.from("class_question_responses").insert({
+            question_id: current.legacyQuestionId,
+            user_id: user.id,
+            response_text: String(value),
+          });
+      ok = !legacyWrite.error;
     } else {
       const { error } = await supabase.from("edu_chapter_experience_responses" as any).upsert({
         experience_id: current.id,
@@ -438,19 +457,21 @@ const EduExperienciasCapitulo = () => {
       ...prev.filter((r) => r.experience_id !== current.id),
       { experience_id: current.id, response: value, is_correct: isCorrect, feedback },
     ]);
+    setStoryCounts((prev) => ({
+      ...prev,
+      interpretation: prev.interpretation + (current.area === "interpretation" ? 1 : 0),
+      characters: prev.characters + (current.area === "character" ? 1 : 0),
+      discoveries: prev.discoveries + (["discovery", "prediction"].includes(current.area) ? 1 : 0),
+      opinions: prev.opinions + (["connection", "voice"].includes(current.area) ? 1 : 0),
+      predictions: prev.predictions + (current.experience_type === "prediction" ? 1 : 0),
+      words: prev.words + (current.experience_type === "vocabulary" ? 1 : 0),
+    }));
+    setActiveFeedback(feedback);
     setSaving(false);
-
-    window.setTimeout(() => {
-      if (step + 1 < experiences.length) {
-        setStep(step + 1);
-      } else {
-        setFinished(true);
-      }
-    }, 250);
   };
 
   const completeChapter = async () => {
-    if (!classId || !user) return;
+    if (!classId || !user) return false;
     const reflectionCount = responses.length;
     const { error } = await supabase.from("edu_chapter_completions" as any).upsert({
       user_id: user.id,
@@ -462,7 +483,7 @@ const EduExperienciasCapitulo = () => {
     }, { onConflict: "user_id,class_id,chapter_number" });
     if (error) {
       toast.error("Não consegui concluir o capítulo.");
-      return;
+      return false;
     }
     await supabase.from("edu_journey_events" as any).insert({
       event_id: crypto.randomUUID(),
@@ -473,6 +494,7 @@ const EduExperienciasCapitulo = () => {
       payload: { reflection_count: reflectionCount },
     });
     toast.success("Capítulo concluído. Sua jornada avançou.");
+    return true;
   };
 
   const nextChapter = () => {
@@ -548,7 +570,7 @@ const EduExperienciasCapitulo = () => {
 
             <div className="flex flex-col sm:flex-row gap-2 mt-8">
               <Button variant="outline" onClick={() => navigate(`/edu/jornada/${classId}`)} className="sm:flex-1">Voltar à leitura</Button>
-              <Button onClick={async () => { await completeChapter(); nextChapter(); }} className="sm:flex-[1.25] gap-2">
+              <Button onClick={async () => { const done = await completeChapter(); if (done) nextChapter(); }} className="sm:flex-[1.25] gap-2">
                 Continuar jornada <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -602,6 +624,15 @@ const EduExperienciasCapitulo = () => {
               />
             </div>
 
+            {activeFeedback && (
+              <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-emerald-500 mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold">O que sua resposta mostra</p>
+                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{activeFeedback}</p>
+                </div>
+              </div>
+            )}
             {responses.some((r) => r.experience_id === current.id) && (
               <div className="mt-5 rounded-2xl bg-muted/30 border border-border p-4 flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-emerald-500 mt-0.5" />
@@ -616,8 +647,20 @@ const EduExperienciasCapitulo = () => {
               <Button variant="ghost" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0} className="gap-2">
                 <ArrowLeft className="h-4 w-4" /> Anterior
               </Button>
-              <Button onClick={saveCurrent} disabled={!canAnswer || saving} className="gap-2 min-w-[150px]">
-                {saving ? "Salvando…" : step + 1 === experiences.length ? "Explorar resultado" : "Continuar"}
+              <Button
+                onClick={async () => {
+                  if (responses.some((r) => r.experience_id === current.id)) {
+                    setActiveFeedback(null);
+                    if (step + 1 < experiences.length) setStep(step + 1);
+                    else setFinished(true);
+                    return;
+                  }
+                  await saveCurrent();
+                }}
+                disabled={(!canAnswer && !responses.some((r) => r.experience_id === current.id)) || saving}
+                className="gap-2 min-w-[150px]"
+              >
+                {saving ? "Salvando…" : activeFeedback ? (step + 1 === experiences.length ? "Ver resultado" : "Continuar") : "Responder"}
                 {!saving && <ArrowRight className="h-4 w-4" />}
               </Button>
             </div>
