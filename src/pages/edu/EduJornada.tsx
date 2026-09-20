@@ -14,7 +14,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 // Metodologia pedagógica interna: usada para organizar eventos e acompanhamento, sem aparecer como nomenclatura da interface.
-const LEARNING_METHOD = { observe: "ler", engage: "engajar", interpret: "interpretar", advance: "avançar" } as const;\n\nconst MOMENTS = [
+const LEARNING_METHOD = { observe: "ler", engage: "engajar", interpret: "interpretar", advance: "avançar" } as const;
+
+const MOMENTS = [
   ["discovery", "🔎", "Descoberta"], ["character", "🎭", "Personagem"],
   ["reaction", "💭", "Minha reação"], ["important", "❗", "Parte importante"],
   ["question", "❓", "Não entendi"], ["liked", "❤️", "Gostei muito"],
@@ -100,7 +102,7 @@ const EduJornada = () => {
       started_page: page, target_minutes: target, chapter_number: null,
     }).select("id").single();
     if (error) { toast.error("Não foi possível iniciar a sessão."); return; }
-    setSessionId(data.id); setStartedPage(page); setElapsed(0); setRunning(true);
+    setSessionId((data as any)?.id ?? null); setStartedPage(page); setElapsed(0); setRunning(true);
     await emit("reading_session_started", { target_minutes: target, stage: LEARNING_METHOD.observe });
   };
 
