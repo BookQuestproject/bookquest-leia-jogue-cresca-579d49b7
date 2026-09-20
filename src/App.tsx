@@ -45,7 +45,6 @@ import AdminFounderPreview from "./pages/AdminFounderPreview";
 import AuthCallback from "./pages/AuthCallback";
 import EduEntry from "./pages/edu/EduEntry";
 import EduProfessor from "./pages/edu/EduProfessor";
-import EduProfessorEntry from "./pages/edu/EduProfessorEntry";
 import Desafios from "./pages/Desafios";
 import EduTurmas from "./pages/edu/EduTurmas";
 import EduTurmaDetail from "./pages/edu/EduTurmaDetail";
