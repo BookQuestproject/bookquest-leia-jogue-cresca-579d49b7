@@ -212,18 +212,17 @@ const EduJornada = () => {
     const { data, error } = await supabase.from("edu_reading_sessions" as any).insert({
       user_id: user.id,
       class_id: currentClass.id,
-      book_id: currentClass.book_id,
+      book_id: currentClass.book_id || null,
       started_page: startPageValue,
       target_minutes: target,
       chapter_number: chapterInfo.chapterNumber,
     }).select("id").single();
 
-    if (error) {
-      toast.error("Não foi possível iniciar a sessão.");
-      return;
-    }
-
     const id = (data as any)?.id ?? null;
+    if (error) {
+      console.warn("EDU session could not be persisted; keeping reading usable:", error.message);
+      toast.warning("Leitura iniciada. O registro da sessão será retomado quando houver conexão.");
+    }
     setSessionId(id);
     setStartedPage(startPageValue);
     setElapsed(0);
@@ -233,6 +232,7 @@ const EduJornada = () => {
       target_minutes: target,
       stage: LEARNING_METHOD.observe,
       chapter_number: chapterInfo.chapterNumber,
+      session_persisted: Boolean(id),
     }, id);
   };
 
