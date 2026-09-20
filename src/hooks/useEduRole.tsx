@@ -11,10 +11,15 @@ export const useEduRole = () => {
   const [isTeacher, setIsTeacher] = useState(false);
   const [loading, setLoading] = useState(true);
   const [studentClasses, setStudentClasses] = useState<any[]>([]);
+  const OWNER_EMAIL = "davimirandamarquesofc@gmail.com";
 
   const checkTeacherStatus = useCallback(async () => {
     if (!user) { setLoading(false); return; }
     try {
+      if (user.email?.toLowerCase() === OWNER_EMAIL) {
+        setIsTeacher(true);
+        return;
+      }
       const { data, error } = await supabase
         .from('edu_teachers' as any)
         .select('id')
