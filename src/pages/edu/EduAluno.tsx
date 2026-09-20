@@ -242,7 +242,7 @@ const EduAluno = () => {
     if (!chapter || chapter.status === "locked") return;
 
     if (selectedClass.book_id) {
-      navigate(`/ler/${selectedClass.book_id}/${chapterNumber}`);
+      navigate(`/ler/${selectedClass.book_id}/${chapterNumber}?edu=1`);
       return;
     }
 
