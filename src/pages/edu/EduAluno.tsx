@@ -25,7 +25,6 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { useToast } from "@/hooks/use-toast";
 import EduStudentHome from "@/components/edu/EduStudentHome";
 import { bookTrails } from "@/pages/Trilhas";
-import { useEnrichedChapters } from "@/hooks/useEnrichedChapters";
 
 interface ClassInfo {
   id: string;
@@ -102,8 +101,6 @@ const EduAluno = () => {
   const { profile } = useProfile();
   const { essencia, streak } = useUserStats();
   const { toast } = useToast();
-  const { getEnrichment } = useEnrichedChapters();
-
   const [section, setSection] = useState<Section>("dashboard");
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
@@ -142,7 +139,7 @@ const EduAluno = () => {
       const [{ data: link }, { data: enrichment }, { data: challenge }] = await Promise.all([
         supabase.from("edu_journey_classes" as any).select("journey_id").eq("class_id", selectedClass.id).limit(1).maybeSingle(),
         selectedClass.book_id
-          ? supabase.from("book_trail_enrichments" as any).select("cover_url,theme_color").eq("book_id", selectedClass.book_id).maybeSingle()
+          ? supabase.from("book_trail_enrichments" as any).select("cover_url,theme_color,chapters").eq("book_id", selectedClass.book_id).maybeSingle()
           : Promise.resolve({ data: null }),
         supabase.from("edu_class_challenges" as any).select("title,description,goal_value,challenge_type").eq("class_id", selectedClass.id).eq("is_active", true).order("end_date", { ascending: true }).limit(1).maybeSingle(),
       ]);
@@ -154,11 +151,18 @@ const EduAluno = () => {
       const normalTrail = selectedClass.book_id
         ? bookTrails.find((trail) => trail.id === selectedClass.book_id)
         : undefined;
-      const normalEnrichment = selectedClass.book_id ? getEnrichment(selectedClass.book_id) : undefined;
-      const sharedTrailChapters = normalEnrichment?.chapters?.length
-        ? normalEnrichment.chapters.map((chapter: any) => ({
-            number: chapter.id,
-            title: chapter.title || `Capítulo ${chapter.id}`,
+      let enrichedChapters: any[] = [];
+      try {
+        const raw = typeof (enrichment as any)?.chapters === "string"
+          ? JSON.parse((enrichment as any).chapters)
+          : (enrichment as any)?.chapters;
+        enrichedChapters = Array.isArray(raw) ? raw : [];
+      } catch {}
+
+      const sharedTrailChapters = enrichedChapters.length
+        ? enrichedChapters.map((chapter: any, index: number) => ({
+            number: chapter.id || index + 1,
+            title: chapter.title || `Capítulo ${index + 1}`,
             icon: chapter.icon || "📖",
           }))
         : normalTrail?.chapters?.map((chapter: any) => ({
@@ -167,8 +171,8 @@ const EduAluno = () => {
             icon: chapter.icon || "📖",
           })) || [];
 
-      setBookTheme((enrichment as any)?.theme_color || normalEnrichment?.theme_color || normalTrail?.themeColor || undefined);
-      setBookCoverUrl((enrichment as any)?.cover_url || normalEnrichment?.cover_url || normalTrail?.coverImage || null);
+      setBookTheme((enrichment as any)?.theme_color || normalTrail?.themeColor || undefined);
+      setBookCoverUrl((enrichment as any)?.cover_url || normalTrail?.coverImage || null);
 
       const journeyId = (link as any)?.journey_id;
       if (journeyId) {
@@ -216,7 +220,7 @@ const EduAluno = () => {
         };
       }));
     })();
-  }, [selectedClass?.id, user?.id, totalPages, getEnrichment]);
+  }, [selectedClass?.id, user?.id, totalPages]);
 
   const fetchRanking = async (classId: string) => {
     const { data: members } = await supabase.from("class_members").select("user_id").eq("class_id", classId);
@@ -489,8 +493,6 @@ const EduAluno = () => {
                   setSelectedChapter(chapterNumber);
                 }}
                 onStartChapter={handleStartChapter}
-                sidebarExpanded={sidebarExpanded}
-                onToggleSidebar={() => setSidebarExpanded((value) => !value)}
                 onActivities={() => setSection("activities")}
                 onStats={() => setSection("stats")}
                 onAnnouncements={() => setSection("announcements")}
