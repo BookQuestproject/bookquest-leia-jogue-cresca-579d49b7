@@ -85,7 +85,7 @@ const generateChapters = (totalPages: number, chaptersCount?: number): Chapter[]
 
 // Expand a curated chapter list to match totalChapters by appending placeholders.
 // Preserves all curated chapters (titles, questions, status) and only adds the missing ones.
-const expandChapters = (chapters: Chapter[], totalChapters: number, defaultPagesPerChapter = 18): Chapter[] => {
+export const expandChapters = (chapters: Chapter[], totalChapters: number, defaultPagesPerChapter = 18): Chapter[] => {
   if (!totalChapters || chapters.length >= totalChapters) return chapters;
   const filled: Chapter[] = [...chapters];
   for (let i = chapters.length; i < totalChapters; i++) {
