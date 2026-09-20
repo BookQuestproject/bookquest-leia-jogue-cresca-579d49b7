@@ -425,6 +425,37 @@ const EduAluno = () => {
                   <InfoSquare icon={Flame} title="Sequência" value={`${streak}d`} subtitle="lendo seguidos" tone="destructive" onClick={() => setSection("stats")} />
                 </div>
 
+                {/* Próximas ações — cada objetivo tem seu próprio espaço, sem concentrar toda a experiência em uma única tela. */}
+                <section className="space-y-3">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-primary font-bold">Sua jornada</p>
+                    <h3 className="text-lg font-bold text-foreground">O que você quer fazer agora?</h3>
+                    <p className="text-sm text-muted-foreground">A Home orienta o próximo passo; cada experiência acontece no seu próprio espaço.</p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <button type="button" onClick={() => navigate('/edu/jornada/' + selectedClass.id)} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><BookOpen className="h-5 w-5" /></div>
+                      <p className="font-semibold text-foreground">Continuar leitura</p>
+                      <p className="text-xs text-muted-foreground mt-1">Voltar ao ponto onde você parou</p>
+                    </button>
+                    <button type="button" onClick={() => setSection("activities")} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-accent/30 hover:shadow-lg">
+                      <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-3 group-hover:bg-accent group-hover:text-accent-foreground transition-colors"><ClipboardList className="h-5 w-5" /></div>
+                      <p className="font-semibold text-foreground">Resolver atividades</p>
+                      <p className="text-xs text-muted-foreground mt-1">Veja o que precisa ser feito</p>
+                    </button>
+                    <button type="button" onClick={() => setSection("stats")} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><Trophy className="h-5 w-5" /></div>
+                      <p className="font-semibold text-foreground">Ver evolução</p>
+                      <p className="text-xs text-muted-foreground mt-1">Acompanhe seu progresso</p>
+                    </button>
+                    <button type="button" onClick={() => setSection("announcements")} className="group rounded-2xl border border-border bg-card p-4 text-left transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><Megaphone className="h-5 w-5" /></div>
+                      <p className="font-semibold text-foreground">Avisos da turma</p>
+                      <p className="text-xs text-muted-foreground mt-1">Veja as novidades do professor</p>
+                    </button>
+                  </div>
+                </section>
+
                 {/* Pending activities */}
                 <div>
                   <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-3">
