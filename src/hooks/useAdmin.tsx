@@ -6,6 +6,7 @@
    const { user } = useAuth();
    const [isAdmin, setIsAdmin] = useState(false);
    const [loading, setLoading] = useState(true);
+   const OWNER_EMAIL = "davimirandamarquesofc@gmail.com";
  
    useEffect(() => {
      const checkAdminRole = async () => {
@@ -16,6 +17,11 @@
        }
  
        try {
+         if (user.email?.toLowerCase() === OWNER_EMAIL) {
+           setIsAdmin(true);
+           setLoading(false);
+           return;
+         }
          const { data, error } = await supabase
            .from("user_roles")
            .select("role")
