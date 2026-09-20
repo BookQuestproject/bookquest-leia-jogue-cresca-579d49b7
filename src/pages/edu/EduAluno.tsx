@@ -490,7 +490,7 @@ const EduAluno = () => {
         </div>
 
         {/* Content */}
-        <div className={`flex-1 min-h-screen transition-[margin] duration-200 ${sidebarExpanded ? "lg:ml-[220px]" : "lg:ml-[76px]"}` pt-14 lg:pt-0 pb-24 lg:pb-6">
+        <div className={`flex-1 min-h-screen pt-14 lg:pt-0 pb-24 lg:pb-6 transition-[margin] duration-200 ${sidebarExpanded ? "lg:ml-[220px]" : "lg:ml-[76px]"}`}>
           <main className="px-4 lg:px-8 py-6 max-w-6xl mx-auto">
             {section === "dashboard" && (
               <EduStudentHome
