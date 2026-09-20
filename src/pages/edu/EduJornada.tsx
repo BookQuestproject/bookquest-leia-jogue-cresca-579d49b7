@@ -13,7 +13,8 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-// Metodologia pedagógica interna: usada para organizar eventos e acompanhamento, sem aparecer como nomenclatura da interface.\nconst LEARNING_METHOD = { observe: "ler", engage: "engajar", interpret: "interpretar", advance: "avançar" } as const;\n\nconst MOMENTS = [
+// Metodologia pedagógica interna: usada para organizar eventos e acompanhamento, sem aparecer como nomenclatura da interface.
+const LEARNING_METHOD = { observe: "ler", engage: "engajar", interpret: "interpretar", advance: "avançar" } as const;\n\nconst MOMENTS = [
   ["discovery", "🔎", "Descoberta"], ["character", "🎭", "Personagem"],
   ["reaction", "💭", "Minha reação"], ["important", "❗", "Parte importante"],
   ["question", "❓", "Não entendi"], ["liked", "❤️", "Gostei muito"],
