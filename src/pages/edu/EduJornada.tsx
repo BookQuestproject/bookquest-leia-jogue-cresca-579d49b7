@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft, BookOpen, CheckCircle2, ChevronDown, Flag, Heart, HelpCircle,
   Lightbulb, MessageCircle, Pause, Play, Sparkles, Users,
@@ -48,6 +48,7 @@ const formatTime = (seconds: number) =>
 const EduJornada = () => {
   const { classId } = useParams<{ classId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const { studentClasses } = useEduRole();
 
@@ -83,7 +84,7 @@ const EduJornada = () => {
     if (!currentClass || !user) return;
     (async () => {
       setLoadingContext(true);
-      const [{ data: progressRow }, { data: link }] = await Promise.all([
+      const [{ data: progressRow }, { data: link }, { data: preferences }] = await Promise.all([
         supabase
           .from("class_reading_progress")
           .select("current_page")
@@ -96,13 +97,19 @@ const EduJornada = () => {
           .eq("class_id", currentClass.id)
           .limit(1)
           .maybeSingle(),
+        supabase
+          .from("edu_student_preferences" as any)
+          .select("routine_minutes")
+          .eq("user_id", user.id)
+          .maybeSingle(),
       ]);
 
       const saved = Number((progressRow as any)?.current_page || 0);
-      setPage(saved);
-      setPageDraft(String(saved));
+      const routineMinutes = Math.max(5, Math.min(90, Number((preferences as any)?.routine_minutes || 20)));
+      setTarget(routineMinutes);
 
       const journeyId = (link as any)?.journey_id ?? null;
+      const requestedChapter = Math.max(1, Number(searchParams.get("chapter") || 1));
       let title = `Capítulo 1`;
       let chapterNumber = 1;
       let startPage = 1;
@@ -119,28 +126,41 @@ const EduJornada = () => {
         ]);
 
         const chapterRows = (chapters as any[]) || [];
-        const exact = chapterRows.find((x) => saved >= x.start_page && saved <= x.end_page);
+        const requested = chapterRows.find((x) => x.chapter_number === requestedChapter);
+        const exact = requested || chapterRows.find((x) => saved >= x.start_page && saved <= x.end_page);
         if (exact) {
           chapterNumber = exact.chapter_number;
           title = exact.title || `Capítulo ${chapterNumber}`;
           startPage = exact.start_page;
           endPage = exact.end_page;
+          const nextPage = saved >= startPage && saved <= endPage ? saved : (requested ? startPage : saved);
+          setPage(nextPage);
+          setPageDraft(String(nextPage));
         } else {
           const totalChapters = Math.max(1, Number((journey as any)?.total_chapters || chapterRows.length || 1));
           const size = totalPages ? Math.ceil(totalPages / totalChapters) : 1;
-          chapterNumber = Math.min(totalChapters, Math.max(1, saved > 0 ? Math.ceil(saved / size) : 1));
+          chapterNumber = Math.min(totalChapters, Math.max(1, requestedChapter || (saved > 0 ? Math.ceil(saved / size) : 1)));
           startPage = (chapterNumber - 1) * size + 1;
           endPage = totalPages ? Math.min(totalPages, chapterNumber * size) : chapterNumber * size;
           title = `Capítulo ${chapterNumber}`;
+          const nextPage = saved >= startPage && saved <= endPage ? saved : startPage;
+          setPage(nextPage);
+          setPageDraft(String(nextPage));
         }
       } else if (totalPages) {
         endPage = totalPages;
+        chapterNumber = requestedChapter;
+        const size = totalPages ? Math.ceil(totalPages / Math.max(requestedChapter, 1)) : 1;
+        startPage = Math.max(1, (requestedChapter - 1) * size + 1);
+        const nextPage = saved > 0 ? saved : startPage;
+        setPage(nextPage);
+        setPageDraft(String(nextPage));
       }
 
       setChapterInfo({ journeyId, chapterNumber, title, startPage, endPage });
       setLoadingContext(false);
     })();
-  }, [currentClass?.id, user?.id, totalPages]);
+  }, [currentClass?.id, user?.id, totalPages, searchParams]);
 
   useEffect(() => {
     if (!running) return;
