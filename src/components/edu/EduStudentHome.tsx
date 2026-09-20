@@ -1,6 +1,6 @@
 import {
   Award, BarChart3, BookOpen, Check, ChevronRight, ClipboardList, Flame,
-  Flag, Lock, Megaphone, Sparkles, Target, Trophy, Users,
+  Lock, Megaphone, Sparkles, Target, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -49,24 +49,25 @@ type Props = {
     challenge_type: string;
   } | null;
   onSelectChapter: (chapterNumber: number) => void;
-  onContinueReading: () => void;
+  onStartChapter: (chapterNumber: number) => void;
   onActivities: () => void;
   onStats: () => void;
   onAnnouncements: () => void;
 };
 
-const colorForGenre = (value: string | null) => {
-  if (!value) return "210 48% 42%";
-  const normalized = value.toLowerCase();
-  if (normalized.includes("fantasia")) return "265 48% 42%";
-  if (normalized.includes("mistério")) return "350 42% 38%";
-  if (normalized.includes("romance")) return "335 48% 45%";
-  if (normalized.includes("aventura")) return "24 58% 40%";
-  if (normalized.includes("não-ficção")) return "180 40% 36%";
-  return "210 48% 42%";
+const colorForTheme = (theme: string | undefined, index: number) => {
+  if (theme) return `hsl(${theme})`;
+  const palette = [
+    "hsl(45 82% 46%)",
+    "hsl(265 58% 52%)",
+    "hsl(158 48% 40%)",
+    "hsl(345 58% 52%)",
+    "hsl(197 70% 45%)",
+    "hsl(24 72% 48%)",
+    "hsl(183 52% 38%)",
+  ];
+  return palette[index % palette.length];
 };
-
-const chapterPositions = ["-translate-x-10", "translate-x-8", "-translate-x-6", "translate-x-10", "-translate-x-8", "translate-x-6"];
 
 const EduStudentHome = ({
   studentName,
@@ -74,7 +75,7 @@ const EduStudentHome = ({
   bookTitle,
   author,
   bookCoverUrl,
-  themeColor = colorForGenre(null),
+  themeColor,
   currentPage,
   totalPages,
   progressPercent,
@@ -90,24 +91,21 @@ const EduStudentHome = ({
   ranking,
   classChallenge,
   onSelectChapter,
-  onContinueReading,
+  onStartChapter,
   onActivities,
   onStats,
   onAnnouncements,
 }: Props) => {
-  const selected = chapters.find((chapter) => chapter.number === selectedChapter) || chapters.find((chapter) => chapter.status === "current") || chapters[0];
+  const selected = chapters.find((chapter) => chapter.number === selectedChapter)
+    || chapters.find((chapter) => chapter.status === "current")
+    || chapters[0];
   const goalProgress = dailyGoal > 0 ? Math.min(100, Math.round((dailyPagesRead / dailyGoal) * 100)) : 0;
   const visibleRanking = ranking.slice(0, 3);
   const meInTop = visibleRanking.some((row) => row.isMe);
-  const hsl = `hsl(${themeColor})`;
+  const bookHsl = colorForTheme(themeColor, 0);
 
   return (
-    <div
-      className="space-y-6"
-      style={{
-        "--book-theme": hsl,
-      } as React.CSSProperties}
-    >
+    <div className="space-y-6">
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
         <section className="min-w-0">
           <div className="flex items-center justify-between gap-4 mb-5">
@@ -124,27 +122,25 @@ const EduStudentHome = ({
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[32px] border border-border bg-card min-h-[690px] shadow-sm">
+          <div className="relative overflow-hidden rounded-[32px] border border-border bg-card min-h-[700px] shadow-sm">
             <div
-              className="absolute inset-x-0 top-0 h-44 opacity-90"
+              className="absolute inset-x-0 top-0 h-48"
               style={{
-                background: `radial-gradient(circle at 50% 0%, ${hsl}28, transparent 70%)`,
+                background: `radial-gradient(circle at 50% 0%, ${bookHsl}24, transparent 68%)`,
               }}
             />
 
-            <div className="relative px-4 sm:px-8 pt-7 pb-10">
+            <div className="relative px-4 sm:px-8 pt-8 pb-8">
               <div className="mx-auto max-w-xl text-center">
                 <div
-                  className="relative inline-block rounded-3xl border border-white/40 bg-card px-5 py-4 shadow-lg"
-                  style={{
-                    boxShadow: `0 14px 40px ${hsl}20`,
-                  }}
+                  className="relative inline-block max-w-full rounded-3xl border border-white/50 bg-card px-5 py-4 shadow-lg"
+                  style={{ boxShadow: `0 16px 42px ${bookHsl}20` }}
                 >
-                  <div className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 border-b border-r border-white/40 bg-card" />
+                  <div className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 border-b border-r border-white/50 bg-card" />
                   <div className="relative z-10 flex items-center gap-3 text-left">
                     <div
-                      className="h-11 w-11 rounded-2xl flex items-center justify-center text-white font-bold shrink-0 overflow-hidden"
-                      style={{ backgroundColor: hsl }}
+                      className="h-12 w-12 rounded-2xl flex items-center justify-center text-white shrink-0 overflow-hidden"
+                      style={{ backgroundColor: bookHsl }}
                     >
                       {bookCoverUrl ? (
                         <img src={bookCoverUrl} alt="" className="h-full w-full object-cover" />
@@ -153,38 +149,37 @@ const EduStudentHome = ({
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold uppercase tracking-[0.14em]" style={{ color: hsl }}>Livro da turma</p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: bookHsl }}>Livro da turma</p>
                       <p className="text-base sm:text-lg font-bold text-foreground truncate">{bookTitle || "Sua leitura"}</p>
                       <p className="text-xs text-muted-foreground truncate">{author || "Autor não informado"}</p>
                     </div>
-                    <div className="hidden sm:block h-8 w-px bg-border" />
-                    <div className="hidden sm:block text-right shrink-0">
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Agora</p>
-                      <p className="text-sm font-bold">Cap. {selected?.number ?? 1}</p>
+                    <div className="hidden sm:flex items-center gap-2 shrink-0">
+                      <div className="h-7 w-px bg-border" />
+                      <div className="text-right">
+                        <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Agora</p>
+                        <p className="text-sm font-bold">Cap. {selected?.number ?? 1}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-sm font-semibold text-foreground mt-6">
-                  Escolha um capítulo para explorar.
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  O mapa acompanha seu avanço sem tirar o foco da leitura.
-                </p>
+                <p className="text-sm font-semibold text-foreground mt-7">Seu caminho pelo livro</p>
+                <p className="text-xs text-muted-foreground mt-1">Toque em um capítulo para abrir.</p>
               </div>
 
-              <div className="relative mx-auto mt-8 max-w-[560px] min-h-[470px]">
+              <div className="relative mx-auto mt-8 max-w-[500px] px-2 sm:px-6">
                 <div
-                  className="absolute left-1/2 top-7 bottom-7 w-1 -translate-x-1/2 rounded-full opacity-25"
-                  style={{ backgroundColor: hsl }}
+                  className="absolute left-1/2 top-6 bottom-6 w-1 -translate-x-1/2 rounded-full opacity-20"
+                  style={{ backgroundColor: bookHsl }}
                 />
 
-                <div className="relative flex flex-col items-center gap-7">
+                <div className="relative flex flex-col items-center gap-11 sm:gap-14">
                   {chapters.map((chapter, index) => {
                     const active = chapter.number === selected?.number;
                     const completed = chapter.status === "completed";
                     const locked = chapter.status === "locked";
-                    const position = chapterPositions[index % chapterPositions.length];
+                    const accent = colorForTheme(undefined, index);
+                    const nodeColor = locked ? "hsl(var(--muted-foreground))" : active ? bookHsl : accent;
 
                     return (
                       <div key={chapter.number} className="relative w-full flex justify-center">
@@ -192,67 +187,73 @@ const EduStudentHome = ({
                           type="button"
                           disabled={locked}
                           onClick={() => onSelectChapter(chapter.number)}
-                          className={`group relative z-10 ${position} w-52 sm:w-60 text-left focus:outline-none disabled:cursor-not-allowed`}
+                          className="group relative z-10 flex items-center justify-center focus:outline-none disabled:cursor-not-allowed"
                           aria-label={`Capítulo ${chapter.number}: ${chapter.title}${locked ? ", bloqueado" : ""}`}
                         >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`h-[70px] w-[70px] rounded-[22px] border-4 flex items-center justify-center shrink-0 shadow-md transition-all duration-200 ${active ? "scale-110" : "group-hover:scale-105"} `}
-                              style={{
-                                borderColor: locked ? "hsl(var(--border))" : active ? hsl : `${hsl}66`,
-                                backgroundColor: locked ? "hsl(var(--muted))" : active ? hsl : "hsl(var(--card))",
-                                color: locked ? "hsl(var(--muted-foreground))" : active ? "white" : hsl,
-                                boxShadow: active ? `0 10px 30px ${hsl}35` : undefined,
-                              }}
-                            >
-                              {locked ? <Lock className="h-5 w-5" /> : completed ? <Check className="h-6 w-6" /> : <span className="text-lg font-black">{chapter.number}</span>}
-                            </div>
-                            <div className={`min-w-0 ${active ? "opacity-100" : "opacity-90"}`}>
-                              <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Capítulo {chapter.number}</p>
-                              <p className={`text-sm font-bold leading-snug ${locked ? "text-muted-foreground" : "text-foreground"}`}>{chapter.title}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">
-                                {completed ? "Concluído" : locked ? "Continue a leitura para desbloquear" : `Pág. ${chapter.startPage}–${chapter.endPage}`}
-                              </p>
-                            </div>
+                          <div
+                            className={`h-20 w-20 sm:h-[88px] sm:w-[88px] rounded-[28px] border-4 flex items-center justify-center shadow-md transition-transform duration-200 ${
+                              active ? "scale-110" : "group-hover:scale-105"
+                            }`}
+                            style={{
+                              borderColor: locked ? "hsl(var(--border))" : `${nodeColor}99`,
+                              backgroundColor: locked ? "hsl(var(--muted))" : active ? nodeColor : "hsl(var(--card))",
+                              color: locked ? "hsl(var(--muted-foreground))" : active ? "white" : nodeColor,
+                              boxShadow: active ? `0 12px 30px ${nodeColor}35` : undefined,
+                            }}
+                          >
+                            {locked ? (
+                              <Lock className="h-5 w-5" />
+                            ) : completed ? (
+                              <Check className="h-6 w-6" />
+                            ) : (
+                              <span className="text-xl font-black">{chapter.number}</span>
+                            )}
+                          </div>
+
+                          <div
+                            className={`absolute left-1/2 top-full mt-3 -translate-x-1/2 w-[min(260px,75vw)] rounded-2xl border px-4 py-3 text-center bg-card shadow-sm transition-all ${
+                              active ? "border-primary/30 shadow-md" : "border-border"
+                            }`}
+                          >
+                            <p className={`text-sm font-bold leading-snug ${locked ? "text-muted-foreground" : "text-foreground"}`}>
+                              {chapter.title}
+                            </p>
                           </div>
                         </button>
 
                         {index < chapters.length - 1 && (
                           <div
-                            className="absolute left-1/2 top-[70px] h-7 w-0.5 -translate-x-1/2"
-                            style={{ backgroundColor: `${hsl}30` }}
+                            className="absolute left-1/2 top-[88px] h-12 w-0.5 -translate-x-1/2 sm:top-[92px] sm:h-14"
+                            style={{ backgroundColor: `${bookHsl}25` }}
                           />
                         )}
                       </div>
                     );
                   })}
                 </div>
-
-                <div
-                  className="absolute left-1/2 bottom-0 -translate-x-1/2 h-16 w-16 rounded-2xl rotate-45 flex items-center justify-center shadow-lg"
-                  style={{ backgroundColor: hsl }}
-                >
-                  <div className="-rotate-45 text-white">
-                    <Sparkles className="h-6 w-6" />
-                  </div>
-                </div>
               </div>
 
               {selected && (
-                <div className="mx-auto max-w-2xl mt-2 rounded-3xl border border-border bg-muted/25 p-4 sm:p-5">
+                <div
+                  className="mx-auto max-w-xl mt-20 rounded-3xl border bg-background/70 p-5 sm:p-6"
+                  style={{ borderColor: `${bookHsl}35` }}
+                >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
                     <div className="min-w-0">
-                      <p className="text-xs uppercase tracking-[0.14em] font-bold text-muted-foreground">Capítulo selecionado</p>
-                      <h2 className="text-lg font-bold text-foreground mt-1">{selected.title}</h2>
-                      <p className="text-xs text-muted-foreground mt-1">Páginas {selected.startPage}–{selected.endPage}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: selected.status === "locked" ? "hsl(var(--muted-foreground))" : bookHsl }} />
+                        <p className="text-xs uppercase tracking-[0.14em] font-bold text-muted-foreground">Capítulo {selected.number}</p>
+                      </div>
+                      <h2 className="text-lg sm:text-xl font-bold text-foreground mt-1">{selected.title}</h2>
                     </div>
                     <Button
-                      onClick={onContinueReading}
+                      disabled={selected.status === "locked"}
+                      onClick={() => onStartChapter(selected.number)}
                       className="shrink-0 gap-2 h-11"
-                      style={{ backgroundColor: hsl }}
+                      style={{ backgroundColor: selected.status === "locked" ? undefined : bookHsl }}
                     >
-                      {selected.status === "current" ? "Continuar leitura" : "Voltar à leitura"}
-                      <ChevronRight className="h-4 w-4" />
+                      {selected.status === "locked" ? "Bloqueado" : selected.status === "current" ? "Começar leitura" : "Abrir capítulo"}
+                      {selected.status !== "locked" && <ChevronRight className="h-4 w-4" />}
                     </Button>
                   </div>
                 </div>
@@ -386,18 +387,6 @@ const EduStudentHome = ({
             <Button variant="ghost" onClick={onAnnouncements} className="w-full mt-3 justify-between">
               Avisos da turma <ChevronRight className="h-4 w-4" />
             </Button>
-          </div>
-
-          <div className="hidden xl:block rounded-3xl border border-primary/15 bg-primary/[0.04] p-5">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
-              <Sparkles className="h-4 w-4" /> Progresso
-            </div>
-            <p className="text-2xl font-bold mt-2">{progressPercent}%</p>
-            <p className="text-xs text-muted-foreground mt-1">do livro concluído</p>
-            <div className="mt-3 flex gap-2">
-              <Button size="sm" variant="outline" onClick={onStats} className="flex-1">Evolução</Button>
-              <Button size="sm" variant="outline" onClick={onContinueReading} className="flex-1">Ler</Button>
-            </div>
           </div>
         </aside>
       </div>
