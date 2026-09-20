@@ -30,7 +30,7 @@ const apoioItems = [
   { icon: BookMarked,     label: "Jornadas",      path: "/edu/jornadas" },
   { icon: FileBarChart,   label: "Relatórios",    path: "/edu/relatorios" },
   { icon: Library,        label: "Biblioteca",    path: "/edu/livros" },
-  { icon: BookMarked,     label: "Reflexões",     path: "/edu/perguntas" },
+  { icon: BookMarked,     label: "Experiências",  path: "/edu/perguntas" },
   { icon: MessageCircle,  label: "Comunicação",   path: "/edu/comunicacao" },
 ];
 
