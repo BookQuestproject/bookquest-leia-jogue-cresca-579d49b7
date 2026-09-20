@@ -1,6 +1,6 @@
 import {
   Award, BarChart3, BookOpen, Check, ChevronRight, ClipboardList, Flame,
-  Lock, Megaphone, Sparkles, Target, Trophy,
+  Lock, Megaphone, PanelRightClose, PanelRightOpen, Sparkles, Target, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -53,21 +53,34 @@ type Props = {
   onActivities: () => void;
   onStats: () => void;
   onAnnouncements: () => void;
+  sidebarExpanded: boolean;
+  onToggleSidebar: () => void;
 };
 
-const colorForTheme = (theme: string | undefined, index: number) => {
-  if (theme) return `hsl(${theme})`;
-  const palette = [
-    "hsl(45 82% 46%)",
-    "hsl(265 58% 52%)",
-    "hsl(158 48% 40%)",
-    "hsl(345 58% 52%)",
-    "hsl(197 70% 45%)",
-    "hsl(24 72% 48%)",
-    "hsl(183 52% 38%)",
-  ];
-  return palette[index % palette.length];
-};
+const BOOK_PALETTE = [
+  "hsl(45 82% 46%)",
+  "hsl(265 58% 52%)",
+  "hsl(158 48% 40%)",
+  "hsl(345 58% 52%)",
+  "hsl(197 70% 45%)",
+  "hsl(24 72% 48%)",
+  "hsl(183 52% 38%)",
+];
+
+const STREAK_STAGES = [
+  { min: 0, label: "Acendendo", color: "hsl(45 82% 48%)", next: 2 },
+  { min: 2, label: "Fogo laranja", color: "hsl(24 90% 52%)", next: 5 },
+  { min: 5, label: "Fogo vermelho", color: "hsl(4 78% 52%)", next: 10 },
+  { min: 10, label: "Fogo azul", color: "hsl(198 85% 52%)", next: 20 },
+  { min: 20, label: "Fogo verde", color: "hsl(150 62% 44%)", next: 30 },
+  { min: 30, label: "Fogo roxo", color: "hsl(274 72% 58%)", next: null },
+];
+
+const getStreakStage = (streak: number) =>
+  [...STREAK_STAGES].reverse().find((stage) => streak >= stage.min) || STREAK_STAGES[0];
+
+const getBookColor = (theme: string | undefined, index: number) =>
+  theme ? `hsl(${theme})` : BOOK_PALETTE[index % BOOK_PALETTE.length];
 
 const EduStudentHome = ({
   studentName,
@@ -80,7 +93,6 @@ const EduStudentHome = ({
   totalPages,
   progressPercent,
   pendingActivities,
-  essencia,
   streak,
   rank,
   dailyPagesRead,
@@ -95,91 +107,122 @@ const EduStudentHome = ({
   onActivities,
   onStats,
   onAnnouncements,
+  sidebarExpanded,
+  onToggleSidebar,
 }: Props) => {
   const selected = chapters.find((chapter) => chapter.number === selectedChapter)
     || chapters.find((chapter) => chapter.status === "current")
     || chapters[0];
+  const currentTrailChapter = chapters.find((chapter) => chapter.status === "current") || selected;
   const goalProgress = dailyGoal > 0 ? Math.min(100, Math.round((dailyPagesRead / dailyGoal) * 100)) : 0;
   const visibleRanking = ranking.slice(0, 3);
   const meInTop = visibleRanking.some((row) => row.isMe);
-  const bookHsl = colorForTheme(themeColor, 0);
+  const bookHsl = getBookColor(themeColor, 0);
+  const streakStage = getStreakStage(streak);
+  const streakNext = streakStage.next;
+  const streakProgress = streakNext ? Math.min(100, Math.round((streak / streakNext) * 100)) : 100;
+  const chapterProgress = currentTrailChapter && currentTrailChapter.endPage > currentTrailChapter.startPage
+    ? Math.max(0, Math.min(100, Math.round(((currentPage - currentTrailChapter.startPage + 1) / (currentTrailChapter.endPage - currentTrailChapter.startPage + 1)) * 100)))
+    : 0;
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
-        <section className="min-w-0">
-          <div className="flex items-center justify-between gap-4 mb-5">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Sua jornada</p>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mt-1">
-                Olá, {studentName.split(" ")[0]}.
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">{className}</p>
+      <section
+        className="sticky top-3 z-20 rounded-3xl border border-border bg-card/95 backdrop-blur-xl shadow-md overflow-hidden"
+        aria-label="Leitura atual"
+      >
+        <div
+          className="h-1"
+          style={{ background: `linear-gradient(90deg, ${bookHsl}, ${BOOK_PALETTE[1]}, ${BOOK_PALETTE[3]})` }}
+        />
+        <div className="px-4 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center gap-4">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div
+              className="h-12 w-12 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center text-white"
+              style={{ backgroundColor: bookHsl }}
+            >
+              {bookCoverUrl ? <img src={bookCoverUrl} alt="" className="h-full w-full object-cover" /> : <BookOpen className="h-5 w-5" />}
             </div>
-            <div className="hidden sm:flex items-center gap-2 rounded-full border border-border bg-card px-3 py-2 text-xs">
-              <Flame className="h-4 w-4 text-orange-500" />
-              <span className="font-semibold">{streak} dias de sequência</span>
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-muted-foreground">Lendo agora</p>
+              <h1 className="text-base sm:text-lg font-bold truncate">{bookTitle || "Livro da turma"}</h1>
+              <p className="text-xs text-muted-foreground truncate">{author || "Autor não informado"}</p>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[32px] border border-border bg-card min-h-[700px] shadow-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 lg:w-auto">
+            <div className="rounded-2xl border border-border bg-muted/25 px-3 py-2 min-w-[104px]">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Capítulo</p>
+              <p className="text-sm font-bold mt-0.5">Cap. {currentTrailChapter?.number || 1}</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-muted/25 px-3 py-2 min-w-[104px]">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Página</p>
+              <p className="text-sm font-bold mt-0.5">{currentPage}{totalPages ? ` / ${totalPages}` : ""}</p>
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <Button
+                size="lg"
+                onClick={() => currentTrailChapter && onStartChapter(currentTrailChapter.number)}
+                disabled={!currentTrailChapter || currentTrailChapter.status === "locked"}
+                className="w-full h-full min-h-11 gap-2 shadow-sm"
+                style={{ backgroundColor: bookHsl }}
+              >
+                <BookOpen className="h-4 w-4" />
+                Continuar leitura
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Sua jornada</p>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mt-1">
+                Olá, {studentName.split(" ")[0]}.
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">{className}</p>
+            </div>
             <div
-              className="absolute inset-x-0 top-0 h-48"
+              className="hidden sm:flex items-center gap-2 rounded-2xl border px-3 py-2"
+              style={{ borderColor: `${streakStage.color}35`, backgroundColor: `${streakStage.color}0d` }}
+            >
+              <Flame className="h-4 w-4" style={{ color: streakStage.color }} />
+              <div>
+                <p className="text-xs font-bold">{streak} dias</p>
+                <p className="text-[10px] text-muted-foreground">{streakStage.label}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[32px] border border-border bg-card shadow-sm">
+            <div
+              className="absolute inset-x-0 top-0 h-40"
               style={{
-                background: `radial-gradient(circle at 50% 0%, ${bookHsl}24, transparent 68%)`,
+                background: `linear-gradient(180deg, ${bookHsl}10 0%, transparent 100%)`,
               }}
             />
 
-            <div className="relative px-4 sm:px-8 pt-8 pb-8">
+            <div className="relative px-4 sm:px-8 pt-8 pb-10">
               <div className="mx-auto max-w-xl text-center">
-                <div
-                  className="relative inline-block max-w-full rounded-3xl border border-white/50 bg-card px-5 py-4 shadow-lg"
-                  style={{ boxShadow: `0 16px 42px ${bookHsl}20` }}
-                >
-                  <div className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 border-b border-r border-white/50 bg-card" />
-                  <div className="relative z-10 flex items-center gap-3 text-left">
-                    <div
-                      className="h-12 w-12 rounded-2xl flex items-center justify-center text-white shrink-0 overflow-hidden"
-                      style={{ backgroundColor: bookHsl }}
-                    >
-                      {bookCoverUrl ? (
-                        <img src={bookCoverUrl} alt="" className="h-full w-full object-cover" />
-                      ) : (
-                        <BookOpen className="h-5 w-5" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: bookHsl }}>Livro da turma</p>
-                      <p className="text-base sm:text-lg font-bold text-foreground truncate">{bookTitle || "Sua leitura"}</p>
-                      <p className="text-xs text-muted-foreground truncate">{author || "Autor não informado"}</p>
-                    </div>
-                    <div className="hidden sm:flex items-center gap-2 shrink-0">
-                      <div className="h-7 w-px bg-border" />
-                      <div className="text-right">
-                        <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Agora</p>
-                        <p className="text-sm font-bold">Cap. {selected?.number ?? 1}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-sm font-semibold text-foreground mt-7">Seu caminho pelo livro</p>
-                <p className="text-xs text-muted-foreground mt-1">Toque em um capítulo para abrir.</p>
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground">Mapa da leitura</p>
+                <h3 className="text-lg sm:text-xl font-bold mt-2">Escolha seu próximo capítulo</h3>
               </div>
 
-              <div className="relative mx-auto mt-8 max-w-[500px] px-2 sm:px-6">
+              <div className="relative mx-auto mt-10 max-w-[520px] px-2">
                 <div
-                  className="absolute left-1/2 top-6 bottom-6 w-1 -translate-x-1/2 rounded-full opacity-20"
+                  className="absolute left-1/2 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full opacity-15"
                   style={{ backgroundColor: bookHsl }}
                 />
 
-                <div className="relative flex flex-col items-center gap-11 sm:gap-14">
+                <div className="relative flex flex-col items-center gap-16">
                   {chapters.map((chapter, index) => {
                     const active = chapter.number === selected?.number;
                     const completed = chapter.status === "completed";
                     const locked = chapter.status === "locked";
-                    const accent = colorForTheme(undefined, index);
-                    const nodeColor = locked ? "hsl(var(--muted-foreground))" : active ? bookHsl : accent;
+                    const nodeColor = locked ? "hsl(var(--muted-foreground))" : active ? bookHsl : getBookColor(undefined, index);
 
                     return (
                       <div key={chapter.number} className="relative w-full flex justify-center">
@@ -187,34 +230,26 @@ const EduStudentHome = ({
                           type="button"
                           disabled={locked}
                           onClick={() => onSelectChapter(chapter.number)}
-                          className="group relative z-10 flex items-center justify-center focus:outline-none disabled:cursor-not-allowed"
+                          className="group relative z-10 focus:outline-none disabled:cursor-not-allowed"
                           aria-label={`Capítulo ${chapter.number}: ${chapter.title}${locked ? ", bloqueado" : ""}`}
                         >
                           <div
-                            className={`h-20 w-20 sm:h-[88px] sm:w-[88px] rounded-[28px] border-4 flex items-center justify-center shadow-md transition-transform duration-200 ${
+                            className={`h-[84px] w-[84px] sm:h-24 sm:w-24 rounded-[30px] border-4 flex items-center justify-center shadow-md transition-all duration-200 ${
                               active ? "scale-110" : "group-hover:scale-105"
                             }`}
                             style={{
                               borderColor: locked ? "hsl(var(--border))" : `${nodeColor}99`,
                               backgroundColor: locked ? "hsl(var(--muted))" : active ? nodeColor : "hsl(var(--card))",
                               color: locked ? "hsl(var(--muted-foreground))" : active ? "white" : nodeColor,
-                              boxShadow: active ? `0 12px 30px ${nodeColor}35` : undefined,
+                              boxShadow: active ? `0 14px 34px ${nodeColor}35` : undefined,
                             }}
                           >
-                            {locked ? (
-                              <Lock className="h-5 w-5" />
-                            ) : completed ? (
-                              <Check className="h-6 w-6" />
-                            ) : (
-                              <span className="text-xl font-black">{chapter.number}</span>
+                            {locked ? <Lock className="h-5 w-5" /> : completed ? <Check className="h-7 w-7" /> : (
+                              <span className="text-2xl font-black">{chapter.number}</span>
                             )}
                           </div>
 
-                          <div
-                            className={`absolute left-1/2 top-full mt-3 -translate-x-1/2 w-[min(260px,75vw)] rounded-2xl border px-4 py-3 text-center bg-card shadow-sm transition-all ${
-                              active ? "border-primary/30 shadow-md" : "border-border"
-                            }`}
-                          >
+                          <div className={`absolute left-1/2 top-full mt-3 -translate-x-1/2 w-[min(250px,75vw)] rounded-2xl border px-4 py-2.5 text-center bg-card shadow-sm ${active ? "border-primary/30" : "border-border"}`}>
                             <p className={`text-sm font-bold leading-snug ${locked ? "text-muted-foreground" : "text-foreground"}`}>
                               {chapter.title}
                             </p>
@@ -223,8 +258,8 @@ const EduStudentHome = ({
 
                         {index < chapters.length - 1 && (
                           <div
-                            className="absolute left-1/2 top-[88px] h-12 w-0.5 -translate-x-1/2 sm:top-[92px] sm:h-14"
-                            style={{ backgroundColor: `${bookHsl}25` }}
+                            className="absolute left-1/2 top-[96px] h-16 w-0.5 -translate-x-1/2"
+                            style={{ background: `linear-gradient(180deg, ${getBookColor(undefined, index)}, ${getBookColor(undefined, index + 1)})`, opacity: 0.24 }}
                           />
                         )}
                       </div>
@@ -234,25 +269,31 @@ const EduStudentHome = ({
               </div>
 
               {selected && (
-                <div
-                  className="mx-auto max-w-xl mt-20 rounded-3xl border bg-background/70 p-5 sm:p-6"
-                  style={{ borderColor: `${bookHsl}35` }}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+                <div className="mx-auto max-w-xl mt-24 rounded-3xl border border-border bg-muted/20 p-5 sm:p-6">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: selected.status === "locked" ? "hsl(var(--muted-foreground))" : bookHsl }} />
-                        <p className="text-xs uppercase tracking-[0.14em] font-bold text-muted-foreground">Capítulo {selected.number}</p>
-                      </div>
-                      <h2 className="text-lg sm:text-xl font-bold text-foreground mt-1">{selected.title}</h2>
+                      <p className="text-xs uppercase tracking-[0.14em] font-bold text-muted-foreground">Capítulo selecionado</p>
+                      <h4 className="text-lg font-bold truncate mt-1">{selected.title}</h4>
                     </div>
+                    <span className="text-xs font-semibold text-muted-foreground shrink-0">{selected.status === "completed" ? "Concluído" : selected.status === "locked" ? "Bloqueado" : "Disponível"}</span>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {selected.status === "current" && currentTrailChapter && (
+                      <div className="w-full">
+                        <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1.5">
+                          <span>Progresso no capítulo</span>
+                          <span>{chapterProgress}%</span>
+                        </div>
+                        <Progress value={chapterProgress} className="h-2" />
+                      </div>
+                    )}
                     <Button
                       disabled={selected.status === "locked"}
                       onClick={() => onStartChapter(selected.number)}
-                      className="shrink-0 gap-2 h-11"
-                      style={{ backgroundColor: selected.status === "locked" ? undefined : bookHsl }}
+                      className="mt-1 gap-2"
+                      style={{ backgroundColor: selected.status === "locked" ? undefined : getBookColor(undefined, selected.number - 1) }}
                     >
-                      {selected.status === "locked" ? "Bloqueado" : selected.status === "current" ? "Começar leitura" : "Abrir capítulo"}
+                      {selected.status === "locked" ? "Bloqueado" : selected.status === "completed" ? "Revisar capítulo" : "Abrir capítulo"}
                       {selected.status !== "locked" && <ChevronRight className="h-4 w-4" />}
                     </Button>
                   </div>
@@ -260,133 +301,140 @@ const EduStudentHome = ({
               )}
             </div>
           </div>
-        </section>
+        </div>
 
-        <aside className="space-y-4 xl:sticky xl:top-6">
-          <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Ranking da turma</p>
-                <h2 className="text-lg font-bold mt-1">Você está em <span className="text-primary">{rank > 0 ? `#${rank}` : "—"}</span></h2>
+        <aside className="hidden md:flex w-[72px] xl:w-[300px] shrink-0" aria-label="Progresso e missões">
+          <div className="w-full space-y-4">
+            <div
+              className="rounded-3xl border border-border bg-card p-3 xl:p-5 shadow-sm"
+              style={{ borderTopColor: `${streakStage.color}80` }}
+            >
+              <div className="flex items-center justify-center xl:justify-between gap-3">
+                <div className="text-center xl:text-left">
+                  <p className="hidden xl:block text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Sequência</p>
+                  <p className="text-2xl font-black mt-1">{streak}</p>
+                  <p className="hidden xl:block text-xs text-muted-foreground">{streakStage.label}</p>
+                </div>
+                <Flame className="h-7 w-7" style={{ color: streakStage.color }} />
               </div>
-              <div className="h-10 w-10 rounded-2xl bg-amber-400/10 text-amber-500 flex items-center justify-center">
-                <Trophy className="h-5 w-5" />
+              <div className="hidden xl:block mt-4">
+                <Progress value={streakProgress} className="h-2" />
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  {streakNext ? `Mais ${Math.max(0, streakNext - streak)} dia${streakNext - streak === 1 ? "" : "s"} para mudar de cor.` : "Você alcançou o último marco de fogo."}
+                </p>
+              </div>
+              <div className="hidden xl:flex items-center justify-center gap-1.5 mt-4">
+                {STREAK_STAGES.slice(1).map((stage) => (
+                  <span
+                    key={stage.min}
+                    title={`${stage.min} dias · ${stage.label}`}
+                    className="h-3 w-3 rounded-full"
+                    style={{ backgroundColor: stage.color }}
+                  />
+                ))}
               </div>
             </div>
 
-            <div className="mt-5 space-y-2.5">
-              {visibleRanking.map((row, index) => (
-                <div key={row.user_id} className="flex items-center gap-3 rounded-2xl border border-border bg-muted/20 px-3 py-2.5">
-                  <span className="w-6 text-center text-sm font-black text-muted-foreground">{index + 1}</span>
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary overflow-hidden shrink-0">
-                    {row.avatar_url ? <img src={row.avatar_url} alt="" className="h-full w-full object-cover" /> : row.name.slice(0, 1).toUpperCase()}
+            <div className="rounded-3xl border border-border bg-card p-3 xl:p-5 shadow-sm">
+              <div className="flex items-center justify-center xl:justify-between gap-2">
+                <div className="hidden xl:block">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Ranking</p>
+                  <p className="text-lg font-bold mt-1">#{rank > 0 ? rank : "—"}</p>
+                </div>
+                <Trophy className="h-6 w-6 text-amber-500" />
+              </div>
+              <div className="hidden xl:block mt-4 space-y-2">
+                {visibleRanking.map((row, index) => (
+                  <div key={row.user_id} className="flex items-center gap-2 rounded-xl border border-border bg-muted/20 px-2.5 py-2">
+                    <span className="w-5 text-center text-xs font-black text-muted-foreground">{index + 1}</span>
+                    <span className="min-w-0 flex-1 truncate text-xs font-semibold">{row.name}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground">{row.pages}p</span>
                   </div>
-                  <span className="min-w-0 flex-1 truncate text-sm font-semibold">{row.name}</span>
-                  <span className="text-xs font-bold text-muted-foreground">{row.pages}p</span>
-                </div>
-              ))}
-            </div>
-
-            {!meInTop && rank > 0 && (
-              <>
-                <div className="my-3 border-t border-dashed border-border" />
-                <div className="rounded-2xl border border-primary/20 bg-primary/5 px-3 py-2.5 flex items-center gap-3">
-                  <span className="w-6 text-center text-sm font-black text-primary">#{rank}</span>
-                  <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-                    {studentName.slice(0, 1).toUpperCase()}
+                ))}
+                {!meInTop && rank > 0 && (
+                  <div className="rounded-xl border border-primary/20 bg-primary/5 px-2.5 py-2 flex items-center gap-2">
+                    <span className="text-xs font-black text-primary">#{rank}</span>
+                    <span className="text-xs font-semibold">Você</span>
                   </div>
-                  <span className="min-w-0 flex-1 truncate text-sm font-semibold">Você</span>
-                  <span className="text-xs font-bold text-primary">agora</span>
-                </div>
-              </>
-            )}
-
-            <Button variant="outline" onClick={onStats} className="w-full mt-4 gap-2">
-              <BarChart3 className="h-4 w-4" /> Ver evolução
-            </Button>
-          </div>
-
-          <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Missões de hoje</p>
-                <h2 className="text-lg font-bold mt-1">Seu ritmo de leitura</h2>
+                )}
               </div>
-              <Target className="h-5 w-5 text-accent" />
+              <Button variant="outline" onClick={onStats} className="w-full mt-3 gap-2">
+                <BarChart3 className="h-4 w-4" /> <span className="hidden xl:inline">Ver evolução</span>
+              </Button>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-border bg-muted/20 p-4">
-              <div className="flex items-start gap-3">
-                <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                  <BookOpen className="h-4 w-4" />
+            <div className="rounded-3xl border border-border bg-card p-3 xl:p-5 shadow-sm">
+              <div className="flex items-center justify-center xl:justify-between">
+                <div className="hidden xl:block">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Missões</p>
+                  <p className="text-sm font-bold mt-1">Hoje</p>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold">Avançar na leitura</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {dailyGoal > 0 ? `Leia ${dailyGoal} pág. hoje.` : "Continue registrando suas páginas."}
-                  </p>
-                  {dailyGoal > 0 && (
-                    <div className="mt-3">
-                      <Progress value={goalProgress} className="h-2" />
-                      <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
-                        <span>{dailyPagesRead} pág.</span>
-                        <span>{goalProgress}%</span>
+                <Target className="h-6 w-6 text-accent" />
+              </div>
+
+              <div className="hidden xl:block mt-4 space-y-3">
+                <div className="rounded-2xl border border-border bg-muted/20 p-3">
+                  <div className="flex items-start gap-2">
+                    <BookOpen className="h-4 w-4 text-accent mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold">Ritmo de leitura</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {dailyGoal > 0 ? `Leia ${dailyGoal} pág. hoje.` : "Continue registrando sua leitura."}
+                      </p>
+                    </div>
+                  </div>
+                  {dailyGoal > 0 && <Progress value={goalProgress} className="h-1.5 mt-3" />}
+                  <p className="text-[10px] text-muted-foreground mt-1.5">{dailyPagesRead}/{dailyGoal || "—"} páginas</p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-muted/20 p-3">
+                  <div className="flex items-start gap-2">
+                    <Sparkles className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold">Próximo passo</p>
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+                        {currentTrailChapter?.status === "current"
+                          ? `Avance até o fim de ${currentTrailChapter.title}.`
+                          : "Abra o capítulo disponível no mapa."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={onActivities}
+                  className="w-full rounded-2xl border border-border bg-muted/20 p-3 text-left hover:bg-muted/35 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <ClipboardList className="h-4 w-4 text-primary" />
+                    <div className="flex-1">
+                      <p className="text-xs font-bold">Atividades</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {pendingActivities > 0 ? `${pendingActivities} esperando você.` : "Nada pendente."}
+                      </p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </button>
+
+                {classChallenge && (
+                  <div className="rounded-2xl border border-border bg-muted/20 p-3">
+                    <div className="flex items-start gap-2">
+                      <Award className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold">{classChallenge.title}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">{classChallenge.description || `Meta da turma: ${classChallenge.goal_value}.`}</p>
                       </div>
                     </div>
-                  )}
-                </div>
-                {goalProgress >= 100 && <Check className="h-5 w-5 text-emerald-500 shrink-0" />}
+                  </div>
+                )}
+
+                <Button variant="ghost" onClick={onAnnouncements} className="w-full justify-between text-xs">
+                  Avisos da turma <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={onActivities}
-              className="mt-3 w-full rounded-2xl border border-border bg-muted/20 px-4 py-3 text-left hover:bg-muted/35 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <ClipboardList className="h-4 w-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold">Atividades</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {pendingActivities > 0 ? `${pendingActivities} aguardando você.` : "Nada pendente por enquanto."}
-                  </p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </button>
-
-            {classChallenge && (
-              <div className="mt-3 rounded-2xl border border-border bg-muted/20 p-4">
-                <div className="flex items-start gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-amber-400/10 text-amber-500 flex items-center justify-center shrink-0">
-                    <Award className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold">{classChallenge.title}</p>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{classChallenge.description || `Meta da turma: ${classChallenge.goal_value}.`}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <Megaphone className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Continuidade</p>
-                <p className="text-sm font-bold mt-1">{daysRemaining > 0 ? `${daysRemaining} dias restantes` : "Continue no seu ritmo"}</p>
-                <p className="text-xs text-muted-foreground mt-1">Volte amanhã e continue de onde parou.</p>
-              </div>
-            </div>
-            <Button variant="ghost" onClick={onAnnouncements} className="w-full mt-3 justify-between">
-              Avisos da turma <ChevronRight className="h-4 w-4" />
-            </Button>
           </div>
         </aside>
       </div>
