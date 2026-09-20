@@ -19,6 +19,7 @@ type RankingRow = {
   name: string;
   avatar_url?: string | null;
   pages: number;
+  isMe?: boolean;
 };
 
 type Props = {
@@ -97,7 +98,7 @@ const EduStudentHome = ({
   const selected = chapters.find((chapter) => chapter.number === selectedChapter) || chapters.find((chapter) => chapter.status === "current") || chapters[0];
   const goalProgress = dailyGoal > 0 ? Math.min(100, Math.round((dailyPagesRead / dailyGoal) * 100)) : 0;
   const visibleRanking = ranking.slice(0, 3);
-  const meInTop = visibleRanking.some((row) => row.user_id === "me");
+  const meInTop = visibleRanking.some((row) => row.isMe);
   const hsl = `hsl(${themeColor})`;
 
   return (
