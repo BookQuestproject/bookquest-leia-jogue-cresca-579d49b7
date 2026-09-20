@@ -819,7 +819,7 @@ const EduAluno = () => {
                       <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Evolução da sequência</p>
                       <h2 className="text-xl font-bold mt-1">O fogo muda com você.</h2>
                     </div>
-                    <p className="text-sm font-semibold" style={{ color: stageColor }}>{{streak}} dias</p>
+                    <p className="text-sm font-semibold text-accent">{streak} dias de sequência</p>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-6">
                     {[
