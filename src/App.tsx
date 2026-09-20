@@ -129,7 +129,7 @@ const App = () => (
                 <Route path="/edu/onboarding" element={<EduOnboarding />} />
                 <Route path="/edu/onboarding-aluno" element={<EduAlunoOnboarding />} />
                 <Route path="/entrar/:codigo" element={<JoinClass />} />
-                <Route path="/edu/professor/entrar" element={<EduProfessorEntry />} />
+                <Route path="/edu/professor/entrar" element={<Navigate to="/edu" replace />} />
                 <Route path="/edu/demo/professor" element={<Navigate to="/edu/professor/entrar" replace />} />
                 <Route path="/edu/demo/aluno" element={<Navigate to="/edu" replace />} />
                 <Route path="/edu/aluno" element={<EduAluno />} />
