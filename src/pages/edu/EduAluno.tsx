@@ -24,7 +24,8 @@ import { useProfile } from "@/hooks/useProfile";
 import { useUserStats } from "@/hooks/useUserStats";
 import { useToast } from "@/hooks/use-toast";
 import EduStudentHome from "@/components/edu/EduStudentHome";
-import { bookTrails } from "@/pages/Trilhas";
+import { bookTrails, expandChapters } from "@/pages/Trilhas";
+import BookQuestTrailMap from "@/components/BookQuestTrailMap";
 
 interface ClassInfo {
   id: string;
@@ -161,15 +162,21 @@ const EduAluno = () => {
 
       const sharedTrailChapters = enrichedChapters.length
         ? enrichedChapters.map((chapter: any, index: number) => ({
-            number: chapter.id || index + 1,
+            id: chapter.id || index + 1,
             title: chapter.title || `Capítulo ${index + 1}`,
+            status: index === 0 ? "current" : "locked",
             icon: chapter.icon || "📖",
+            totalPages: chapter.totalPages || undefined,
           }))
-        : normalTrail?.chapters?.map((chapter: any) => ({
-            number: chapter.id,
-            title: chapter.title || `Capítulo ${chapter.id}`,
-            icon: chapter.icon || "📖",
-          })) || [];
+        : normalTrail
+          ? expandChapters(normalTrail.chapters, normalTrail.totalChapters).map((chapter: any) => ({
+              id: chapter.id,
+              title: chapter.title || `Capítulo ${chapter.id}`,
+              status: chapter.status,
+              icon: chapter.icon || "📖",
+              totalPages: chapter.totalPages,
+            }))
+          : [];
 
       setBookTheme((enrichment as any)?.theme_color || normalTrail?.themeColor || undefined);
       setBookCoverUrl((enrichment as any)?.cover_url || normalTrail?.coverImage || null);
@@ -184,13 +191,15 @@ const EduAluno = () => {
 
         if ((chapters as any[])?.length) {
           setChapterMap((chapters as any[]).map((c) => {
-            const shared = sharedTrailChapters.find((chapter) => chapter.number === c.chapter_number);
+            const shared = sharedTrailChapters.find((chapter) => chapter.id === c.chapter_number);
             return {
-              number: c.chapter_number,
+              id: c.chapter_number,
               title: shared?.title || c.title || `Capítulo ${c.chapter_number}`,
               startPage: c.start_page,
               endPage: c.end_page,
+              totalPages: Math.max(1, c.end_page - c.start_page + 1),
               icon: shared?.icon || "📖",
+              status: "locked",
             };
           }));
           return;
@@ -200,7 +209,7 @@ const EduAluno = () => {
       const fallbackCount = Math.max(
         1,
         Math.min(
-          20,
+          25,
           Math.max(
             sharedTrailChapters.length,
             Number(normalTrail?.totalChapters || 0),
@@ -209,14 +218,17 @@ const EduAluno = () => {
         ),
       );
       const pagesPerChapter = totalPages > 0 ? Math.ceil(totalPages / fallbackCount) : 1;
+      const baseTrail = sharedTrailChapters.length ? sharedTrailChapters : [];
       setChapterMap(Array.from({ length: fallbackCount }, (_, i) => {
-        const shared = sharedTrailChapters.find((chapter) => chapter.number === i + 1);
+        const shared = baseTrail.find((chapter: any) => chapter.id === i + 1);
         return {
-          number: i + 1,
+          id: i + 1,
           title: shared?.title || `Capítulo ${i + 1}`,
           startPage: i === 0 ? 1 : i * pagesPerChapter + 1,
           endPage: totalPages ? Math.min(totalPages, (i + 1) * pagesPerChapter) : (i + 1) * pagesPerChapter,
           icon: shared?.icon || "📖",
+          totalPages: pagesPerChapter,
+          status: "locked",
         };
       }));
     })();
@@ -255,6 +267,7 @@ const EduAluno = () => {
   const rankedStudents = classRanking.map((row) => ({ ...row, isMe: row.user_id === user?.id }));
   const normalizedChapters = chapterMap.map((chapter) => ({
     ...chapter,
+    id: chapter.id ?? chapter.number,
     status: chapter.endPage <= currentPage
       ? "completed"
       : chapter.startPage <= Math.max(currentPage + 1, 1)
