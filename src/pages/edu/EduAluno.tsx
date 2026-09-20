@@ -124,6 +124,7 @@ const EduAluno = () => {
 
   const { announcements } = useEduEngagement(selectedClass?.id);
   const { questions, responses, fetchQuestions, createResponse } = useClassQuestions();
+  const totalPages = selectedClass?.total_pages || 0;
 
   useEffect(() => {
     if (!selectedClass?.id || !user?.id) return;
@@ -200,7 +201,6 @@ const EduAluno = () => {
     setClassRanking(ranked);
   };
 
-  const totalPages = selectedClass?.total_pages || 0;
   const myProgress = progressData.find(p => p.user_id === user?.id);
   const currentPage = myProgress?.current_page || 0;
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
@@ -285,88 +285,67 @@ const EduAluno = () => {
   return (
     <div className="min-h-screen bg-transparent">
       <div className="flex">
-        {/* Sidebar */}
-        <aside className="hidden lg:flex flex-col w-60 border-r border-border bg-card fixed h-screen top-0 z-20">
-          <div className="p-4 border-b border-border flex items-center gap-2">
-            <img src={logoCrown} alt="BookQuest" className="h-8 w-8" />
-            <div className="leading-tight">
-              <div className="font-bold text-foreground text-sm">BookQuest</div>
-              <div className="text-[10px] font-semibold text-accent uppercase tracking-wider">EDU · Aluno</div>
-            </div>
+        {/* Symbolic left rail */}
+        <aside className="hidden lg:flex flex-col w-[76px] border-r border-border bg-card/95 backdrop-blur-sm fixed h-screen top-0 z-20">
+          <div className="h-16 border-b border-border flex items-center justify-center">
+            <img src={logoCrown} alt="BookQuest" className="h-9 w-9" />
           </div>
 
-          {/* Profile */}
-          <div className="p-4 border-b border-border">
-            <div className="flex items-center gap-3">
+          <div className="px-2 pt-4 pb-3 border-b border-border">
+            <div className="h-11 w-11 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden">
               <Avatar className="h-10 w-10">
                 {profile?.avatar_url && <AvatarImage src={profile.avatar_url} alt={studentName} />}
                 <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-foreground truncate">{studentName}</p>
-                <p className="text-[11px] text-muted-foreground truncate">{selectedClass.name}</p>
-              </div>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-1.5 text-center">
-              <div className="rounded-md bg-accent/10 py-1.5">
-                <p className="text-[9px] uppercase text-muted-foreground">✦</p>
-                <p className="text-sm font-bold text-accent">{essencia}</p>
-              </div>
-              <div className="rounded-md bg-destructive/5 py-1.5">
-                <p className="text-[9px] uppercase text-muted-foreground">🔥</p>
-                <p className="text-sm font-bold text-destructive">{streak}</p>
-              </div>
             </div>
           </div>
 
-          {/* Class switcher */}
           {studentClasses.length > 1 && (
-            <div className="p-3 border-b border-border space-y-1">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold px-2">Suas turmas</p>
-              {studentClasses.map((c: any) => (
-                <button
-                  key={c.id}
-                  onClick={() => setSelectedClass(c as ClassInfo)}
-                  className={`w-full text-left text-xs px-2.5 py-1.5 rounded-md ${
-                    c.id === selectedClass.id ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {c.name}
-                </button>
-              ))}
+            <div className="px-2 py-3 border-b border-border">
+              <button
+                type="button"
+                title={`Turma atual: ${selectedClass.name}`}
+                onClick={() => setSection("book")}
+                className="w-full h-11 rounded-2xl bg-muted/50 hover:bg-muted flex items-center justify-center text-primary transition-colors"
+              >
+                <Users className="h-4 w-4" />
+              </button>
             </div>
           )}
 
-          <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-            {NAV.map(item => {
+          <nav className="flex-1 flex flex-col items-center gap-2 p-2">
+            {NAV.map((item) => {
               const active = section === item.id;
               return (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => setSection(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  title={item.label}
+                  aria-label={item.label}
+                  className={`h-11 w-11 rounded-2xl flex items-center justify-center transition-all ${
                     active
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-primary text-primary-foreground shadow-sm scale-[1.03]"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
+                  <item.icon className="h-5 w-5" />
+                  <span className="sr-only">{item.label}</span>
                 </button>
               );
             })}
           </nav>
 
-          <div className="p-3 border-t border-border">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start text-muted-foreground"
+          <div className="p-2 border-t border-border">
+            <button
+              type="button"
+              title="Sair"
+              aria-label="Sair"
               onClick={() => supabase.auth.signOut().then(() => navigate("/"))}
+              className="h-11 w-11 mx-auto rounded-2xl flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
-            </Button>
+              <LogOut className="h-5 w-5" />
+            </button>
           </div>
         </aside>
 
@@ -401,7 +380,7 @@ const EduAluno = () => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 lg:ml-60 min-h-screen pt-14 lg:pt-0 pb-24 lg:pb-6">
+        <div className="flex-1 lg:ml-[76px] min-h-screen pt-14 lg:pt-0 pb-24 lg:pb-6">
           <main className="px-4 lg:px-8 py-6 max-w-6xl mx-auto">
             {section === "dashboard" && (
               <EduStudentHome
