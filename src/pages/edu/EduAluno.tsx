@@ -554,7 +554,10 @@ const EduAluno = () => {
                       <BookQuestTrailMap
                         chapters={normalizedChapters as any}
                         themeColor={bookTheme || "210 55% 30%"}
-                        onChapterClick={(chapter) => setSelectedChapter(chapter.id)}
+                        onChapterClick={(chapter) => {
+                          setSelectedChapter(chapter.id);
+                          handleStartChapter(chapter.id);
+                        }}
                         className="max-w-[540px]"
                         endLabel="🏁 Fim da trilha"
                       />
