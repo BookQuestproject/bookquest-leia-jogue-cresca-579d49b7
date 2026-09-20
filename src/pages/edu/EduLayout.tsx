@@ -47,8 +47,10 @@ const EduLayout = ({ children, breadcrumbExtra }: EduLayoutProps) => {
       navigate("/auth?redirect=/edu/professor", { replace: true });
       return;
     }
+    // Uma conta autenticada sem papel de professor não deve voltar para a
+    // própria porta de entrada do professor, evitando um loop de navegação.
     if (!isTeacher) {
-      navigate("/edu/professor/entrar", { replace: true });
+      navigate("/edu", { replace: true });
     }
   }, [user, isTeacher, authLoading, roleLoading, navigate]);
 
