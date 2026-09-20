@@ -12,14 +12,24 @@ const EduProfessorEntry = () => {
   const { isTeacher, loading: roleLoading } = useEduRole();
 
   useEffect(() => {
-    if (!authLoading && !roleLoading && user && isTeacher) {
+    if (authLoading || roleLoading) return;
+    if (user && isTeacher) {
       navigate("/edu/professor", { replace: true });
+    } else if (user && !isTeacher) {
+      navigate("/edu", { replace: true });
     }
   }, [user, isTeacher, authLoading, roleLoading, navigate]);
 
   const goToPanel = () => {
-    if (user && isTeacher) navigate("/edu/professor");
-    else navigate("/auth?redirect=/edu/professor");
+    if (user && isTeacher) {
+      navigate("/edu/professor");
+      return;
+    }
+    if (user) {
+      navigate("/edu");
+      return;
+    }
+    navigate("/auth?redirect=/edu/professor");
   };
 
   return (
