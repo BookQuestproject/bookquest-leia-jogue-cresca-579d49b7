@@ -111,6 +111,7 @@ const EduAluno = () => {
   const [bookTheme, setBookTheme] = useState<string | undefined>(undefined);
   const [bookCoverUrl, setBookCoverUrl] = useState<string | null>(null);
   const [classChallenge, setClassChallenge] = useState<any | null>(null);
+  const [studentPreferences, setStudentPreferences] = useState<any | null>(null);
   const [updatingPage, setUpdatingPage] = useState("");
   const [activeQuestion, setActiveQuestion] = useState<any | null>(null);
   const [responseText, setResponseText] = useState("");
@@ -137,13 +138,15 @@ const EduAluno = () => {
     fetchRanking(selectedClass.id);
 
     (async () => {
-      const [{ data: link }, { data: enrichment }, { data: challenge }] = await Promise.all([
+      const [{ data: link }, { data: enrichment }, { data: challenge }, { data: preferences }] = await Promise.all([
         supabase.from("edu_journey_classes" as any).select("journey_id").eq("class_id", selectedClass.id).limit(1).maybeSingle(),
         selectedClass.book_id
           ? supabase.from("book_trail_enrichments" as any).select("cover_url,theme_color,chapters").eq("book_id", selectedClass.book_id).maybeSingle()
           : Promise.resolve({ data: null }),
         supabase.from("edu_class_challenges" as any).select("title,description,goal_value,challenge_type").eq("class_id", selectedClass.id).eq("is_active", true).order("end_date", { ascending: true }).limit(1).maybeSingle(),
+        supabase.from("edu_student_preferences" as any).select("*").eq("user_id", user.id).maybeSingle(),
       ]);
+      setStudentPreferences((preferences as any) || null);
 
       setBookTheme((enrichment as any)?.theme_color || undefined);
       setBookCoverUrl((enrichment as any)?.cover_url || null);
@@ -299,7 +302,10 @@ const EduAluno = () => {
   const deadline = selectedClass?.reading_deadline ? new Date(selectedClass.reading_deadline) : null;
   const today = new Date();
   const daysRemaining = deadline ? Math.max(1, Math.ceil((deadline.getTime() - today.getTime()) / 86400000)) : 0;
-  const dailyGoal = daysRemaining > 0 ? Math.ceil(Math.max(0, totalPages - currentPage) / daysRemaining) : 0;
+  const deadlineGoal = daysRemaining > 0 ? Math.ceil(Math.max(0, totalPages - currentPage) / daysRemaining) : 0;
+  const dailyGoal = studentPreferences?.daily_goal_pages
+    ? Number(studentPreferences.daily_goal_pages)
+    : deadlineGoal;
 
   const handleStartChapter = (chapterNumber: number) => {
     if (!selectedClass) return;
@@ -502,6 +508,9 @@ const EduAluno = () => {
                 dailyPagesRead={myProgress?.pages_read_today || 0}
                 dailyGoal={dailyGoal}
                 daysRemaining={daysRemaining}
+                routineMinutes={Number(studentPreferences?.routine_minutes || 20)}
+                readingBarrier={studentPreferences?.reading_barrier || ""}
+                preferredSupport={studentPreferences?.preferred_support || ""}
                 chapters={normalizedChapters}
                 selectedChapter={activeChapter?.number || 1}
                 ranking={rankedStudents}
