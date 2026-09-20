@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import EduLayout from "./EduLayout";
 import { useJourneys } from "@/hooks/useJourneys";
 import { useClasses } from "@/hooks/useClasses";
@@ -10,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { BookMarked, Plus, Copy, Trash2, Send, Search, Check, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 
 const EduJornadas = () => {
+  const navigate = useNavigate();
   const { journeys, links, loading, create, remove, duplicate, assignToClasses } = useJourneys();
   const { classes } = useClasses();
   const activeClasses = classes.filter(c => !c.is_archived);
@@ -82,7 +84,8 @@ const EduJornadas = () => {
                       Aplicada em <span className="font-semibold text-foreground">{linkedCount}</span> turma{linkedCount !== 1 ? "s" : ""}
                     </div>
                     <div className="flex gap-1.5 pt-1">
-                      <Button size="sm" variant="outline" onClick={() => duplicate(j)} className="flex-1 h-8 text-[11px] gap-1"><Copy className="h-3 w-3" />Duplicar</Button>
+                      <Button size="sm" variant="outline" onClick={() => navigate(`/edu/jornadas/${j.id}/capitulos`)} className="flex-1 h-8 text-[11px] gap-1"><BookMarked className="h-3 w-3" />Capítulos</Button>
+                      <Button size="sm" variant="outline" onClick={() => duplicate(j)} className="h-8 text-[11px] gap-1"><Copy className="h-3 w-3" />Duplicar</Button>
                       <Button size="sm" variant="outline" onClick={() => remove(j.id)} className="h-8 text-[11px] gap-1 hover:text-destructive"><Trash2 className="h-3 w-3" /></Button>
                     </div>
                   </CardContent>
