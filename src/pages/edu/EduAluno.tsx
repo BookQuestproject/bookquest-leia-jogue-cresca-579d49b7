@@ -4,6 +4,7 @@ import {
   BookOpen, Trophy, Target, Megaphone, LogOut, CheckCircle2,
   Flame, Sparkles, LayoutDashboard, ClipboardList, BarChart3,
   Send, HelpCircle, Loader2, Users, Medal, TrendingUp, Clock,
+  PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,8 @@ import { useProfile } from "@/hooks/useProfile";
 import { useUserStats } from "@/hooks/useUserStats";
 import { useToast } from "@/hooks/use-toast";
 import EduStudentHome from "@/components/edu/EduStudentHome";
+import { bookTrails } from "@/pages/Trilhas";
+import { useEnrichedChapters } from "@/hooks/useEnrichedChapters";
 
 interface ClassInfo {
   id: string;
@@ -99,8 +102,10 @@ const EduAluno = () => {
   const { profile } = useProfile();
   const { essencia, streak } = useUserStats();
   const { toast } = useToast();
+  const { getEnrichment } = useEnrichedChapters();
 
   const [section, setSection] = useState<Section>("dashboard");
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
   const [classRanking, setClassRanking] = useState<any[]>([]);
   const [chapterMap, setChapterMap] = useState<any[]>([]);
@@ -146,6 +151,25 @@ const EduAluno = () => {
       setBookCoverUrl((enrichment as any)?.cover_url || null);
       setClassChallenge((challenge as any) || null);
 
+      const normalTrail = selectedClass.book_id
+        ? bookTrails.find((trail) => trail.id === selectedClass.book_id)
+        : undefined;
+      const normalEnrichment = selectedClass.book_id ? getEnrichment(selectedClass.book_id) : undefined;
+      const sharedTrailChapters = normalEnrichment?.chapters?.length
+        ? normalEnrichment.chapters.map((chapter: any) => ({
+            number: chapter.id,
+            title: chapter.title || `Capítulo ${chapter.id}`,
+            icon: chapter.icon || "📖",
+          }))
+        : normalTrail?.chapters?.map((chapter: any) => ({
+            number: chapter.id,
+            title: chapter.title || `Capítulo ${chapter.id}`,
+            icon: chapter.icon || "📖",
+          })) || [];
+
+      setBookTheme((enrichment as any)?.theme_color || normalEnrichment?.theme_color || normalTrail?.themeColor || undefined);
+      setBookCoverUrl((enrichment as any)?.cover_url || normalEnrichment?.cover_url || normalTrail?.coverImage || null);
+
       const journeyId = (link as any)?.journey_id;
       if (journeyId) {
         const { data: chapters } = await supabase
@@ -155,26 +179,44 @@ const EduAluno = () => {
           .order("chapter_number", { ascending: true });
 
         if ((chapters as any[])?.length) {
-          setChapterMap((chapters as any[]).map((c) => ({
-            number: c.chapter_number,
-            title: c.title || `Capítulo ${c.chapter_number}`,
-            startPage: c.start_page,
-            endPage: c.end_page,
-          })));
+          setChapterMap((chapters as any[]).map((c) => {
+            const shared = sharedTrailChapters.find((chapter) => chapter.number === c.chapter_number);
+            return {
+              number: c.chapter_number,
+              title: shared?.title || c.title || `Capítulo ${c.chapter_number}`,
+              startPage: c.start_page,
+              endPage: c.end_page,
+              icon: shared?.icon || "📖",
+            };
+          }));
           return;
         }
       }
 
-      const total = Math.max(1, Math.min(12, Number(selectedClass.total_pages || 12) ? Math.ceil(Number(selectedClass.total_pages || 12) / 20) : 1));
-      const pagesPerChapter = totalPages > 0 ? Math.ceil(totalPages / total) : 1;
-      setChapterMap(Array.from({ length: total }, (_, i) => ({
-        number: i + 1,
-        title: `Capítulo ${i + 1}`,
-        startPage: i === 0 ? 1 : i * pagesPerChapter + 1,
-        endPage: totalPages ? Math.min(totalPages, (i + 1) * pagesPerChapter) : (i + 1) * pagesPerChapter,
-      })));
+      const fallbackCount = Math.max(
+        1,
+        Math.min(
+          20,
+          Math.max(
+            sharedTrailChapters.length,
+            Number(normalTrail?.totalChapters || 0),
+            Number(selectedClass.total_pages || 0) ? Math.ceil(Number(selectedClass.total_pages || 0) / 20) : 1,
+          ),
+        ),
+      );
+      const pagesPerChapter = totalPages > 0 ? Math.ceil(totalPages / fallbackCount) : 1;
+      setChapterMap(Array.from({ length: fallbackCount }, (_, i) => {
+        const shared = sharedTrailChapters.find((chapter) => chapter.number === i + 1);
+        return {
+          number: i + 1,
+          title: shared?.title || `Capítulo ${i + 1}`,
+          startPage: i === 0 ? 1 : i * pagesPerChapter + 1,
+          endPage: totalPages ? Math.min(totalPages, (i + 1) * pagesPerChapter) : (i + 1) * pagesPerChapter,
+          icon: shared?.icon || "📖",
+        };
+      }));
     })();
-  }, [selectedClass?.id, user?.id, totalPages]);
+  }, [selectedClass?.id, user?.id, totalPages, getEnrichment]);
 
   const fetchRanking = async (classId: string) => {
     const { data: members } = await supabase.from("class_members").select("user_id").eq("class_id", classId);
@@ -299,66 +341,89 @@ const EduAluno = () => {
   return (
     <div className="min-h-screen bg-transparent">
       <div className="flex">
-        {/* Symbolic left rail */}
-        <aside className="hidden lg:flex flex-col w-[76px] border-r border-border bg-card/95 backdrop-blur-sm fixed h-screen top-0 z-20">
-          <div className="h-16 border-b border-border flex items-center justify-center">
-            <img src={logoCrown} alt="BookQuest" className="h-9 w-9" />
+        {/* Symbolic / expandable left rail */}
+        <aside className={`hidden lg:flex flex-col border-r border-border bg-card/95 backdrop-blur-sm fixed h-screen top-0 z-20 transition-[width] duration-200 ${sidebarExpanded ? "w-[220px]" : "w-[76px]"}`}>
+          <div className="h-16 border-b border-border flex items-center justify-between px-2">
+            <div className={`flex items-center ${sidebarExpanded ? "gap-2 px-2" : "justify-center w-full"}`}>
+              <img src={logoCrown} alt="BookQuest" className="h-9 w-9" />
+              {sidebarExpanded && (
+                <div className="leading-tight min-w-0">
+                  <p className="font-bold text-sm truncate">BookQuest</p>
+                  <p className="text-[9px] font-bold text-accent uppercase tracking-[0.18em]">EDU · Aluno</p>
+                </div>
+              )}
+            </div>
+            {sidebarExpanded && (
+              <button type="button" onClick={() => setSidebarExpanded(false)} className="h-9 w-9 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Recolher navegação">
+                <PanelLeftClose className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
-          <div className="px-2 pt-4 pb-3 border-b border-border">
-            <div className="h-11 w-11 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden">
-              <Avatar className="h-10 w-10">
+          <div className={`px-2 py-4 border-b border-border ${sidebarExpanded ? "px-3" : ""}`}>
+            {sidebarExpanded ? (
+              <>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10 shrink-0">
+                    {profile?.avatar_url && <AvatarImage src={profile.avatar_url} alt={studentName} />}
+                    <AvatarFallback>{initials}</AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold truncate">{studentName}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{selectedClass.name}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-3">
+                  <div className="rounded-xl bg-accent/10 px-3 py-2">
+                    <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Essência</p>
+                    <p className="text-sm font-bold text-accent">{essencia}</p>
+                  </div>
+                  <div className="rounded-xl bg-orange-500/10 px-3 py-2">
+                    <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Sequência</p>
+                    <p className="text-sm font-bold text-orange-500">{streak} dias</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Avatar className="h-10 w-10 mx-auto">
                 {profile?.avatar_url && <AvatarImage src={profile.avatar_url} alt={studentName} />}
                 <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
-            </div>
+            )}
           </div>
 
-          {studentClasses.length > 1 && (
-            <div className="px-2 py-3 border-b border-border">
-              <button
-                type="button"
-                title={`Turma atual: ${selectedClass.name}`}
-                onClick={() => setSection("book")}
-                className="w-full h-11 rounded-2xl bg-muted/50 hover:bg-muted flex items-center justify-center text-primary transition-colors"
-              >
-                <Users className="h-4 w-4" />
-              </button>
-            </div>
-          )}
-
-          <nav className="flex-1 flex flex-col items-center gap-2 p-2">
+          <nav className="flex-1 flex flex-col gap-1 p-2 overflow-y-auto">
             {NAV.map((item) => {
               const active = section === item.id;
               return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setSection(item.id)}
-                  title={item.label}
-                  aria-label={item.label}
-                  className={`h-11 w-11 rounded-2xl flex items-center justify-center transition-all ${
-                    active
-                      ? "bg-primary text-primary-foreground shadow-sm scale-[1.03]"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span className="sr-only">{item.label}</span>
+                <button key={item.id} type="button" onClick={() => setSection(item.id)} title={sidebarExpanded ? undefined : item.label} aria-label={item.label}
+                  className={`w-full h-11 rounded-2xl flex items-center transition-all ${sidebarExpanded ? "gap-3 px-3 justify-start" : "justify-center"} ${active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  {sidebarExpanded && <span className="text-sm font-medium truncate">{item.label}</span>}
                 </button>
               );
             })}
           </nav>
 
-          <div className="p-2 border-t border-border">
-            <button
-              type="button"
-              title="Sair"
-              aria-label="Sair"
-              onClick={() => supabase.auth.signOut().then(() => navigate("/"))}
-              className="h-11 w-11 mx-auto rounded-2xl flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            >
-              <LogOut className="h-5 w-5" />
+          <div className="p-2 border-t border-border space-y-1">
+            {sidebarExpanded && studentClasses.length > 1 && (
+              <div className="px-2 py-1.5">
+                <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold mb-1">Turmas</p>
+                {studentClasses.map((c: any) => (
+                  <button key={c.id} onClick={() => setSelectedClass(c as ClassInfo)} className={`w-full text-left text-xs px-2.5 py-1.5 rounded-lg ${c.id === selectedClass.id ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground hover:bg-muted"}`}>
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            )}
+            <button type="button" onClick={() => setSidebarExpanded((value) => !value)} className="w-full h-10 rounded-2xl flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground" aria-label={sidebarExpanded ? "Recolher navegação" : "Ampliar navegação"} title={sidebarExpanded ? "Recolher navegação" : "Ampliar navegação"}>
+              {sidebarExpanded ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+              {sidebarExpanded && <span className="text-xs ml-2">Modo compacto</span>}
+            </button>
+            <button type="button" title="Sair" aria-label="Sair" onClick={() => supabase.auth.signOut().then(() => navigate("/"))}
+              className={`h-10 rounded-2xl flex items-center text-muted-foreground hover:bg-muted hover:text-foreground w-full ${sidebarExpanded ? "gap-3 px-3 justify-start" : "justify-center"}`}>
+              <LogOut className="h-4 w-4" />
+              {sidebarExpanded && <span className="text-sm">Sair</span>}
             </button>
           </div>
         </aside>
@@ -394,7 +459,7 @@ const EduAluno = () => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 lg:ml-[76px] min-h-screen pt-14 lg:pt-0 pb-24 lg:pb-6">
+        <div className={`flex-1 min-h-screen transition-[margin] duration-200 ${sidebarExpanded ? "lg:ml-[220px]" : "lg:ml-[76px]"}` pt-14 lg:pt-0 pb-24 lg:pb-6">
           <main className="px-4 lg:px-8 py-6 max-w-6xl mx-auto">
             {section === "dashboard" && (
               <EduStudentHome
@@ -424,6 +489,8 @@ const EduAluno = () => {
                   setSelectedChapter(chapterNumber);
                 }}
                 onStartChapter={handleStartChapter}
+                sidebarExpanded={sidebarExpanded}
+                onToggleSidebar={() => setSidebarExpanded((value) => !value)}
                 onActivities={() => setSection("activities")}
                 onStats={() => setSection("stats")}
                 onAnnouncements={() => setSection("announcements")}
