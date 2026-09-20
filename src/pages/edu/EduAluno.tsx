@@ -102,6 +102,11 @@ const EduAluno = () => {
   const [section, setSection] = useState<Section>("dashboard");
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
   const [classRanking, setClassRanking] = useState<any[]>([]);
+  const [chapterMap, setChapterMap] = useState<any[]>([]);
+  const [selectedChapter, setSelectedChapter] = useState(1);
+  const [bookTheme, setBookTheme] = useState<string | undefined>(undefined);
+  const [bookCoverUrl, setBookCoverUrl] = useState<string | null>(null);
+  const [classChallenge, setClassChallenge] = useState<any | null>(null);
   const [updatingPage, setUpdatingPage] = useState("");
   const [activeQuestion, setActiveQuestion] = useState<any | null>(null);
   const [responseText, setResponseText] = useState("");
@@ -121,12 +126,53 @@ const EduAluno = () => {
   const { questions, responses, fetchQuestions, createResponse } = useClassQuestions();
 
   useEffect(() => {
-    if (selectedClass?.id) {
-      fetchProgress(selectedClass.id);
-      fetchQuestions(selectedClass.id);
-      fetchRanking(selectedClass.id);
-    }
-  }, [selectedClass?.id]);
+    if (!selectedClass?.id || !user?.id) return;
+    fetchProgress(selectedClass.id);
+    fetchQuestions(selectedClass.id);
+    fetchRanking(selectedClass.id);
+
+    (async () => {
+      const [{ data: link }, { data: enrichment }, { data: challenge }] = await Promise.all([
+        supabase.from("edu_journey_classes" as any).select("journey_id").eq("class_id", selectedClass.id).limit(1).maybeSingle(),
+        selectedClass.book_id
+          ? supabase.from("book_trail_enrichments" as any).select("cover_url,theme_color").eq("book_id", selectedClass.book_id).maybeSingle()
+          : Promise.resolve({ data: null }),
+        supabase.from("edu_class_challenges" as any).select("title,description,goal_value,challenge_type").eq("class_id", selectedClass.id).eq("is_active", true).order("end_date", { ascending: true }).limit(1).maybeSingle(),
+      ]);
+
+      setBookTheme((enrichment as any)?.theme_color || undefined);
+      setBookCoverUrl((enrichment as any)?.cover_url || null);
+      setClassChallenge((challenge as any) || null);
+
+      const journeyId = (link as any)?.journey_id;
+      if (journeyId) {
+        const { data: chapters } = await supabase
+          .from("edu_journey_chapters" as any)
+          .select("chapter_number,title,start_page,end_page")
+          .eq("journey_id", journeyId)
+          .order("chapter_number", { ascending: true });
+
+        if ((chapters as any[])?.length) {
+          setChapterMap((chapters as any[]).map((c) => ({
+            number: c.chapter_number,
+            title: c.title || `Capítulo ${c.chapter_number}`,
+            startPage: c.start_page,
+            endPage: c.end_page,
+          })));
+          return;
+        }
+      }
+
+      const total = Math.max(1, Math.min(12, Number(selectedClass.total_pages || 12) ? Math.ceil(Number(selectedClass.total_pages || 12) / 20) : 1));
+      const pagesPerChapter = totalPages > 0 ? Math.ceil(totalPages / total) : 1;
+      setChapterMap(Array.from({ length: total }, (_, i) => ({
+        number: i + 1,
+        title: `Capítulo ${i + 1}`,
+        startPage: i === 0 ? 1 : i * pagesPerChapter + 1,
+        endPage: totalPages ? Math.min(totalPages, (i + 1) * pagesPerChapter) : (i + 1) * pagesPerChapter,
+      })));
+    })();
+  }, [selectedClass?.id, user?.id, totalPages]);
 
   const fetchRanking = async (classId: string) => {
     const { data: members } = await supabase.from("class_members").select("user_id").eq("class_id", classId);
@@ -159,6 +205,23 @@ const EduAluno = () => {
   const currentPage = myProgress?.current_page || 0;
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
   const myRank = classRanking.findIndex(r => r.user_id === user?.id) + 1;
+  const rankedStudents = classRanking.map((row) => ({ ...row, isMe: row.user_id === user?.id }));
+  const normalizedChapters = chapterMap.map((chapter) => ({
+    ...chapter,
+    status: chapter.endPage <= currentPage
+      ? "completed"
+      : chapter.startPage <= Math.max(currentPage + 1, 1)
+        ? "current"
+        : "locked",
+  }));
+  const activeChapter = normalizedChapters.find((chapter) => chapter.number === selectedChapter)
+    || normalizedChapters.find((chapter) => chapter.status === "current")
+    || normalizedChapters[0];
+  useEffect(() => {
+    if (!normalizedChapters.length) return;
+    const current = normalizedChapters.find((chapter) => chapter.status === "current");
+    setSelectedChapter(current?.number || normalizedChapters[0].number);
+  }, [currentPage, chapterMap.length]);
 
   const myResponseIds = useMemo(
     () => new Set(responses.filter(r => r.user_id === user?.id).map(r => r.question_id)),
@@ -346,6 +409,8 @@ const EduAluno = () => {
                 className={selectedClass.name}
                 bookTitle={selectedClass.book_title}
                 author={selectedClass.author}
+                bookCoverUrl={bookCoverUrl}
+                themeColor={bookTheme}
                 currentPage={currentPage}
                 totalPages={totalPages}
                 progressPercent={progressPercent}
@@ -353,8 +418,18 @@ const EduAluno = () => {
                 essencia={essencia}
                 streak={streak}
                 rank={myRank}
-                daysRemaining={daysRemaining}
+                dailyPagesRead={myProgress?.pages_read_today || 0}
                 dailyGoal={dailyGoal}
+                daysRemaining={daysRemaining}
+                chapters={normalizedChapters}
+                selectedChapter={activeChapter?.number || 1}
+                ranking={rankedStudents}
+                classChallenge={classChallenge}
+                onSelectChapter={(chapterNumber) => {
+                  const chapter = normalizedChapters.find((item) => item.number === chapterNumber);
+                  if (!chapter || chapter.status === "locked") return;
+                  setSelectedChapter(chapterNumber);
+                }}
                 onContinueReading={() => navigate(`/edu/jornada/${selectedClass.id}`)}
                 onActivities={() => setSection("activities")}
                 onStats={() => setSection("stats")}
