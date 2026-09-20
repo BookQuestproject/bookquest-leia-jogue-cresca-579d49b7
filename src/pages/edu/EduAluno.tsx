@@ -27,6 +27,7 @@ import EduStudentHome from "@/components/edu/EduStudentHome";
 interface ClassInfo {
   id: string;
   name: string;
+  book_id: string | null;
   book_title: string | null;
   author: string | null;
   total_pages: number | null;
@@ -235,6 +236,19 @@ const EduAluno = () => {
   const daysRemaining = deadline ? Math.max(1, Math.ceil((deadline.getTime() - today.getTime()) / 86400000)) : 0;
   const dailyGoal = daysRemaining > 0 ? Math.ceil(Math.max(0, totalPages - currentPage) / daysRemaining) : 0;
 
+  const handleStartChapter = (chapterNumber: number) => {
+    if (!selectedClass) return;
+    const chapter = normalizedChapters.find((item) => item.number === chapterNumber);
+    if (!chapter || chapter.status === "locked") return;
+
+    if (selectedClass.book_id) {
+      navigate(`/ler/${selectedClass.book_id}/${chapterNumber}`);
+      return;
+    }
+
+    navigate(`/edu/jornada/${selectedClass.id}?chapter=${chapterNumber}`);
+  };
+
   const handleUpdatePage = async () => {
     if (!selectedClass) return;
     const page = parseInt(updatingPage);
@@ -409,7 +423,7 @@ const EduAluno = () => {
                   if (!chapter || chapter.status === "locked") return;
                   setSelectedChapter(chapterNumber);
                 }}
-                onContinueReading={() => navigate(`/edu/jornada/${selectedClass.id}`)}
+                onStartChapter={handleStartChapter}
                 onActivities={() => setSection("activities")}
                 onStats={() => setSection("stats")}
                 onAnnouncements={() => setSection("announcements")}
