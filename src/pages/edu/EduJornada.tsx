@@ -13,7 +13,7 @@ import { useUserStats } from "@/hooks/useUserStats";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const MOMENTS = [
+// Metodologia pedagógica interna: usada para organizar eventos e acompanhamento, sem aparecer como nomenclatura da interface.\nconst LEARNING_METHOD = { observe: "ler", engage: "engajar", interpret: "interpretar", advance: "avançar" } as const;\n\nconst MOMENTS = [
   ["discovery", "🔎", "Descoberta"], ["character", "🎭", "Personagem"],
   ["reaction", "💭", "Minha reação"], ["important", "❗", "Parte importante"],
   ["question", "❓", "Não entendi"], ["liked", "❤️", "Gostei muito"],
@@ -100,7 +100,7 @@ const EduJornada = () => {
     }).select("id").single();
     if (error) { toast.error("Não foi possível iniciar a sessão."); return; }
     setSessionId(data.id); setStartedPage(page); setElapsed(0); setRunning(true);
-    await emit("reading_session_started", { target_minutes: target, stage: "L" });
+    await emit("reading_session_started", { target_minutes: target, stage: LEARNING_METHOD.observe });
   };
 
   const pause = async () => {
@@ -118,7 +118,7 @@ const EduJornada = () => {
     if (error) { toast.error("Não foi possível finalizar."); return; }
     setRunning(false); await emit("reading_session_completed", {
       elapsed_seconds: elapsed, pages_advanced: Math.max(0, page - startedPage),
-      target_reached: elapsed >= target * 60, stage: "A",
+      target_reached: elapsed >= target * 60, stage: LEARNING_METHOD.advance,
     });
     toast.success("Sessão concluída. Sua jornada foi atualizada.");
     setSessionId(null);
@@ -148,13 +148,13 @@ const EduJornada = () => {
       <main className="max-w-4xl mx-auto px-4 py-5 space-y-4">
         <Card className="border-primary/20">
           <CardContent className="p-5 sm:p-6">
-            <div className="flex items-center justify-between gap-3"><div><Badge>Modo Jornada</Badge><h1 className="text-2xl font-bold mt-2">Leia no seu ritmo.</h1><p className="text-sm text-muted-foreground">Ler → Engajar → Interpretar → Avançar.</p></div><div className="text-sm font-semibold">{progress}%</div></div>
+            <div className="flex items-center justify-between gap-3"><div><Badge>Sessão de leitura</Badge><h1 className="text-2xl font-bold mt-2">Leia no seu ritmo.</h1><p className="text-sm text-muted-foreground">Registre sua leitura e marque o que chamou sua atenção.</p></div><div className="text-sm font-semibold">{progress}%</div></div>
             <Progress value={progress} className="h-2 mt-4" />
           </CardContent>
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-4">
-          <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><BookOpen className="h-4 w-4" />L — Ler</CardTitle></CardHeader><CardContent className="space-y-4">
+          <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><BookOpen className="h-4 w-4" />Leitura</CardTitle></CardHeader><CardContent className="space-y-4">
             <div className="rounded-xl border p-4"><p className="text-xs text-muted-foreground">Página atual</p><div className="flex items-center gap-2 mt-2"><Input value={pageDraft} onChange={(e) => setPageDraft(e.target.value)} onBlur={savePage} type="number" min={0} max={totalPages || undefined} className="w-28" /><span className="text-sm text-muted-foreground">de {totalPages || "—"}</span></div></div>
             <div className="rounded-xl border p-4"><div className="flex justify-between"><div><p className="text-xs text-muted-foreground">Tempo</p><p className="text-2xl font-bold">{formatTime(elapsed)}</p></div><div className="text-right"><p className="text-xs text-muted-foreground">Meta</p><Input value={target} onChange={(e) => setTarget(Math.max(5, Number(e.target.value) || 20))} type="number" min={5} max={90} className="w-20 h-8" /></div></div><Progress value={Math.min(100, elapsed / (target * 60) * 100)} className="h-2 mt-3" />{elapsed >= target * 60 && <p className="text-sm text-primary font-semibold mt-3">🎉 Meta alcançada. Você pode continuar ou finalizar.</p>}<div className="flex gap-2 mt-4">{!sessionId ? <Button onClick={start} className="gap-2"><Play className="h-4 w-4" />Começar sessão</Button> : running ? <><Button variant="outline" onClick={pause} className="gap-2"><Pause className="h-4 w-4" />Pausar</Button><Button onClick={finish} className="gap-2"><CheckCircle2 className="h-4 w-4" />Finalizar</Button></> : <><Button onClick={start} variant="outline" className="gap-2"><Play className="h-4 w-4" />Retomar</Button><Button onClick={finish} className="gap-2"><CheckCircle2 className="h-4 w-4" />Finalizar</Button></>}</div></div>
           </CardContent></Card>
@@ -162,9 +162,9 @@ const EduJornada = () => {
           <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Lightbulb className="h-4 w-4" />Próximo passo</CardTitle></CardHeader><CardContent className="space-y-3"><p className="text-sm text-muted-foreground">Sua leitura fica registrada aqui. Ao terminar, siga para uma atividade ou reflexão da turma.</p><Button className="w-full gap-2" variant="outline" onClick={() => navigate("/edu/aluno")}><MessageCircle className="h-4 w-4" />Ver próxima atividade</Button><div className="rounded-lg bg-muted/30 p-3 text-xs text-muted-foreground flex gap-2"><Sparkles className="h-4 w-4 shrink-0" />O progresso e as ações da sessão ficam conectados à sua jornada.</div></CardContent></Card>
         </div>
 
-        <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Flag className="h-4 w-4" />E — Engajar</CardTitle></CardHeader><CardContent className="space-y-3"><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{MOMENTS.map(([type, icon, label]) => <button key={type} onClick={() => setMoment(type)} className="rounded-lg border p-3 text-left hover:border-primary/50 transition-colors"><span className="text-lg">{icon}</span><p className="text-xs font-medium mt-1">{label}</p></button>)}</div>{moment && <div className="rounded-xl border bg-muted/20 p-4 space-y-3"><p className="text-sm font-semibold">Página {page} · {MOMENTS.find((m) => m[0] === moment)?.[2]}</p><Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Anotação opcional…" rows={3} /><div className="flex gap-2"><Button onClick={saveMoment}>Salvar momento</Button><Button variant="ghost" onClick={() => setMoment(null)}>Cancelar</Button></div></div>}{moments.length > 0 && <div className="space-y-2 pt-2"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Seus momentos</p>{moments.slice(0, 5).map((item) => <div key={item.id} className="text-sm">Página {item.page_number} · {item.note || item.moment_type}</div>)}</div>}</CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Flag className="h-4 w-4" />Momentos da leitura</CardTitle></CardHeader><CardContent className="space-y-3"><div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{MOMENTS.map(([type, icon, label]) => <button key={type} onClick={() => setMoment(type)} className="rounded-lg border p-3 text-left hover:border-primary/50 transition-colors"><span className="text-lg">{icon}</span><p className="text-xs font-medium mt-1">{label}</p></button>)}</div>{moment && <div className="rounded-xl border bg-muted/20 p-4 space-y-3"><p className="text-sm font-semibold">Página {page} · {MOMENTS.find((m) => m[0] === moment)?.[2]}</p><Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Anotação opcional…" rows={3} /><div className="flex gap-2"><Button onClick={saveMoment}>Salvar momento</Button><Button variant="ghost" onClick={() => setMoment(null)}>Cancelar</Button></div></div>}{moments.length > 0 && <div className="space-y-2 pt-2"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Seus momentos</p>{moments.slice(0, 5).map((item) => <div key={item.id} className="text-sm">Página {item.page_number} · {item.note || item.moment_type}</div>)}</div>}</CardContent></Card>
 
-        <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Trophy className="h-4 w-4" />A — Avançar</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Ao concluir a sessão, o próximo passo fica claro na sua Home. Sua Essência atual: <strong>{essencia}</strong>.</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Trophy className="h-4 w-4" />Seu próximo passo</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Ao concluir a sessão, o próximo passo fica claro na sua Home. Sua Essência atual: <strong>{essencia}</strong>.</p></CardContent></Card>
       </main>
     </div>
   );
