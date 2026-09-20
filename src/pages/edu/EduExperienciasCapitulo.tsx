@@ -262,6 +262,7 @@ const EduExperienciasCapitulo = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [responses, setResponses] = useState<StoredResponse[]>([]);
+  const [responsesLoaded, setResponsesLoaded] = useState(false);
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -332,6 +333,7 @@ const EduExperienciasCapitulo = () => {
         }
 
         setResponses(stored);
+        setResponsesLoaded(true);
         setStoryCounts({
           interpretation: stored.filter((r) => loaded.find((e) => e.id === r.experience_id)?.area === "interpretation").length,
           characters: stored.filter((r) => loaded.find((e) => e.id === r.experience_id)?.area === "character").length,
@@ -342,6 +344,10 @@ const EduExperienciasCapitulo = () => {
         });
       }
 
+      if (!loaded.length) {
+        setResponses([]);
+        setResponsesLoaded(true);
+      }
       setLoading(false);
     })();
   }, [classId, chapterNumber, user, authLoading, navigate]);
@@ -351,7 +357,7 @@ const EduExperienciasCapitulo = () => {
     const firstPending = experiences.findIndex((e) => !responses.some((r) => r.experience_id === e.id));
     if (firstPending >= 0) setStep(firstPending);
     else setFinished(true);
-  }, [experiences, responses]);
+  }, [experiences, responsesLoaded]);
 
   useEffect(() => {
     if (!current || answers[current.id] !== undefined) return;
@@ -402,6 +408,10 @@ const EduExperienciasCapitulo = () => {
       feedback = isCorrect
         ? feedback || "Boa leitura dos detalhes."
         : feedback || "Revise os detalhes que sustentam sua escolha.";
+    }
+
+    if (isCorrect === null && !feedback) {
+      feedback = "Essa é uma interpretação possível. Sua leitura ficou registrada como parte da jornada.";
     }
 
     let ok = true;
