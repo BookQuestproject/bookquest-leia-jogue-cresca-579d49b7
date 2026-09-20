@@ -514,7 +514,6 @@ const EduAluno = () => {
                 chapters={normalizedChapters}
                 selectedChapter={activeChapter?.number || 1}
                 ranking={rankedStudents}
-                classChallenge={classChallenge}
                 onSelectChapter={(chapterNumber) => {
                   const chapter = normalizedChapters.find((item) => item.number === chapterNumber);
                   if (!chapter || chapter.status === "locked") return;
