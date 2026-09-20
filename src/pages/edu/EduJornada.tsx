@@ -102,7 +102,7 @@ const EduJornada = () => {
       started_page: page, target_minutes: target, chapter_number: null,
     }).select("id").single();
     if (error) { toast.error("Não foi possível iniciar a sessão."); return; }
-    setSessionId(data.id); setStartedPage(page); setElapsed(0); setRunning(true);
+    setSessionId((data as any)?.id ?? null); setStartedPage(page); setElapsed(0); setRunning(true);
     await emit("reading_session_started", { target_minutes: target, stage: LEARNING_METHOD.observe });
   };
 
