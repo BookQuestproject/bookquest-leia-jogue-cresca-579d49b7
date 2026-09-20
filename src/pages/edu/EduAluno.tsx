@@ -138,15 +138,17 @@ const EduAluno = () => {
     fetchRanking(selectedClass.id);
 
     (async () => {
-      const [{ data: link }, { data: enrichment }, { data: challenge }, { data: preferences }] = await Promise.all([
+      const [{ data: link }, { data: enrichment }, { data: challenge }, { data: preferences }, { data: profileRow }] = await Promise.all([
         supabase.from("edu_journey_classes" as any).select("journey_id").eq("class_id", selectedClass.id).limit(1).maybeSingle(),
         selectedClass.book_id
           ? supabase.from("book_trail_enrichments" as any).select("cover_url,theme_color,chapters").eq("book_id", selectedClass.book_id).maybeSingle()
           : Promise.resolve({ data: null }),
         supabase.from("edu_class_challenges" as any).select("title,description,goal_value,challenge_type").eq("class_id", selectedClass.id).eq("is_active", true).order("end_date", { ascending: true }).limit(1).maybeSingle(),
         supabase.from("edu_student_preferences" as any).select("*").eq("user_id", user.id).maybeSingle(),
+        supabase.from("profiles").select("literary_profile").eq("id", user.id).maybeSingle(),
       ]);
-      setStudentPreferences((preferences as any) || null);
+      const profileDiagnostic = (profileRow as any)?.literary_profile?.edu_diagnostic;
+      setStudentPreferences((preferences as any) || profileDiagnostic || null);
 
       setBookTheme((enrichment as any)?.theme_color || undefined);
       setBookCoverUrl((enrichment as any)?.cover_url || null);
