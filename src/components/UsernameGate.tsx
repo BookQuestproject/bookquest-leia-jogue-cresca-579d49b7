@@ -23,7 +23,8 @@ const UsernameGate = ({ children }: UsernameGateProps) => {
 
   // Exempt paths
   const exemptPaths = ["/", "/auth", "/quiz-literario", "/configuracoes", "/auth/callback", "/politica-de-privacidade", "/termos-de-servico", "/reset-password", "/edu", "/entrar/"];
-  if (exemptPaths.some(p => location.pathname.startsWith(p))) {
+  const isEduReading = location.pathname.startsWith("/ler/") && new URLSearchParams(location.search).get("edu") === "1";
+  if (isEduReading || exemptPaths.some(p => location.pathname.startsWith(p))) {
     return <>{children}</>;
   }
 
