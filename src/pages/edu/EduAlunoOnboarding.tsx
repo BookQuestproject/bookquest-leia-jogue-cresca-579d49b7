@@ -183,8 +183,7 @@ const EduAlunoOnboarding = () => {
     if (!user) return;
     setSaving(true);
 
-    const { error } = await supabase.from("edu_student_preferences" as any).upsert({
-      user_id: user.id,
+    const diagnostic = {
       avatar_id: avatar,
       reading_experience: experience,
       reading_frequency: frequency,
@@ -194,17 +193,34 @@ const EduAlunoOnboarding = () => {
       reading_motivation: motivation,
       preferred_support: support,
       daily_goal_pages: goalPages,
+      captured_at: new Date().toISOString(),
+    };
+
+    // Preferred storage for teacher analytics and future adaptive rules.
+    await supabase.from("edu_student_preferences" as any).upsert({
+      user_id: user.id,
+      ...diagnostic,
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id" });
 
-    if (error) {
-      setSaving(false);
-      return;
-    }
+    // Mirror the diagnostic into the existing profile so the first experience
+    // remains useful even before the personalization table is available.
+    const { data: currentProfile } = await supabase
+      .from("profiles")
+      .select("literary_profile")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const currentLiterary = (currentProfile as any)?.literary_profile;
+    const mergedLiterary = {
+      ...(currentLiterary && typeof currentLiterary === "object" ? currentLiterary : {}),
+      edu_diagnostic: diagnostic,
+    };
 
     const { error: profileError } = await supabase.from("profiles").update({
       avatar_character: avatar,
       edu_onboarding_completed: true,
+      literary_profile: mergedLiterary,
     } as any).eq("id", user.id);
 
     if (profileError) {
@@ -214,6 +230,7 @@ const EduAlunoOnboarding = () => {
         full_name: user.user_metadata?.full_name || null,
         avatar_character: avatar,
         edu_onboarding_completed: true,
+        literary_profile: mergedLiterary,
       } as any, { onConflict: "id" });
     }
 
