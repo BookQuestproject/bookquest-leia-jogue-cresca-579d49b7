@@ -18,7 +18,8 @@ const QuizGate = ({ children }: QuizGateProps) => {
 
   // Don't gate these routes
   const exemptPaths = ["/", "/auth", "/quiz-literario", "/configuracoes", "/edu", "/entrar/", "/auth/callback", "/politica-de-privacidade", "/termos-de-servico"];
-  if (exemptPaths.some(p => location.pathname.startsWith(p))) {
+  const isEduReading = location.pathname.startsWith("/ler/") && new URLSearchParams(location.search).get("edu") === "1";
+  if (isEduReading || exemptPaths.some(p => location.pathname.startsWith(p))) {
     return <>{children}</>;
   }
 
