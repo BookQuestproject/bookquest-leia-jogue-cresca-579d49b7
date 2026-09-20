@@ -136,7 +136,10 @@ const EduStudentHome = ({
               <BookQuestTrailMap
                 chapters={chapters}
                 themeColor={themeColor || "210 55% 30%"}
-                onChapterClick={(chapter) => onSelectChapter(chapter.id)}
+                onChapterClick={(chapter) => {
+                  onSelectChapter(chapter.id);
+                  onStartChapter(chapter.id);
+                }}
                 className="max-w-[540px]"
                 endLabel="🏁 Chegada da trilha"
               />
