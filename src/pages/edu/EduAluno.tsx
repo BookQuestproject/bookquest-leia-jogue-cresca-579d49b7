@@ -190,18 +190,24 @@ const EduAluno = () => {
           .order("chapter_number", { ascending: true });
 
         if ((chapters as any[])?.length) {
-          setChapterMap((chapters as any[]).map((c) => {
-            const shared = sharedTrailChapters.find((chapter) => chapter.id === c.chapter_number);
+          const journeyById = new Map((chapters as any[]).map((c) => [c.chapter_number, c]));
+          const count = Math.max(sharedTrailChapters.length, (chapters as any[]).length);
+          const pagesPerChapter = totalPages > 0 ? Math.ceil(totalPages / count) : 1;
+          const merged = Array.from({ length: count }, (_, i) => {
+            const id = i + 1;
+            const journeyChapter = journeyById.get(id);
+            const shared = sharedTrailChapters.find((chapter) => chapter.id === id);
             return {
-              id: c.chapter_number,
-              title: shared?.title || c.title || `Capítulo ${c.chapter_number}`,
-              startPage: c.start_page,
-              endPage: c.end_page,
-              totalPages: Math.max(1, c.end_page - c.start_page + 1),
+              id,
+              title: shared?.title || journeyChapter?.title || `Capítulo ${id}`,
+              startPage: journeyChapter?.start_page || (i === 0 ? 1 : i * pagesPerChapter + 1),
+              endPage: journeyChapter?.end_page || (totalPages ? Math.min(totalPages, (i + 1) * pagesPerChapter) : (i + 1) * pagesPerChapter),
+              totalPages: journeyChapter ? Math.max(1, journeyChapter.end_page - journeyChapter.start_page + 1) : (shared?.totalPages || pagesPerChapter),
               icon: shared?.icon || "📖",
               status: "locked",
             };
-          }));
+          });
+          setChapterMap(merged);
           return;
         }
       }
