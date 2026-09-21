@@ -101,7 +101,7 @@ export const expandChapters = (chapters: Chapter[], totalChapters: number, defau
   return filled;
 };
 
-export const bookTrails: BookTrail[] = [
+const bookTrails: BookTrail[] = [
   {
     id: "harry-potter-1",
     title: "Harry Potter e a Pedra Filosofal",

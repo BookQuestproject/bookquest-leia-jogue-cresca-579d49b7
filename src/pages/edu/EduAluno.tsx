@@ -4,7 +4,7 @@ import {
   BookOpen, Trophy, Target, Megaphone, LogOut, CheckCircle2,
   Flame, Sparkles, LayoutDashboard, ClipboardList, BarChart3,
   Send, HelpCircle, Loader2, Users, Medal, TrendingUp, Clock,
-  PanelLeftClose, PanelLeftOpen,
+  PanelLeftClose, PanelLeftOpen, ChevronRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -296,6 +296,7 @@ const EduAluno = () => {
   };
 
   const myProgress = progressData.find(p => p.user_id === user?.id);
+  const dailyPagesRead = myProgress?.pages_read_today || 0;
   const currentPage = myProgress?.current_page || 0;
   const progressPercent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
   const myRank = classRanking.findIndex(r => r.user_id === user?.id) + 1;
@@ -540,7 +541,6 @@ const EduAluno = () => {
                 totalPages={totalPages}
                 progressPercent={progressPercent}
                 pendingActivities={pendingQuestions.length}
-                essencia={essencia}
                 streak={streak}
                 rank={myRank}
                 dailyPagesRead={myProgress?.pages_read_today || 0}
