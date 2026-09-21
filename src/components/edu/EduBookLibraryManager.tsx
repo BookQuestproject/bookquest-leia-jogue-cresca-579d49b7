@@ -321,6 +321,21 @@ const EduBookLibraryManager = () => {
     await supabase.rpc("sync_edu_book_question_to_classes" as any, { _book_question_id: data.id });
   };
 
+  const saveQuestion = async (question: BookQuestion) => {
+    const text = question.question_text.trim();
+    if (!text) return;
+    const { error } = await supabase.from("edu_book_questions" as any).update({
+      question_text: text,
+      updated_at: new Date().toISOString(),
+    }).eq("id", question.id);
+    if (error) {
+      toast({ title: "Não consegui salvar a pergunta", description: error.message, variant: "destructive" });
+      return;
+    }
+    await supabase.rpc("sync_edu_book_question_to_classes" as any, { _book_question_id: question.id });
+    toast({ title: "Pergunta atualizada" });
+  };
+
   const deleteQuestion = async (id: string) => {
     const { error } = await supabase.from("edu_book_questions" as any).update({ is_active: false }).eq("id", id);
     if (error) {
@@ -589,14 +604,21 @@ const EduBookLibraryManager = () => {
 
                 <div className="mt-4 space-y-3">
                   {currentQuestions.map((question) => (
-                    <div key={question.id} className="rounded-xl border border-border bg-muted/10 p-3 flex items-start gap-3">
-                      <div className="flex-1">
+                    <div key={question.id} className="rounded-xl border border-border bg-muted/10 p-3 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
                         <Badge variant="outline" className="text-[10px]">{question.source === "ai" ? "IA" : question.source === "catalog" ? "Catálogo" : "Professor"}</Badge>
-                        <p className="text-sm font-medium mt-2">{question.question_text}</p>
+                        <Button size="icon" variant="ghost" onClick={() => void deleteQuestion(question.id)} aria-label="Remover pergunta">
+                          <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                        </Button>
                       </div>
-                      <Button size="icon" variant="ghost" onClick={() => void deleteQuestion(question.id)} aria-label="Remover pergunta">
-                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                      </Button>
+                      <Textarea
+                        rows={2}
+                        value={question.question_text}
+                        onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === question.id ? { ...item, question_text: e.target.value } : item))}
+                      />
+                      <div className="flex justify-end">
+                        <Button size="sm" variant="outline" onClick={() => void saveQuestion(question)}>Salvar pergunta</Button>
+                      </div>
                     </div>
                   ))}
                 </div>
