@@ -9,7 +9,14 @@ const storageKey = (context: string) => `bq_feedback_${context}`;
 /** Returns true when the user has already answered/dismissed this feedback context. */
 export const isFeedbackDone = (context: string) => {
   try {
-    return localStorage.getItem(storageKey(context)) !== null;
+    const stored = localStorage.getItem(storageKey(context));
+    if (!stored) return false;
+    const timestamp = new Date(stored).getTime();
+    if (!Number.isFinite(timestamp)) return false;
+    const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+    if (Date.now() - timestamp < thirtyDays) return true;
+    localStorage.removeItem(storageKey(context));
+    return false;
   } catch {
     return false;
   }
