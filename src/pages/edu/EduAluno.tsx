@@ -49,9 +49,6 @@ const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "dashboard", label: "Início", icon: LayoutDashboard },
   { id: "book", label: "Livro", icon: BookOpen },
   { id: "activities", label: "Atividades", icon: ClipboardList },
-  { id: "ranking", label: "Ranking", icon: Trophy },
-  { id: "announcements", label: "Avisos", icon: Megaphone },
-  { id: "stats", label: "Progresso", icon: BarChart3 },
 ];
 
 const MiniStat = ({ icon: Icon, value, label, tone }: { icon: any; value: string | number; label: string; tone: "primary" | "accent" | "destructive" }) => {
@@ -613,6 +610,7 @@ const EduAluno = () => {
                 onStartChapter={handleStartChapter}
                 onActivities={() => setSection("activities")}
                 onStats={() => setSection("stats")}
+                onRanking={() => setSection("ranking")}
                 onAnnouncements={() => setSection("announcements")}
                 onMissions={() => setSection("missions")}
                 onAchievements={() => setSection("achievements")}
