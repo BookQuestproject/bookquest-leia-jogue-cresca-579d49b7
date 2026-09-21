@@ -4,7 +4,7 @@ import {
   BookOpen, Trophy, Target, Megaphone, LogOut, CheckCircle2,
   Flame, Sparkles, LayoutDashboard, ClipboardList, BarChart3,
   Send, HelpCircle, Loader2, Users, Medal, TrendingUp, Clock,
-  PanelLeftClose, PanelLeftOpen, ChevronRight,
+  Award, BookMarked, MessageSquare, PanelLeftClose, PanelLeftOpen, ChevronRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,7 @@ import BookQuestTrailMap from "@/components/BookQuestTrailMap";
 import EduBookCover from "@/components/edu/EduBookCover";
 import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
 import FeedbackLauncher from "@/components/feedback/FeedbackLauncher";
+import { EduAchievementsSection, EduClassDiscussionSection, EduDiagnosticSummary, EduMissionsSection, EduVocabularySection } from "@/components/edu/EduIntegratedFeatures";
 
 interface ClassInfo {
   id: string;
@@ -42,11 +43,15 @@ interface ClassInfo {
   access_code: string;
 }
 
-type Section = "dashboard" | "book" | "ranking" | "activities" | "announcements" | "stats";
+type Section = "dashboard" | "book" | "missions" | "achievements" | "vocabulary" | "community" | "activities" | "ranking" | "announcements" | "stats";
 
 const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "dashboard", label: "Início", icon: LayoutDashboard },
   { id: "book", label: "Livro", icon: BookOpen },
+  { id: "missions", label: "Missões", icon: Target },
+  { id: "achievements", label: "Conquistas", icon: Award },
+  { id: "vocabulary", label: "Vocabulário", icon: BookMarked },
+  { id: "community", label: "Debate", icon: MessageSquare },
   { id: "activities", label: "Atividades", icon: ClipboardList },
   { id: "ranking", label: "Ranking", icon: Trophy },
   { id: "announcements", label: "Avisos", icon: Megaphone },
@@ -548,7 +553,7 @@ const EduAluno = () => {
 
         {/* Mobile bottom nav */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border flex justify-around py-1.5 overflow-x-auto">
-          {NAV.slice(0, 5).map(item => {
+          {NAV.slice(0, 6).map(item => {
             const active = section === item.id;
             return (
               <button
@@ -602,7 +607,14 @@ const EduAluno = () => {
                 onActivities={() => setSection("activities")}
                 onStats={() => setSection("stats")}
                 onAnnouncements={() => setSection("announcements")}
+                onMissions={() => setSection("missions")}
+                onAchievements={() => setSection("achievements")}
+                onVocabulary={() => setSection("vocabulary")}
+                onCommunity={() => setSection("community")}
               />
+              <div className="max-w-2xl mx-auto mt-6">
+                <EduDiagnosticSummary onOpen={() => navigate("/edu/onboarding-aluno")} />
+              </div>
               <FeedbackPrompt
                 context={`aluno_home_${new Date().toISOString().slice(0, 7)}`}
                 audience="aluno"
@@ -611,6 +623,21 @@ const EduAluno = () => {
                 question="Como está sendo sua experiência de leitura no BookQuest EDU?"
               />
               </>
+            )}
+
+            {section === "missions" && <EduMissionsSection /> }
+
+            {section === "achievements" && <EduAchievementsSection /> }
+
+            {section === "vocabulary" && <EduVocabularySection bookTitle={hasDefinedBook ? selectedClass.book_title : null} /> }
+
+            {section === "community" && (
+              <EduClassDiscussionSection
+                classId={selectedClass.id}
+                bookTitle={hasDefinedBook ? selectedClass.book_title : null}
+                chapters={normalizedChapters}
+                onStartChapter={handleStartChapter}
+              />
             )}
 
             {section === "book" && (
