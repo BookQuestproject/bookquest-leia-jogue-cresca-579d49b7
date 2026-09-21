@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { useToast } from "./use-toast";
+import { bookTrails } from "@/pages/Trilhas";
 
 export interface CatalogBook {
   book_id: string;
@@ -83,20 +84,55 @@ export const useClassBooks = (classId?: string) => {
   useEffect(() => { fetchAll(); }, [fetchAll]);
   useEffect(() => { fetchMyRequests(); }, [fetchMyRequests]);
 
-  /** Search the BookQuest catalog (enriched library). */
+  /** Search the central BookQuest library plus teacher-created EDU books. */
   const searchCatalog = async (query: string): Promise<CatalogBook[]> => {
-    const q = query.trim();
+    const q = query.trim().toLowerCase();
     if (!q) return [];
-    const { data, error } = await supabase
-      .from("book_trail_enrichments")
-      .select("book_id, title, author, cover_url, total_pages, genre")
-      .or(`title.ilike.%${q}%,author.ilike.%${q}%`)
-      .limit(20);
-    if (error) {
-      console.error(error);
-      return [];
-    }
-    return (data ?? []) as CatalogBook[];
+
+    const builtIns: CatalogBook[] = bookTrails
+      .filter((book) => !q || book.title.toLowerCase().includes(q) || book.author.toLowerCase().includes(q))
+      .map((book) => ({
+        book_id: book.id,
+        title: book.title,
+        author: book.author,
+        cover_url: book.coverImage || null,
+        total_pages: book.chapters.reduce((sum, chapter) => sum + (chapter.totalPages || 0), 0) || null,
+        genre: book.genre,
+      }));
+
+    const [{ data: enriched }, { data: custom }] = await Promise.all([
+      supabase
+        .from("book_trail_enrichments")
+        .select("book_id, title, author, cover_url, total_pages, genre")
+        .or(`title.ilike.%${q}%,author.ilike.%${q}%`)
+        .limit(20),
+      supabase
+        .from("edu_books" as any)
+        .select("id,title,author,cover_url,total_pages,genre")
+        .eq("is_active", true)
+        .or(`title.ilike.%${q}%,author.ilike.%${q}%`)
+        .limit(20),
+    ]);
+
+    const merged = [
+      ...builtIns,
+      ...((enriched || []) as CatalogBook[]),
+      ...((custom || []) as any[]).map((book) => ({
+        book_id: book.id,
+        title: book.title,
+        author: book.author || "",
+        cover_url: book.cover_url || null,
+        total_pages: book.total_pages ?? null,
+        genre: book.genre || null,
+      })),
+    ];
+
+    return merged.filter((book, index, rows) =>
+      rows.findIndex((row) =>
+        row.book_id === book.book_id ||
+        (row.title.toLowerCase() === book.title.toLowerCase() && row.author.toLowerCase() === book.author.toLowerCase())
+      ) === index
+    ).slice(0, 20);
   };
 
   /** Schedule the next book for the class (replaces any existing scheduled book). */
