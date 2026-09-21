@@ -41,6 +41,7 @@ type Props = {
   onStartChapter: (chapterNumber: number) => void;
   onActivities: () => void;
   onStats: () => void;
+  onRanking: () => void;
   onAnnouncements: () => void;
   onMissions: () => void;
   onAchievements: () => void;
@@ -88,6 +89,7 @@ const EduStudentHome = ({
   onStartChapter,
   onActivities,
   onStats,
+  onRanking,
   onAnnouncements,
   onMissions,
   onAchievements,
@@ -312,7 +314,7 @@ const EduStudentHome = ({
             ["Vocabulário", onVocabulary],
             ["Debate da turma", onCommunity],
             ["Atividades", onActivities],
-            ["Ranking", onStats],
+            ["Ranking", onRanking],
             ["Avisos", onAnnouncements],
             ["Meu plano", onDiagnostic],
           ].map(([label, action]) => (
