@@ -14,6 +14,7 @@ import {
   Users, Library, Loader2, ChevronRight, X, Check,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 type EduBook = {
   id: string;
@@ -157,7 +158,7 @@ const EduLivros = () => {
       .eq("is_active", true)
       .order("created_at", { ascending: false });
     if (error) toast.error("Não consegui carregar os livros.");
-    setBooks((data as EduBook[]) || []);
+    setBooks((data as unknown as EduBook[]) || []);
     setLoading(false);
   };
 
@@ -254,13 +255,13 @@ const EduLivros = () => {
       return;
     }
 
-    await seedBookChapters(data as EduBook);
+    await seedBookChapters(data as unknown as EduBook);
     toast.success("Livro criado na biblioteca EDU.");
     setShowCreate(false);
     setBookForm({ title: "", author: "", total_pages: "", genre: "", cover_url: "", description: "" });
     setSaving(false);
     await refreshBooks();
-    await loadDetails(data as EduBook);
+    await loadDetails(data as unknown as EduBook);
   };
 
   const importCatalogBook = async (item: CatalogItem) => {
@@ -289,11 +290,11 @@ const EduLivros = () => {
       return;
     }
 
-    await seedBookChapters(data as EduBook);
+    await seedBookChapters(data as unknown as EduBook);
     setCatalog([]);
     toast.success("Livro adicionado à sua biblioteca EDU.");
     await refreshBooks();
-    await loadDetails(data as EduBook);
+    await loadDetails(data as unknown as EduBook);
     setSaving(false);
   };
 
@@ -340,7 +341,7 @@ const EduLivros = () => {
         .order("created_at", { ascending: true }),
     ]);
 
-    setChapters((chapterRows as EduChapter[]) || []);
+    setChapters((chapterRows as unknown as EduChapter[]) || []);
     setQuestions(((questionRows as any[]) || []).map((row) => ({
       ...row,
       options: Array.isArray(row.options) ? row.options : [],

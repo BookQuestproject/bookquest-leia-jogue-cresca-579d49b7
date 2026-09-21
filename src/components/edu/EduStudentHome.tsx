@@ -304,13 +304,13 @@ const EduStudentHome = ({
           </div>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
-          {[
-            ["Missões", onMissions],
-            ["Conquistas", onAchievements],
-            ["Vocabulário", onVocabulary],
-            ["Debate da turma", onCommunity],
-          ].map(([label, action]) => (
-            <button key={String(label)} type="button" onClick={action as () => void} className="rounded-2xl border border-border px-3 py-3 text-left hover:bg-muted/40 transition-colors">
+          {([
+            { label: "Missões", action: onMissions },
+            { label: "Conquistas", action: onAchievements },
+            { label: "Vocabulário", action: onVocabulary },
+            { label: "Debate da turma", action: onCommunity },
+          ] as { label: string; action: () => void }[]).map(({ label, action }) => (
+            <button key={label} type="button" onClick={action} className="rounded-2xl border border-border px-3 py-3 text-left hover:bg-muted/40 transition-colors">
               <p className="text-sm font-semibold">{label}</p>
               <p className="text-[11px] text-muted-foreground mt-1">Abrir dentro do EDU</p>
             </button>
