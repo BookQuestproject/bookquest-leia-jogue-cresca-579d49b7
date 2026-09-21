@@ -553,7 +553,7 @@ const EduAluno = () => {
 
         {/* Mobile bottom nav */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border flex justify-around py-1.5 overflow-x-auto">
-          {NAV.slice(0, 6).map(item => {
+          {NAV.map(item => {
             const active = section === item.id;
             return (
               <button
