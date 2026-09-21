@@ -27,6 +27,7 @@ import EduStudentHome from "@/components/edu/EduStudentHome";
 import { bookTrails, expandChapters } from "@/pages/Trilhas";
 import BookQuestTrailMap from "@/components/BookQuestTrailMap";
 import EduBookCover from "@/components/edu/EduBookCover";
+import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
 import FeedbackLauncher from "@/components/feedback/FeedbackLauncher";
 import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
 
@@ -939,6 +940,18 @@ const EduAluno = () => {
           </main>
         </div>
       </div>
+
+      {selectedClass && (
+        <div className="max-w-2xl mx-auto mt-6">
+          <FeedbackPrompt
+            context={`edu_home_${selectedClass.id}`}
+            audience="aluno"
+            question="Como está sendo sua experiência no BookQuest EDU?"
+            variant="inline"
+            delay={3500}
+          />
+        </div>
+      )}
 
       {/* Activity response dialog */}
       <Dialog open={!!activeQuestion} onOpenChange={o => !o && setActiveQuestion(null)}>
