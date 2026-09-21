@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
-  BookOpen, Check, ChevronRight, Flame, Lock, Megaphone, Sparkles, Target, Trophy, Share2,
+  BookOpen, Check, ChevronRight, Flame, Lock, Megaphone, Sparkles, Target, Trophy, Share2, Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -104,6 +104,14 @@ const EduStudentHome = ({
     } catch {
       // User canceled the native share sheet.
     }
+  };
+
+  const handleReportProblem = () => {
+    const subject = encodeURIComponent(`Problema no BookQuest EDU — ${bookTitle || "leitura"}`);
+    const body = encodeURIComponent(
+      `Olá, quero relatar um problema no BookQuest EDU.\\n\\nLivro: ${bookTitle || "não informado"}\\nTurma: ${className}\\nPágina: ${currentPage}${totalPages ? `/${totalPages}` : ""}\\n\\nDescrição do problema:\\n`
+    );
+    window.location.href = `mailto:hello@bookquest.app?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -255,9 +263,14 @@ const EduStudentHome = ({
             <h2 className="text-lg font-bold mt-1">Sua leitura continua aqui.</h2>
             <p className="text-sm text-muted-foreground mt-1">Use os recursos do BookQuest normal sem sair da sua experiência EDU.</p>
           </div>
-          <Button variant="outline" onClick={() => void handleShareExperience()} className="gap-2 shrink-0">
-            <Share2 className="h-4 w-4" /> Compartilhar experiência
-          </Button>
+          <div className="flex flex-wrap gap-2 shrink-0">
+            <Button variant="outline" onClick={() => void handleShareExperience()} className="gap-2">
+              <Share2 className="h-4 w-4" /> Compartilhar experiência
+            </Button>
+            <Button variant="ghost" onClick={handleReportProblem} className="gap-2">
+              <Mail className="h-4 w-4" /> Relatar problema
+            </Button>
+          </div>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
           {[
