@@ -4,6 +4,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import BookQuestTrailMap, { BookQuestTrailChapter } from "@/components/BookQuestTrailMap";
+import EduBookCover from "@/components/edu/EduBookCover";
 
 type RankingRow = {
   user_id: string;
@@ -98,7 +99,7 @@ const EduStudentHome = ({
           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className="h-12 w-12 rounded-2xl overflow-hidden flex items-center justify-center text-white shrink-0" style={{ backgroundColor: accent }}>
-                {bookCoverUrl ? <img src={bookCoverUrl} alt="" className="h-full w-full object-cover" /> : <BookOpen className="h-5 w-5" />}
+                <EduBookCover src={bookCoverUrl} title={bookTitle || "Livro da turma"} alt={bookTitle || "Livro"} />
               </div>
               <div className="min-w-0">
                 <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-muted-foreground">Lendo agora</p>
