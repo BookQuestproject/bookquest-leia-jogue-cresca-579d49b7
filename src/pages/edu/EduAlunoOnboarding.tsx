@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Check, ChevronLeft, ChevronRight, Compass, FlaskConical, Flame, Heart, Lightbulb, Loader2, Mountain, Sparkles, Target, Trophy, UserRound, Wand2 } from "lucide-react";
+import { BookOpen, Check, ChevronLeft, ChevronRight, Compass, FlaskConical, Flame, Heart, Lightbulb, Loader2, Mountain, Sparkles, Target, Trophy, UserRound, Wand2 } from "lucide-react";
 import logoCrown from "@/assets/logo-crown-transparent.png";
 
 const AVATARS = [
