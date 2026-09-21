@@ -171,17 +171,23 @@ const EduBookLibraryManager = () => {
     const source = bookTrails.find((book) => book.id.toLowerCase() === catalog.id.toLowerCase());
     const meta = catalogMetadata[catalog.id.toLowerCase()];
     const catalogPages = meta?.total_pages || catalog.total_pages;
+    const title = source?.title || catalog.title;
+    const author = source?.author || catalog.author;
+    const coverUrl = source?.coverImage || catalog.cover_url || null;
+    const genre = source?.genre || catalog.genre || null;
+    const themeColor = source?.themeColor || "210 55% 30%";
+    const sourceBookId = source?.id || catalog.id;
 
     const { data: inserted, error } = await supabase
       .from("edu_books" as any)
       .insert({
-        title: source.title,
-        author: source.author,
-        cover_url: source.coverImage || null,
+        title,
+        author,
+        cover_url: coverUrl,
         total_pages: catalogPages,
-        genre: source.genre,
-        theme_color: source.themeColor,
-        source_book_id: source.id,
+        genre,
+        theme_color: themeColor,
+        source_book_id: sourceBookId,
         created_by: user.id,
       })
       .select("id,title,author,cover_url,total_pages,genre,source_book_id")
@@ -192,7 +198,17 @@ const EduBookLibraryManager = () => {
       return null;
     }
 
-    const expanded = expandChapters(source.chapters, source.totalChapters);
+    const sourceChapters = source?.chapters || [];
+    const sourceCount = source?.totalChapters || Math.max(5, Math.min(25, Math.ceil((catalogPages || 200) / 20)));
+    const expanded = source
+      ? expandChapters(sourceChapters, sourceCount)
+      : Array.from({ length: sourceCount }, (_, index) => ({
+          id: index + 1,
+          title: `Capítulo ${index + 1}`,
+          status: index === 0 ? "current" : "locked",
+          icon: "📖",
+          totalPages: catalogPages ? Math.ceil(catalogPages / sourceCount) : 18,
+        }));
     const chapterRows = expanded.map((chapter, index) => {
       const pagesPerChapter = catalogPages ? Math.max(1, Math.ceil(catalogPages / expanded.length)) : Math.max(1, chapter.totalPages || 18);
       const startPage = catalogPages ? index * pagesPerChapter + 1 : expanded.slice(0, index).reduce((sum, item) => sum + (item.totalPages || 18), 0) + 1;
