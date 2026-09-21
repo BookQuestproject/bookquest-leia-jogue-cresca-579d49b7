@@ -46,6 +46,7 @@ type Props = {
   onAchievements: () => void;
   onVocabulary: () => void;
   onCommunity: () => void;
+  onDiagnostic: () => void;
 };
 
 const STREAK_STAGES = [
@@ -92,6 +93,7 @@ const EduStudentHome = ({
   onAchievements,
   onVocabulary,
   onCommunity,
+  onDiagnostic,
 }: Props) => {
   const selected = chapters.find((chapter) => chapter.id === selectedChapter) || chapters.find((chapter) => chapter.status === "current") || chapters[0];
   const currentChapter = hasDefinedBook
@@ -290,9 +292,9 @@ const EduStudentHome = ({
       <section className="rounded-3xl border border-border bg-card p-5 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.15em] font-bold text-muted-foreground">Mais do BookQuest</p>
-            <h2 className="text-lg font-bold mt-1">Sua leitura continua aqui.</h2>
-            <p className="text-sm text-muted-foreground mt-1">Use os recursos do BookQuest normal sem sair da sua experiência EDU.</p>
+            <p className="text-xs uppercase tracking-[0.15em] font-bold text-muted-foreground">Seu espaço no BookQuest EDU</p>
+            <h2 className="text-lg font-bold mt-1">Tudo o que você precisa, em um só lugar.</h2>
+            <p className="text-sm text-muted-foreground mt-1">Missões, conquistas, vocabulário, debate e acompanhamento ficam aqui para a navegação não ficar cheia.</p>
           </div>
           <div className="flex flex-wrap gap-2 shrink-0">
             <Button variant="outline" onClick={() => void handleShareExperience()} className="gap-2">
@@ -303,14 +305,18 @@ const EduStudentHome = ({
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
-          {([
-            { label: "Missões", action: onMissions },
-            { label: "Conquistas", action: onAchievements },
-            { label: "Vocabulário", action: onVocabulary },
-            { label: "Debate da turma", action: onCommunity },
-          ] as { label: string; action: () => void }[]).map(({ label, action }) => (
-            <button key={label} type="button" onClick={action} className="rounded-2xl border border-border px-3 py-3 text-left hover:bg-muted/40 transition-colors">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
+          {[
+            ["Missões", onMissions],
+            ["Conquistas", onAchievements],
+            ["Vocabulário", onVocabulary],
+            ["Debate da turma", onCommunity],
+            ["Atividades", onActivities],
+            ["Ranking", onStats],
+            ["Avisos", onAnnouncements],
+            ["Meu plano", onDiagnostic],
+          ].map(([label, action]) => (
+            <button key={String(label)} type="button" onClick={action as () => void} className="rounded-2xl border border-border px-3 py-3 text-left hover:bg-muted/40 transition-colors">
               <p className="text-sm font-semibold">{label}</p>
               <p className="text-[11px] text-muted-foreground mt-1">Abrir dentro do EDU</p>
             </button>
