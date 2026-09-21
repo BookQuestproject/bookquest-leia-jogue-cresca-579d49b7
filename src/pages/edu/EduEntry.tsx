@@ -105,14 +105,28 @@ const EduEntry = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Deep-link used after authentication: open a dedicated student entry route.
+  // Deep-link used after authentication: never render the landing page first.
   useEffect(() => {
-    if (searchParams.get("join") === "1" && user) {
+    if (searchParams.get("join") !== "1" || authLoading) return;
+    if (user) {
       navigate("/edu/aluno/entrar", { replace: true });
+    } else {
+      navigate("/auth?redirect=" + encodeURIComponent("/edu/aluno/entrar"), { replace: true });
     }
-  }, [user, searchParams, navigate]);
+  }, [user, authLoading, searchParams, navigate]);
 
   // Open role picker
+  if (searchParams.get("join") === "1") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#021f53] text-white">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-400 mx-auto" />
+          <p className="mt-3 text-sm text-white/60">Abrindo sua entrada na turma…</p>
+        </div>
+      </div>
+    );
+  }
+
   const handleAccess = () => {
     setShowRolePicker(true);
   };
