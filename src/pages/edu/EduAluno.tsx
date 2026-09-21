@@ -140,7 +140,7 @@ const EduAluno = () => {
     fetchRanking(selectedClass.id);
 
     (async () => {
-      const [{ data: link }, { data: enrichment }, { data: challenge }, { data: preferences }, { data: profileRow }] = await Promise.all([
+      const [{ data: link }, { data: enrichment }, { data: challenge }, { data: preferences }, { data: profileRow }, { data: customBook }] = await Promise.all([
         supabase.from("edu_journey_classes" as any).select("journey_id").eq("class_id", selectedClass.id).limit(1).maybeSingle(),
         selectedClass.book_id
           ? supabase.from("book_trail_enrichments" as any).select("cover_url,theme_color,chapters").eq("book_id", selectedClass.book_id).maybeSingle()
@@ -148,12 +148,25 @@ const EduAluno = () => {
         supabase.from("edu_class_challenges" as any).select("title,description,goal_value,challenge_type").eq("class_id", selectedClass.id).eq("is_active", true).order("end_date", { ascending: true }).limit(1).maybeSingle(),
         supabase.from("edu_student_preferences" as any).select("*").eq("user_id", user.id).maybeSingle(),
         supabase.from("profiles").select("literary_profile").eq("id", user.id).maybeSingle(),
+        selectedClass.book_id
+          ? supabase.from("edu_books" as any).select("id,title,author,cover_url,total_pages,genre,theme_color").eq("id", selectedClass.book_id).eq("is_active", true).maybeSingle()
+          : Promise.resolve({ data: null }),
       ]);
       const profileDiagnostic = (profileRow as any)?.literary_profile?.edu_diagnostic;
       setStudentPreferences((preferences as any) || profileDiagnostic || null);
 
-      setBookTheme((enrichment as any)?.theme_color || undefined);
-      setBookCoverUrl((enrichment as any)?.cover_url || null);
+      let customBookChapters: any[] = [];
+      if (customBook) {
+        const { data } = await supabase
+          .from("edu_book_chapters" as any)
+          .select("chapter_number,title,start_page,end_page")
+          .eq("book_id", (customBook as any).id)
+          .order("chapter_number", { ascending: true });
+        customBookChapters = (data || []) as any[];
+      }
+
+      setBookTheme((customBook as any)?.theme_color || (enrichment as any)?.theme_color || undefined);
+      setBookCoverUrl((customBook as any)?.cover_url || (enrichment as any)?.cover_url || null);
       setClassChallenge((challenge as any) || null);
 
       const selectedBookId = String(selectedClass.book_id || "").trim().toLowerCase();
@@ -170,19 +183,28 @@ const EduAluno = () => {
         enrichedChapters = Array.isArray(raw) ? raw : [];
       } catch {}
 
-      const curatedChapters = enrichedChapters.length
-        ? enrichedChapters.map((chapter: any, index: number) => ({
-            id: chapter.id || index + 1,
-            title: chapter.title || `Capítulo ${index + 1}`,
-            status: index === 0 ? "current" : "locked",
-            icon: chapter.icon || "📖",
-            totalPages: chapter.totalPages || undefined,
+      const curatedChapters = customBookChapters.length
+        ? customBookChapters.map((chapter: any) => ({
+            id: chapter.chapter_number,
+            title: chapter.title || `Capítulo ${chapter.chapter_number}`,
+            status: chapter.chapter_number === 1 ? "current" : "locked",
+            icon: "📖",
+            totalPages: Math.max(1, Number(chapter.end_page || 0) - Number(chapter.start_page || 1) + 1),
           }))
-        : normalTrail?.chapters || [];
+        : enrichedChapters.length
+          ? enrichedChapters.map((chapter: any, index: number) => ({
+              id: chapter.id || index + 1,
+              title: chapter.title || `Capítulo ${index + 1}`,
+              status: index === 0 ? "current" : "locked",
+              icon: chapter.icon || "📖",
+              totalPages: chapter.totalPages || undefined,
+            }))
+          : normalTrail?.chapters || [];
 
       // Sempre monta a trilha visual com a quantidade total do livro.
       // Assim, capítulos ainda não liberados continuam visíveis como bloqueados.
       const canonicalChapterCount = Math.max(
+        Number((customBookChapters as any[]).length || 0),
         Number(normalTrail?.totalChapters || 0),
         enrichedChapters.length,
         curatedChapters.length,
@@ -256,13 +278,14 @@ const EduAluno = () => {
       const baseTrail = sharedTrailChapters.length ? sharedTrailChapters : [];
       setChapterMap(Array.from({ length: fallbackCount }, (_, i) => {
         const shared = baseTrail.find((chapter: any) => chapter.id === i + 1);
+        const custom = customBookChapters.find((chapter: any) => chapter.chapter_number === i + 1);
         return {
           id: i + 1,
-          title: shared?.title || `Capítulo ${i + 1}`,
-          startPage: i === 0 ? 1 : i * pagesPerChapter + 1,
-          endPage: totalPages ? Math.min(totalPages, (i + 1) * pagesPerChapter) : (i + 1) * pagesPerChapter,
+          title: custom?.title || shared?.title || `Capítulo ${i + 1}`,
+          startPage: custom?.start_page || (i === 0 ? 1 : i * pagesPerChapter + 1),
+          endPage: custom?.end_page || (totalPages ? Math.min(totalPages, (i + 1) * pagesPerChapter) : (i + 1) * pagesPerChapter),
           icon: shared?.icon || "📖",
-          totalPages: pagesPerChapter,
+          totalPages: custom ? Math.max(1, custom.end_page - custom.start_page + 1) : pagesPerChapter,
           status: "locked",
         };
       }));
