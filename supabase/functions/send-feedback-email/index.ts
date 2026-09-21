@@ -32,19 +32,22 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const audience = String(body?.audience || "aluno");
+    const type = String(body?.type || "feedback");
     const context = String(body?.context || "");
     const rating = Number(body?.rating || 0);
     const comment = String(body?.comment || "");
     const pagePath = String(body?.page_path || "");
 
-    const subject = audience === "aluno"
-      ? `BookQuest EDU · feedback do aluno · ${rating}/5`
-      : `BookQuest EDU · feedback do professor · ${rating}/5`;
+    const subject = type === "bug"
+      ? `BookQuest EDU · problema reportado · ${audience}`
+      : audience === "aluno"
+        ? `BookQuest EDU · feedback do aluno · ${rating}/5`
+        : `BookQuest EDU · feedback do professor · ${rating}/5`;
 
     const html = `
       <h2>Feedback BookQuest EDU</h2>
       <p><strong>Público:</strong> ${audience}</p>
-      <p><strong>Nota:</strong> ${rating}/5</p>
+      <p><strong>Tipo:</strong> ${type}</p><p><strong>Nota:</strong> ${rating}/5</p>
       <p><strong>Contexto:</strong> ${context}</p>
       <p><strong>Página:</strong> ${pagePath}</p>
       <p><strong>Usuário:</strong> ${user.id}</p>
