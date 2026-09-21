@@ -657,9 +657,6 @@ export const bookTrails: BookTrail[] = [
   },
 ];
 
-// Export for use in Biblioteca
-export { bookTrails };
-
 const normaliseTitle = (s: string) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 const Trilhas = () => {
