@@ -122,7 +122,7 @@ const EduBookLibraryManager = () => {
     () => catalogBooks.filter((book) => {
       const q = normalize(query);
       return !q || normalize(book.title).includes(q) || normalize(book.author || "").includes(q);
-    }).slice(0, 18),
+    }),
     [catalogBooks, query],
   );
 
