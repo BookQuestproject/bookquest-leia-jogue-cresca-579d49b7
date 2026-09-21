@@ -527,6 +527,20 @@ const EduLivros = () => {
       reading_deadline: null,
     });
     if (ok) {
+      const { data: bookQuestions } = await supabase
+        .from("edu_book_questions" as any)
+        .select("id")
+        .eq("book_id", assigningBook.id)
+        .eq("is_active", true);
+
+      await Promise.all(
+        ((bookQuestions || []) as any[]).map((question) =>
+          supabase.rpc("sync_edu_book_question_to_classes" as any, {
+            _book_question_id: question.id,
+          })
+        )
+      );
+
       toast.success(`"${assigningBook.title}" foi colocado em ${classData.name}.`);
       setAssigningBook(null);
     }
