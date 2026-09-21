@@ -14,6 +14,20 @@ import HabitToast from "@/components/missions/HabitToast";
 import ChallengeModal from "@/components/missions/ChallengeModal";
 import MilestoneOverlay from "@/components/missions/MilestoneOverlay";
 import type { BookQuestTrailChapter } from "@/components/BookQuestTrailMap";
+import { supabase } from "@/integrations/supabase/client";
+
+const BARRIER_LABELS: Record<string, string> = {
+  time: "Falta de tempo",
+  focus: "Dificuldade de foco",
+  interest: "Manter o interesse",
+  difficulty: "Entender o texto",
+};
+
+const SUPPORT_LABELS: Record<string, string> = {
+  discoveries: "Pistas e descobertas",
+  characters: "Personagens",
+  competition: "Competição e ranking",
+};
 type FeatureSectionProps = { classId: string; bookTitle: string | null; chapters: BookQuestTrailChapter[]; onStartChapter: (chapterNumber: number) => void; };
 
 const getPeriods = () => {
@@ -155,4 +169,54 @@ export const EduClassDiscussionSection = ({ classId, bookTitle, chapters, onStar
     <section className="rounded-[30px] border border-border bg-card p-6 shadow-sm"><div className="flex flex-wrap gap-2">{chapters.map((chapter) => <Button key={chapter.id} size="sm" variant={selectedChapter === chapter.id ? "default" : "outline"} onClick={() => setSelectedChapter(chapter.id)}>Cap. {chapter.id}</Button>)}</div><div className="mt-5 flex flex-col sm:flex-row gap-3"><Input value={content} onChange={(event) => setContent(event.target.value)} placeholder={"Compartilhe uma ideia sobre " + (chapters.find((chapter) => chapter.id === selectedChapter)?.title || "este capítulo") + "..."} onKeyDown={(event) => { if (event.key === "Enter") void submit(); }} /><Button onClick={() => void submit()} disabled={!content.trim()}><Send className="h-4 w-4 mr-2" /> Publicar</Button></div></section>
     <section className="rounded-[30px] border border-border bg-card p-6 shadow-sm">{loading ? <p className="text-sm text-muted-foreground">Carregando debate...</p> : chapterDiscussions.length === 0 ? <div className="py-10 text-center text-muted-foreground"><MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-30" /><p>Nenhuma conversa neste capítulo ainda.</p><Button variant="outline" size="sm" className="mt-4" onClick={() => onStartChapter(selectedChapter)}>Abrir capítulo</Button></div> : <div className="space-y-3">{chapterDiscussions.map((discussion) => <article key={discussion.id} className="rounded-2xl border border-border bg-muted/15 p-4"><div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold">Leitor da turma</p><span className="text-xs text-muted-foreground">{new Date(discussion.created_at).toLocaleString("pt-BR")}</span></div><p className="text-sm leading-relaxed mt-2">{discussion.content}</p></article>)}</div>}</section>
   </div>;
+};
+
+export const EduDiagnosticSummary = ({ onOpen }: { onOpen: () => void }) => {
+  const [prefs, setPrefs] = useState<Record<string, any> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data: auth } = await supabase.auth.getUser();
+      const userId = auth.user?.id;
+      if (!userId) { if (active) setLoading(false); return; }
+      const { data } = await supabase
+        .from("edu_student_preferences" as any)
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (!active) return;
+      setPrefs((data as Record<string, any>) || null);
+      setLoading(false);
+    })();
+    return () => { active = false; };
+  }, []);
+
+  const rows = [
+    { label: "Rotina diária", value: prefs?.routine_minutes ? `${prefs.routine_minutes} min` : "Não informado" },
+    { label: "Maior dificuldade", value: BARRIER_LABELS[prefs?.reading_barrier as string] || "Não informado" },
+    { label: "Apoio preferido", value: SUPPORT_LABELS[prefs?.preferred_support as string] || "Não informado" },
+  ];
+
+  return (
+    <Card className="rounded-[26px] p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Seu diagnóstico</p>
+          <h2 className="text-xl font-bold mt-1">Como sua leitura está organizada</h2>
+        </div>
+        <Target className="h-6 w-6 text-primary" />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3 mt-5">
+        {rows.map((row) => (
+          <div key={row.label} className="rounded-2xl border border-border bg-muted/20 p-4">
+            <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{row.label}</p>
+            <p className="text-sm font-semibold mt-1">{loading ? "..." : row.value}</p>
+          </div>
+        ))}
+      </div>
+      <Button className="mt-5" onClick={onOpen}>Refazer diagnóstico</Button>
+    </Card>
+  );
 };
