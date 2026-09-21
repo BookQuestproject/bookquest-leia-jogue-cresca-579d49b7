@@ -107,24 +107,21 @@ const EduStudentHome = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-[110px_110px_auto] gap-2">
-              <div className="rounded-2xl border border-border bg-muted/20 px-3 py-2">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Capítulo</p>
+            <div className="grid grid-cols-2 gap-2 lg:w-[230px]">
+              <button
+                type="button"
+                onClick={() => currentChapter && onStartChapter(currentChapter.id)}
+                disabled={!currentChapter || currentChapter.status === "locked"}
+                className="text-left rounded-2xl border border-border bg-muted/20 px-3 py-2 hover:border-primary/40 hover:bg-primary/5 transition-colors disabled:cursor-not-allowed disabled:opacity-70"
+                title="Abrir este capítulo"
+              >
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Capítulo atual</p>
                 <p className="text-sm font-bold mt-0.5">Cap. {currentChapter?.id || 1}</p>
-              </div>
+              </button>
               <div className="rounded-2xl border border-border bg-muted/20 px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Página</p>
                 <p className="text-sm font-bold mt-0.5">{currentPage}{totalPages ? ` / ${totalPages}` : ""}</p>
               </div>
-              <Button
-                size="lg"
-                onClick={() => currentChapter && onStartChapter(currentChapter.id)}
-                disabled={!currentChapter || currentChapter.status === "locked"}
-                className="col-span-2 sm:col-span-1 gap-2 min-h-11 shadow-sm"
-                style={{ backgroundColor: accent }}
-              >
-                <BookOpen className="h-4 w-4" /> Continuar leitura
-              </Button>
             </div>
           </div>
         </div>
