@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { bookTitle, chapterTitle, chapterId, totalChapters } = await req.json();
+    const { bookTitle, chapterTitle, chapterId, totalChapters, chapterContext } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -60,9 +60,9 @@ Retorne APENAS um array JSON válido com 5 objetos de pergunta.`
           {
             role: "user",
             content: `Livro: "${bookTitle}"
-Capítulo ${chapterId} de ${totalChapters}: "${chapterTitle}"
+Capítulo ${chapterId} de ${totalChapters}: "${chapterTitle}"${chapterContext ? `\nContexto fornecido pelo professor: ${String(chapterContext).slice(0, 10000)}` : ""}
 
-Gere 5 perguntas de reflexão variadas sobre este capítulo específico.`
+Gere 5 perguntas de reflexão variadas sobre este capítulo específico. Quando houver contexto fornecido, use-o como fonte principal e não invente acontecimentos ausentes.`
           }
         ],
         temperature: 0.8,
