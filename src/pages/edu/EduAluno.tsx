@@ -26,6 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import EduStudentHome from "@/components/edu/EduStudentHome";
 import { bookTrails, expandChapters } from "@/pages/Trilhas";
 import BookQuestTrailMap from "@/components/BookQuestTrailMap";
+import EduBookCover from "@/components/edu/EduBookCover";
 
 interface ClassInfo {
   id: string;
@@ -110,6 +111,7 @@ const EduAluno = () => {
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [bookTheme, setBookTheme] = useState<string | undefined>(undefined);
   const [bookCoverUrl, setBookCoverUrl] = useState<string | null>(null);
+  const [bookCoverFallbackUrl, setBookCoverFallbackUrl] = useState<string | null>(null);
   const [classChallenge, setClassChallenge] = useState<any | null>(null);
   const [studentPreferences, setStudentPreferences] = useState<any | null>(null);
   const [updatingPage, setUpdatingPage] = useState("");
@@ -154,9 +156,12 @@ const EduAluno = () => {
       setBookCoverUrl((enrichment as any)?.cover_url || null);
       setClassChallenge((challenge as any) || null);
 
-      const normalTrail = selectedClass.book_id
-        ? bookTrails.find((trail) => trail.id === selectedClass.book_id)
-        : undefined;
+      const selectedBookId = String(selectedClass.book_id || "").trim().toLowerCase();
+      const selectedBookTitle = String(selectedClass.book_title || "").trim().toLowerCase();
+      const normalTrail = bookTrails.find((trail) =>
+        trail.id.toLowerCase() === selectedBookId ||
+        trail.title.toLowerCase() === selectedBookTitle
+      );
       let enrichedChapters: any[] = [];
       try {
         const raw = typeof (enrichment as any)?.chapters === "string"
@@ -185,6 +190,7 @@ const EduAluno = () => {
 
       setBookTheme((enrichment as any)?.theme_color || normalTrail?.themeColor || undefined);
       setBookCoverUrl((enrichment as any)?.cover_url || normalTrail?.coverImage || null);
+      setBookCoverFallbackUrl(normalTrail?.coverImage || null);
 
       const journeyId = (link as any)?.journey_id;
       if (journeyId) {
@@ -285,13 +291,13 @@ const EduAluno = () => {
         ? "current"
         : "locked",
   }));
-  const activeChapter = normalizedChapters.find((chapter) => chapter.number === selectedChapter)
+  const activeChapter = normalizedChapters.find((chapter) => chapter.id === selectedChapter)
     || normalizedChapters.find((chapter) => chapter.status === "current")
     || normalizedChapters[0];
   useEffect(() => {
     if (!normalizedChapters.length) return;
     const current = normalizedChapters.find((chapter) => chapter.status === "current");
-    setSelectedChapter(current?.number || normalizedChapters[0].number);
+    setSelectedChapter(current?.id || normalizedChapters[0].id);
   }, [currentPage, chapterMap.length]);
 
   const myResponseIds = useMemo(
@@ -311,11 +317,18 @@ const EduAluno = () => {
 
   const handleStartChapter = (chapterNumber: number) => {
     if (!selectedClass) return;
-    const chapter = normalizedChapters.find((item) => item.number === chapterNumber);
+    const chapter = normalizedChapters.find((item) => item.id === chapterNumber);
     if (!chapter || chapter.status === "locked") return;
 
-    if (selectedClass.book_id) {
-      navigate(`/ler/${selectedClass.book_id}/${chapterNumber}?edu=1`);
+    const selectedBookId = String(selectedClass.book_id || "").trim().toLowerCase();
+    const selectedBookTitle = String(selectedClass.book_title || "").trim().toLowerCase();
+    const matchedTrail = bookTrails.find((trail) =>
+      trail.id.toLowerCase() === selectedBookId ||
+      trail.title.toLowerCase() === selectedBookTitle
+    );
+    const readingBookId = matchedTrail?.id || selectedClass.book_id;
+    if (readingBookId) {
+      navigate(`/ler/${readingBookId}/${chapterNumber}?edu=1`);
       return;
     }
 
@@ -541,7 +554,13 @@ const EduAluno = () => {
                         className="w-40 h-56 mx-auto rounded-2xl overflow-hidden shadow-lg flex items-center justify-center text-white"
                         style={{ backgroundColor: `hsl(${bookTheme || "210 55% 30%"})` }}
                       >
-                        {bookCoverUrl ? <img src={bookCoverUrl} alt={selectedClass.book_title || "Livro"} className="h-full w-full object-cover" /> : <BookOpen className="h-16 w-16 opacity-80" />}
+                        <EduBookCover
+                          src={bookCoverUrl}
+                          fallbackSrc={bookCoverFallbackUrl}
+                          title={selectedClass.book_title || "Livro da turma"}
+                          alt={selectedClass.book_title || "Livro"}
+                          className="h-full w-full"
+                        />
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Livro da turma</p>
