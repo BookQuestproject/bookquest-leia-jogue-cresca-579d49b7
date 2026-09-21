@@ -27,6 +27,8 @@ import EduStudentHome from "@/components/edu/EduStudentHome";
 import { bookTrails, expandChapters } from "@/pages/Trilhas";
 import BookQuestTrailMap from "@/components/BookQuestTrailMap";
 import EduBookCover from "@/components/edu/EduBookCover";
+import FeedbackLauncher from "@/components/feedback/FeedbackLauncher";
+import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
 
 interface ClassInfo {
   id: string;
@@ -66,6 +68,7 @@ const MiniStat = ({ icon: Icon, value, label, tone }: { icon: any; value: string
         <p className="text-sm font-bold text-foreground leading-none truncate">{value}</p>
         <p className="text-[9px] text-muted-foreground uppercase tracking-wider mt-0.5 truncate">{label}</p>
       </div>
+      <FeedbackLauncher audience="aluno" />
     </div>
   );
 };
@@ -552,7 +555,7 @@ const EduAluno = () => {
         {/* Content */}
         <div className={`flex-1 min-h-screen pt-14 lg:pt-0 pb-24 lg:pb-6 transition-[margin] duration-200 ${sidebarExpanded ? "lg:ml-[220px]" : "lg:ml-[76px]"}`}>
           <main className="px-4 lg:px-8 py-6 max-w-6xl mx-auto">
-            {section === "dashboard" && (
+<>\n            {section === "dashboard" && (
               <EduStudentHome
                 studentName={studentName}
                 className={selectedClass.name}
@@ -585,6 +588,14 @@ const EduAluno = () => {
                 onStats={() => setSection("stats")}
                 onAnnouncements={() => setSection("announcements")}
               />
+              <FeedbackPrompt
+                context={`aluno_home_${new Date().toISOString().slice(0, 7)}`}
+                audience="aluno"
+                variant="inline"
+                delay={15000}
+                question="Como está sendo sua experiência de leitura no BookQuest EDU?"
+              />
+              </>
             )}
 
             {section === "book" && (
