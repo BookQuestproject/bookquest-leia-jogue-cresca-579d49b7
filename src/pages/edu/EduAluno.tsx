@@ -48,11 +48,6 @@ type Section = "dashboard" | "book" | "missions" | "achievements" | "vocabulary"
 const NAV: { id: Section; label: string; icon: any }[] = [
   { id: "dashboard", label: "Início", icon: LayoutDashboard },
   { id: "book", label: "Livro", icon: BookOpen },
-  { id: "missions", label: "Missões", icon: Target },
-  { id: "achievements", label: "Conquistas", icon: Award },
-  { id: "vocabulary", label: "Vocabulário", icon: BookMarked },
-  { id: "community", label: "Debate", icon: MessageSquare },
-  { id: "diagnostic", label: "Meu plano", icon: Sparkles },
   { id: "activities", label: "Atividades", icon: ClipboardList },
   { id: "ranking", label: "Ranking", icon: Trophy },
   { id: "announcements", label: "Avisos", icon: Megaphone },
