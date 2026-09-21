@@ -177,6 +177,15 @@ begin
     return 0;
   end if;
 
+  if not exists (
+    select 1
+    from public.edu_books b
+    where b.id = q.book_id
+      and b.created_by = auth.uid()
+  ) then
+    return 0;
+  end if;
+
   insert into public.class_questions (
     class_id,
     chapter_number,
