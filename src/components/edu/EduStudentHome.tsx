@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import {
   BookOpen, Check, ChevronRight, Flame, Lock, Megaphone, Sparkles, Target, Trophy, Share2, Mail,
 } from "lucide-react";
@@ -103,7 +102,6 @@ const EduStudentHome = ({
   const streakProgress = nextStage ? Math.min(100, Math.round((streak / nextStage) * 100)) : 100;
   const goalProgress = dailyGoal > 0 ? Math.min(100, Math.round((dailyPagesRead / dailyGoal) * 100)) : 0;
   const accent = themeColor ? `hsl(${themeColor})` : "hsl(210 60% 42%)";
-  const navigate = useNavigate();
 
   const handleShareExperience = async () => {
     const text = `Estou lendo "${bookTitle || "um livro"}" no BookQuest EDU. Já avancei para a página ${currentPage}${totalPages ? ` de ${totalPages}` : ""}. 📚`;
