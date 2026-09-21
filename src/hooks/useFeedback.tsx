@@ -61,6 +61,19 @@ export const useFeedback = (context: string, { delay = 0, enabled = true }: Opti
       } as any);
       setSubmitting(false);
       if (error) return false;
+
+      // Persistimos no Supabase e, quando o projeto tiver o envio por e-mail configurado,
+      // encaminhamos uma cópia para o endereço de feedback sem bloquear a experiência.
+      void supabase.functions.invoke("send-feedback-email", {
+        body: {
+          audience,
+          context,
+          rating,
+          comment: comment.trim().slice(0, 1000) || null,
+          page_path: window.location.pathname,
+        },
+      }).catch(() => {});
+
       markFeedbackDone(context);
       setSubmitted(true);
       setTimeout(() => setVisible(false), 1600);
