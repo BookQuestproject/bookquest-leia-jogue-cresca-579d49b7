@@ -724,7 +724,18 @@ const EduAluno = () => {
               </div>
             )}
 
-            {section === "diagnostic" && (\n              <div className="space-y-6">\n                <section className="rounded-[30px] border border-border bg-card p-6 shadow-sm">\n                  <p className="text-xs uppercase tracking-[0.18em] font-bold text-primary">Seu plano de leitura</p>\n                  <h1 className="text-3xl font-bold mt-2">O BookQuest EDU se adapta a você.</h1>\n                  <p className="text-sm text-muted-foreground mt-2 max-w-2xl">Refaça o diagnóstico quando sua rotina ou suas dificuldades mudarem. O perfil orienta ritmo, metas e o tipo de apoio mostrado na experiência.</p>\n                </section>\n                <EduDiagnosticSummary onOpen={() => navigate("/edu/onboarding-aluno")} />\n              </div>\n            )}\n\n            {section === "activities" && (
+            {section === "diagnostic" && (
+              <div className="space-y-6">
+                <section className="rounded-[30px] border border-border bg-card p-6 shadow-sm">
+                  <p className="text-xs uppercase tracking-[0.18em] font-bold text-primary">Seu plano de leitura</p>
+                  <h1 className="text-3xl font-bold mt-2">O BookQuest EDU se adapta a você.</h1>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-2xl">Refaça o diagnóstico quando sua rotina ou suas dificuldades mudarem. O perfil orienta ritmo, metas e o tipo de apoio mostrado na experiência.</p>
+                </section>
+                <EduDiagnosticSummary onOpen={() => navigate("/edu/onboarding-aluno")} />
+              </div>
+            )}
+
+            {section === "activities" && (
               <div className="space-y-6">
                 <section className="rounded-[30px] border border-border bg-card p-6 lg:p-8 shadow-sm">
                   <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
