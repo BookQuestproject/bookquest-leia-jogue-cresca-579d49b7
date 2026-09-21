@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   BookOpen, Trophy, Target, Megaphone, LogOut, CheckCircle2,
   Flame, Sparkles, LayoutDashboard, ClipboardList, BarChart3,
@@ -101,13 +101,17 @@ const InfoSquare = ({ icon: Icon, title, value, subtitle, tone, onClick }: {
 
 const EduAluno = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const { studentClasses, loading: eduRoleLoading } = useEduRole();
   const { progressData, fetchProgress, updateProgress } = useClassReadingProgress();
   const { profile } = useProfile();
   const { essencia, streak } = useUserStats();
   const { toast } = useToast();
-  const [section, setSection] = useState<Section>("dashboard");
+  const [section, setSection] = useState<Section>(() => {
+    const initial = new URLSearchParams(window.location.search).get("section") as Section | null;
+    return initial && NAV.some((item) => item.id === initial) ? initial : "dashboard";
+  });
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
   const [classRanking, setClassRanking] = useState<any[]>([]);
@@ -125,6 +129,13 @@ const EduAluno = () => {
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth?redirect=/edu/aluno");
   }, [authLoading, user, navigate]);
+
+  useEffect(() => {
+    const nextSection = searchParams.get("section") as Section | null;
+    if (nextSection && NAV.some((item) => item.id === nextSection)) {
+      setSection(nextSection);
+    }
+  }, [searchParams]);
 
   // Auto-select first class
   useEffect(() => {
@@ -607,6 +618,7 @@ const EduAluno = () => {
                 onAchievements={() => setSection("achievements")}
                 onVocabulary={() => setSection("vocabulary")}
                 onCommunity={() => setSection("community")}
+                onDiagnostic={() => setSection("diagnostic")}
               />
               <div className="max-w-2xl mx-auto mt-6">
                 <EduDiagnosticSummary onOpen={() => navigate("/edu/onboarding-aluno")} />
