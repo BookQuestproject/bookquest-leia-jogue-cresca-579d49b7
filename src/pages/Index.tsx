@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/useAdmin";
 import { BookOpen, Trophy, ArrowRight, Star, Target, Lock, CheckCircle, Play, HelpCircle, MapPin, Sparkles, Repeat, Zap, Clock, Flame, Settings } from "lucide-react";
@@ -9,6 +9,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { usePageBookmark } from "@/hooks/usePageBookmark";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUserStats } from "@/hooks/useUserStats";
+import { useEduRole } from "@/hooks/useEduRole";
 import { useDailyMissions } from "@/hooks/useDailyMissions";
 import MobileHome from "@/components/mobile/MobileHome";
 import MissionCompletionToast from "@/components/MissionCompletionToast";
@@ -36,8 +37,15 @@ const Index = () => {
   const { activeTrail } = useActiveTrail();
   const { isAdmin } = useAdmin();
   const { quizCompleted, isPremium } = useProfile();
+  const { studentClasses, isTeacher, loading: eduRoleLoading } = useEduRole();
   const { essencia, streak } = useUserStats();
   const { missions: dailyMissions, recentCompletion, clearCompletion } = useDailyMissions();
+
+  useEffect(() => {
+    if (!eduRoleLoading && !isTeacher && studentClasses.length > 0) {
+      navigate("/edu/aluno", { replace: true });
+    }
+  }, [eduRoleLoading, isTeacher, studentClasses.length, navigate]);
   const [showChapterQuestion, setShowChapterQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
