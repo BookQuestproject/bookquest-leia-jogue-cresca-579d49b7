@@ -489,6 +489,45 @@ const ChapterReading = () => {
     const slug = bookId.replace(/^suggestion-/, "");
 
     (async () => {
+      // EDU custom books live in the central teacher library.
+      const { data: eduBook } = await supabase
+        .from("edu_books" as any)
+        .select("id,title,author,cover_url,genre,total_pages,theme_color")
+        .eq("id", bookId)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (!cancelled && eduBook) {
+        const { data: eduChapters } = await supabase
+          .from("edu_book_chapters" as any)
+          .select("chapter_number,title,start_page,end_page")
+          .eq("book_id", bookId)
+          .order("chapter_number", { ascending: true });
+
+        const rows = (eduChapters || []) as any[];
+        const chapters = rows.length
+          ? rows.map((row) => ({
+              id: row.chapter_number,
+              title: row.title || `Capítulo ${row.chapter_number}`,
+              icon: CHAPTER_ICONS[row.chapter_number % CHAPTER_ICONS.length],
+              totalPages: Math.max(1, Number(row.end_page || 0) - Number(row.start_page || 1) + 1),
+            }))
+          : [{
+              id: 1,
+              title: "Capítulo 1",
+              icon: CHAPTER_ICONS[0],
+              totalPages: Number((eduBook as any).total_pages || 1),
+            }];
+
+        setDynamicBook({
+          title: (eduBook as any).title,
+          themeColor: (eduBook as any).theme_color || "200 40% 35%",
+          chapters,
+        });
+        setDynamicLoading(false);
+        return;
+      }
+
       const { data } = await supabase
         .from("book_suggestions")
         .select("title, author, cover_url, genre, chapters_list, ai_verification_data")
