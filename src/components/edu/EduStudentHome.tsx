@@ -20,6 +20,7 @@ type Props = {
   className: string;
   bookTitle: string | null;
   author: string | null;
+  hasDefinedBook: boolean;
   bookCoverUrl?: string | null;
   themeColor?: string;
   currentPage: number;
@@ -61,6 +62,7 @@ const EduStudentHome = ({
   className,
   bookTitle,
   author,
+  hasDefinedBook,
   bookCoverUrl,
   themeColor,
   currentPage,
@@ -85,7 +87,9 @@ const EduStudentHome = ({
   onAnnouncements,
 }: Props) => {
   const selected = chapters.find((chapter) => chapter.id === selectedChapter) || chapters.find((chapter) => chapter.status === "current") || chapters[0];
-  const currentChapter = chapters.find((chapter) => chapter.status === "current") || selected;
+  const currentChapter = hasDefinedBook
+    ? chapters.find((chapter) => chapter.status === "current") || selected
+    : undefined;
   const stage = streakStage(streak);
   const nextStage = stage.next;
   const streakProgress = nextStage ? Math.min(100, Math.round((streak / nextStage) * 100)) : 100;
@@ -122,12 +126,16 @@ const EduStudentHome = ({
           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className="h-12 w-12 rounded-2xl overflow-hidden flex items-center justify-center text-white shrink-0" style={{ backgroundColor: accent }}>
-                <EduBookCover src={bookCoverUrl} title={bookTitle || "Livro da turma"} alt={bookTitle || "Livro"} />
+                <EduBookCover
+                  src={bookCoverUrl}
+                  title={hasDefinedBook ? bookTitle || "Livro da turma" : "Livro não definido"}
+                  alt={hasDefinedBook ? bookTitle || "Livro" : "Livro não definido"}
+                />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-muted-foreground">Lendo agora</p>
-                <h1 className="text-base sm:text-lg font-bold truncate">{bookTitle || "Livro da turma"}</h1>
-                <p className="text-xs text-muted-foreground truncate">{author || "Autor não informado"}</p>
+                <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-muted-foreground">Livro da turma</p>
+                <h1 className="text-base sm:text-lg font-bold truncate">{hasDefinedBook ? bookTitle || "Livro da turma" : "Livro não definido"}</h1>
+                {hasDefinedBook && <p className="text-xs text-muted-foreground truncate">{author || "Autor não informado"}</p>}
               </div>
             </div>
 
@@ -135,12 +143,12 @@ const EduStudentHome = ({
               <button
                 type="button"
                 onClick={() => currentChapter && onStartChapter(currentChapter.id)}
-                disabled={!currentChapter || currentChapter.status === "locked"}
+                disabled={!hasDefinedBook || !currentChapter || currentChapter.status === "locked"}
                 className="text-left rounded-2xl border border-border bg-muted/20 px-3 py-2 hover:border-primary/40 hover:bg-primary/5 transition-colors disabled:cursor-not-allowed disabled:opacity-70"
                 title="Abrir este capítulo"
               >
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Capítulo atual</p>
-                <p className="text-sm font-bold mt-0.5">Cap. {currentChapter?.id || 1}</p>
+                <p className="text-sm font-bold mt-0.5">{hasDefinedBook ? `Cap. ${currentChapter?.id || 1}` : "—"}</p>
               </button>
               <div className="rounded-2xl border border-border bg-muted/20 px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Página</p>
@@ -158,19 +166,33 @@ const EduStudentHome = ({
             <h2 className="text-2xl sm:text-3xl font-bold mt-2">Continue sua história.</h2>
             <p className="text-sm text-muted-foreground mt-2">Os capítulos seguem a mesma trilha do BookQuest.</p>
           </div>
-          <div className="px-3 sm:px-8 py-3 sm:py-5 overflow-x-auto">
-            <div className="min-w-[540px]">
-              <BookQuestTrailMap
-                chapters={chapters}
-                themeColor={themeColor || "210 55% 30%"}
-                onChapterClick={(chapter) => {
-                  onSelectChapter(chapter.id);
-                  onStartChapter(chapter.id);
-                }}
-                className="max-w-[540px]"
-                endLabel="🏁 Chegada da trilha"
-              />
-            </div>
+          <div className="px-3 sm:px-8 py-5 sm:py-7">
+            {hasDefinedBook ? (
+              <div className="overflow-x-auto">
+                <div className="min-w-[540px]">
+                  <BookQuestTrailMap
+                    chapters={chapters}
+                    themeColor={themeColor || "210 55% 30%"}
+                    onChapterClick={(chapter) => {
+                      onSelectChapter(chapter.id);
+                      onStartChapter(chapter.id);
+                    }}
+                    className="max-w-[540px]"
+                    endLabel="🏁 Chegada da trilha"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="min-h-[280px] rounded-[26px] border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center text-center px-6 py-12">
+                <div className="h-16 w-16 rounded-3xl bg-primary/10 text-primary flex items-center justify-center">
+                  <BookOpen className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-bold mt-5">Ainda não definida</h3>
+                <p className="text-sm text-muted-foreground mt-2 max-w-md">
+                  A trilha literária aparecerá aqui quando o professor selecionar o livro da turma.
+                </p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -207,17 +229,19 @@ const EduStudentHome = ({
               <div className="flex items-center gap-2">
                 {goalProgress >= 100 ? <Check className="h-5 w-5 text-emerald-500" /> : <Sparkles className="h-5 w-5 text-accent" />}
                 <p className="text-sm font-bold">
-                  {readingBarrier === "time"
-                    ? `Sessão rápida de ${routineMinutes} min`
-                    : readingBarrier === "focus"
-                      ? `Leitura em foco por ${routineMinutes} min`
-                      : readingBarrier === "interest"
-                        ? "Encontre uma descoberta no capítulo"
-                        : readingBarrier === "difficulty"
-                          ? "Encontre uma pista que faça sentido"
-                          : dailyGoal > 0
-                            ? `Ler ${dailyGoal} páginas`
-                            : "Continue sua leitura"}
+                  {!hasDefinedBook
+                    ? "Aguardando o professor definir o livro"
+                    : readingBarrier === "time"
+                      ? `Sessão rápida de ${routineMinutes} min`
+                      : readingBarrier === "focus"
+                        ? `Leitura em foco por ${routineMinutes} min`
+                        : readingBarrier === "interest"
+                          ? "Encontre uma descoberta no capítulo"
+                          : readingBarrier === "difficulty"
+                            ? "Encontre uma pista que faça sentido"
+                            : dailyGoal > 0
+                              ? `Ler ${dailyGoal} páginas`
+                              : "Continue sua leitura"}
                 </p>
               </div>
               {dailyGoal > 0 && (
@@ -233,7 +257,8 @@ const EduStudentHome = ({
             <div className="mt-3 rounded-2xl border border-border bg-muted/20 p-4">
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Próximo passo</p>
               <p className="text-sm font-semibold mt-1">
-                {preferredSupport === "discoveries" ? "Preste atenção a uma pista ou detalhe." :
+                {!hasDefinedBook ? "Aguarde o professor definir o livro da turma." :
+                  preferredSupport === "discoveries" ? "Preste atenção a uma pista ou detalhe." :
                   preferredSupport === "characters" ? "Observe o que um personagem escolhe ou muda." :
                   preferredSupport === "competition" ? "Mantenha sua sequência e acompanhe sua posição." :
                   currentChapter ? currentChapter.title : "Abra a trilha para continuar."}
