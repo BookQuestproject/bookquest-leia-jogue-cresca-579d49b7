@@ -527,10 +527,10 @@ const EduAluno = () => {
                 readingBarrier={studentPreferences?.reading_barrier || ""}
                 preferredSupport={studentPreferences?.preferred_support || ""}
                 chapters={normalizedChapters}
-                selectedChapter={activeChapter?.number || 1}
+                selectedChapter={activeChapter?.id || 1}
                 ranking={rankedStudents}
                 onSelectChapter={(chapterNumber) => {
-                  const chapter = normalizedChapters.find((item) => item.number === chapterNumber);
+                  const chapter = normalizedChapters.find((item) => item.id === chapterNumber);
                   if (!chapter || chapter.status === "locked") return;
                   setSelectedChapter(chapterNumber);
                 }}
