@@ -153,15 +153,15 @@ const EduAlunoOnboarding = () => {
 
       const prefs = preferences as any;
       if (prefs) {
-        setAvatar(preferences.avatar_id || "");
-        setExperience(preferences.reading_experience || "");
-        setFrequency(preferences.reading_frequency || "");
-        setRoutine(Number(preferences.routine_minutes) || 20);
-        setBarrier(preferences.reading_barrier || "");
-        setMotivation(preferences.reading_motivation || "");
-        setSupport(preferences.preferred_support || "short_missions");
-        setGoalPages(Number(preferences.daily_goal_pages) || 10);
-        setPreferredDays(Array.isArray(preferences.preferred_days) ? preferences.preferred_days : [1,2,3,4,5]);
+        setAvatar(prefs.avatar_id || "");
+        setExperience(prefs.reading_experience || "");
+        setFrequency(prefs.reading_frequency || "");
+        setRoutine(Number(prefs.routine_minutes) || 20);
+        setBarrier(prefs.reading_barrier || "");
+        setMotivation(prefs.reading_motivation || "");
+        setSupport(prefs.preferred_support || "short_missions");
+        setGoalPages(Number(prefs.daily_goal_pages) || 10);
+        setPreferredDays(Array.isArray(prefs.preferred_days) ? prefs.preferred_days : [1,2,3,4,5]);
       }
     })();
   }, [user]);
