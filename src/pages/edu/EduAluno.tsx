@@ -29,7 +29,6 @@ import BookQuestTrailMap from "@/components/BookQuestTrailMap";
 import EduBookCover from "@/components/edu/EduBookCover";
 import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
 import FeedbackLauncher from "@/components/feedback/FeedbackLauncher";
-import FeedbackPrompt from "@/components/feedback/FeedbackPrompt";
 
 interface ClassInfo {
   id: string;
@@ -135,13 +134,26 @@ const EduAluno = () => {
 
   const { announcements } = useEduEngagement(selectedClass?.id);
   const { questions, responses, fetchQuestions, createResponse } = useClassQuestions();
-  const totalPages = selectedClass?.total_pages || 0;
+  const hasDefinedBook = Boolean(
+    String(selectedClass?.book_id || "").trim() || String(selectedClass?.book_title || "").trim(),
+  );
+  const totalPages = hasDefinedBook ? (selectedClass?.total_pages || 0) : 0;
 
   useEffect(() => {
     if (!selectedClass?.id || !user?.id) return;
     fetchProgress(selectedClass.id);
     fetchQuestions(selectedClass.id);
     fetchRanking(selectedClass.id);
+
+    if (!hasDefinedBook) {
+      setBookTheme(undefined);
+      setBookCoverUrl(null);
+      setBookCoverFallbackUrl(null);
+      setClassChallenge(null);
+      setChapterMap([]);
+      setSelectedChapter(1);
+      return;
+    }
 
     (async () => {
       const [{ data: link }, { data: enrichment }, { data: challenge }, { data: preferences }, { data: profileRow }, { data: customBook }] = await Promise.all([
@@ -294,7 +306,7 @@ const EduAluno = () => {
         };
       }));
     })();
-  }, [selectedClass?.id, user?.id, totalPages]);
+  }, [selectedClass?.id, selectedClass?.book_id, selectedClass?.book_title, user?.id, totalPages, hasDefinedBook]);
 
   const fetchRanking = async (classId: string) => {
     const { data: members } = await supabase.from("class_members").select("user_id").eq("class_id", classId);
@@ -563,6 +575,7 @@ const EduAluno = () => {
                 className={selectedClass.name}
                 bookTitle={selectedClass.book_title}
                 author={selectedClass.author}
+                hasDefinedBook={hasDefinedBook}
                 bookCoverUrl={bookCoverUrl}
                 themeColor={bookTheme}
                 currentPage={currentPage}
@@ -616,23 +629,31 @@ const EduAluno = () => {
                         <EduBookCover
                           src={bookCoverUrl}
                           fallbackSrc={bookCoverFallbackUrl}
-                          title={selectedClass.book_title || "Livro da turma"}
-                          alt={selectedClass.book_title || "Livro"}
+                          title={hasDefinedBook ? selectedClass.book_title || "Livro da turma" : "Livro não definido"}
+                          alt={hasDefinedBook ? selectedClass.book_title || "Livro" : "Livro não definido"}
                           className="h-full w-full"
                         />
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs uppercase tracking-[0.16em] font-bold text-muted-foreground">Livro da turma</p>
-                        <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mt-2">{selectedClass.book_title || "Aguardando livro"}</h1>
-                        {selectedClass.author && <p className="text-base text-muted-foreground mt-2">{selectedClass.author}</p>}
-                        <div className="mt-6 flex flex-wrap gap-2">
-                          <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">Página {currentPage}{totalPages ? ` / ${totalPages}` : ""}</span>
-                          <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">{progressPercent}% concluído</span>
-                          {deadline && <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">{daysRemaining} dias restantes</span>}
-                        </div>
-                        <div className="mt-6">
-                          <Progress value={progressPercent} className="h-3" />
-                        </div>
+                        <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mt-2">{hasDefinedBook ? selectedClass.book_title || "Livro da turma" : "Livro não definido"}</h1>
+                        {hasDefinedBook && selectedClass.author && <p className="text-base text-muted-foreground mt-2">{selectedClass.author}</p>}
+                        {hasDefinedBook ? (
+                          <>
+                            <div className="mt-6 flex flex-wrap gap-2">
+                              <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">Página {currentPage}{totalPages ? ` / ${totalPages}` : ""}</span>
+                              <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">{progressPercent}% concluído</span>
+                              {deadline && <span className="rounded-full border border-border bg-muted/20 px-3 py-1.5 text-xs font-semibold">{daysRemaining} dias restantes</span>}
+                            </div>
+                            <div className="mt-6">
+                              <Progress value={progressPercent} className="h-3" />
+                            </div>
+                          </>
+                        ) : (
+                          <div className="mt-6 rounded-2xl border border-dashed border-border bg-muted/15 px-4 py-3 text-sm text-muted-foreground">
+                            O professor ainda não definiu o livro desta turma.
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -643,19 +664,33 @@ const EduAluno = () => {
                     <p className="text-xs uppercase tracking-[0.18em] font-bold text-muted-foreground">A mesma trilha do BookQuest</p>
                     <h2 className="text-2xl font-bold mt-2">Sua história, capítulo por capítulo.</h2>
                   </div>
-                  <div className="overflow-x-auto px-3 sm:px-8 pb-8">
-                    <div className="min-w-[540px]">
-                      <BookQuestTrailMap
-                        chapters={normalizedChapters as any}
-                        themeColor={bookTheme || "210 55% 30%"}
-                        onChapterClick={(chapter) => {
-                          setSelectedChapter(chapter.id);
-                          handleStartChapter(chapter.id);
-                        }}
-                        className="max-w-[540px]"
-                        endLabel="🏁 Fim da trilha"
-                      />
-                    </div>
+                  <div className="px-3 sm:px-8 pb-8">
+                    {hasDefinedBook ? (
+                      <div className="overflow-x-auto">
+                        <div className="min-w-[540px]">
+                          <BookQuestTrailMap
+                            chapters={normalizedChapters as any}
+                            themeColor={bookTheme || "210 55% 30%"}
+                            onChapterClick={(chapter) => {
+                              setSelectedChapter(chapter.id);
+                              handleStartChapter(chapter.id);
+                            }}
+                            className="max-w-[540px]"
+                            endLabel="🏁 Fim da trilha"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="min-h-[280px] rounded-[26px] border border-dashed border-border bg-muted/10 flex flex-col items-center justify-center text-center px-6 py-12">
+                        <div className="h-16 w-16 rounded-3xl bg-primary/10 text-primary flex items-center justify-center">
+                          <BookOpen className="h-7 w-7" />
+                        </div>
+                        <h3 className="text-xl font-bold mt-5">Ainda não definida</h3>
+                        <p className="text-sm text-muted-foreground mt-2 max-w-md">
+                          A trilha literária aparecerá aqui quando o professor selecionar o livro da turma.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </section>
               </div>
