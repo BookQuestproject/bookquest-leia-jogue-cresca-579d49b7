@@ -99,25 +99,6 @@ const EduBookLibraryManager = () => {
 
   useEffect(() => { void loadBooks(); }, [user?.id]);
 
-  const loadBooks = async () => {
-    setLoadingBooks(true);
-    const [{ data: custom }, { data: enriched }] = await Promise.all([
-      supabase
-        .from("edu_books" as any)
-        .select("id,title,author,cover_url,total_pages,genre,source_book_id,is_active")
-        .eq("is_active", true)
-        .order("title", { ascending: true }),
-      supabase
-        .from("book_trail_enrichments" as any)
-        .select("book_id,title,author,cover_url,total_pages,genre"),
-    ]);
-    setCustomBooks(((custom || []) as any[]).map((book) => ({ ...book, custom: true, editable: true })));
-    setCatalogMetadata(Object.fromEntries(
-      ((enriched || []) as any[]).map((book) => [String(book.book_id).toLowerCase(), book])
-    ));
-    setLoadingBooks(false);
-  };
-
   const filteredCatalog = useMemo(
     () => catalogBooks.filter((book) => {
       const q = normalize(query);
