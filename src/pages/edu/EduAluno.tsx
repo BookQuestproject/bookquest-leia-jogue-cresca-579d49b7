@@ -170,7 +170,7 @@ const EduAluno = () => {
         enrichedChapters = Array.isArray(raw) ? raw : [];
       } catch {}
 
-      const sharedTrailChapters = enrichedChapters.length
+      const curatedChapters = enrichedChapters.length
         ? enrichedChapters.map((chapter: any, index: number) => ({
             id: chapter.id || index + 1,
             title: chapter.title || `Capítulo ${index + 1}`,
@@ -178,15 +178,25 @@ const EduAluno = () => {
             icon: chapter.icon || "📖",
             totalPages: chapter.totalPages || undefined,
           }))
-        : normalTrail
-          ? expandChapters(normalTrail.chapters, normalTrail.totalChapters).map((chapter: any) => ({
-              id: chapter.id,
-              title: chapter.title || `Capítulo ${chapter.id}`,
-              status: chapter.status,
-              icon: chapter.icon || "📖",
-              totalPages: chapter.totalPages,
-            }))
-          : [];
+        : normalTrail?.chapters || [];
+
+      // Sempre monta a trilha visual com a quantidade total do livro.
+      // Assim, capítulos ainda não liberados continuam visíveis como bloqueados.
+      const canonicalChapterCount = Math.max(
+        Number(normalTrail?.totalChapters || 0),
+        enrichedChapters.length,
+        curatedChapters.length,
+      );
+      const sharedTrailChapters = expandChapters(
+        curatedChapters as any[],
+        canonicalChapterCount,
+      ).map((chapter: any) => ({
+        id: chapter.id,
+        title: chapter.title || `Capítulo ${chapter.id}`,
+        status: chapter.status,
+        icon: chapter.icon || "📖",
+        totalPages: chapter.totalPages,
+      }));
 
       setBookTheme((enrichment as any)?.theme_color || normalTrail?.themeColor || undefined);
       setBookCoverUrl((enrichment as any)?.cover_url || normalTrail?.coverImage || null);
@@ -194,15 +204,28 @@ const EduAluno = () => {
 
       const journeyId = (link as any)?.journey_id;
       if (journeyId) {
-        const { data: chapters } = await supabase
-          .from("edu_journey_chapters" as any)
-          .select("chapter_number,title,start_page,end_page")
-          .eq("journey_id", journeyId)
-          .order("chapter_number", { ascending: true });
+        const [{ data: journey }, { data: chapters }] = await Promise.all([
+          supabase
+            .from("edu_journeys" as any)
+            .select("total_chapters")
+            .eq("id", journeyId)
+            .maybeSingle(),
+          supabase
+            .from("edu_journey_chapters" as any)
+            .select("chapter_number,title,start_page,end_page")
+            .eq("journey_id", journeyId)
+            .order("chapter_number", { ascending: true }),
+        ]);
 
-        if ((chapters as any[])?.length) {
-          const journeyById = new Map((chapters as any[]).map((c) => [c.chapter_number, c]));
-          const count = Math.max(sharedTrailChapters.length, (chapters as any[]).length);
+        const chapterRows = (chapters as any[]) || [];
+        if (chapterRows.length) {
+          const journeyById = new Map(chapterRows.map((c) => [c.chapter_number, c]));
+          const count = Math.max(
+            1,
+            Number((journey as any)?.total_chapters || 0),
+            sharedTrailChapters.length,
+            chapterRows.length,
+          );
           const pagesPerChapter = totalPages > 0 ? Math.ceil(totalPages / count) : 1;
           const merged = Array.from({ length: count }, (_, i) => {
             const id = i + 1;
@@ -225,14 +248,9 @@ const EduAluno = () => {
 
       const fallbackCount = Math.max(
         1,
-        Math.min(
-          25,
-          Math.max(
-            sharedTrailChapters.length,
-            Number(normalTrail?.totalChapters || 0),
-            Number(selectedClass.total_pages || 0) ? Math.ceil(Number(selectedClass.total_pages || 0) / 20) : 1,
-          ),
-        ),
+        canonicalChapterCount,
+        Number(normalTrail?.totalChapters || 0),
+        Number(selectedClass.total_pages || 0) ? Math.ceil(Number(selectedClass.total_pages || 0) / 20) : 1,
       );
       const pagesPerChapter = totalPages > 0 ? Math.ceil(totalPages / fallbackCount) : 1;
       const baseTrail = sharedTrailChapters.length ? sharedTrailChapters : [];
@@ -326,13 +344,18 @@ const EduAluno = () => {
       trail.id.toLowerCase() === selectedBookId ||
       trail.title.toLowerCase() === selectedBookTitle
     );
-    const readingBookId = matchedTrail?.id || selectedClass.book_id;
+    const slugFromTitle = selectedClass.book_title
+      ? selectedClass.book_title
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")
+      : "";
+    const readingBookId = matchedTrail?.id || selectedClass.book_id || slugFromTitle;
     if (readingBookId) {
-      navigate(`/ler/${readingBookId}/${chapterNumber}?edu=1`);
-      return;
+      navigate(`/ler/${readingBookId}/${chapterNumber}?edu=1&classId=${encodeURIComponent(selectedClass.id)}`);
     }
-
-    navigate(`/edu/jornada/${selectedClass.id}?chapter=${chapterNumber}`);
   };
 
   const handleUpdatePage = async () => {
