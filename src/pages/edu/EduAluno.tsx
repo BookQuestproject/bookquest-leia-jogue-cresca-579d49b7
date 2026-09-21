@@ -98,7 +98,7 @@ const InfoSquare = ({ icon: Icon, title, value, subtitle, tone, onClick }: {
 const EduAluno = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { studentClasses } = useEduRole();
+  const { studentClasses, loading: eduRoleLoading } = useEduRole();
   const { progressData, fetchProgress, updateProgress } = useClassReadingProgress();
   const { profile } = useProfile();
   const { essencia, streak } = useUserStats();
@@ -360,7 +360,7 @@ const EduAluno = () => {
   const initials = (profile?.full_name || "A").split(" ").map(s => s[0]).slice(0, 2).join("").toUpperCase();
   const studentName = profile?.full_name || "Aluno";
 
-  if (authLoading) {
+  if (authLoading || eduRoleLoading) {
     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   }
 
