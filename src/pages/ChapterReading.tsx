@@ -450,6 +450,8 @@ const bookData: Record<string, {
 
 import ReadingCountdown from "@/components/ReadingCountdown";
 
+const CHAPTER_ICONS = ["📖", "📕", "📗", "📘", "📙", "🕯️", "🗝️", "🪶"];
+
 type ReadingState = "intro" | "countdown" | "reading" | "reflection" | "completed";
 
 const ChapterReading = () => {
