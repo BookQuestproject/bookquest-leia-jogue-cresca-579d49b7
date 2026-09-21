@@ -54,6 +54,7 @@ const EduBookLibraryManager = () => {
   const { toast } = useToast();
 
   const [customBooks, setCustomBooks] = useState<LibraryBook[]>([]);
+  const [catalogMetadata, setCatalogMetadata] = useState<Record<string, Partial<LibraryBook>>>({});
   const [loadingBooks, setLoadingBooks] = useState(true);
   const [query, setQuery] = useState("");
   const [creating, setCreating] = useState(false);
@@ -79,30 +80,43 @@ const EduBookLibraryManager = () => {
 
   const loadBooks = async () => {
     setLoadingBooks(true);
-    const { data } = await supabase
-      .from("edu_books" as any)
-      .select("id,title,author,cover_url,total_pages,genre,source_book_id,is_active")
-      .eq("is_active", true)
-      .order("title", { ascending: true });
-    setCustomBooks(((data || []) as any[]).map((book) => ({ ...book, custom: true, editable: true })));
+    const [{ data: custom }, { data: enriched }] = await Promise.all([
+      supabase
+        .from("edu_books" as any)
+        .select("id,title,author,cover_url,total_pages,genre,source_book_id,is_active")
+        .eq("is_active", true)
+        .order("title", { ascending: true }),
+      supabase
+        .from("book_trail_enrichments" as any)
+        .select("book_id,title,author,cover_url,total_pages,genre"),
+    ]);
+    setCustomBooks(((custom || []) as any[]).map((book) => ({ ...book, custom: true, editable: true })));
+    setCatalogMetadata(Object.fromEntries(
+      ((enriched || []) as any[]).map((book) => [String(book.book_id).toLowerCase(), book])
+    ));
     setLoadingBooks(false);
   };
 
   useEffect(() => { void loadBooks(); }, [user?.id]);
 
-  const catalogBooks = useMemo<LibraryBook[]>(
-    () => bookTrails.map((book) => ({
-      id: book.id,
-      title: book.title,
-      author: book.author,
-      cover_url: book.coverImage || null,
-      total_pages: book.chapters.reduce((sum, chapter) => sum + (chapter.totalPages || 0), 0) || null,
-      genre: book.genre,
-      custom: false,
-      editable: false,
-    })),
-    [],
-  );
+  const loadBooks = async () => {
+    setLoadingBooks(true);
+    const [{ data: custom }, { data: enriched }] = await Promise.all([
+      supabase
+        .from("edu_books" as any)
+        .select("id,title,author,cover_url,total_pages,genre,source_book_id,is_active")
+        .eq("is_active", true)
+        .order("title", { ascending: true }),
+      supabase
+        .from("book_trail_enrichments" as any)
+        .select("book_id,title,author,cover_url,total_pages,genre"),
+    ]);
+    setCustomBooks(((custom || []) as any[]).map((book) => ({ ...book, custom: true, editable: true })));
+    setCatalogMetadata(Object.fromEntries(
+      ((enriched || []) as any[]).map((book) => [String(book.book_id).toLowerCase(), book])
+    ));
+    setLoadingBooks(false);
+  };
 
   const filteredCatalog = useMemo(
     () => catalogBooks.filter((book) => {
@@ -135,6 +149,7 @@ const EduBookLibraryManager = () => {
 
     const source = bookTrails.find((book) => book.id === catalog.id);
     if (!source) return null;
+    const catalogPages = catalogMetadata[source.id.toLowerCase()]?.total_pages || catalog.total_pages;
 
     const { data: inserted, error } = await supabase
       .from("edu_books" as any)
@@ -142,7 +157,7 @@ const EduBookLibraryManager = () => {
         title: source.title,
         author: source.author,
         cover_url: source.coverImage || null,
-        total_pages: catalog.total_pages,
+        total_pages: catalogPages,
         genre: source.genre,
         theme_color: source.themeColor,
         source_book_id: source.id,
