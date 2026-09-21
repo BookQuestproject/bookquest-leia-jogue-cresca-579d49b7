@@ -54,7 +54,7 @@ const EduBookLibraryManager = () => {
   const { toast } = useToast();
 
   const [customBooks, setCustomBooks] = useState<LibraryBook[]>([]);
-  const [catalogMetadata, setCatalogMetadata] = useState<Record<string, Partial<LibraryBook>>>({});
+  const [catalogMetadata, setCatalogMetadata] = useState<Record<string, any>>({});
   const [loadingBooks, setLoadingBooks] = useState(true);
   const [query, setQuery] = useState("");
   const [creating, setCreating] = useState(false);
@@ -209,14 +209,14 @@ const EduBookLibraryManager = () => {
           icon: "📖",
           totalPages: catalogPages ? Math.ceil(catalogPages / sourceCount) : 18,
         }));
-    const chapterRows = expanded.map((chapter, index) => {
+    const chapterRows = (expanded as any[]).map((chapter, index) => {
       const pagesPerChapter = catalogPages ? Math.max(1, Math.ceil(catalogPages / expanded.length)) : Math.max(1, chapter.totalPages || 18);
       const startPage = catalogPages ? index * pagesPerChapter + 1 : expanded.slice(0, index).reduce((sum, item) => sum + (item.totalPages || 18), 0) + 1;
       const endPage = catalogPages
         ? (index === expanded.length - 1 ? catalogPages : Math.min(catalogPages, (index + 1) * pagesPerChapter))
         : startPage + pagesPerChapter - 1;
       return {
-        book_id: inserted.id,
+        book_id: (inserted as any).id,
         chapter_number: chapter.id,
         title: chapter.title || `Capítulo ${chapter.id}`,
         start_page: startPage,
@@ -226,10 +226,10 @@ const EduBookLibraryManager = () => {
     });
     await supabase.from("edu_book_chapters" as any).insert(chapterRows);
 
-    const questionRows = expanded
+    const questionRows = (expanded as any[])
       .filter((chapter) => Boolean(chapter.question?.text))
       .map((chapter) => ({
-        book_id: inserted.id,
+        book_id: (inserted as any).id,
         chapter_number: chapter.id,
         question_type: "multiple_choice",
         question_text: chapter.question!.text,
@@ -275,7 +275,7 @@ const EduBookLibraryManager = () => {
 
     const pagesPerChapter = Math.max(1, Math.ceil(totalPages / chapterCount));
     const chapterRows = Array.from({ length: chapterCount }, (_, index) => ({
-      book_id: data.id,
+      book_id: (data as any).id,
       chapter_number: index + 1,
       title: `Capítulo ${index + 1}`,
       start_page: index * pagesPerChapter + 1,
@@ -289,7 +289,7 @@ const EduBookLibraryManager = () => {
     setCreating(false);
     setSaving(false);
     toast({ title: "Livro criado", description: "Agora você pode editar capítulos e perguntas." });
-    setEditorBookId(data.id);
+    setEditorBookId((data as any).id);
   };
 
   const loadEditor = async (book: LibraryBook) => {
@@ -309,7 +309,7 @@ const EduBookLibraryManager = () => {
         .eq("is_active", true)
         .order("created_at", { ascending: true }),
     ]);
-    setChapters((chapterRows || []) as Chapter[]);
+    setChapters((chapterRows || []) as unknown as Chapter[]);
     setQuestions(((questionRows || []) as any[]).map((row) => ({
       ...row,
       options: Array.isArray(row.options) ? row.options : [],
@@ -355,7 +355,7 @@ const EduBookLibraryManager = () => {
     }
     setQuestions((prev) => [...prev, { ...(data as any), options: [] }]);
     setQuestionDraft("");
-    await supabase.rpc("sync_edu_book_question_to_classes" as any, { _book_question_id: data.id });
+    await supabase.rpc("sync_edu_book_question_to_classes" as any, { _book_question_id: (data as any).id });
   };
 
   const saveQuestion = async (question: BookQuestion) => {
@@ -421,7 +421,7 @@ const EduBookLibraryManager = () => {
       return;
     }
     setQuestions((prev) => [...prev, { ...(data as any), options: Array.isArray((data as any).options) ? (data as any).options : [] }]);
-    await supabase.rpc("sync_edu_book_question_to_classes" as any, { _book_question_id: data.id });
+    await supabase.rpc("sync_edu_book_question_to_classes" as any, { _book_question_id: (data as any).id });
     setAiSuggestions((prev) => prev.filter((item) => item !== suggestion));
     toast({ title: "Pergunta adicionada" });
   };
