@@ -99,6 +99,46 @@ const EduBookLibraryManager = () => {
 
   useEffect(() => { void loadBooks(); }, [user?.id]);
 
+  const catalogBooks = useMemo<LibraryBook[]>(() => {
+    const builtIns = bookTrails.map((book) => {
+      const meta = catalogMetadata[book.id.toLowerCase()] || {};
+      return {
+        id: book.id,
+        title: meta.title || book.title,
+        author: meta.author || book.author,
+        cover_url: meta.cover_url || book.coverImage || null,
+        total_pages: meta.total_pages || null,
+        genre: meta.genre || book.genre,
+        custom: false,
+        editable: false,
+      };
+    });
+
+    const enrichedOnly = Object.values(catalogMetadata)
+      .filter((meta) =>
+        meta.book_id &&
+        !bookTrails.some((book) => book.id.toLowerCase() === String(meta.book_id).toLowerCase())
+      )
+      .map((meta) => ({
+        id: String(meta.book_id),
+        title: meta.title || "Livro",
+        author: meta.author || null,
+        cover_url: meta.cover_url || null,
+        total_pages: meta.total_pages || null,
+        genre: meta.genre || null,
+        custom: false,
+        editable: false,
+      }));
+
+    return [...builtIns, ...enrichedOnly].filter((book, index, rows) =>
+      rows.findIndex((row) =>
+        row.id === book.id ||
+        (normalize(row.title) === normalize(book.title) &&
+          normalize(row.author || "") === normalize(book.author || ""))
+      ) === index
+    );
+  }, [catalogMetadata]);
+
   const filteredCatalog = useMemo(
     () => catalogBooks.filter((book) => {
       const q = normalize(query);
@@ -128,9 +168,9 @@ const EduBookLibraryManager = () => {
     );
     if (existing) return existing;
 
-    const source = bookTrails.find((book) => book.id === catalog.id);
-    if (!source) return null;
-    const catalogPages = catalogMetadata[source.id.toLowerCase()]?.total_pages || catalog.total_pages;
+    const source = bookTrails.find((book) => book.id.toLowerCase() === catalog.id.toLowerCase());
+    const meta = catalogMetadata[catalog.id.toLowerCase()];
+    const catalogPages = meta?.total_pages || catalog.total_pages;
 
     const { data: inserted, error } = await supabase
       .from("edu_books" as any)
