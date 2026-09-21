@@ -151,7 +151,8 @@ const EduAlunoOnboarding = () => {
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (preferences) {
+      const prefs = preferences as any;
+      if (prefs) {
         setAvatar(preferences.avatar_id || "");
         setExperience(preferences.reading_experience || "");
         setFrequency(preferences.reading_frequency || "");
