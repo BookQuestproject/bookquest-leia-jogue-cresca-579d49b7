@@ -43,6 +43,10 @@ type Props = {
   onActivities: () => void;
   onStats: () => void;
   onAnnouncements: () => void;
+  onMissions: () => void;
+  onAchievements: () => void;
+  onVocabulary: () => void;
+  onCommunity: () => void;
 };
 
 const STREAK_STAGES = [
@@ -85,6 +89,10 @@ const EduStudentHome = ({
   onActivities,
   onStats,
   onAnnouncements,
+  onMissions,
+  onAchievements,
+  onVocabulary,
+  onCommunity,
 }: Props) => {
   const selected = chapters.find((chapter) => chapter.id === selectedChapter) || chapters.find((chapter) => chapter.status === "current") || chapters[0];
   const currentChapter = hasDefinedBook
@@ -299,18 +307,17 @@ const EduStudentHome = ({
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
           {[
-            ["Missões", "/missoes"],
-            ["Conquistas", "/conquistas"],
-            ["Vocabulário", "/vocabulario"],
-            ["Comunidade", "/comunidade"],
-          ].map(([label, path]) => (
-            <button key={path} type="button" onClick={() => navigate(path)} className="rounded-2xl border border-border px-3 py-3 text-left hover:bg-muted/40 transition-colors">
+            ["Missões", onMissions],
+            ["Conquistas", onAchievements],
+            ["Vocabulário", onVocabulary],
+            ["Debate da turma", onCommunity],
+          ].map(([label, action]) => (
+            <button key={String(label)} type="button" onClick={action as () => void} className="rounded-2xl border border-border px-3 py-3 text-left hover:bg-muted/40 transition-colors">
               <p className="text-sm font-semibold">{label}</p>
-              <p className="text-[11px] text-muted-foreground mt-1">Abrir recurso</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Abrir dentro do EDU</p>
             </button>
           ))}
-        </div>
-      </section>
+        </div>     </section>
     </div>
   );
 };
