@@ -6,18 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Copy, Trash2, Users, BookOpen, Calendar, Archive, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { RenameClassDialog } from "@/components/edu/RenameClassDialog";
-
-// Mock book library - replace with actual data source
-const libraryBooks = [
-  { id: "dom-casmurro", title: "Dom Casmurro", author: "Machado de Assis", pages: 256 },
-  { id: "1984", title: "1984", author: "George Orwell", pages: 416 },
-  { id: "pequeno-principe", title: "O Pequeno Príncipe", author: "Antoine de Saint-Exupéry", pages: 96 },
-];
 
 const EduTurmas = () => {
   const { classes, loading, createClass, deleteClass, archiveClass } = useClasses();
@@ -25,7 +17,6 @@ const EduTurmas = () => {
   const navigate = useNavigate();
   
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [bookSource, setBookSource] = useState<"library" | "manual">("library");
   const [form, setForm] = useState({
     name: "",
     grade: "",
@@ -36,7 +27,6 @@ const EduTurmas = () => {
     reading_start_date: "",
     reading_deadline: "",
   });
-  const [selectedLibraryBook, setSelectedLibraryBook] = useState<string>("");
   const [creating, setCreating] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
   const [renameTarget, setRenameTarget] = useState<{ id: string; name: string } | null>(null);
@@ -49,25 +39,6 @@ const EduTurmas = () => {
     if (!form.name.trim()) return;
     
     setCreating(true);
-    
-    let bookData = {};
-    if (bookSource === "library" && selectedLibraryBook) {
-      const book = libraryBooks.find(b => b.id === selectedLibraryBook);
-      if (book) {
-        bookData = {
-          book_id: book.id,
-          book_title: book.title,
-          author: book.author,
-          total_pages: book.pages,
-        };
-      }
-    } else if (bookSource === "manual" && form.book_title.trim()) {
-      bookData = {
-        book_title: form.book_title,
-        author: form.author || undefined,
-        total_pages: form.total_pages ? parseInt(form.total_pages) : undefined,
-      };
-    }
 
     const result = await createClass({
       name: form.name,
@@ -75,9 +46,8 @@ const EduTurmas = () => {
       description: form.description || undefined,
       reading_start_date: form.reading_start_date || undefined,
       reading_deadline: form.reading_deadline || undefined,
-      ...bookData,
     });
-    
+
     setCreating(false);
     if (result) {
       setIsCreateOpen(false);
@@ -91,7 +61,7 @@ const EduTurmas = () => {
         reading_start_date: "",
         reading_deadline: "",
       });
-      setSelectedLibraryBook("");
+      navigate("/edu/livros");
     }
   };
 
@@ -266,72 +236,17 @@ const EduTurmas = () => {
                 />
               </div>
 
-              <div className="border-t border-border pt-4">
-                <h3 className="text-sm font-semibold mb-3">Livro da Turma</h3>
-                <Tabs value={bookSource} onValueChange={(v) => setBookSource(v as "library" | "manual")}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="library">Da Biblioteca</TabsTrigger>
-                    <TabsTrigger value="manual">Cadastro Manual</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="library" className="space-y-3 mt-4">
-                    <div className="space-y-2">
-                      {libraryBooks.map((book) => (
-                        <label
-                          key={book.id}
-                          className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
-                            selectedLibraryBook === book.id
-                              ? "border-accent bg-accent/5"
-                              : "border-border hover:border-accent/50"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="library-book"
-                            value={book.id}
-                            checked={selectedLibraryBook === book.id}
-                            onChange={(e) => setSelectedLibraryBook(e.target.value)}
-                            className="text-accent"
-                          />
-                          <div className="flex-1">
-                            <p className="font-medium text-sm">{book.title}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {book.author} · {book.pages} páginas
-                            </p>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="manual" className="space-y-3 mt-4">
-                    <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Título do livro</label>
-                      <Input
-                        value={form.book_title}
-                        onChange={(e) => setForm({ ...form, book_title: e.target.value })}
-                        placeholder="Ex: Dom Casmurro"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Autor</label>
-                      <Input
-                        value={form.author}
-                        onChange={(e) => setForm({ ...form, author: e.target.value })}
-                        placeholder="Ex: Machado de Assis"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Total de páginas</label>
-                      <Input
-                        type="number"
-                        value={form.total_pages}
-                        onChange={(e) => setForm({ ...form, total_pages: e.target.value })}
-                        placeholder="Ex: 256"
-                      />
-                    </div>
-                  </TabsContent>
-                </Tabs>
+              <div className="rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-4">
+                <div className="flex items-start gap-3">
+                  <BookOpen className="h-5 w-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold">O livro fica em Livros</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Primeiro crie a turma. Depois escolha um livro da biblioteca ou cadastre um novo em <strong>Livros</strong>, onde também ficam capítulos e perguntas.
+                    </p>
+                  </div>
+                </div>
               </div>
-
               <div className="border-t border-border pt-4">
                 <h3 className="text-sm font-semibold mb-3">Planejamento de Leitura</h3>
                 <div className="grid grid-cols-2 gap-4">
