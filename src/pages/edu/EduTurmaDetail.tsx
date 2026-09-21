@@ -253,7 +253,7 @@ const EduTurmaDetail = () => {
           <TabsList className="grid w-full grid-cols-5 text-xs">
             <TabsTrigger value="overview">Visão geral</TabsTrigger>
             <TabsTrigger value="ranking">Alunos</TabsTrigger>
-            <TabsTrigger value="books">Jornadas</TabsTrigger>
+            <TabsTrigger value="books">Livro</TabsTrigger>
             <TabsTrigger value="announcements">Comunicação</TabsTrigger>
             <TabsTrigger value="metrics">Relatórios</TabsTrigger>
           </TabsList>
