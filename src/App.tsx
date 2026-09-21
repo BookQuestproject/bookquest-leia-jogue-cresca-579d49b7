@@ -59,8 +59,6 @@ import EduAtividadeReview from "./pages/edu/EduAtividadeReview";
 import EduPerguntas from "./pages/edu/EduPerguntas";
 import EduComunicacao from "./pages/edu/EduComunicacao";
 import EduConfiguracoes from "./pages/edu/EduConfiguracoes";
-import EduJornada from "./pages/edu/EduJornada";
-import EduExperienciasCapitulo from "./pages/edu/EduExperienciasCapitulo";
 import EduJourneyChapters from "./pages/edu/EduJourneyChapters";
 import PoliticaDePrivacidade from "./pages/PoliticaDePrivacidade";
 import TermosDeServico from "./pages/TermosDeServico";
@@ -137,8 +135,6 @@ const App = () => (
                 <Route path="/edu/demo/aluno" element={<Navigate to="/edu" replace />} />
                 <Route path="/edu/aluno/entrar" element={<EduAlunoEntry />} />
                 <Route path="/edu/aluno" element={<EduAluno />} />
-                <Route path="/edu/jornada/:classId" element={<EduJornada />} />
-                <Route path="/edu/experiencias/:classId/:chapterNumber" element={<EduExperienciasCapitulo />} />
                 <Route path="/edu/jornadas/:journeyId/capitulos" element={<EduJourneyChapters />} />
                 <Route path="/edu/professor" element={<EduProfessor />} />
                 <Route path="/edu/turmas" element={<EduTurmas />} />
