@@ -148,7 +148,7 @@ const bookTrails: BookTrail[] = [
     title: "Dom Casmurro",
     author: "Machado de Assis",
     cover: "📜",
-    coverImage: "https://m.media-amazon.com/images/I/61dKS9CIBYL._AC_UF1000,1000_QL80_.jpg",
+    coverImage: "https://commons.wikimedia.org/wiki/Special:FilePath/DomCasmurroMachadodeAssis.jpg",
     totalChapters: 15,
     isPremium: false,
     genre: "Romance Brasileiro",
