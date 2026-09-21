@@ -456,27 +456,35 @@ type ReadingState = "intro" | "countdown" | "reading" | "reflection" | "complete
 
 type EduReadingShellProps = { children: ReactNode };
 
-const EduReadingShell = ({ children }: EduReadingShellProps) => (
-  <div className="min-h-screen bg-background">
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-card/95 backdrop-blur-sm">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 min-w-0">
-          <BookOpen className="h-5 w-5 text-primary shrink-0" />
-          <div className="min-w-0">
-            <p className="text-sm font-bold truncate">BookQuest EDU</p>
-            <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Leitura da turma</p>
+const EduReadingShell = ({ children }: EduReadingShellProps) => {
+  const [searchParams] = useSearchParams();
+  const returnSection = searchParams.get("returnSection");
+  const returnPath = returnSection
+    ? `/edu/aluno?section=${encodeURIComponent(returnSection)}`
+    : "/edu/aluno";
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-40 border-b border-border/80 bg-card/95 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <BookOpen className="h-5 w-5 text-primary shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold truncate">BookQuest EDU</p>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Leitura da turma</p>
+            </div>
           </div>
+          <Link to={returnPath} className="text-xs font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap">
+            {returnSection === "book" ? "Voltar ao livro" : "Voltar ao BookQuest EDU"}
+          </Link>
         </div>
-        <Link to="/edu/aluno" className="text-xs font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap">
-          Voltar ao BookQuest EDU
-        </Link>
-      </div>
-    </header>
-    <main className="px-4 sm:px-6 py-6 sm:py-8">
-      {children}
-    </main>
-  </div>
-);
+      </header>
+      <main className="px-4 sm:px-6 py-6 sm:py-8">
+        {children}
+      </main>
+    </div>
+  );
+};
 
 const ChapterReading = () => {
   const { bookId, chapterId } = useParams();
@@ -484,6 +492,10 @@ const ChapterReading = () => {
   const [searchParams] = useSearchParams();
   const isEduMode = searchParams.get("edu") === "1";
   const eduClassId = searchParams.get("classId");
+  const eduReturnSection = isEduMode ? searchParams.get("returnSection") : null;
+  const eduReturnPath = eduReturnSection
+    ? `/edu/aluno?section=${encodeURIComponent(eduReturnSection)}`
+    : "/edu/aluno";
   const PageShell = isEduMode ? EduReadingShell : Layout;
   const { user } = useAuth();
   const { progress, loading: progressLoading, saveProgress, markAsCompleted, clearProgress } = useReadingProgress(bookId, chapterId);
@@ -898,7 +910,7 @@ const ChapterReading = () => {
       setShowExitConfirm(true);
       return;
     }
-    navigate(isEduMode ? "/edu/aluno" : `/trilhas/${bookId}`);
+    navigate(isEduMode ? eduReturnPath : `/trilhas/${bookId}`);
   };
 
   const handleConfirmExit = async () => {
@@ -907,7 +919,7 @@ const ChapterReading = () => {
       await clearProgress();
     }
     setShowExitConfirm(false);
-    navigate(isEduMode ? "/edu/aluno" : `/trilhas/${bookId}`);
+    navigate(isEduMode ? eduReturnPath : `/trilhas/${bookId}`);
   };
 
   if (dynamicLoading && !staticBook) {
