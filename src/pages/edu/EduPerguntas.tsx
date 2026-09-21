@@ -88,7 +88,7 @@ const EduPerguntas = () => {
       .order("chapter_number", { ascending: true })
       .order("sort_order", { ascending: true });
     if (error) toast.error("Não consegui carregar as experiências.");
-    setItems((data as ExperienceRow[]) || []);
+    setItems((data as unknown as ExperienceRow[]) || []);
     setLoading(false);
   };
 
