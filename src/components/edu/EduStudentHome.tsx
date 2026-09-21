@@ -1,5 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import {
-  BookOpen, Check, ChevronRight, Flame, Lock, Megaphone, Sparkles, Target, Trophy,
+  BookOpen, Check, ChevronRight, Flame, Lock, Megaphone, Sparkles, Target, Trophy, Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -90,6 +91,20 @@ const EduStudentHome = ({
   const streakProgress = nextStage ? Math.min(100, Math.round((streak / nextStage) * 100)) : 100;
   const goalProgress = dailyGoal > 0 ? Math.min(100, Math.round((dailyPagesRead / dailyGoal) * 100)) : 0;
   const accent = themeColor ? `hsl(${themeColor})` : "hsl(210 60% 42%)";
+  const navigate = useNavigate();
+
+  const handleShareExperience = async () => {
+    const text = `Estou lendo "${bookTitle || "um livro"}" no BookQuest EDU. Já avancei para a página ${currentPage}${totalPages ? ` de ${totalPages}` : ""}. 📚`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Minha leitura no BookQuest", text });
+      } else {
+        await navigator.clipboard.writeText(text);
+      }
+    } catch {
+      // User canceled the native share sheet.
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -232,6 +247,32 @@ const EduStudentHome = ({
           </div>
         </aside>
       </div>
+
+      <section className="rounded-3xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.15em] font-bold text-muted-foreground">Mais do BookQuest</p>
+            <h2 className="text-lg font-bold mt-1">Sua leitura continua aqui.</h2>
+            <p className="text-sm text-muted-foreground mt-1">Use os recursos do BookQuest normal sem sair da sua experiência EDU.</p>
+          </div>
+          <Button variant="outline" onClick={() => void handleShareExperience()} className="gap-2 shrink-0">
+            <Share2 className="h-4 w-4" /> Compartilhar experiência
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
+          {[
+            ["Missões", "/missoes"],
+            ["Conquistas", "/conquistas"],
+            ["Vocabulário", "/vocabulario"],
+            ["Comunidade", "/comunidade"],
+          ].map(([label, path]) => (
+            <button key={path} type="button" onClick={() => navigate(path)} className="rounded-2xl border border-border px-3 py-3 text-left hover:bg-muted/40 transition-colors">
+              <p className="text-sm font-semibold">{label}</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Abrir recurso</p>
+            </button>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
