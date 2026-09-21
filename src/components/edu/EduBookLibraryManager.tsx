@@ -173,14 +173,17 @@ const EduBookLibraryManager = () => {
 
     const expanded = expandChapters(source.chapters, source.totalChapters);
     const chapterRows = expanded.map((chapter, index) => {
-      const previousPages = expanded.slice(0, index).reduce((sum, item) => sum + (item.totalPages || 0), 0);
-      const pages = Math.max(1, chapter.totalPages || 18);
+      const pagesPerChapter = catalogPages ? Math.max(1, Math.ceil(catalogPages / expanded.length)) : Math.max(1, chapter.totalPages || 18);
+      const startPage = catalogPages ? index * pagesPerChapter + 1 : expanded.slice(0, index).reduce((sum, item) => sum + (item.totalPages || 18), 0) + 1;
+      const endPage = catalogPages
+        ? (index === expanded.length - 1 ? catalogPages : Math.min(catalogPages, (index + 1) * pagesPerChapter))
+        : startPage + pagesPerChapter - 1;
       return {
         book_id: inserted.id,
         chapter_number: chapter.id,
         title: chapter.title || `Capítulo ${chapter.id}`,
-        start_page: previousPages + 1,
-        end_page: previousPages + pages,
+        start_page: startPage,
+        end_page: Math.max(startPage, endPage),
         context_text: null,
       };
     });
