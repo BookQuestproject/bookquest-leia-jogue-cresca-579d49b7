@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Play, Pause, CheckCircle, Clock, BookOpen, Timer, HelpCircle, Sparkles, AlertCircle, AlertTriangle } from "lucide-react";
 import {
   AlertDialog,
@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserStats } from "@/hooks/useUserStats";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { bookTrails, expandChapters } from "@/pages/Trilhas";
 
 // This would ideally come from a shared data source
 const bookData: Record<string, {
@@ -454,6 +455,9 @@ type ReadingState = "intro" | "countdown" | "reading" | "reflection" | "complete
 const ChapterReading = () => {
   const { bookId, chapterId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isEduMode = searchParams.get("edu") === "1";
+  const eduClassId = searchParams.get("classId");
   const { user } = useAuth();
   const { progress, loading: progressLoading, saveProgress, markAsCompleted, clearProgress } = useReadingProgress(bookId, chapterId);
   const { addEssencia, streak, updateStreak } = useUserStats();
@@ -547,8 +551,18 @@ const ChapterReading = () => {
   }, [bookId, staticBook]);
 
   const book = staticBook || dynamicBook;
-  const chapter = book?.chapters.find(c => c.id === Number(chapterId));
-  const themeColor = book?.themeColor || "350 45% 32%";
+  const eduTrail = isEduMode && bookId
+    ? bookTrails.find((trail) => trail.id.toLowerCase() === bookId.toLowerCase())
+    : null;
+  const eduChapter = isEduMode && eduTrail
+    ? expandChapters(eduTrail.chapters, eduTrail.totalChapters).find((item) => item.id === Number(chapterId))
+    : null;
+  const chapter = book?.chapters.find(c => c.id === Number(chapterId)) || eduChapter;
+  const totalChapterCount = Math.max(
+    book?.chapters.length || 0,
+    eduTrail?.totalChapters || 0,
+  );
+  const themeColor = book?.themeColor || eduTrail?.themeColor || "350 45% 32%";
 
   // Block browser back button during reflection
   useEffect(() => {
@@ -694,11 +708,76 @@ const ChapterReading = () => {
     setShowFinishDialog(true);
   };
 
+  const syncEduClassProgress = async () => {
+    if (!isEduMode || !eduClassId || !user || !chapterId) return;
+
+    const [{ data: classRow }, { data: currentRow }, { data: link }] = await Promise.all([
+      supabase.from("classes").select("total_pages").eq("id", eduClassId).maybeSingle(),
+      supabase
+        .from("class_reading_progress")
+        .select("current_page,pages_read_today,last_read_date")
+        .eq("class_id", eduClassId)
+        .eq("user_id", user.id)
+        .maybeSingle(),
+      supabase
+        .from("edu_journey_classes" as any)
+        .select("journey_id")
+        .eq("class_id", eduClassId)
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    const previousPage = Number((currentRow as any)?.current_page || 0);
+    let targetPage = previousPage;
+
+    if ((link as any)?.journey_id) {
+      const { data: journeyChapter } = await supabase
+        .from("edu_journey_chapters" as any)
+        .select("end_page")
+        .eq("journey_id", (link as any).journey_id)
+        .eq("chapter_number", Number(chapterId))
+        .maybeSingle();
+      targetPage = Math.max(targetPage, Number((journeyChapter as any)?.end_page || 0));
+    }
+
+    const totalClassPages = Number((classRow as any)?.total_pages || 0);
+    if (totalClassPages > 0 && totalChapterCount > 0) {
+      targetPage = Math.max(
+        targetPage,
+        Math.min(totalClassPages, Math.ceil((totalClassPages * Number(chapterId)) / totalChapterCount)),
+      );
+    }
+
+    if (targetPage <= previousPage) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const previousLastRead = (currentRow as any)?.last_read_date;
+    const previousPagesToday = Number((currentRow as any)?.pages_read_today || 0);
+    const pagesDelta = targetPage - previousPage;
+    const pagesReadToday = previousLastRead === today
+      ? previousPagesToday + pagesDelta
+      : pagesDelta;
+
+    const { error } = await supabase.from("class_reading_progress").upsert({
+      user_id: user.id,
+      class_id: eduClassId,
+      current_page: targetPage,
+      last_read_date: today,
+      pages_read_today: pagesReadToday,
+      is_up_to_date: totalClassPages > 0 ? targetPage >= totalClassPages : false,
+    }, { onConflict: "user_id,class_id" });
+
+    if (error) {
+      console.warn("EDU class progress could not be synced:", error.message);
+    }
+  };
+
   const handleFinishedFully = async () => {
     setShowFinishDialog(false);
     if (timerRef.current) clearInterval(timerRef.current);
     if (user) {
       await markAsCompleted(elapsedTime);
+      await syncEduClassProgress();
     }
     setReadingState("reflection");
   };
@@ -753,7 +832,7 @@ const ChapterReading = () => {
       setShowExitConfirm(true);
       return;
     }
-    navigate(`/trilhas/${bookId}`);
+    navigate(isEduMode ? "/edu/aluno" : `/trilhas/${bookId}`);
   };
 
   const handleConfirmExit = async () => {
@@ -1065,7 +1144,7 @@ const ChapterReading = () => {
           bookTitle={book.title}
           chapterTitle={chapter.title}
           chapterId={chapter.id}
-          totalChapters={book.chapters.length}
+          totalChapters={totalChapterCount}
           themeColor={themeColor}
           readingTime={elapsedTime}
           onComplete={handleReflectionComplete}
