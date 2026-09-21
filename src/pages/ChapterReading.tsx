@@ -589,7 +589,7 @@ const ChapterReading = () => {
     })();
 
     return () => { cancelled = true; };
-  }, [bookId, staticBook]);
+  }, [bookId, staticBook, isEduMode]);
 
   const book = staticBook || dynamicBook;
   const eduTrail = isEduMode && bookId
