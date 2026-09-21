@@ -395,7 +395,7 @@ const EduAluno = () => {
       : "";
     const readingBookId = matchedTrail?.id || selectedClass.book_id || slugFromTitle;
     if (readingBookId) {
-      navigate(`/ler/${readingBookId}/${chapterNumber}?edu=1&classId=${encodeURIComponent(selectedClass.id)}`);
+      navigate(`/ler/${readingBookId}/${chapterNumber}?edu=1&classId=${encodeURIComponent(selectedClass.id)}&returnSection=${encodeURIComponent(section)}`);
     }
   };
 
