@@ -882,7 +882,7 @@ const ChapterReading = () => {
       await clearProgress();
     }
     setShowExitConfirm(false);
-    navigate(`/trilhas/${bookId}`);
+    navigate(isEduMode ? "/edu/aluno" : `/trilhas/${bookId}`);
   };
 
   if (dynamicLoading && !staticBook) {
@@ -903,8 +903,8 @@ const ChapterReading = () => {
       <Layout>
         <div className="py-8 text-center">
           <h1 className="text-2xl font-serif font-semibold mb-4">Capítulo não encontrado</h1>
-          <Link to="/trilhas">
-            <Button variant="outline">Voltar às trilhas</Button>
+          <Link to={isEduMode ? "/edu/aluno" : "/trilhas"}>
+            <Button variant="outline">{isEduMode ? "Voltar ao BookQuest EDU" : "Voltar às trilhas"}</Button>
           </Link>
         </div>
       </Layout>
