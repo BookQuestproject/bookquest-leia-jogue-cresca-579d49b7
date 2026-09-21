@@ -119,6 +119,7 @@ const EduLivros = () => {
   const [editingQuestion, setEditingQuestion] = useState<EduQuestion | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<any[]>([]);
+  const [questionSource, setQuestionSource] = useState<"teacher" | "ai">("teacher");
 
   const [bookForm, setBookForm] = useState({
     title: "",
@@ -259,7 +260,7 @@ const EduLivros = () => {
     setBookForm({ title: "", author: "", total_pages: "", genre: "", cover_url: "", description: "" });
     setSaving(false);
     await refreshBooks();
-    setActiveBook(data as EduBook);
+    await loadDetails(data as EduBook);
   };
 
   const importCatalogBook = async (item: CatalogItem) => {
@@ -292,7 +293,7 @@ const EduLivros = () => {
     setCatalog([]);
     toast.success("Livro adicionado à sua biblioteca EDU.");
     await refreshBooks();
-    setActiveBook(data as EduBook);
+    await loadDetails(data as EduBook);
     setSaving(false);
   };
 
@@ -384,6 +385,7 @@ const EduLivros = () => {
 
   const resetQuestionForm = () => {
     setEditingQuestion(null);
+    setQuestionSource("teacher");
     setQuestionForm({
       question_type: "multiple_choice",
       question_text: "",
@@ -395,6 +397,7 @@ const EduLivros = () => {
 
   const startEditQuestion = (question: EduQuestion) => {
     setEditingQuestion(question);
+    setQuestionSource(question.source === "ai" ? "ai" : "teacher");
     setQuestionForm({
       question_type: question.question_type,
       question_text: question.question_text,
@@ -430,7 +433,7 @@ const EduLivros = () => {
       const result = await supabase.from("edu_book_questions" as any).insert({
         ...payload,
         book_id: activeBook.id,
-        source: "teacher",
+        source: questionSource,
         created_by: user.id,
       }).select("id").single();
       error = result.error;
@@ -461,7 +464,7 @@ const EduLivros = () => {
     const classIds = ((classRows || []) as any[]).map((row) => row.id);
     if (classIds.length) {
       await supabase
-        .from("class_questions")
+        .from("class_questions" as any)
         .delete()
         .in("class_id", classIds)
         .eq("book_question_id", question.id);
@@ -502,6 +505,7 @@ const EduLivros = () => {
 
   const useSuggestion = (suggestion: any) => {
     setEditingQuestion(null);
+    setQuestionSource("ai");
     setQuestionForm({
       question_type: suggestion.question_type || "multiple_choice",
       question_text: suggestion.question_text || suggestion.question || "",
